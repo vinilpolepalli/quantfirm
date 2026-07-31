@@ -86,6 +86,15 @@ def plan() -> None:
         cfg = json.load(f)
     state = load_state()
     settle(state)
+
+    # Run lock: one plan per UTC day. A duplicate session firing must not
+    # double-rebalance (or, worse, kill-switch-liquidate lots bought hours
+    # earlier with unsettled proceeds — a GFV).
+    today = date.today().isoformat()
+    if state.get("last_plan_date") == today:
+        save_state(state)
+        print(json.dumps({"action": "already_planned_today"})); return
+    state["last_plan_date"] = today
     save_state(state)
 
     if not cfg.get("enabled", False):
@@ -118,25 +127,42 @@ def plan() -> None:
         kill_active = True
 
     if kill_active:
+        gfv_hold = state.get("gfv_hold", {})
+        deferred = []
         for s, v in pos_value.items():
-            if v >= 2.0:
-                orders.append({"symbol": s, "side": "sell", "dollars": round(v, 2),
-                               "reason": "kill_switch_liquidation"})
+            if v < 2.0:
+                continue
+            # never liquidate a lot bought with unsettled funds before the
+            # funding sale settles — that's a good-faith violation
+            if gfv_hold.get(s, "") >= today:
+                deferred.append(s)
+                continue
+            orders.append({"symbol": s, "side": "sell", "dollars": round(v, 2),
+                           "reason": "kill_switch_liquidation"})
         print(json.dumps({"action": "kill_switch", "drawdown": round(dd, 4),
-                          "orders": orders, "equity": round(equity, 2)}, indent=2))
+                          "orders": orders, "deferred_for_settlement": deferred,
+                          "equity": round(equity, 2)}, indent=2))
         return
 
-    min_order = float(cfg["risk"].get("min_order_usd", 2.0))
+    # Hysteresis: the $0.01 SEC sell fee is 25-50bps on tiny drift orders, so
+    # a rebalance must clear BOTH an absolute floor and a relative band
+    # (fraction of the target position) before it's worth trading.
+    min_order = float(cfg["risk"].get("min_order_usd", 5.0))
+    band = float(cfg["risk"].get("rebalance_band_frac", 0.15))
     target_val = {s: float(frac) * min(bankroll, equity) for s, frac in target_w.items()}
+
+    def _worth_trading(delta: float, target: float) -> bool:
+        return abs(delta) >= max(min_order, band * max(target, 1.0))
+
     sells, buys = [], []
     for s, v in pos_value.items():
         delta = target_val.get(s, 0.0) - v
-        if delta < -min_order:
+        if delta < 0 and _worth_trading(delta, target_val.get(s, v)):
             sells.append({"symbol": s, "side": "sell", "dollars": round(-delta, 2)})
     budget = state["settled_cash"] + sum(o["dollars"] for o in sells)  # sells fill first
     for s, tv in sorted(target_val.items(), key=lambda kv: -kv[1]):
         delta = tv - pos_value.get(s, 0.0)
-        if delta > min_order:
+        if delta > 0 and _worth_trading(delta, tv):
             amt = round(min(delta, max(0.0, budget)), 2)
             if amt >= min_order:
                 buys.append({"symbol": s, "side": "buy", "dollars": amt})
@@ -169,6 +195,10 @@ def record(args) -> None:
     if args.side == "buy":
         pos[args.symbol] = round(pos.get(args.symbol, 0.0) + qty, 8)
         state["settled_cash"] = round(state["settled_cash"] - usd, 2)
+        # a buy made while sale proceeds are unsettled cannot be sold before
+        # those proceeds settle (T+1) without a good-faith violation
+        if state.get("unsettled_cash", 0.0) > 0:
+            state.setdefault("gfv_hold", {})[args.symbol] = date.today().isoformat()
     else:
         pos[args.symbol] = round(max(0.0, pos.get(args.symbol, 0.0) - qty), 8)
         if pos[args.symbol] == 0:

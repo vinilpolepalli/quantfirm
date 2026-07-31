@@ -1,15 +1,22 @@
 {
   "enabled": false,
-  "lifecycle_state": "PENDING_TOURNAMENT",
-  "strategy": "dual_momentum",
-  "params": {},
+  "lifecycle_state": "NO_GO_DSR_FALLBACK_AVAILABLE",
+  "strategy": "allweather_trend",
+  "params": {
+    "menu": ["SPY", "QQQ", "IWM", "TLT", "GLD", "DBC"],
+    "sma_days": 200, "mom_days": 231, "filter_mode": "blend",
+    "vol_days": 126, "weighting": "inv_vol", "every": 21,
+    "renorm": false, "cash_proxy": "", "max_sleeve": 0.5
+  },
+  "fallback_strategy": "faber_sma",
   "account_number": "534796784",
   "risk": {
     "bankroll_usd": 250.0,
-    "min_order_usd": 2.0,
+    "min_order_usd": 5.0,
+    "rebalance_band_frac": 0.15,
     "kill_drawdown": 0.3,
     "max_positions": 15,
     "max_single_name_frac": 0.34
   },
-  "_notes": "Equity desk config. enabled flips true only after the equity tournament passes the gauntlet AND the RUNBOOK equity go-live checklist completes (agentic account funded, books initialized). strategy/params are placeholders until the tournament verdict."
+  "_notes": "Equity desk. NO-GO on the alpha gate (DSR 0.18 vs 0.95 bar; see docs/TOURNAMENT_EQ.md) but allweather_trend and faber_sma both passed implementation, holdout, and capital-preservation audits as BETA-WITH-BRAKES books. enabled may flip true only by explicit human decision acknowledging the no-alpha-claim expectations, plus the RUNBOOK equity go-live checklist."
 }
