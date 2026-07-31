@@ -1,0 +1,7 @@
+# Exact pins: this file is installed hourly in the same job that holds the
+# trading credentials, so version drift = supply-chain surface. Bump versions
+# deliberately, via PR, never with ranges.
+pandas==3.0.5
+numpy==2.4.6
+requests==2.33.1
+pynacl==1.6.2

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "initialized": false,
+  "positions": {},
+  "settled_cash": 0.0,
+  "unsettled_cash": 0.0,
+  "unsettled_date": null,
+  "peak_equity": 0.0,
+  "equity_history": [],
+  "last_rebalance": null,
+  "last_plan_date": "2026-07-31"
+}

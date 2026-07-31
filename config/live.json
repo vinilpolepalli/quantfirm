@@ -1,0 +1,24 @@
+{
+  "enabled": false,
+  "lifecycle_state": "NO_GO_HOLDOUT_FAILED",
+  "strategy": "composite_ensemble",
+  "params": {
+    "fast": 72, "slow": 1080, "trend_band": 0.005, "mom_lb": 1080,
+    "mom_band": 0.02, "brk_entry": 480, "brk_exit": 240, "vol_window": 720,
+    "target_vol": 0.4, "w_trend": 1, "w_mom": 1, "w_brk": 1, "w_vol": 1,
+    "vol_mode": "gate", "step": 0.25, "hyst_down": 0.25, "hyst_up": 0.35,
+    "min_hold": 168
+  },
+  "data_symbol": "BTCUSDT",
+  "venue_symbol": "BTC-USD",
+  "risk": {
+    "bankroll_usd": 250.0,
+    "max_position_usd": 260.0,
+    "min_trade_usd": 5.0,
+    "max_trade_usd": 260.0,
+    "kill_drawdown": 0.4,
+    "max_data_age_hours": 3.0,
+    "max_orders_per_run": 2
+  },
+  "_notes": "NO-GO per docs/TOURNAMENT.md: tournament #1 candidates all failed the holdout year (2025-07->2026-06 bear). composite_ensemble holds the WATCH seat for nightly revalidation only. enabled flips true only after a future tournament round passes the full gauntlet in FIRM.md and the RUNBOOK go-live checklist completes."
+}
