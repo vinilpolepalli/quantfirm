@@ -57,9 +57,9 @@ def _hysteresis_state(up: pd.Series, down: pd.Series) -> pd.Series:
 def composite_ensemble(
     df: pd.DataFrame,
     fast: int = 72,
-    slow: int = 720,
+    slow: int = 1080,
     trend_band: float = 0.005,
-    mom_lb: int = 720,
+    mom_lb: int = 1080,
     mom_band: float = 0.02,
     brk_entry: int = 480,
     brk_exit: int = 240,
@@ -71,9 +71,9 @@ def composite_ensemble(
     w_vol: float = 1.0,
     vol_mode: str = "gate",
     step: float = 0.25,
-    hyst_down: float = 0.15,
-    hyst_up: float = 0.20,
-    min_hold: int = 72,
+    hyst_down: float = 0.25,
+    hyst_up: float = 0.35,
+    min_hold: int = 168,
 ) -> pd.Series:
     close = df["close"]
     ret = close.pct_change()
@@ -95,12 +95,21 @@ def composite_ensemble(
     ann_vol = ret.rolling(vol_window).std() * np.sqrt(HOURS_PER_YEAR)
     m_vol = (target_vol / ann_vol).clip(0.0, 1.0)
 
-    members = [m_trend, m_mom, m_brk, m_vol]
-    weights = [w_trend, w_mom, w_brk, w_vol]
-    wsum = sum(weights)
-    if wsum <= 0:
-        return pd.Series(0.0, index=df.index)
-    score = sum(w * m for w, m in zip(weights, members)) / wsum
+    if vol_mode == "member":
+        members = [m_trend, m_mom, m_brk, m_vol]
+        weights = [w_trend, w_mom, w_brk, w_vol]
+        wsum = sum(weights)
+        if wsum <= 0:
+            return pd.Series(0.0, index=df.index)
+        score = sum(w * m for w, m in zip(weights, members)) / wsum
+    else:  # "gate": vol member scales the directional consensus
+        members = [m_trend, m_mom, m_brk]
+        weights = [w_trend, w_mom, w_brk]
+        wsum = sum(weights)
+        if wsum <= 0:
+            return pd.Series(0.0, index=df.index)
+        directional = sum(w * m for w, m in zip(weights, members)) / wsum
+        score = directional * m_vol.fillna(0.0)
 
     # warmup: until every used member has data, stay flat
     warm = max(slow, mom_lb, brk_entry, brk_exit, vol_window)
