@@ -4,18 +4,27 @@ Improvements over the xsec_momentum baseline (dev OOS 0.91):
   1. Vol-scaled ranking: rank by momentum / realized vol (Sharpe-momentum)
      instead of raw return, damping the junk-vol names that dominate raw
      rankings and crash hardest in regime turns.
-  2. Intermediate lookback: 6-9 month formation (with 1-month skip) rather
-     than only 12-1 — the more robust part of the momentum term structure.
+  2. Intermediate lookback: ~8-month formation with 1-month skip (189-21)
+     rather than 12-1 — the more robust part of the momentum term structure.
   3. Rank-band holding (turnover control): a held name is only replaced when
      it falls out of the top band_mult * top_n ranks, so marginal rank noise
-     does not churn the book.
-  4. Regime gate to ETFs, not cash: when SPY is below its SMA the risky
-     sleeve is scaled down and the freed weight goes to the best trending
-     defensive ETF (IEF/TLT/GLD/SHY, bias-free) — cash only if none trend.
-  5. Optional inverse-vol position weighting.
+     does not churn the book (annual turnover ~9.6x vs baseline 9.4x with
+     far higher gross alpha; Sharpe degrades only 1.35 -> 1.33 at 10bps).
+  4. Risk-off to ETFs, not cash: any name failing its own absolute-momentum
+     filter forfeits its slot to the best trending defensive ETF
+     (IEF/TLT/GLD/SHY, bias-free) — cash only if none trend. An explicit
+     SPY-SMA book-level gate is available (gate_mode) but tested WORSE on
+     dev (whipsaw), so the tuned default is per-name gating only.
+  5. Inverse-vol position weighting.
 
-Account fit: <= top_n + def_k positions (default 10 + 1 <= 15), monthly
-rebalance (every=21), long-only, fractional-dollar friendly.
+Tuned champion (dev 4-fold walk-forward, 39 total trials, net 5bps/side):
+formation=189, skip=21, top_n=6, band_mult=3.0, inv_vol, gate_mode=none ->
+OOS Sharpe 1.349 (folds 0.625/2.051/0.514/1.992), max DD -28%, turnover
+9.6x; 10bps stress 1.330. Baseline xsec_momentum: 0.908.
+
+Account fit: <= top_n + def_k positions (default 6 + 1 <= 15), monthly
+rebalance (every=21), long-only, fractional-dollar friendly ($250 / 7
+positions ~ $36 each, above the $2 minimum).
 
 Causality: every signal at row date t is built from closes <= t only
 (pct_change / rolling / shift look strictly backward); the backtester trades
@@ -49,14 +58,14 @@ def xsec_refined(closes: pd.DataFrame,
                  formation: int = 189,
                  skip: int = 21,
                  vol_days: int = 63,
-                 top_n: int = 10,
-                 band_mult: float = 2.0,
+                 top_n: int = 6,
+                 band_mult: float = 3.0,
                  weighting: str = "inv_vol",
                  every: int = 21,
                  vol_scale: bool = True,
                  abs_filter: bool = True,
                  gate_sma: int = 200,
-                 gate_mode: str = "binary",
+                 gate_mode: str = "none",
                  vol_window: int = 20,
                  vol_cap: float = 0.25,
                  def_menu: tuple = DEFAULT_DEF_MENU,
