@@ -27,14 +27,15 @@ from . import register
 @register("slow_trend")
 def slow_trend(
     df: pd.DataFrame,
-    fast: int = 96,
+    fast: int = 72,
     slow: int = 720,
     entry_band: float = 0.004,
     exit_band: float = 0.02,
     confirm: int = 12,
     min_hold: int = 168,
+    slope_lb: int = 168,
     stop_lookback: int = 0,
-    target_vol: float = 0.0,
+    target_vol: float = 0.3,
     vol_window: int = 720,
     step: float = 0.25,
 ) -> pd.Series:
@@ -44,6 +45,8 @@ def slow_trend(
     gap = f / s - 1.0
 
     enter_raw = gap > entry_band
+    if slope_lb and slope_lb > 0:
+        enter_raw = enter_raw & (s > s.shift(slope_lb))
     if confirm > 1:
         enter_ok = enter_raw.rolling(confirm).sum() >= confirm
     else:

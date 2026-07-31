@@ -20,6 +20,7 @@ import json
 import os
 import sys
 from datetime import datetime, timezone
+from decimal import Decimal, ROUND_DOWN
 
 import pandas as pd
 
@@ -115,12 +116,25 @@ def run() -> dict:
     ref_price = ask if side == "buy" else bid
     if side == "buy":
         trade_usd = min(delta_usd, cash)  # never spend money the bot doesn't have
-        qty = round(trade_usd / ask, 8)
+        qty = trade_usd / ask
     else:
-        qty = round(min(-delta_usd / bid, pos_qty), 8)
-        trade_usd = qty * bid
+        qty = min(-delta_usd / bid, pos_qty)
 
-    if qty <= 0 or trade_usd < policy.min_trade_usd:
+    # Quantize to the venue's served increment and respect its minimum.
+    try:
+        pair = client.trading_pair(venue_symbol)
+        increment = Decimal(str(pair.get("asset_increment", "0.00000001")))
+        min_qty = float(pair.get("min_order_size", 0.0) or 0.0)
+        if pair.get("status") not in (None, "", "tradable"):
+            result["action"] = f"pair_untradable:{pair.get('status')}"
+            _finalize(state, last_bar, pos_qty, cash, equity, peak, result)
+            return result
+    except Exception:
+        increment, min_qty = Decimal("0.00000001"), 0.000001
+    qty = float(Decimal(str(qty)).quantize(increment, rounding=ROUND_DOWN))
+    trade_usd = qty * ref_price
+
+    if qty <= 0 or qty < min_qty or trade_usd < policy.min_trade_usd:
         result["action"] = f"skip_small_{side}"
         _finalize(state, last_bar, pos_qty, cash, equity, peak, result)
         return result

@@ -28,15 +28,15 @@ HOURS_PER_YEAR = 24 * 365
 @register("vol_regime")
 def vol_regime(
     df: pd.DataFrame,
-    vol_window: int = 24 * 14,
-    target_ann_vol: float = 0.45,
+    vol_window: int = 24 * 30,
+    target_ann_vol: float = 0.30,
     step: float = 0.25,
     band_down: float = 0.15,
     band_up: float = 0.25,
     vov_short: int = 24 * 5,
-    vov_ratio: float = 1.75,
+    vov_ratio: float = 2.0,
     vov_scale: float = 0.5,
-    min_hold_up: int = 48,
+    min_hold_up: int = 96,
 ) -> pd.Series:
     """Inverse-realized-vol sizing with vol-expansion gate and hysteresis.
 

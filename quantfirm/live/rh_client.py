@@ -88,6 +88,13 @@ class RobinhoodCrypto:
     def holdings(self) -> list[dict]:
         return self._request("GET", "/api/v1/crypto/trading/holdings/").get("results", [])
 
+    def trading_pair(self, symbol: str) -> dict:
+        """Venue-served precision/min rules: min_order_size, asset_increment,
+        status. Never hardcode these — they change per symbol."""
+        data = self._request("GET", f"/api/v1/crypto/trading/trading_pairs/?symbol={symbol}")
+        results = data.get("results", [])
+        return results[0] if results else {}
+
     def orders(self) -> list[dict]:
         return self._request("GET", "/api/v1/crypto/trading/orders/").get("results", [])
 
