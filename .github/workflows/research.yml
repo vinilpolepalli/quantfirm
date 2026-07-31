@@ -1,0 +1,47 @@
+name: research-desk-nightly
+# Nightly data refresh + re-validation of the live strategy on updated data.
+# Produces state/research_report.json for the risk-committee agent session.
+
+on:
+  schedule:
+    - cron: '23 6 * * *'   # daily 06:23 UTC
+  workflow_dispatch: {}
+
+concurrency:
+  group: trading-engine   # never overlap with the execution desk
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  revalidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Update candle data
+        run: python scripts/update_data.py
+      - name: Re-validate live strategy (walk-forward, all data)
+        run: |
+          STRAT=$(python -c "import json;print(json.load(open('config/live.json'))['strategy'])")
+          PARAMS=$(python -c "import json;print(json.dumps(json.load(open('config/live.json'))['params']))")
+          python -m quantfirm.cli walkforward --strategy "$STRAT" --params "$PARAMS" --symbol BTCUSDT --split all > state/research_report.json
+          cat state/research_report.json
+      - name: Commit data + report
+        run: |
+          git config user.name "quantfirm-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/ state/research_report.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "research: nightly data refresh + revalidation"
+          for i in 1 2 3; do
+            git push && break
+            git pull --rebase && sleep $((i*2))
+          done

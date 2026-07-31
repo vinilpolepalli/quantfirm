@@ -1,0 +1,46 @@
+name: execution-desk
+# The firm's 24/7 execution desk: one idempotent engine run per hour.
+# Requires repo secrets RH_API_KEY and RH_PRIVATE_KEY_B64.
+
+on:
+  schedule:
+    - cron: '7 * * * *'   # hourly at :07 (off-peak minute; GH cron can drift)
+  workflow_dispatch: {}
+
+concurrency:
+  group: trading-engine
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Run trading engine
+        env:
+          RH_API_KEY: ${{ secrets.RH_API_KEY }}
+          RH_PRIVATE_KEY_B64: ${{ secrets.RH_PRIVATE_KEY_B64 }}
+        run: python -m quantfirm.live.engine | tee run_result.json
+      - name: Commit state
+        run: |
+          git config user.name "quantfirm-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add state/
+          if git diff --cached --quiet; then
+            echo "no state change"; exit 0
+          fi
+          git commit -m "state: $(date -u +%FT%H:%M) $(python -c "import json;print(json.load(open('run_result.json')).get('action','?'))" 2>/dev/null || echo run)"
+          for i in 1 2 3; do
+            git push && break
+            git pull --rebase && sleep $((i*2))
+          done

@@ -1,0 +1,17 @@
+{
+  "enabled": false,
+  "strategy": "trend_vol_composite",
+  "params": {},
+  "data_symbol": "BTCUSDT",
+  "venue_symbol": "BTC-USD",
+  "risk": {
+    "bankroll_usd": 250.0,
+    "max_position_usd": 260.0,
+    "min_trade_usd": 5.0,
+    "max_trade_usd": 260.0,
+    "kill_drawdown": 0.4,
+    "max_data_age_hours": 3.0,
+    "max_orders_per_run": 2
+  },
+  "_notes": "enabled stays false until the go-live checklist in docs/RUNBOOK.md is complete. strategy/params are set by the tournament result; changes go through PRs authored by the research-desk agent."
+}

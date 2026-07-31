@@ -1,0 +1,4 @@
+pandas>=2.2
+numpy>=1.26
+requests>=2.31
+pynacl>=1.5
