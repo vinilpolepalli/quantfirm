@@ -1,8 +1,13 @@
 """Render the firm dashboard HTML from committed state. Run by the daily
-execution session after mark-to-market; output is published as a claude.ai
-artifact (same path -> same URL every day).
+execution session after mark-to-market. Two outputs:
 
-Usage: python scripts/gen_dashboard.py > /path/to/quantfirm-dashboard.html
+  python scripts/gen_dashboard.py > fragment.html
+      page content only — for the claude.ai Artifact publisher, which wraps
+      it in its own document skeleton
+
+  python scripts/gen_dashboard.py --standalone > dashboard/index.html
+      complete HTML document — for Vercel (or any static host), which
+      serves the file raw
 """
 
 from __future__ import annotations
@@ -228,6 +233,14 @@ rank band (~monthly). High-risk mandate: expect large swings; the
 Books live in the repo; this page regenerates after each trading day.</footer>
 </div>
 """
+    if "--standalone" in sys.argv:
+        html = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+                '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+                '<meta name="robots" content="noindex, nofollow">\n'
+                + html.replace("<title>", "<title>", 1).split("<style>")[0]
+                + "<style>" + html.split("<style>", 1)[1]
+                  .replace("</style>", "</style>\n</head>\n<body>", 1)
+                + "\n</body>\n</html>\n")
     sys.stdout.write(html)
 
 
