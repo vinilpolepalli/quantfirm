@@ -105,6 +105,10 @@ def walk_forward(closes: pd.DataFrame, strategy, params: dict,
     out["fold_sharpes"] = fold_sharpes
     out["oos_sharpe"] = out.pop("net_sharpe")
     out["cost_bps_per_side"] = cost_bps_per_side
+    # exposure-diff turnover is misleading for always-invested portfolios;
+    # report true traded turnover from a full-sample sim instead
+    out["annual_turnover"] = run(closes, strategy(closes, **params),
+                                 cost_bps_per_side)["annual_turnover"]
     return out
 
 
