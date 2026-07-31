@@ -87,14 +87,14 @@ def plan() -> None:
     state = load_state()
     settle(state)
 
-    # Run lock: one plan per UTC day. A duplicate session firing must not
-    # double-rebalance (or, worse, kill-switch-liquidate lots bought hours
-    # earlier with unsettled proceeds — a GFV).
+    # Run lock: one emitted plan per UTC day. A duplicate session firing must
+    # not double-rebalance (or, worse, kill-switch-liquidate lots bought
+    # hours earlier with unsettled proceeds — a GFV). The stamp is written
+    # only when a plan is actually emitted, so no-op runs don't burn the day.
     today = date.today().isoformat()
     if state.get("last_plan_date") == today:
         save_state(state)
         print(json.dumps({"action": "already_planned_today"})); return
-    state["last_plan_date"] = today
     save_state(state)
 
     if not cfg.get("enabled", False):
@@ -168,6 +168,8 @@ def plan() -> None:
                 buys.append({"symbol": s, "side": "buy", "dollars": amt})
                 budget -= amt
 
+    state["last_plan_date"] = today
+    save_state(state)
     print(json.dumps({
         "action": "rebalance_plan", "as_of_panel_date": last_date,
         "equity": round(equity, 2), "drawdown": round(dd, 4),

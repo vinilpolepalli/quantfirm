@@ -1,6 +1,6 @@
 {
-  "enabled": false,
-  "lifecycle_state": "PRINCIPAL_MANDATE_HIGH_RISK",
+  "enabled": true,
+  "lifecycle_state": "LIVE_PRINCIPAL_MANDATE",
   "strategy": "xsec_refined",
   "params": {
     "formation": 189, "skip": 21, "vol_days": 63, "top_n": 6,
