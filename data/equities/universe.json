@@ -1,0 +1,1435 @@
+{
+ "as_of": "2026-07-31",
+ "scan_id": "6211c26b-2cec-4d46-bb4b-ee526a40daf2",
+ "filters": "market_cap>2e9, avg_vol_30d>1e6, last>5, top 200 by cap",
+ "stocks": [
+  {
+   "ticker": "AAPL",
+   "name": "Apple",
+   "market_cap": 4897205111080.0,
+   "avg_volume": 61602092.88993864,
+   "last": 302.79
+  },
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA",
+   "market_cap": 4724063840000.0,
+   "avg_volume": 139055949.7170693,
+   "last": 197.4
+  },
+  {
+   "ticker": "GOOG",
+   "name": "Alphabet Class C",
+   "market_cap": 4080750595711.0,
+   "avg_volume": 23003991.39770864,
+   "last": 350.5768
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet Class A",
+   "market_cap": 4080750595711.0,
+   "avg_volume": 34656458.8422114,
+   "last": 351.0889
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "market_cap": 3349663570990.0,
+   "avg_volume": 44619093.75025304,
+   "last": 451.7
+  },
+  {
+   "ticker": "AMZN",
+   "name": "Amazon",
+   "market_cap": 2533299272178.0,
+   "avg_volume": 55865935.16152454,
+   "last": 269.9601
+  },
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom",
+   "market_cap": 1845179903992.0,
+   "avg_volume": 24314770.327138565,
+   "last": 387.01
+  },
+  {
+   "ticker": "TSM",
+   "name": "Taiwan Semiconductor Manufacturing",
+   "market_cap": 1765991926771.0,
+   "avg_volume": 15804573.223712267,
+   "last": 406.77
+  },
+  {
+   "ticker": "SPCX",
+   "name": "SpaceX",
+   "market_cap": 1478143814835.0,
+   "avg_volume": 92991122.7211037,
+   "last": 109.455
+  },
+  {
+   "ticker": "META",
+   "name": "Meta Platforms",
+   "market_cap": 1373182280461.0,
+   "avg_volume": 19513820.953677963,
+   "last": 549.7
+  },
+  {
+   "ticker": "TSLA",
+   "name": "Tesla",
+   "market_cap": 1219817712636.0,
+   "avg_volume": 44213713.734918766,
+   "last": 307.87
+  },
+  {
+   "ticker": "BRK.B",
+   "name": "Berkshire Hathaway Inc. Class B",
+   "market_cap": 1099543122427.0,
+   "avg_volume": 4703510.045378399,
+   "last": 510.04
+  },
+  {
+   "ticker": "LLY",
+   "name": "Eli Lilly",
+   "market_cap": 1029934571687.0,
+   "avg_volume": 2808151.5898841997,
+   "last": 1134.3775
+  },
+  {
+   "ticker": "MU",
+   "name": "Micron Technology",
+   "market_cap": 987835013453.0,
+   "avg_volume": 52892212.430997536,
+   "last": 843.64
+  },
+  {
+   "ticker": "JPM",
+   "name": "JPMorgan Chase",
+   "market_cap": 932629470000.0,
+   "avg_volume": 10208731.671890069,
+   "last": 353.33
+  },
+  {
+   "ticker": "WMT",
+   "name": "Walmart",
+   "market_cap": 884142594120.0,
+   "avg_volume": 22987818.718207862,
+   "last": 111.155
+  },
+  {
+   "ticker": "AMD",
+   "name": "AMD",
+   "market_cap": 791477244164.0,
+   "avg_volume": 29547187.0150427,
+   "last": 492.41
+  },
+  {
+   "ticker": "V",
+   "name": "Visa",
+   "market_cap": 678123197823.0,
+   "avg_volume": 8969960.282314533,
+   "last": 363.89
+  },
+  {
+   "ticker": "XOM",
+   "name": "ExxonMobil Holdings Corporation",
+   "market_cap": 650632356019.0,
+   "avg_volume": 16319001.483468499,
+   "last": 153.75
+  },
+  {
+   "ticker": "SKHY",
+   "name": "SK hynix Inc. ADR",
+   "market_cap": 649754993395.0,
+   "avg_volume": 63194974.74810947,
+   "last": 148.49
+  },
+  {
+   "ticker": "ASML",
+   "name": "ASML Holding NV",
+   "market_cap": 634228118657.0,
+   "avg_volume": 2168592.440589001,
+   "last": 1652.525
+  },
+  {
+   "ticker": "JNJ",
+   "name": "Johnson & Johnson",
+   "market_cap": 616500259084.0,
+   "avg_volume": 8983308.001349902,
+   "last": 256.545
+  },
+  {
+   "ticker": "MA",
+   "name": "Mastercard",
+   "market_cap": 510137138683.0,
+   "avg_volume": 3612779.2299954,
+   "last": 570.33
+  },
+  {
+   "ticker": "INTC",
+   "name": "Intel",
+   "market_cap": 459659720000.0,
+   "avg_volume": 122001367.303315,
+   "last": 92.93
+  },
+  {
+   "ticker": "ABBV",
+   "name": "AbbVie",
+   "market_cap": 454790140053.0,
+   "avg_volume": 8198016.890764667,
+   "last": 252.885
+  },
+  {
+   "ticker": "CSCO",
+   "name": "Cisco Systems",
+   "market_cap": 447589320557.0,
+   "avg_volume": 24029890.911296494,
+   "last": 114.22
+  },
+  {
+   "ticker": "BAC",
+   "name": "Bank of America",
+   "market_cap": 433219131305.0,
+   "avg_volume": 35861815.681830965,
+   "last": 62.025
+  },
+  {
+   "ticker": "COST",
+   "name": "Costco",
+   "market_cap": 423154170412.0,
+   "avg_volume": 2560142.9624772994,
+   "last": 947.215
+  },
+  {
+   "ticker": "AMAT",
+   "name": "Applied Materials",
+   "market_cap": 398385023191.0,
+   "avg_volume": 11027608.385829998,
+   "last": 513.31
+  },
+  {
+   "ticker": "CVX",
+   "name": "Chevron",
+   "market_cap": 383004159840.0,
+   "avg_volume": 8866654.9272692,
+   "last": 194.17
+  },
+  {
+   "ticker": "UNH",
+   "name": "UnitedHealth",
+   "market_cap": 382755621953.0,
+   "avg_volume": 6093480.388702598,
+   "last": 419.58
+  },
+  {
+   "ticker": "KO",
+   "name": "Coca-Cola",
+   "market_cap": 380732582513.0,
+   "avg_volume": 19873314.4826138,
+   "last": 87.54
+  },
+  {
+   "ticker": "CAT",
+   "name": "Caterpillar",
+   "market_cap": 372683397124.0,
+   "avg_volume": 3686611.033470567,
+   "last": 818.83
+  },
+  {
+   "ticker": "LRCX",
+   "name": "Lam Research Corp",
+   "market_cap": 372530486160.0,
+   "avg_volume": 13500494.470734665,
+   "last": 300.9
+  },
+  {
+   "ticker": "GE",
+   "name": "General Electric",
+   "market_cap": 368376194615.0,
+   "avg_volume": 4655913.697876766,
+   "last": 359.0
+  },
+  {
+   "ticker": "ORCL",
+   "name": "Oracle",
+   "market_cap": 367432880760.0,
+   "avg_volume": 37284849.679935455,
+   "last": 127.04
+  },
+  {
+   "ticker": "HSBC",
+   "name": "HSBC",
+   "market_cap": 363755802476.0,
+   "avg_volume": 1314778.2513985669,
+   "last": 106.51
+  },
+  {
+   "ticker": "PG",
+   "name": "Procter & Gamble",
+   "market_cap": 335225108872.0,
+   "avg_volume": 9356008.676696666,
+   "last": 143.02
+  },
+  {
+   "ticker": "HD",
+   "name": "Home Depot",
+   "market_cap": 332388845944.0,
+   "avg_volume": 4602476.3603792,
+   "last": 330.7
+  },
+  {
+   "ticker": "MS",
+   "name": "Morgan Stanley",
+   "market_cap": 330214320000.0,
+   "avg_volume": 6298307.533721199,
+   "last": 211.51
+  },
+  {
+   "ticker": "MRK",
+   "name": "Merck",
+   "market_cap": 320558510822.0,
+   "avg_volume": 10274719.155679164,
+   "last": 130.215
+  },
+  {
+   "ticker": "NFLX",
+   "name": "Netflix",
+   "market_cap": 304675466092.0,
+   "avg_volume": 52721846.95970951,
+   "last": 71.61
+  },
+  {
+   "ticker": "GS",
+   "name": "Goldman Sachs",
+   "market_cap": 302341305486.0,
+   "avg_volume": 2184037.0615599332,
+   "last": 1023.98
+  },
+  {
+   "ticker": "PM",
+   "name": "Philip Morris",
+   "market_cap": 299253780288.0,
+   "avg_volume": 5492373.198290333,
+   "last": 191.89
+  },
+  {
+   "ticker": "NVS",
+   "name": "Novartis",
+   "market_cap": 296249531190.0,
+   "avg_volume": 2123076.4700299,
+   "last": 156.22
+  },
+  {
+   "ticker": "PLTR",
+   "name": "Palantir Technologies",
+   "market_cap": 293095362307.0,
+   "avg_volume": 40602675.89952084,
+   "last": 120.11
+  },
+  {
+   "ticker": "RY",
+   "name": "Royal Bank of Canada",
+   "market_cap": 291424914870.0,
+   "avg_volume": 1709730.0779919,
+   "last": 210.85
+  },
+  {
+   "ticker": "RTX",
+   "name": "RTX Corporation",
+   "market_cap": 288932390910.0,
+   "avg_volume": 5307612.278670032,
+   "last": 213.38
+  },
+  {
+   "ticker": "BABA",
+   "name": "Alibaba",
+   "market_cap": 273346877753.0,
+   "avg_volume": 13398744.691464098,
+   "last": 121.86
+  },
+  {
+   "ticker": "PANW",
+   "name": "Palo Alto Networks",
+   "market_cap": 265429200000.0,
+   "avg_volume": 7101199.080469832,
+   "last": 324.105
+  },
+  {
+   "ticker": "AZN",
+   "name": "AstraZeneca",
+   "market_cap": 263680907773.0,
+   "avg_volume": 2631305.078340866,
+   "last": 170.29
+  },
+  {
+   "ticker": "DELL",
+   "name": "Dell",
+   "market_cap": 261564916278.0,
+   "avg_volume": 7501288.888240399,
+   "last": 406.66
+  },
+  {
+   "ticker": "GEV",
+   "name": "GE Vernova",
+   "market_cap": 261534249870.0,
+   "avg_volume": 3162497.036701533,
+   "last": 1000.45
+  },
+  {
+   "ticker": "WFC",
+   "name": "Wells Fargo",
+   "market_cap": 258340263274.0,
+   "avg_volume": 16877105.351539034,
+   "last": 86.0699
+  },
+  {
+   "ticker": "ARM",
+   "name": "Arm Holdings plc",
+   "market_cap": 257964374356.0,
+   "avg_volume": 7963112.018479135,
+   "last": 249.2
+  },
+  {
+   "ticker": "TXN",
+   "name": "Texas Instruments",
+   "market_cap": 254576924949.0,
+   "avg_volume": 9707930.790894534,
+   "last": 276.25
+  },
+  {
+   "ticker": "SHEL",
+   "name": "Shell",
+   "market_cap": 245487293195.0,
+   "avg_volume": 6729921.658099267,
+   "last": 91.25
+  },
+  {
+   "ticker": "MUFG",
+   "name": "Mitsubishi UFJ",
+   "market_cap": 243387228929.0,
+   "avg_volume": 3442370.7703128667,
+   "last": 22.555
+  },
+  {
+   "ticker": "KLAC",
+   "name": "KLA",
+   "market_cap": 235560608619.0,
+   "avg_volume": 14538258.557753267,
+   "last": 185.4
+  },
+  {
+   "ticker": "LIN",
+   "name": "Linde plc",
+   "market_cap": 235168335758.0,
+   "avg_volume": 2209760.6421588,
+   "last": 476.73
+  },
+  {
+   "ticker": "AXP",
+   "name": "American Express",
+   "market_cap": 227930574834.0,
+   "avg_volume": 3338981.4230326996,
+   "last": 337.39
+  },
+  {
+   "ticker": "NVO",
+   "name": "Novo Nordisk",
+   "market_cap": 224425552329.0,
+   "avg_volume": 10294796.308776032,
+   "last": 47.2
+  },
+  {
+   "ticker": "C",
+   "name": "Citigroup",
+   "market_cap": 221953568000.0,
+   "avg_volume": 13862939.917736232,
+   "last": 133.2
+  },
+  {
+   "ticker": "ANET",
+   "name": "Arista",
+   "market_cap": 215343157286.0,
+   "avg_volume": 7988232.313849668,
+   "last": 177.2001
+  },
+  {
+   "ticker": "TMO",
+   "name": "Thermo Fisher Scientific",
+   "market_cap": 214340112368.0,
+   "avg_volume": 2336171.1160389674,
+   "last": 564.41
+  },
+  {
+   "ticker": "AMGN",
+   "name": "Amgen",
+   "market_cap": 209212515333.0,
+   "avg_volume": 2642650.3323118,
+   "last": 381.515
+  },
+  {
+   "ticker": "BHP",
+   "name": "BHP Billiton",
+   "market_cap": 209124821253.0,
+   "avg_volume": 2627231.335440133,
+   "last": 85.15
+  },
+  {
+   "ticker": "IBM",
+   "name": "IBM",
+   "market_cap": 208908879638.0,
+   "avg_volume": 12647990.5695696,
+   "last": 218.61
+  },
+  {
+   "ticker": "SAP",
+   "name": "SAP",
+   "market_cap": 206358889395.0,
+   "avg_volume": 3131935.205305533,
+   "last": 180.29
+  },
+  {
+   "ticker": "TD",
+   "name": "TD Bank",
+   "market_cap": 197452027896.0,
+   "avg_volume": 2885984.9036200335,
+   "last": 120.465
+  },
+  {
+   "ticker": "APH",
+   "name": "Amphenol",
+   "market_cap": 196616068999.0,
+   "avg_volume": 7858111.387956499,
+   "last": 161.84
+  },
+  {
+   "ticker": "STX",
+   "name": "Seagate Technology",
+   "market_cap": 193331360000.0,
+   "avg_volume": 5584159.172598332,
+   "last": 865.235
+  },
+  {
+   "ticker": "VZ",
+   "name": "Verizon",
+   "market_cap": 192535021340.0,
+   "avg_volume": 33422027.80638073,
+   "last": 46.395
+  },
+  {
+   "ticker": "PEP",
+   "name": "PepsiCo",
+   "market_cap": 191357796431.0,
+   "avg_volume": 9578984.737040067,
+   "last": 138.9925
+  },
+  {
+   "ticker": "MCD",
+   "name": "McDonald's",
+   "market_cap": 190728192789.0,
+   "avg_volume": 4723243.306175534,
+   "last": 269.16
+  },
+  {
+   "ticker": "SNDK",
+   "name": "Sandisk Corporation",
+   "market_cap": 189548966649.0,
+   "avg_volume": 14927304.813260166,
+   "last": 1258.375
+  },
+  {
+   "ticker": "CRWD",
+   "name": "CrowdStrike Holdings",
+   "market_cap": 188601983841.0,
+   "avg_volume": 7078224.9249221,
+   "last": 186.62
+  },
+  {
+   "ticker": "TMUS",
+   "name": "T-Mobile",
+   "market_cap": 185936897397.0,
+   "avg_volume": 5834866.740822331,
+   "last": 171.2
+  },
+  {
+   "ticker": "WDC",
+   "name": "Western Digital",
+   "market_cap": 183729363108.0,
+   "avg_volume": 9354643.732575234,
+   "last": 550.59
+  },
+  {
+   "ticker": "NEE",
+   "name": "NextEra Energy",
+   "market_cap": 183420063917.0,
+   "avg_volume": 11393166.55519997,
+   "last": 87.555
+  },
+  {
+   "ticker": "ABT",
+   "name": "Abbott",
+   "market_cap": 182745779890.0,
+   "avg_volume": 13847928.631755562,
+   "last": 104.45
+  },
+  {
+   "ticker": "SCHW",
+   "name": "Charles Schwab",
+   "market_cap": 181444007445.0,
+   "avg_volume": 10195374.8581603,
+   "last": 104.96
+  },
+  {
+   "ticker": "ADI",
+   "name": "Analog Devices",
+   "market_cap": 178600204956.0,
+   "avg_volume": 4992635.497533932,
+   "last": 368.115
+  },
+  {
+   "ticker": "TJX",
+   "name": "TJX",
+   "market_cap": 175935230069.0,
+   "avg_volume": 5648125.5376263,
+   "last": 157.74
+  },
+  {
+   "ticker": "BA",
+   "name": "Boeing",
+   "market_cap": 174592737418.0,
+   "avg_volume": 5777190.930544566,
+   "last": 211.6577
+  },
+  {
+   "ticker": "UNP",
+   "name": "Union Pacific",
+   "market_cap": 171961093651.0,
+   "avg_volume": 3110221.349709367,
+   "last": 290.33
+  },
+  {
+   "ticker": "UBS",
+   "name": "UBS",
+   "market_cap": 171745963712.0,
+   "avg_volume": 1878856.2963123668,
+   "last": 52.86
+  },
+  {
+   "ticker": "WELL",
+   "name": "Welltower",
+   "market_cap": 169788382951.0,
+   "avg_volume": 3356219.2749102,
+   "last": 235.48
+  },
+  {
+   "ticker": "DIS",
+   "name": "Disney",
+   "market_cap": 166982938531.0,
+   "avg_volume": 11834567.380768333,
+   "last": 95.81
+  },
+  {
+   "ticker": "BUD",
+   "name": "Anheuser Busch InBev",
+   "market_cap": 163324747758.0,
+   "avg_volume": 2168750.5964477668,
+   "last": 86.23
+  },
+  {
+   "ticker": "GILD",
+   "name": "Gilead Sciences",
+   "market_cap": 162993293058.0,
+   "avg_volume": 7586624.031613264,
+   "last": 130.15
+  },
+  {
+   "ticker": "DE",
+   "name": "Deere",
+   "market_cap": 161819388164.0,
+   "avg_volume": 1216288.6577356,
+   "last": 594.785
+  },
+  {
+   "ticker": "MRVL",
+   "name": "Marvell Technology",
+   "market_cap": 160894585335.0,
+   "avg_volume": 37785835.40356973,
+   "last": 192.135
+  },
+  {
+   "ticker": "QCOM",
+   "name": "Qualcomm",
+   "market_cap": 159180000000.0,
+   "avg_volume": 17992107.7715582,
+   "last": 148.45
+  },
+  {
+   "ticker": "T",
+   "name": "AT&T",
+   "market_cap": 159043870936.0,
+   "avg_volume": 84108244.0963662,
+   "last": 23.325
+  },
+  {
+   "ticker": "SHOP",
+   "name": "Shopify",
+   "market_cap": 158832924141.0,
+   "avg_volume": 8590577.257085133,
+   "last": 116.82
+  },
+  {
+   "ticker": "SMFG",
+   "name": "Sumitomo Mitsui Financial Group",
+   "market_cap": 155585201124.0,
+   "avg_volume": 1949687.5653959,
+   "last": 25.95
+  },
+  {
+   "ticker": "RIO",
+   "name": "Rio Tinto",
+   "market_cap": 155116125208.0,
+   "avg_volume": 2899596.0101205334,
+   "last": 97.13
+  },
+  {
+   "ticker": "ETN",
+   "name": "Eaton",
+   "market_cap": 150229387000.0,
+   "avg_volume": 2431410.477110267,
+   "last": 402.67
+  },
+  {
+   "ticker": "BKNG",
+   "name": "Booking Holdings",
+   "market_cap": 149737508972.0,
+   "avg_volume": 7505931.069063967,
+   "last": 192.73
+  },
+  {
+   "ticker": "CRM",
+   "name": "Salesforce",
+   "market_cap": 148001490000.0,
+   "avg_volume": 15402137.445969466,
+   "last": 180.42
+  },
+  {
+   "ticker": "SCCO",
+   "name": "Southern Copper",
+   "market_cap": 145045997700.0,
+   "avg_volume": 1281760.6100986002,
+   "last": 182.0
+  },
+  {
+   "ticker": "COP",
+   "name": "ConocoPhillips",
+   "market_cap": 145013535653.0,
+   "avg_volume": 7288819.719457533,
+   "last": 118.94
+  },
+  {
+   "ticker": "UBER",
+   "name": "Uber",
+   "market_cap": 143245102544.0,
+   "avg_volume": 19746464.78886743,
+   "last": 69.74
+  },
+  {
+   "ticker": "PFE",
+   "name": "Pfizer",
+   "market_cap": 141973154249.0,
+   "avg_volume": 47437387.38297303,
+   "last": 24.955
+  },
+  {
+   "ticker": "UL",
+   "name": "Unilever",
+   "market_cap": 139591990857.0,
+   "avg_volume": 4518020.987129065,
+   "last": 63.85
+  },
+  {
+   "ticker": "DHR",
+   "name": "Danaher",
+   "market_cap": 137904774213.0,
+   "avg_volume": 6008073.105925933,
+   "last": 192.93
+  },
+  {
+   "ticker": "SONY",
+   "name": "Sony",
+   "market_cap": 136956039293.0,
+   "avg_volume": 5401523.255896366,
+   "last": 22.985
+  },
+  {
+   "ticker": "PLD",
+   "name": "Prologis",
+   "market_cap": 136406380440.0,
+   "avg_volume": 4489144.183332998,
+   "last": 143.76
+  },
+  {
+   "ticker": "APP",
+   "name": "AppLovin",
+   "market_cap": 135675894346.0,
+   "avg_volume": 5751052.109364133,
+   "last": 386.06
+  },
+  {
+   "ticker": "CB",
+   "name": "Chubb",
+   "market_cap": 135087820628.0,
+   "avg_volume": 1999366.245598667,
+   "last": 352.32
+  },
+  {
+   "ticker": "CVS",
+   "name": "CVS",
+   "market_cap": 134253071242.0,
+   "avg_volume": 7972505.876432536,
+   "last": 105.27
+  },
+  {
+   "ticker": "SYK",
+   "name": "Stryker",
+   "market_cap": 133424879606.0,
+   "avg_volume": 2601966.9874988,
+   "last": 320.115
+  },
+  {
+   "ticker": "LMT",
+   "name": "Lockheed",
+   "market_cap": 132499279204.0,
+   "avg_volume": 1381066.5888812998,
+   "last": 573.8353
+  },
+  {
+   "ticker": "BMY",
+   "name": "Bristol-Myers Squibb",
+   "market_cap": 132448741080.0,
+   "avg_volume": 12629620.834713602,
+   "last": 64.23
+  },
+  {
+   "ticker": "BTI",
+   "name": "British American Tobacco p.l.c. American Depositary Shares, American Depositary Shares, each representing one Ordinary Share",
+   "market_cap": 131639228690.0,
+   "avg_volume": 4443242.785762734,
+   "last": 61.45
+  },
+  {
+   "ticker": "COF",
+   "name": "Capital One",
+   "market_cap": 128917703437.0,
+   "avg_volume": 4650250.724044068,
+   "last": 207.725
+  },
+  {
+   "ticker": "ISRG",
+   "name": "Intuitive Surgical",
+   "market_cap": 124696549072.0,
+   "avg_volume": 3650426.0632259008,
+   "last": 349.35
+  },
+  {
+   "ticker": "PDD",
+   "name": "PDD Holdings",
+   "market_cap": 124461786637.0,
+   "avg_volume": 7626771.633454433,
+   "last": 87.605
+  },
+  {
+   "ticker": "PGR",
+   "name": "Progressive",
+   "market_cap": 124000992000.0,
+   "avg_volume": 3653641.7728398675,
+   "last": 212.43
+  },
+  {
+   "ticker": "SPGI",
+   "name": "S&P Global",
+   "market_cap": 122342000000.0,
+   "avg_volume": 2464535.9026980996,
+   "last": 411.795
+  },
+  {
+   "ticker": "VRTX",
+   "name": "Vertex Pharmaceuticals",
+   "market_cap": 122258069368.0,
+   "avg_volume": 1824148.045571933,
+   "last": 471.4
+  },
+  {
+   "ticker": "HDB",
+   "name": "HDFC Bank",
+   "market_cap": 121327962705.0,
+   "avg_volume": 9037668.7178136,
+   "last": 23.885
+  },
+  {
+   "ticker": "ENB",
+   "name": "Enbridge",
+   "market_cap": 120844063868.0,
+   "avg_volume": 3523561.0163380997,
+   "last": 55.21
+  },
+  {
+   "ticker": "SBUX",
+   "name": "Starbucks",
+   "market_cap": 120669000000.0,
+   "avg_volume": 7705955.371732534,
+   "last": 104.7
+  },
+  {
+   "ticker": "LOW",
+   "name": "Lowe's",
+   "market_cap": 117793335173.0,
+   "avg_volume": 3194222.3733924,
+   "last": 209.01
+  },
+  {
+   "ticker": "MFG",
+   "name": "Mizuho Financial Group",
+   "market_cap": 116627543386.0,
+   "avg_volume": 4365444.264345933,
+   "last": 10.4
+  },
+  {
+   "ticker": "GLW",
+   "name": "Corning",
+   "market_cap": 116240226696.0,
+   "avg_volume": 17155175.92516197,
+   "last": 141.64
+  },
+  {
+   "ticker": "PBR",
+   "name": "Petrobras",
+   "market_cap": 115913618189.0,
+   "avg_volume": 14761076.595113602,
+   "last": 19.055
+  },
+  {
+   "ticker": "PBR.A",
+   "name": "Petrobras",
+   "market_cap": 115913618189.0,
+   "avg_volume": 7206661.612373433,
+   "last": 16.885
+  },
+  {
+   "ticker": "NOW",
+   "name": "ServiceNow",
+   "market_cap": 113797190340.0,
+   "avg_volume": 25205795.288264837,
+   "last": 108.93
+  },
+  {
+   "ticker": "MO",
+   "name": "Altria",
+   "market_cap": 113442402332.0,
+   "avg_volume": 8253615.718239266,
+   "last": 69.295
+  },
+  {
+   "ticker": "FTNT",
+   "name": "Fortinet",
+   "market_cap": 113011014311.0,
+   "avg_volume": 6132412.615085768,
+   "last": 156.655
+  },
+  {
+   "ticker": "BP",
+   "name": "British Petroleum",
+   "market_cap": 112120367081.0,
+   "avg_volume": 9574427.558698332,
+   "last": 44.42
+  },
+  {
+   "ticker": "HWM",
+   "name": "Howmet Aerospace",
+   "market_cap": 110941802886.0,
+   "avg_volume": 2988278.7198566007,
+   "last": 281.375
+  },
+  {
+   "ticker": "MDT",
+   "name": "Medtronic",
+   "market_cap": 109712673234.0,
+   "avg_volume": 8723969.248814534,
+   "last": 83.92
+  },
+  {
+   "ticker": "SO",
+   "name": "Southern",
+   "market_cap": 108525242212.0,
+   "avg_volume": 5820783.851886332,
+   "last": 94.79
+  },
+  {
+   "ticker": "CM",
+   "name": "Canadian Imperial",
+   "market_cap": 107699224500.0,
+   "avg_volume": 1611463.536380767,
+   "last": 118.98
+  },
+  {
+   "ticker": "SPOT",
+   "name": "Spotify",
+   "market_cap": 107459100079.0,
+   "avg_volume": 1718563.906364,
+   "last": 511.205
+  },
+  {
+   "ticker": "IBN",
+   "name": "ICICI Bank",
+   "market_cap": 107446553183.0,
+   "avg_volume": 7500773.980642701,
+   "last": 30.13
+  },
+  {
+   "ticker": "BNS",
+   "name": "Bank Of Nova Scotia",
+   "market_cap": 106910142066.0,
+   "avg_volume": 2889494.411144333,
+   "last": 88.2075
+  },
+  {
+   "ticker": "BNY",
+   "name": "BNY Mellon",
+   "market_cap": 105900904320.0,
+   "avg_volume": 4339727.715710567,
+   "last": 156.66
+  },
+  {
+   "ticker": "ADP",
+   "name": "Automatic Data Processing",
+   "market_cap": 104967486000.0,
+   "avg_volume": 2826170.3510421333,
+   "last": 262.58
+  },
+  {
+   "ticker": "GSK",
+   "name": "GSK plc",
+   "market_cap": 103901931863.0,
+   "avg_volume": 4325726.3081707,
+   "last": 51.84
+  },
+  {
+   "ticker": "GD",
+   "name": "General Dynamics",
+   "market_cap": 103406959929.0,
+   "avg_volume": 1352525.3376188,
+   "last": 378.975
+  },
+  {
+   "ticker": "SNOW",
+   "name": "Snowflake",
+   "market_cap": 103321460000.0,
+   "avg_volume": 5753588.015691566,
+   "last": 296.23
+  },
+  {
+   "ticker": "BN",
+   "name": "Brookfield Corporation",
+   "market_cap": 102834555838.0,
+   "avg_volume": 3711114.3257203326,
+   "last": 42.615
+  },
+  {
+   "ticker": "BX",
+   "name": "Blackstone",
+   "market_cap": 102447621532.0,
+   "avg_volume": 5317946.1458269665,
+   "last": 128.72
+  },
+  {
+   "ticker": "MCK",
+   "name": "McKesson",
+   "market_cap": 101331959074.0,
+   "avg_volume": 1125152.7140684996,
+   "last": 853.51
+  },
+  {
+   "ticker": "NEM",
+   "name": "Newmont",
+   "market_cap": 100901571870.0,
+   "avg_volume": 8393151.651219299,
+   "last": 93.82
+  },
+  {
+   "ticker": "NET",
+   "name": "Cloudflare",
+   "market_cap": 100586323041.0,
+   "avg_volume": 3124456.8772703335,
+   "last": 276.8
+  },
+  {
+   "ticker": "ACN",
+   "name": "Accenture",
+   "market_cap": 99924026978.0,
+   "avg_volume": 11952990.4179681,
+   "last": 161.52
+  },
+  {
+   "ticker": "PNC",
+   "name": "PNC Financial",
+   "market_cap": 99235290000.0,
+   "avg_volume": 2227095.8970747003,
+   "last": 249.565
+  },
+  {
+   "ticker": "MAR",
+   "name": "Marriott International",
+   "market_cap": 99009804164.0,
+   "avg_volume": 1541946.1309584333,
+   "last": 374.1825
+  },
+  {
+   "ticker": "ING",
+   "name": "ING Group",
+   "market_cap": 98970901255.0,
+   "avg_volume": 3288953.467189366,
+   "last": 34.99
+  },
+  {
+   "ticker": "PWR",
+   "name": "Quanta",
+   "market_cap": 98736576839.0,
+   "avg_volume": 1388713.5661064663,
+   "last": 667.27
+  },
+  {
+   "ticker": "ADBE",
+   "name": "Adobe",
+   "market_cap": 98540250000.0,
+   "avg_volume": 6692841.495881368,
+   "last": 243.64
+  },
+  {
+   "ticker": "DUK",
+   "name": "Duke Energy",
+   "market_cap": 98439614320.0,
+   "avg_volume": 3891178.5014633336,
+   "last": 125.705
+  },
+  {
+   "ticker": "CNQ",
+   "name": "Canadian Natural Resource",
+   "market_cap": 98393621028.0,
+   "avg_volume": 9072938.4440903,
+   "last": 47.665
+  },
+  {
+   "ticker": "USB",
+   "name": "US Bank",
+   "market_cap": 97981325691.0,
+   "avg_volume": 9350614.952976767,
+   "last": 62.94
+  },
+  {
+   "ticker": "TT",
+   "name": "Trane Technologies",
+   "market_cap": 97326305413.0,
+   "avg_volume": 1340643.3775591664,
+   "last": 455.54
+  },
+  {
+   "ticker": "CME",
+   "name": "CME Group",
+   "market_cap": 96086770656.0,
+   "avg_volume": 3571198.0854391996,
+   "last": 267.13
+  },
+  {
+   "ticker": "DDOG",
+   "name": "Datadog",
+   "market_cap": 95596668356.0,
+   "avg_volume": 4336399.978415499,
+   "last": 266.425
+  },
+  {
+   "ticker": "MNST",
+   "name": "Monster",
+   "market_cap": 95502491941.0,
+   "avg_volume": 6016471.437725934,
+   "last": 96.33
+  },
+  {
+   "ticker": "EQNR",
+   "name": "Equinor",
+   "market_cap": 94916182808.0,
+   "avg_volume": 3975149.0688064336,
+   "last": 40.895
+  },
+  {
+   "ticker": "ITUB",
+   "name": "Itau Unibanco",
+   "market_cap": 94672806414.0,
+   "avg_volume": 20738986.351524297,
+   "last": 8.515
+  },
+  {
+   "ticker": "CEG",
+   "name": "Constellation Energy",
+   "market_cap": 94117807600.0,
+   "avg_volume": 3370879.8163298336,
+   "last": 262.645
+  },
+  {
+   "ticker": "CSX",
+   "name": "CSX",
+   "market_cap": 92973863609.0,
+   "avg_volume": 13595183.161914669,
+   "last": 50.11
+  },
+  {
+   "ticker": "VLO",
+   "name": "Valero",
+   "market_cap": 92556917477.0,
+   "avg_volume": 3078502.1142370002,
+   "last": 309.6325
+  },
+  {
+   "ticker": "BCS",
+   "name": "Barclays",
+   "market_cap": 92099272060.0,
+   "avg_volume": 5408654.714072532,
+   "last": 27.605
+  },
+  {
+   "ticker": "MPC",
+   "name": "Marathon Petroleum",
+   "market_cap": 91691458320.0,
+   "avg_volume": 2266777.3609149004,
+   "last": 313.21
+  },
+  {
+   "ticker": "CDNS",
+   "name": "Cadence Design Systems",
+   "market_cap": 91656298260.0,
+   "avg_volume": 2571562.4305053996,
+   "last": 335.74
+  },
+  {
+   "ticker": "MRSH",
+   "name": "Marsh",
+   "market_cap": 91390729934.0,
+   "avg_volume": 2818588.255078266,
+   "last": 188.585
+  },
+  {
+   "ticker": "FCX",
+   "name": "Freeport-McMoRan",
+   "market_cap": 91198797835.0,
+   "avg_volume": 15702136.920412999,
+   "last": 62.43
+  },
+  {
+   "ticker": "MMM",
+   "name": "3M",
+   "market_cap": 90803245961.0,
+   "avg_volume": 3893736.837376634,
+   "last": 175.36
+  },
+  {
+   "ticker": "KKR",
+   "name": "KKR & Co",
+   "market_cap": 90667209582.0,
+   "avg_volume": 4370930.707518334,
+   "last": 99.76
+  },
+  {
+   "ticker": "WM",
+   "name": "Waste Management",
+   "market_cap": 90467537594.0,
+   "avg_volume": 2100064.4540551663,
+   "last": 226.385
+  },
+  {
+   "ticker": "ABNB",
+   "name": "Airbnb",
+   "market_cap": 90260228689.0,
+   "avg_volume": 3704322.9924716004,
+   "last": 151.32
+  },
+  {
+   "ticker": "LYG",
+   "name": "Lloyds Banking Group",
+   "market_cap": 89735966768.0,
+   "avg_volume": 19371756.479009368,
+   "last": 6.19
+  },
+  {
+   "ticker": "UPS",
+   "name": "UPS",
+   "market_cap": 89480160990.0,
+   "avg_volume": 5281227.558754766,
+   "last": 104.975
+  },
+  {
+   "ticker": "ICE",
+   "name": "Intercontinental Exchange",
+   "market_cap": 87729116483.0,
+   "avg_volume": 4827852.750276834,
+   "last": 153.3
+  },
+  {
+   "ticker": "VRT",
+   "name": "Vertiv",
+   "market_cap": 87584809357.0,
+   "avg_volume": 6806444.901881999,
+   "last": 242.1012
+  },
+  {
+   "ticker": "CMI",
+   "name": "Cummins",
+   "market_cap": 87344319629.0,
+   "avg_volume": 1072231.4612830004,
+   "last": 639.315
+  },
+  {
+   "ticker": "JCI",
+   "name": "Johnson Controls",
+   "market_cap": 87154082703.0,
+   "avg_volume": 4533067.125008967,
+   "last": 145.43
+  },
+  {
+   "ticker": "WMB",
+   "name": "Williams Cos.",
+   "market_cap": 86722806971.0,
+   "avg_volume": 7627948.096876367,
+   "last": 71.18
+  },
+  {
+   "ticker": "INTU",
+   "name": "Intuit",
+   "market_cap": 86300923500.0,
+   "avg_volume": 5001057.780573,
+   "last": 311.73
+  },
+  {
+   "ticker": "RCL",
+   "name": "Royal Caribbean Group",
+   "market_cap": 86103523922.0,
+   "avg_volume": 2668927.3875021334,
+   "last": 317.9
+  },
+  {
+   "ticker": "DASH",
+   "name": "DoorDash",
+   "market_cap": 86067519156.0,
+   "avg_volume": 4441285.198345933,
+   "last": 193.78
+  },
+  {
+   "ticker": "HCA",
+   "name": "HCA Healthcare",
+   "market_cap": 85689128685.0,
+   "avg_volume": 1730355.9486488998,
+   "last": 396.19
+  },
+  {
+   "ticker": "PSX",
+   "name": "Phillips 66",
+   "market_cap": 84436915212.0,
+   "avg_volume": 2821782.147235334,
+   "last": 209.86
+  },
+  {
+   "ticker": "CMCSA",
+   "name": "Comcast",
+   "market_cap": 83996227682.0,
+   "avg_volume": 42007231.63124219,
+   "last": 23.86
+  },
+  {
+   "ticker": "SHW",
+   "name": "Sherwin-Williams",
+   "market_cap": 83712720790.0,
+   "avg_volume": 2584832.2049744,
+   "last": 340.565
+  },
+  {
+   "ticker": "MCO",
+   "name": "Moody's",
+   "market_cap": 83518261343.0,
+   "avg_volume": 1032060.3990725335,
+   "last": 475.86
+  },
+  {
+   "ticker": "EMR",
+   "name": "Emerson",
+   "market_cap": 83253264000.0,
+   "avg_volume": 2782680.0087119993,
+   "last": 149.35
+  },
+  {
+   "ticker": "CTAS",
+   "name": "Cintas",
+   "market_cap": 82751063519.0,
+   "avg_volume": 2474713.0538810333,
+   "last": 203.89
+  },
+  {
+   "ticker": "EPD",
+   "name": "Enterprise Products",
+   "market_cap": 82473316490.0,
+   "avg_volume": 3095020.613573833,
+   "last": 37.805
+  },
+  {
+   "ticker": "ELV",
+   "name": "Elevance Health",
+   "market_cap": 81629600756.0,
+   "avg_volume": 1678196.9740303333,
+   "last": 376.825
+  },
+  {
+   "ticker": "ITW",
+   "name": "Illinois Tool Works",
+   "market_cap": 81620490000.0,
+   "avg_volume": 1581964.2619717668,
+   "last": 284.09
+  },
+  {
+   "ticker": "AMT",
+   "name": "American Tower",
+   "market_cap": 81291389974.0,
+   "avg_volume": 3509755.5960793,
+   "last": 172.285
+  },
+  {
+   "ticker": "ROST",
+   "name": "Ross",
+   "market_cap": 81019676365.0,
+   "avg_volume": 2968542.000291267,
+   "last": 251.065
+  }
+ ],
+ "etfs": [
+  "SPY",
+  "QQQ",
+  "IWM",
+  "DIA",
+  "XLK",
+  "XLF",
+  "XLE",
+  "XLV",
+  "XLI",
+  "XLP",
+  "XLY",
+  "XLU",
+  "XLB",
+  "XLRE",
+  "XLC",
+  "TLT",
+  "IEF",
+  "SHY",
+  "GLD",
+  "DBC",
+  "EFA",
+  "EEM",
+  "VNQ",
+  "HYG",
+  "LQD"
+ ],
+ "survivorship_note": "Universe selected TODAY; historical backtests on it carry survivorship bias. Mitigations: ETF track is bias-free; stock-track results get a documented haircut and the judge stresses recent-period performance."
+}

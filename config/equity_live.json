@@ -1,0 +1,15 @@
+{
+  "enabled": false,
+  "lifecycle_state": "PENDING_TOURNAMENT",
+  "strategy": "dual_momentum",
+  "params": {},
+  "account_number": "534796784",
+  "risk": {
+    "bankroll_usd": 250.0,
+    "min_order_usd": 2.0,
+    "kill_drawdown": 0.3,
+    "max_positions": 15,
+    "max_single_name_frac": 0.34
+  },
+  "_notes": "Equity desk config. enabled flips true only after the equity tournament passes the gauntlet AND the RUNBOOK equity go-live checklist completes (agentic account funded, books initialized). strategy/params are placeholders until the tournament verdict."
+}
