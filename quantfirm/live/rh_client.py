@@ -17,6 +17,7 @@ import base64
 import json
 import os
 import subprocess
+import sys
 import tempfile
 import time
 import uuid
@@ -38,29 +39,39 @@ class RobinhoodCrypto:
     # -- signing ----------------------------------------------------------
     def _make_signer(self):
         try:
-            from nacl.signing import SigningKey  # type: ignore
+            from nacl.signing import SigningKey
             sk = SigningKey(self._seed)
             return lambda msg: sk.sign(msg).signature
-        except Exception:
+        except ImportError:
+            print("WARNING: PyNaCl unavailable; falling back to openssl CLI "
+                  "signing (key material transits a mode-0600 temp file)",
+                  file=sys.stderr)
             return self._openssl_sign
 
     def _openssl_sign(self, msg: bytes) -> bytes:
         der = (bytes.fromhex("302e020100300506032b657004220420") + self._seed)
-        with tempfile.NamedTemporaryFile(suffix=".der", delete=False) as kf:
-            kf.write(der)
-            key_path = kf.name
-        with tempfile.NamedTemporaryFile(delete=False) as mf:
-            mf.write(msg)
-            msg_path = mf.name
+        key_path = msg_path = None
         try:
+            with tempfile.NamedTemporaryFile(suffix=".der", delete=False) as kf:
+                key_path = kf.name
+                kf.write(der)
+            with tempfile.NamedTemporaryFile(delete=False) as mf:
+                msg_path = mf.name
+                mf.write(msg)
             out = subprocess.run(
                 ["openssl", "pkeyutl", "-sign", "-inkey", key_path,
                  "-keyform", "DER", "-rawin", "-in", msg_path],
                 capture_output=True, check=True)
             return out.stdout
         finally:
-            os.unlink(key_path)
-            os.unlink(msg_path)
+            for p in (key_path, msg_path):
+                if p and os.path.exists(p):
+                    try:
+                        with open(p, "r+b") as f:  # best-effort scrub before unlink
+                            f.write(b"\x00" * 64)
+                    except OSError:
+                        pass
+                    os.unlink(p)
 
     # -- transport --------------------------------------------------------
     def _request(self, method: str, path: str, body: dict | None = None) -> dict:

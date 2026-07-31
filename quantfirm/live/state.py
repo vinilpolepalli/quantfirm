@@ -26,11 +26,24 @@ TRADE_LOG = os.path.join(STATE_DIR, "trade_log.csv")
 
 
 def load() -> dict:
+    """Missing file = books not yet initialized (engine refuses to trade until
+    scripts/seed_books.py runs). Corrupt file = raise loudly — a half-merged
+    state file must kill the run before any order, never read as zeroed books."""
     if not os.path.exists(STATE_FILE):
-        return {"version": 1, "last_bar": None, "position_qty": 0.0, "cash_usd": 0.0,
-                "equity_history": [], "peak_equity": 0.0, "trades": 0, "last_run": {}}
+        return {"version": 1, "initialized": False, "orders_read_verified": False,
+                "pending_order": None, "last_bar": None, "position_qty": 0.0,
+                "cash_usd": 0.0, "equity_history": [], "peak_equity": 0.0,
+                "trades": 0, "last_run": {}}
     with open(STATE_FILE) as f:
-        return json.load(f)
+        try:
+            state = json.load(f)
+        except json.JSONDecodeError as e:
+            raise RuntimeError(
+                f"CORRUPT STATE FILE {STATE_FILE}: {e}. Refusing to trade. "
+                "Restore it from git history before the next run.") from e
+    if not isinstance(state, dict) or "position_qty" not in state:
+        raise RuntimeError(f"STATE FILE {STATE_FILE} malformed. Refusing to trade.")
+    return state
 
 
 def save(state: dict) -> None:

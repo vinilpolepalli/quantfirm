@@ -49,7 +49,8 @@ def run_strategy(df: pd.DataFrame, strategy, params: dict,
 
 def walk_forward(df: pd.DataFrame, strategy, params: dict,
                  cost: CostModel = RH_MARKET, n_folds: int = 5,
-                 warmup_bars: int = 24 * 90) -> dict:
+                 warmup_bars: int = 24 * 90,
+                 bars_per_year: float = HOURS_PER_YEAR) -> dict:
     """Score out-of-sample: split dev period into n_folds contiguous test
     windows; for each, compute signals with history available up to the end of
     that window but score only the window's bars. (Signal functions are
@@ -75,7 +76,10 @@ def walk_forward(df: pd.DataFrame, strategy, params: dict,
     all_oos = pd.concat(oos_returns) if oos_returns else pd.Series(dtype=float)
     equity = (1 + all_oos).cumprod()
     pos_full = strategy(df, **params).reindex(df.index).ffill().fillna(0.0)
-    out = summary(all_oos, pos_full, equity if len(equity) else pd.Series([1.0]))
+    # turnover/exposure over the SCORED sample only, matching the returns
+    pos_oos = pos_full.reindex(all_oos.index).fillna(0.0)
+    out = summary(all_oos, pos_oos, equity if len(equity) else pd.Series([1.0]),
+                  bars_per_year)
     out["fold_sharpes"] = fold_results
     out["oos_sharpe"] = out.pop("net_sharpe")
     out["cost_model"] = cost.name
@@ -83,10 +87,12 @@ def walk_forward(df: pd.DataFrame, strategy, params: dict,
 
 
 def split(df: pd.DataFrame, which: str) -> pd.DataFrame:
+    cutoff = pd.Timestamp(HOLDOUT_START, tz="UTC")
     if which == "dev":
-        return df.loc[DEV_START:HOLDOUT_START].iloc[:-1]
+        # strict inequality: partial-string slicing would leak holdout day 1
+        return df.loc[DEV_START:][df.loc[DEV_START:].index < cutoff]
     if which == "holdout":
-        return df.loc[HOLDOUT_START:]
+        return df[df.index >= cutoff]
     if which == "all":
         return df
     raise ValueError("split must be dev|holdout|all")

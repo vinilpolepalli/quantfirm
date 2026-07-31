@@ -30,14 +30,14 @@ def sharpe(returns: pd.Series, bars_per_year: float = HOURS_PER_YEAR) -> float:
 
 
 def cagr(equity: pd.Series, bars_per_year: float = HOURS_PER_YEAR) -> float:
-    if len(equity) < 2 or equity.iloc[0] <= 0:
+    """`equity` is cumprod(1+net) — growth factor from a base of 1.0, so the
+    first bar's cost is included (dividing by equity.iloc[0] would drop it)."""
+    if len(equity) < 2:
         return 0.0
     years = len(equity) / bars_per_year
-    if years <= 0:
-        return 0.0
-    total = equity.iloc[-1] / equity.iloc[0]
-    if total <= 0:
-        return -1.0
+    total = float(equity.iloc[-1])
+    if years <= 0 or total <= 0:
+        return -1.0 if total <= 0 else 0.0
     return float(total ** (1 / years) - 1)
 
 
@@ -55,17 +55,36 @@ def annual_turnover(position: pd.Series, bars_per_year: float = HOURS_PER_YEAR) 
 
 
 def deflated_sharpe(observed_sr: float, n_trials: int, n_obs: int,
-                    skew: float = 0.0, kurt: float = 3.0) -> float:
+                    skew: float = 0.0, kurt: float = 3.0,
+                    annualized: bool = False,
+                    bars_per_year: float = HOURS_PER_YEAR,
+                    trial_sr_std: float | None = None) -> float:
     """Probability the true Sharpe exceeds the expected max of n_trials noise
-    strategies (Bailey & Lopez de Prado). Returns a probability in [0, 1];
-    >= 0.95 is the approval bar. Inputs are per-bar (non-annualised) SR.
+    strategies (Bailey & Lopez de Prado 2014). Returns a probability in
+    [0, 1]; >= 0.95 is the approval bar.
+
+    observed_sr must be PER-BAR; pass annualized=True to convert an annualized
+    Sharpe (the only kind this codebase surfaces) — feeding annualized SR in
+    raw returns ~1.0 unconditionally, which is how evals get gamed.
+
+    trial_sr_std: cross-trial std-dev of the candidates' per-bar Sharpes. The
+    default (None) uses the iid pure-noise null 1/sqrt(n_obs-1); real
+    parameter sweeps have wider dispersion, making the default hurdle a LOWER
+    BOUND on the true one — pass the empirical value when available.
     """
     if n_obs < 20 or n_trials < 1:
         return 0.0
+    if annualized:
+        observed_sr = observed_sr / ann_factor(bars_per_year)
+    elif abs(observed_sr) > 0.5:
+        raise ValueError(
+            f"per-bar |SR|={observed_sr:.2f} is implausible; if this is an "
+            "annualized Sharpe pass annualized=True")
     emc = 0.5772156649
     max_z = ((1 - emc) * _norm_ppf(1 - 1.0 / n_trials)
              + emc * _norm_ppf(1 - 1.0 / (n_trials * math.e))) if n_trials > 1 else 0.0
-    sr0 = max_z / math.sqrt(n_obs - 1)
+    sr_std = trial_sr_std if trial_sr_std is not None else 1 / math.sqrt(n_obs - 1)
+    sr0 = max_z * sr_std
     denom = math.sqrt(max(1e-12, (1 - skew * observed_sr
                                   + (kurt - 1) / 4 * observed_sr ** 2) / (n_obs - 1)))
     return float(_norm_cdf((observed_sr - sr0) / denom))
@@ -111,5 +130,5 @@ def summary(returns: pd.Series, position: pd.Series, equity: pd.Series,
         "annual_turnover": round(annual_turnover(position, bars_per_year), 2),
         "avg_exposure": round(float(position.mean()), 3),
         "n_bars": int(len(returns)),
-        "total_return": round(float(equity.iloc[-1] / equity.iloc[0] - 1), 4) if len(equity) else 0.0,
+        "total_return": round(float(equity.iloc[-1]) - 1.0, 4) if len(equity) else 0.0,
     }
