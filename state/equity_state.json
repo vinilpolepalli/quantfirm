@@ -1,12 +1,24 @@
 {
   "version": 1,
   "initialized": true,
-  "positions": {},
-  "settled_cash": 250.0,
+  "positions": {
+    "STX": 0.058,
+    "LRCX": 0.163604,
+    "WDC": 0.07922,
+    "INTC": 0.412944,
+    "MU": 0.042777,
+    "SNDK": 0.025628
+  },
+  "settled_cash": 0.0,
   "unsettled_cash": 0.0,
   "unsettled_date": null,
   "peak_equity": 250.0,
-  "equity_history": [],
-  "last_rebalance": null,
+  "equity_history": [
+    [
+      "2026-07-31T17:05:29.121285+00:00",
+      250.0
+    ]
+  ],
+  "last_rebalance": "2026-07-31T17:05:28.745984+00:00",
   "last_plan_date": "2026-07-31"
 }
