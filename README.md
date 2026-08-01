@@ -1,4 +1,7 @@
-# quantfirm — an agent-operated crypto trading firm
+# quantfirm — an agent-operated trading firm
+
+**📈 Live dashboard: https://quantfirm-dashboard.vercel.app** · daily
+end-of-day reports (HTML + PDF): https://quantfirm-dashboard.vercel.app/reports/
 
 A miniature systematic trading operation modeled on how real quant firms run
 (research → validation → risk → execution → review), except every seat is an
