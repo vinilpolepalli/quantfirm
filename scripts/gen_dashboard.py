@@ -175,7 +175,7 @@ footer b {{ color:var(--ink); }}
 </style>
 <div class="wrap">
 <header><h1><span class="tick">▮</span> QUANTFIRM / THE BOOK</h1>
-  <span class="stamp">{now}</span></header>
+  <span class="stamp"><a href="reports/" style="color:var(--accent);text-decoration:none">reports ↗</a> · {now}</span></header>
 
 <section class="card">
   <div class="hero">
