@@ -1,0 +1,1 @@
+{"cagr": 0.4143, "max_drawdown": -0.3384, "annual_turnover": 4.16, "avg_exposure": 0.433, "n_bars": 64243, "total_return": 11.7046, "fold_sharpes": [2.016, 1.815, 0.282, 2.188, -0.175], "oos_sharpe": 1.397, "cost_model": "rh_market", "strategy": "composite_ensemble", "symbol": "BTCUSDT", "split": "all"}
