@@ -90,8 +90,13 @@ def xsec_momentum(closes: pd.DataFrame, formation: int = 252, skip: int = 21,
                   market_filter_sma: int = 0) -> pd.DataFrame:
     """Classic 12-1 cross-sectional momentum, long-only top-N of the stock
     universe, equal weight; optional SPY-SMA regime gate to cash."""
-    etf_like = set(ETF_MENU + SECTORS + DEFENSIVE + ["DIA", "HYG", "LQD"])
-    stocks = [c for c in closes.columns if c not in etf_like]
+    etf_like = set(ETF_MENU + SECTORS + DEFENSIVE + ["DIA", "HYG", "LQD", "TIP", "BIL", "VEU"])
+    try:
+        from ..data import universe
+        allowed = {s["ticker"] for s in universe()["stocks"]}
+        stocks = [c for c in closes.columns if c in allowed]
+    except Exception:
+        stocks = [c for c in closes.columns if c not in etf_like]
     dates = _rebalance_dates(closes.index, every)
     w = _weights_frame(dates, closes.columns)
     mom = closes[stocks].pct_change(formation - skip).shift(skip)

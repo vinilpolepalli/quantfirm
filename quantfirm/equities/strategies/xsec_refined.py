@@ -42,13 +42,26 @@ import pandas as pd
 
 from . import register
 
-# The 25 bias-free ETFs in the panel (from universe.json) — excluded from the
-# stock ranking universe, used for the regime gate and defensive sleeve.
+# ETFs and any other non-stock panel columns — excluded from the stock
+# ranking universe, used only for the regime gate and defensive sleeve.
+# Tournament #3 lesson: research agents add data files (TIP/BIL) that
+# load_panel() globs in, so a hardcoded list silently rots. The stock
+# universe is therefore defined POSITIVELY from universe.json; the
+# hardcoded set survives only as a fallback if the file is unreadable.
 ETFS = {
     "SPY", "QQQ", "IWM", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI", "XLP",
     "XLY", "XLU", "XLB", "XLRE", "XLC", "TLT", "IEF", "SHY", "GLD", "DBC",
-    "EFA", "EEM", "VNQ", "HYG", "LQD",
+    "EFA", "EEM", "VNQ", "HYG", "LQD", "TIP", "BIL", "VEU",
 }
+
+
+def _stock_universe(columns) -> list:
+    try:
+        from ..data import universe
+        allowed = {s["ticker"] for s in universe()["stocks"]}
+        return [c for c in columns if c in allowed]
+    except Exception:
+        return [c for c in columns if c not in ETFS]
 
 DEFAULT_DEF_MENU = ("IEF", "TLT", "GLD", "SHY")
 
@@ -78,7 +91,7 @@ def xsec_refined(closes: pd.DataFrame,
     trend on and realized vol <= vol_cap, 0.5 if trend on but vol high,
     0.0 if trend off), or "none".
     """
-    stocks = [c for c in closes.columns if c not in ETFS]
+    stocks = _stock_universe(closes.columns)
     mom = closes[stocks].pct_change(formation - skip).shift(skip)
     rets = closes[stocks].pct_change(fill_method=None)
     vol = rets.rolling(vol_days).std()
