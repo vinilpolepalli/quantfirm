@@ -45,7 +45,7 @@ header h1 .tick { color:var(--accent); }
 .sub { width:100%; color:var(--dim); font-size:12.5px; }
 .meter { margin-top:10px; }
 .meter .bar { height:6px; background:var(--meter); border-radius:3px; overflow:hidden; }
-.meter .fill { height:100%; width:4.1%; background:var(--gain);
+.meter .fill { height:100%; width:0.0%; background:var(--gain);
   border-radius:3px; }
 .meter .lbl { display:flex; justify-content:space-between; color:var(--dim);
   font-size:11px; margin-top:4px; letter-spacing:.05em; }
@@ -77,27 +77,27 @@ footer b { color:var(--ink); }
 <body>
 <div class="wrap">
 <header><h1><span class="tick">▮</span> QUANTFIRM / THE BOOK</h1>
-  <span class="stamp"><a href="reports/" style="color:var(--accent);text-decoration:none">reports ↗</a> · 2026-08-03 19:45 UTC</span></header>
+  <span class="stamp"><a href="reports/" style="color:var(--accent);text-decoration:none">reports ↗</a> · 2026-08-04 19:37 UTC</span></header>
 
 <section class="card">
   <div class="hero">
-    <span class="big">$244.86</span>
-    <span class="pill down">−$3.51 today</span>
-    <span class="pill down">−$5.14 all-time</span>
-    <span class="sub">strategy <b>xsec_refined</b> · started $250.00 · peak $250.00</span>
+    <span class="big">$259.43</span>
+    <span class="pill up">+$14.57 today</span>
+    <span class="pill up">+$9.43 all-time</span>
+    <span class="sub">strategy <b>xsec_refined</b> · started $250.00 · peak $259.43</span>
   </div>
   <div class="meter">
     <div class="bar"><div class="fill"></div></div>
-    <div class="lbl"><span>drawdown -2.1%</span><span>kill switch at −50%</span></div>
+    <div class="lbl"><span>drawdown 0.0%</span><span>kill switch at −50%</span></div>
   </div>
 </section>
 
 <section class="card">
   <h2>Equity curve</h2>
   <svg class="spark" viewBox="0 0 320 64" role="img" aria-label="equity history">
-    <polygon points="0,64 0.0,6.0 160.0,22.5 320.0,58.0 320,64" fill="color-mix(in srgb, var(--accent) 12%, transparent)"/>
-    <polyline points="0.0,6.0 160.0,22.5 320.0,58.0" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
-    <circle cx="320.0" cy="58.0" r="3" fill="var(--accent)"/>
+    <polygon points="0,64 0.0,39.7 106.7,45.5 213.3,58.0 320.0,6.0 320,64" fill="color-mix(in srgb, var(--accent) 12%, transparent)"/>
+    <polyline points="0.0,39.7 106.7,45.5 213.3,58.0 320.0,6.0" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
+    <circle cx="320.0" cy="6.0" r="3" fill="var(--accent)"/>
   </svg>
 </section>
 
@@ -105,7 +105,7 @@ footer b { color:var(--ink); }
   <h2>Positions</h2>
   <div class="tablewrap"><table>
     <tr><th>name</th><th>qty</th><th>last</th><th class="num">value</th></tr>
-    <tr><td class="sym">STX</td><td>0.058000</td><td>$874.99</td><td class="num">$50.75</td></tr><tr><td class="sym">LRCX</td><td>0.163604</td><td>$303.17</td><td class="num">$49.60</td></tr><tr><td class="sym">WDC</td><td>0.079220</td><td>$554.02</td><td class="num">$43.89</td></tr><tr><td class="sym">INTC</td><td>0.412944</td><td>$92.24</td><td class="num">$38.09</td></tr><tr><td class="sym">MU</td><td>0.042777</td><td>$837.82</td><td class="num">$35.84</td></tr><tr><td class="sym">SNDK</td><td>0.025628</td><td>$1,242.00</td><td class="num">$31.83</td></tr><tr class="cashrow"><td class="sym">CASH</td><td>—</td><td>—</td><td class="num">$0.00</td></tr>
+    <tr><td class="sym">LRCX</td><td>0.163604</td><td>$303.17</td><td class="num">$49.60</td></tr><tr><td class="sym">WDC</td><td>0.079220</td><td>$554.02</td><td class="num">$43.89</td></tr><tr><td class="sym">INTC</td><td>0.412944</td><td>$92.24</td><td class="num">$38.09</td></tr><tr><td class="sym">MU</td><td>0.042777</td><td>$837.82</td><td class="num">$35.84</td></tr><tr><td class="sym">SNDK</td><td>0.025628</td><td>$1,242.00</td><td class="num">$31.83</td></tr><tr class="cashrow"><td class="sym">CASH</td><td>—</td><td>—</td><td class="num">$47.94</td></tr>
   </table></div>
 </section>
 
@@ -125,7 +125,7 @@ footer b { color:var(--ink); }
   <h2>Recent trades</h2>
   <div class="tablewrap"><table>
     <tr><th>time</th><th>name</th><th>side</th><th class="num">amount</th><th>price</th></tr>
-    <tr><td>07-31 17:05</td><td class="sym">SNDK</td><td class="buy">BUY</td><td class="num">$31.83</td><td>1,242.00</td></tr><tr><td>07-31 17:05</td><td class="sym">MU</td><td class="buy">BUY</td><td class="num">$35.84</td><td>837.82</td></tr><tr><td>07-31 17:05</td><td class="sym">INTC</td><td class="buy">BUY</td><td class="num">$38.09</td><td>92.24</td></tr><tr><td>07-31 17:05</td><td class="sym">WDC</td><td class="buy">BUY</td><td class="num">$43.89</td><td>554.02</td></tr><tr><td>07-31 17:05</td><td class="sym">LRCX</td><td class="buy">BUY</td><td class="num">$49.60</td><td>303.17</td></tr><tr><td>07-31 17:05</td><td class="sym">STX</td><td class="buy">BUY</td><td class="num">$50.75</td><td>874.99</td></tr>
+    <tr><td>08-04 19:36</td><td class="sym">STX</td><td class="sell">SELL</td><td class="num">$47.94</td><td>826.51</td></tr><tr><td>07-31 17:05</td><td class="sym">SNDK</td><td class="buy">BUY</td><td class="num">$31.83</td><td>1,242.00</td></tr><tr><td>07-31 17:05</td><td class="sym">MU</td><td class="buy">BUY</td><td class="num">$35.84</td><td>837.82</td></tr><tr><td>07-31 17:05</td><td class="sym">INTC</td><td class="buy">BUY</td><td class="num">$38.09</td><td>92.24</td></tr><tr><td>07-31 17:05</td><td class="sym">WDC</td><td class="buy">BUY</td><td class="num">$43.89</td><td>554.02</td></tr><tr><td>07-31 17:05</td><td class="sym">LRCX</td><td class="buy">BUY</td><td class="num">$49.60</td><td>303.17</td></tr><tr><td>07-31 17:05</td><td class="sym">STX</td><td class="buy">BUY</td><td class="num">$50.75</td><td>874.99</td></tr>
   </table></div>
 </section>
 

@@ -2,7 +2,6 @@
   "version": 1,
   "initialized": true,
   "positions": {
-    "STX": 0.058,
     "LRCX": 0.163604,
     "WDC": 0.07922,
     "INTC": 0.412944,
@@ -10,9 +9,9 @@
     "SNDK": 0.025628
   },
   "settled_cash": 0.0,
-  "unsettled_cash": 0.0,
-  "unsettled_date": null,
-  "peak_equity": 250.0,
+  "unsettled_cash": 47.94,
+  "unsettled_date": "2026-08-03",
+  "peak_equity": 259.43,
   "equity_history": [
     [
       "2026-07-31T17:05:29.121285+00:00",
@@ -25,8 +24,19 @@
     [
       "2026-08-03T19:45:59.663676+00:00",
       244.86
+    ],
+    [
+      "2026-08-04T19:37:10.674869+00:00",
+      259.43
     ]
   ],
-  "last_rebalance": "2026-07-31T17:05:28.745984+00:00",
-  "last_plan_date": "2026-08-03"
+  "last_rebalance": "2026-08-04T19:36:16.416276+00:00",
+  "last_plan_date": "2026-08-03",
+  "incidents": [
+    {
+      "ts": "2026-08-04T19:40:00Z",
+      "type": "external_agentic_order",
+      "detail": "STX 0.058 sold @826.51 on 2026-08-03 19:41:45Z via agentic channel; NOT placed by this desk (plan was hold; fetch subagent transcript audited clean). Source unknown \u2014 possibly another Claude session holding the Robinhood connector. Books patched to venue truth; no new orders placed pending principal confirmation."
+    }
+  ]
 }
