@@ -4,11 +4,14 @@
   "positions": {
     "LRCX": 0.163604,
     "WDC": 0.07922,
-    "MU": 0.042777
+    "MU": 0.042777,
+    "STX": 0.06005,
+    "INTC": 0.373392,
+    "SNDK": 0.023001
   },
-  "settled_cash": 0.0,
-  "unsettled_cash": 126.01,
-  "unsettled_date": "2026-08-04",
+  "settled_cash": 4.63,
+  "unsettled_cash": 0.0,
+  "unsettled_date": null,
   "peak_equity": 259.43,
   "equity_history": [
     [
@@ -26,10 +29,14 @@
     [
       "2026-08-04T19:37:10.674869+00:00",
       259.43
+    ],
+    [
+      "2026-08-05T19:38:44.763807+00:00",
+      257.83
     ]
   ],
-  "last_rebalance": "2026-08-05T04:26:15.016410+00:00",
-  "last_plan_date": "2026-08-03",
+  "last_rebalance": "2026-08-05T19:38:30.385479+00:00",
+  "last_plan_date": "2026-08-05",
   "incidents": [
     {
       "ts": "2026-08-04T19:40:00Z",
