@@ -4,13 +4,11 @@
   "positions": {
     "LRCX": 0.163604,
     "WDC": 0.07922,
-    "INTC": 0.412944,
-    "MU": 0.042777,
-    "SNDK": 0.025628
+    "MU": 0.042777
   },
   "settled_cash": 0.0,
-  "unsettled_cash": 47.94,
-  "unsettled_date": "2026-08-03",
+  "unsettled_cash": 126.01,
+  "unsettled_date": "2026-08-04",
   "peak_equity": 259.43,
   "equity_history": [
     [
@@ -30,13 +28,18 @@
       259.43
     ]
   ],
-  "last_rebalance": "2026-08-04T19:36:16.416276+00:00",
+  "last_rebalance": "2026-08-05T04:26:15.016410+00:00",
   "last_plan_date": "2026-08-03",
   "incidents": [
     {
       "ts": "2026-08-04T19:40:00Z",
       "type": "external_agentic_order",
       "detail": "STX 0.058 sold @826.51 on 2026-08-03 19:41:45Z via agentic channel; NOT placed by this desk (plan was hold; fetch subagent transcript audited clean). Source unknown \u2014 possibly another Claude session holding the Robinhood connector. Books patched to venue truth; no new orders placed pending principal confirmation."
+    },
+    {
+      "ts": "2026-08-05T04:30:00Z",
+      "type": "rogue_routine_liquidation",
+      "detail": "Legacy 'eod-review-3:30pm' routine (daily_stock_analysis project, +7% take-profit rule) sold INTC 0.412944 @100.7101 ($41.58) and SNDK 0.025628 @1423.86 ($36.49) at 2026-08-04 19:41Z, 8 minutes after the desk's own cycle. Combined with its 2026-08-03 STX sale, it liquidated 3 of 6 firm positions. All four legacy trading routines confirmed deleted by the principal (update_trigger probe returned not-found for each). Books reconciled to venue truth; the desk will redeploy the freed cash per strategy ranks on the next cycle."
     }
   ]
 }
