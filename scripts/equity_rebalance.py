@@ -36,6 +36,8 @@ from datetime import datetime, timezone, date
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+import pandas as pd  # noqa: E402
+
 from quantfirm.equities import backtest as bt  # noqa: E402
 from quantfirm.equities.data import load_panel  # noqa: E402
 from quantfirm.equities.strategies import load_all  # noqa: E402
@@ -105,9 +107,20 @@ def plan() -> None:
 
     closes = load_panel()
     last_date = str(closes.index[-1].date())
-    strat = load_all()[cfg["strategy"]]
-    w = strat(closes, **cfg.get("params", {}))
-    target_w = w.reindex(closes.index).ffill().iloc[-1]
+    # One-shot book reconstruction after an outside actor liquidated part of
+    # the book (see quantfirm/equities/reconstruct.py). Consumes the flag so
+    # it can never fire twice; every later cycle returns to the strategy's
+    # own 21-day cadence.
+    reconstructing = bool(state.get("reconstruct_pending"))
+    if reconstructing:
+        from quantfirm.equities.reconstruct import reconstruct_targets
+        tgt = reconstruct_targets(closes, list(state.get("positions", {})),
+                                  cfg.get("params", {}))
+        target_w = pd.Series(tgt, dtype=float)
+    else:
+        strat = load_all()[cfg["strategy"]]
+        w = strat(closes, **cfg.get("params", {}))
+        target_w = w.reindex(closes.index).ffill().iloc[-1]
     target_w = target_w[target_w > 0]
 
     bankroll = float(cfg["risk"]["bankroll_usd"])
@@ -176,14 +189,31 @@ def plan() -> None:
                 buys.append({"symbol": s, "side": "buy", "dollars": amt})
                 budget -= amt
 
+    # Concentration surveillance. config's max_single_name_frac was never
+    # enforced in code, and the strategy's inverse-vol weighting breaches it
+    # in ~8% of historical rebalances (a low-vol name can draw 5x the dollars
+    # of a volatile one at the same rank). Enforcing it live would deviate
+    # from the backtested weights, so the plan REPORTS the breach and leaves
+    # sizing untouched — the research desk owns whether to cap it.
+    cap = float(cfg["risk"].get("max_single_name_frac", 1.0))
+    breaches = {s: round(float(f), 4) for s, f in target_w.items() if float(f) > cap}
+
     state["last_plan_date"] = today
+    if reconstructing:
+        state["reconstruct_pending"] = False
+        state.setdefault("incidents", []).append(
+            {"ts": _now(), "type": "book_reconstruction",
+             "detail": f"one-shot re-rank at {last_date}; targets "
+                       f"{ {k: round(float(v), 4) for k, v in target_w.items()} }"})
     save_state(state)
     print(json.dumps({
         "action": "rebalance_plan", "as_of_panel_date": last_date,
+        "mode": "reconstruction" if reconstructing else "scheduled",
         "equity": round(equity, 2), "sizing_base": round(sizing_base, 2),
         "drawdown": round(dd, 4),
         "settled_cash": state["settled_cash"], "unsettled_cash": state["unsettled_cash"],
         "target_weights": {s: round(float(v), 4) for s, v in target_w.items()},
+        "concentration_breaches": breaches or None,
         "orders": sells + buys,
         "instructions": "Place sells first, wait for fills, then buys, via "
                         "review_equity_order -> place_equity_order (market, "
