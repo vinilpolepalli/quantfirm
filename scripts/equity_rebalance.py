@@ -53,6 +53,28 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def resolve_account(cfg: dict) -> str | None:
+    """Account number is deliberately NOT stored in the repo (it is an account
+    identifier, and this repo is shareable). Resolution order: environment
+    variable, then a gitignored local override, then config only if it looks
+    like a real account rather than the placeholder. Returns None when
+    unresolved — callers must refuse to trade rather than guess."""
+    env = os.environ.get("QF_EQUITY_ACCOUNT", "").strip()
+    if env.isdigit():
+        return env
+    local = os.path.join(ROOT, "config", "account.local.json")
+    if os.path.exists(local):
+        try:
+            with open(local) as f:
+                v = str(json.load(f).get("account_number", "")).strip()
+            if v.isdigit():
+                return v
+        except Exception:
+            pass
+    v = str(cfg.get("account_number", "")).strip()
+    return v if v.isdigit() else None
+
+
 def load_state() -> dict:
     if not os.path.exists(STATE):
         return {"version": 1, "initialized": False, "positions": {},
@@ -239,6 +261,7 @@ def plan() -> None:
     print(json.dumps({
         "action": "rebalance_plan", "as_of_panel_date": last_date,
         "mode": "reconstruction" if reconstructing else "scheduled",
+        "account_number": resolve_account(cfg) or "UNRESOLVED — set QF_EQUITY_ACCOUNT; do NOT trade",
         "equity": round(equity, 2), "sizing_base": round(sizing_base, 2),
         "position_cap_applied": capped, "drawdown": round(dd, 4),
         "settled_cash": state["settled_cash"], "unsettled_cash": state["unsettled_cash"],

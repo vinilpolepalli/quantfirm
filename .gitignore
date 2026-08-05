@@ -7,3 +7,4 @@ run_result.json
 priv_b64.txt
 .vercel
 .env*
+config/account.local.json
