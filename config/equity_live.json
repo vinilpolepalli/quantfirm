@@ -12,6 +12,7 @@
   "account_number": "534796784",
   "risk": {
     "bankroll_usd": 250.0,
+    "max_growth_mult": 5.0,
     "min_order_usd": 5.0,
     "rebalance_band_frac": 0.15,
     "kill_drawdown": 0.5,

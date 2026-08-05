@@ -149,7 +149,15 @@ def plan() -> None:
     # (fraction of the target position) before it's worth trading.
     min_order = float(cfg["risk"].get("min_order_usd", 5.0))
     band = float(cfg["risk"].get("rebalance_band_frac", 0.15))
-    target_val = {s: float(frac) * min(bankroll, equity) for s, frac in target_w.items()}
+    # Sizing base = the firm's OWN equity, so profits compound instead of
+    # sitting idle (sizing off the static bankroll would strand every dollar
+    # earned above it). Guarded two ways: never size off an equity mark more
+    # than `max_growth_mult` times the original bankroll (protects against a
+    # bad price mark inflating targets), and buys are still limited to
+    # settled cash further below.
+    growth_cap = float(cfg["risk"].get("max_growth_mult", 5.0))
+    sizing_base = min(max(equity, 0.0), bankroll * growth_cap)
+    target_val = {s: float(frac) * sizing_base for s, frac in target_w.items()}
 
     def _worth_trading(delta: float, target: float) -> bool:
         return abs(delta) >= max(min_order, band * max(target, 1.0))
@@ -172,7 +180,8 @@ def plan() -> None:
     save_state(state)
     print(json.dumps({
         "action": "rebalance_plan", "as_of_panel_date": last_date,
-        "equity": round(equity, 2), "drawdown": round(dd, 4),
+        "equity": round(equity, 2), "sizing_base": round(sizing_base, 2),
+        "drawdown": round(dd, 4),
         "settled_cash": state["settled_cash"], "unsettled_cash": state["unsettled_cash"],
         "target_weights": {s: round(float(v), 4) for s, v in target_w.items()},
         "orders": sells + buys,
