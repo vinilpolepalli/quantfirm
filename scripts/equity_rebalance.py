@@ -172,6 +172,36 @@ def plan() -> None:
     sizing_base = min(max(equity, 0.0), bankroll * growth_cap)
     target_val = {s: float(frac) * sizing_base for s, frac in target_w.items()}
 
+    # Single-name concentration cap. config declared max_single_name_frac but
+    # nothing enforced it; the strategy's inverse-vol weighting hands a low-vol
+    # name a huge share whenever the ranks mix calm and volatile stocks (8% of
+    # backtest rebalances exceeded 34%, once reaching 45%). This is a DELIBERATE
+    # live-vs-research divergence: a declared risk limit that silently does not
+    # bind is worse than no limit. Excess is redistributed to names with room;
+    # anything that cannot be placed stays in cash.
+    cap_frac = float(cfg["risk"].get("max_single_name_frac", 1.0))
+    cap_usd = cap_frac * sizing_base
+    capped = []
+    if 0 < cap_frac < 1.0:
+        for _ in range(10):
+            excess, room = 0.0, {}
+            for s, v in target_val.items():
+                if v > cap_usd + 1e-9:
+                    excess += v - cap_usd
+                    target_val[s] = cap_usd
+                    if s not in capped:
+                        capped.append(s)
+                else:
+                    room[s] = cap_usd - v
+            total_room = sum(room.values())
+            if excess <= 1e-9 or total_room <= 1e-9:
+                break
+            share = min(1.0, excess / total_room)
+            for s, r in room.items():
+                target_val[s] += r * share
+            if excess <= total_room:
+                break
+
     def _worth_trading(delta: float, target: float) -> bool:
         return abs(delta) >= max(min_order, band * max(target, 1.0))
 
@@ -210,7 +240,7 @@ def plan() -> None:
         "action": "rebalance_plan", "as_of_panel_date": last_date,
         "mode": "reconstruction" if reconstructing else "scheduled",
         "equity": round(equity, 2), "sizing_base": round(sizing_base, 2),
-        "drawdown": round(dd, 4),
+        "position_cap_applied": capped, "drawdown": round(dd, 4),
         "settled_cash": state["settled_cash"], "unsettled_cash": state["unsettled_cash"],
         "target_weights": {s: round(float(v), 4) for s, v in target_w.items()},
         "concentration_breaches": breaches or None,

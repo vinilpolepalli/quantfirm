@@ -151,3 +151,42 @@ This table exists so the weekly desk never re-opens a dead end. A family leaves 
 ## Footer
 
 **Nothing in this document skips the gauntlet.** Not the Tier 1 briefs, not the "free" feature experiments on the incumbent, not the method upgrades themselves (the CAR25 retirement rule and any vol-targeting overlay are registered trials like everything else). Every experiment — including A/Bs on `xsec_refined` — enters the trial registry before the first backtest runs and counts against the deflated-Sharpe budget. The sealed holdout is unsealed once, after the full gauntlet, or not at all. An idea graded A in this file is still just an idea.
+
+---
+
+## LIVE-DESK FINDINGS — queued for the next tournament
+
+*Added 2026-08-05 from live operation, not from the source catalog. These are
+questions the live book raised that research should settle with evidence.*
+
+### L.1 Inverse-vol weighting concentrates violently in mixed-vol ranks ★ PRIORITY
+
+`xsec_refined` weights by 1/volatility. When the top ranks contain both calm
+names (banks: TD, RY) and volatile ones (semis: SNDK, MU), the calm names
+collect a dominant share — a live re-rank on 2026-08-05 would have put
+**52% in TD alone**, and a full rebuild **75% into two Canadian banks**,
+funded by selling names ranked #2 and #3. Backtest history confirms the
+pattern is intrinsic, not a one-off: median max single-name weight 25%, 90th
+percentile 33%, max 45% (JNJ, 2026-05-13), with 8% of rebalances exceeding
+the firm's declared 34% cap.
+
+Two consequences worth testing, not asserting:
+1. **Risk-mandate drift.** A max-risk momentum mandate silently becomes a
+   majority-defensive book whenever low-vol names enter the ranks. Nobody
+   chose that; the weighting scheme did.
+2. **The cap now binds live** (implemented 2026-08-05 — it was declared in
+   config and never enforced), which is a deliberate live-vs-research
+   divergence: ~8% of historical rebalances would have been clipped. The
+   attribution desk should expect small tracking error from this and NOT
+   flag it as a defect.
+
+Designer brief: A/B the weighting scheme on the tested chassis — inv_vol
+(incumbent) vs equal-weight vs vol-scaled-with-floor (cap the inverse-vol
+multiplier so no name exceeds ~2x the equal-weight share) vs explicit
+cap-and-redistribute at 25/34/50%. Score on the standard eval, and report
+max single-name weight and sector concentration alongside Sharpe — a variant
+that matches incumbent Sharpe with materially lower concentration is a win
+even at equal return. Pre-declared kill: if every capped variant loses more
+than 0.15 Sharpe on dev, the concentration is load-bearing and the firm
+should instead raise the declared cap to match reality rather than keep a
+limit that fights the strategy.
