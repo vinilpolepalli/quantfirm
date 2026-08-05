@@ -1,5 +1,5 @@
 # QUANTFIRM — EQUITY FIRM DESIGN BRIEF
-**Venue:** Robinhood Agentic MCP (segregated agentic account `534796784`) · **Capital:** $250, cash account, high risk tolerance · **Date:** 2026-07-31
+**Venue:** Robinhood Agentic MCP (segregated agentic account `<redacted — see QF_EQUITY_ACCOUNT>`) · **Capital:** $250, cash account, high risk tolerance · **Date:** 2026-07-31
 **Synthesized from:** rh-equity-microstructure, xsec-momentum, etf-rotation, news-events, survivorship-eval, risk-smallacct, deployment-mcp
 
 ---
@@ -126,7 +126,7 @@ Robinhood is the measured worst-execution mainstream PFOF broker (~26.8% price i
 ```json
 {
   "version": "2.0-equity",
-  "account": {"type": "cash", "settlement": "T+1", "equity_usd": 250, "venue_account": "534796784",
+  "account": {"type": "cash", "settlement": "T+1", "equity_usd": 250, "venue_account": "<redacted>",
     "fractional_shares": true, "leverage": false, "shorting": false},
   "universe": {"scope": "US large-cap equities (top-200 liquid) and major ETFs",
     "min_avg_dollar_volume_usd": 5000000, "min_price_usd": 5, "max_quoted_spread_bps": 10,
