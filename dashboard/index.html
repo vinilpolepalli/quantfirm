@@ -45,7 +45,7 @@ header h1 .tick { color:var(--accent); }
 .sub { width:100%; color:var(--dim); font-size:12.5px; }
 .meter { margin-top:10px; }
 .meter .bar { height:6px; background:var(--meter); border-radius:3px; overflow:hidden; }
-.meter .fill { height:100%; width:1.2%; background:var(--gain);
+.meter .fill { height:100%; width:8.8%; background:var(--gain);
   border-radius:3px; }
 .meter .lbl { display:flex; justify-content:space-between; color:var(--dim);
   font-size:11px; margin-top:4px; letter-spacing:.05em; }
@@ -77,27 +77,27 @@ footer b { color:var(--ink); }
 <body>
 <div class="wrap">
 <header><h1><span class="tick">▮</span> QUANTFIRM / THE BOOK</h1>
-  <span class="stamp"><a href="reports/" style="color:var(--accent);text-decoration:none">reports ↗</a> · 2026-08-05 19:38 UTC</span></header>
+  <span class="stamp"><a href="reports/" style="color:var(--accent);text-decoration:none">reports ↗</a> · 2026-08-06 19:37 UTC</span></header>
 
 <section class="card">
   <div class="hero">
-    <span class="big">$257.83</span>
-    <span class="pill down">−$1.60 today</span>
-    <span class="pill up">+$7.83 all-time</span>
+    <span class="big">$248.04</span>
+    <span class="pill down">−$9.79 today</span>
+    <span class="pill down">−$1.96 all-time</span>
     <span class="sub">strategy <b>xsec_refined</b> · started $250.00 · peak $259.43</span>
   </div>
   <div class="meter">
     <div class="bar"><div class="fill"></div></div>
-    <div class="lbl"><span>drawdown -0.6%</span><span>kill switch at −50%</span></div>
+    <div class="lbl"><span>drawdown -4.4%</span><span>kill switch at −50%</span></div>
   </div>
 </section>
 
 <section class="card">
   <h2>Equity curve</h2>
   <svg class="spark" viewBox="0 0 320 64" role="img" aria-label="equity history">
-    <polygon points="0,64 0.0,39.7 80.0,45.5 160.0,58.0 240.0,6.0 320.0,11.7 320,64" fill="color-mix(in srgb, var(--accent) 12%, transparent)"/>
-    <polyline points="0.0,39.7 80.0,45.5 160.0,58.0 240.0,6.0 320.0,11.7" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
-    <circle cx="320.0" cy="11.7" r="3" fill="var(--accent)"/>
+    <polygon points="0,64 0.0,39.7 64.0,45.5 128.0,58.0 192.0,6.0 256.0,11.7 320.0,46.7 320,64" fill="color-mix(in srgb, var(--accent) 12%, transparent)"/>
+    <polyline points="0.0,39.7 64.0,45.5 128.0,58.0 192.0,6.0 256.0,11.7 320.0,46.7" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
+    <circle cx="320.0" cy="46.7" r="3" fill="var(--accent)"/>
   </svg>
 </section>
 
