@@ -45,8 +45,8 @@ jobs:
       - name: Commit data + report
         run: |
           set -euo pipefail
-          git config user.name "quantfirm-bot"
-          git config user.email "bot@users.noreply.github.com"
+          git config user.name "vinilpolepalli"
+          git config user.email "105608101+vinilpolepalli@users.noreply.github.com"
           git add data/*.csv.gz state/research_report.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "research: nightly data refresh + revalidation"
