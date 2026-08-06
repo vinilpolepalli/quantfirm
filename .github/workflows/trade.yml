@@ -43,8 +43,8 @@ jobs:
       - name: Commit state
         run: |
           set -euo pipefail
-          git config user.name "quantfirm-bot"
-          git config user.email "bot@users.noreply.github.com"
+          git config user.name "vinilpolepalli"
+          git config user.email "105608101+vinilpolepalli@users.noreply.github.com"
           # each file may legitimately not exist (e.g. desk disabled -> no
           # state file yet); a bare [ -f ] && under set -e kills the job
           for f in state/live_state.json state/trade_log.csv state/KILL_SWITCH; do
