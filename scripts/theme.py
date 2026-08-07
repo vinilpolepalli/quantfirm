@@ -1,23 +1,51 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<meta name="color-scheme" content="light dark">
-<title>quantfirm EOD — 2026-08-07</title>
-<style>
-@font-face { font-family:"Instrument Serif"; src:url("../fonts/instrument-serif-400.woff2") format("woff2");
-  font-weight:400; font-style:normal; font-display:swap; }
-@font-face { font-family:"JetBrains Mono"; src:url("../fonts/jetbrains-mono-400.woff2") format("woff2");
-  font-weight:400; font-style:normal; font-display:swap; }
-@font-face { font-family:"JetBrains Mono"; src:url("../fonts/jetbrains-mono-500.woff2") format("woff2");
-  font-weight:500; font-style:normal; font-display:swap; }
-@font-face { font-family:"JetBrains Mono"; src:url("../fonts/jetbrains-mono-700.woff2") format("woff2");
-  font-weight:700; font-style:normal; font-display:swap; }
+"""Shared visual system for the two generated surfaces (dashboard + EOD report).
 
-:root {
+Both used to carry their own near-duplicate stylesheet, which is how they drifted
+apart. Everything visual now lives here: tokens, base CSS, the equity chart, and
+the number formatters.
 
+Design constraints this file encodes:
+  * every colour is an OKLCH custom property — no inline hex anywhere downstream
+  * a 4pt spacing scale, referenced by name
+  * two faces: Instrument Serif for identity (masthead, section heads only),
+    JetBrains Mono for every number and label. The hero figure stays in the mono
+    face — a serif hero reads as decoration on a page whose subject is numbers.
+  * light and dark are separately chosen steps, not an inverted flip
+  * charts: 2px line, 10% area wash, solid hairline rules, labels only on the
+    points that carry the story (last, peak, cost basis)
+"""
+
+from __future__ import annotations
+
+# --------------------------------------------------------------------------
+# fonts
+# --------------------------------------------------------------------------
+
+def font_face(base: str) -> str:
+    """@font-face block. `base` is the URL prefix to dashboard/fonts/.
+
+    Returns "" when base is None — the fragment build (claude.ai Artifact) has a
+    CSP that blocks any subresource, so it falls through to the system stack.
+    """
+    if not base:
+        return ""
+    return f"""
+@font-face {{ font-family:"Instrument Serif"; src:url("{base}instrument-serif-400.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }}
+@font-face {{ font-family:"JetBrains Mono"; src:url("{base}jetbrains-mono-400.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }}
+@font-face {{ font-family:"JetBrains Mono"; src:url("{base}jetbrains-mono-500.woff2") format("woff2");
+  font-weight:500; font-style:normal; font-display:swap; }}
+@font-face {{ font-family:"JetBrains Mono"; src:url("{base}jetbrains-mono-700.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }}
+"""
+
+
+# --------------------------------------------------------------------------
+# tokens
+# --------------------------------------------------------------------------
+
+_LIGHT = """
   --page:      oklch(0.977 0.007 92);
   --card:      oklch(1 0 0);
   --sunk:      oklch(0.955 0.008 92);
@@ -33,15 +61,9 @@
   --loss:      oklch(0.520 0.170 27);
   --loss-w:    oklch(0.930 0.050 27);
   --warn:      oklch(0.600 0.125 76);
+"""
 
-  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
-  --s7:48px; --s8:72px;
-  --r-sm:6px; --r-md:10px; --r-lg:14px;
-  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
-  --ease-out:cubic-bezier(.22,.61,.36,1);
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+_DARK = """
   --page:      oklch(0.168 0.012 250);
   --card:      oklch(0.212 0.014 250);
   --sunk:      oklch(0.188 0.013 250);
@@ -57,42 +79,9 @@
   --loss:      oklch(0.688 0.155 25);
   --loss-w:    oklch(0.300 0.058 25);
   --warn:      oklch(0.790 0.115 80);
-} }
-:root[data-theme="dark"] {
-  --page:      oklch(0.168 0.012 250);
-  --card:      oklch(0.212 0.014 250);
-  --sunk:      oklch(0.188 0.013 250);
-  --ink-1:     oklch(0.930 0.008 250);
-  --ink-2:     oklch(0.775 0.012 250);
-  --ink-3:     oklch(0.605 0.015 250);
-  --rule:      oklch(0.310 0.016 250);
-  --rule-soft: oklch(0.258 0.014 250);
-  --accent:    oklch(0.790 0.115 68);
-  --accent-w:  oklch(0.268 0.030 68);
-  --gain:      oklch(0.760 0.135 157);
-  --gain-w:    oklch(0.310 0.055 157);
-  --loss:      oklch(0.688 0.155 25);
-  --loss-w:    oklch(0.300 0.058 25);
-  --warn:      oklch(0.790 0.115 80);
-}
-:root[data-theme="light"] {
-  --page:      oklch(0.977 0.007 92);
-  --card:      oklch(1 0 0);
-  --sunk:      oklch(0.955 0.008 92);
-  --ink-1:     oklch(0.245 0.018 250);
-  --ink-2:     oklch(0.395 0.016 250);
-  --ink-3:     oklch(0.480 0.014 250);
-  --rule:      oklch(0.895 0.008 250);
-  --rule-soft: oklch(0.935 0.006 250);
-  --accent:    oklch(0.545 0.125 58);
-  --accent-w:  oklch(0.925 0.038 70);
-  --gain:      oklch(0.505 0.125 156);
-  --gain-w:    oklch(0.930 0.045 156);
-  --loss:      oklch(0.520 0.170 27);
-  --loss-w:    oklch(0.930 0.050 27);
-  --warn:      oklch(0.600 0.125 76);
-}
-@media print { :root {
+"""
+
+_PRINT = """
   --page:#fff; --card:#fff; --sunk:#fff;
   --ink-1:#14181c; --ink-2:#4a5157; --ink-3:#6b7278;
   --rule:#c6cbd0; --rule-soft:#e2e6e9;
@@ -100,8 +89,30 @@
   --gain:oklch(0.470 0.125 156);   --gain-w:oklch(0.915 0.048 156);
   --loss:oklch(0.480 0.170 27);    --loss-w:oklch(0.915 0.052 27);
   --warn:oklch(0.560 0.125 76);
-} }
+"""
 
+TOKENS = f"""
+:root {{
+{_LIGHT}
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --s7:48px; --s8:72px;
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+}}
+@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{{_DARK}}} }}
+:root[data-theme="dark"] {{{_DARK}}}
+:root[data-theme="light"] {{{_LIGHT}}}
+@media print {{ :root {{{_PRINT}}} }}
+"""
+
+
+# --------------------------------------------------------------------------
+# base stylesheet
+# --------------------------------------------------------------------------
+
+BASE = """
 *,*::before,*::after { box-sizing:border-box; }
 html,body { overflow-x:clip; }
 body {
@@ -255,100 +266,123 @@ footer { margin-top:var(--s7); padding-top:var(--s4);
 footer b { color:var(--ink-2); font-weight:500; }
 @media print { .card { border-color:var(--rule); break-inside:avoid; }
   .wrap { padding:0; max-width:none; } a { border-bottom:none; } }
-</style>
-</head>
-<body>
-<div class="wrap">
-<header>
-  <div class="mast">
-    <h1 class="name">Quant<em>firm</em></h1>
-    <div class="meta"><a href="index.html">all reports</a><a href="../">the book</a></div>
-  </div>
-  <div class="rule"></div>
-  <div class="kicker">End of day · 07 August 2026 · filed 19:37 UTC</div>
-</header>
+"""
 
-<section class="hero">
-  <div class="kicker">Book value at close</div>
-  <span class="fig">$248.04</span>
-  <div class="deltas">
-    <span class="pill up"><span class="arw">▲</span>+$0.00 <span class="per">+0.00% today</span></span>
-    <span class="pill down"><span class="arw">▼</span>−$1.96 <span class="per">−0.78% since inception</span></span>
-  </div>
-  <div class="tiles">
-    <div class="tile"><div class="l">Drawdown from peak</div>
-      <div class="v">-4.4%</div>
-      <div class="s">peak $259.43 · halt at −50%</div></div>
-    <div class="tile"><div class="l">Positions</div>
-      <div class="v">6</div>
-      <div class="s">$4.63 cash · 1.9% of book</div></div>
-    <div class="tile"><div class="l">Trades today</div>
-      <div class="v">0</div>
-      <div class="s">strategy xsec_refined</div></div>
-  </div>
-</section>
 
-<div class="grid">
-  <section class="card full">
-    <h2>Equity curve <span class="n">through 2026-08-07</span></h2>
-    <svg class="chart" viewBox="0 0 760 250"
-  role="img" aria-label="Equity history, 2026-07-31 to 2026-08-06">
-  <polygon class="wash" points="46.0,220 46.0,142.43 170.4,158.72 294.8,193.79 419.2,48.21 543.6,64.19 668.0,162.02 668.0,220"/>
-  <line class="axis" x1="46" y1="220" x2="668.00" y2="220"/>
-  <line class="basis" x1="46" y1="142.43" x2="668.00" y2="142.43"/>
-  <text class="lbl" x="40" y="145.93" text-anchor="end">$250.00</text>
-  <text class="lbl" x="40" y="157.43" text-anchor="end">basis</text>
-  <polyline class="series" points="46.0,142.43 170.4,158.72 294.8,193.79 419.2,48.21 543.6,64.19 668.0,162.02"/>
-  <circle cx="419.2" cy="48.21" r="3" fill="var(--accent)"/><text class="lbl" x="419.2" y="38.21" text-anchor="middle">peak $259.43</text>
-  <circle class="dot" cx="668.0" cy="162.02" r="4.5"/>
-  <text class="val" x="680.00" y="166.02">$248.04</text>
-  <text class="lbl" x="46" y="240">2026-07-31</text>
-  <text class="lbl" x="668.00" y="240" text-anchor="end">2026-08-06</text>
-  <g><rect class="hit" x="-16.20" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-07-31: $250.00"><title>2026-07-31 · $250.00</title></rect><g class="peek"><circle cx="46.0" cy="142.43" r="4.5"/></g></g><g><rect class="hit" x="108.20" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-07-31: $248.37"><title>2026-07-31 · $248.37</title></rect><g class="peek"><circle cx="170.4" cy="158.72" r="4.5"/></g></g><g><rect class="hit" x="232.60" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-03: $244.86"><title>2026-08-03 · $244.86</title></rect><g class="peek"><circle cx="294.8" cy="193.79" r="4.5"/></g></g><g><rect class="hit" x="357.00" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-04: $259.43"><title>2026-08-04 · $259.43</title></rect><g class="peek"><circle cx="419.2" cy="48.21" r="4.5"/></g></g><g><rect class="hit" x="481.40" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-05: $257.83"><title>2026-08-05 · $257.83</title></rect><g class="peek"><circle cx="543.6" cy="64.19" r="4.5"/></g></g><g><rect class="hit" x="605.80" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-06: $248.04"><title>2026-08-06 · $248.04</title></rect><g class="peek"><circle cx="668.0" cy="162.02" r="4.5"/></g></g>
-</svg>
-    <details class="table-twin"><summary>data table</summary><table><tr><th>mark date</th><th class="n">book value</th><th class="n">vs basis</th></tr><tr><td>2026-07-31</td><td class="n">$250.00</td><td class="n">+0.00%</td></tr><tr><td>2026-07-31</td><td class="n">$248.37</td><td class="n">−0.65%</td></tr><tr><td>2026-08-03</td><td class="n">$244.86</td><td class="n">−2.06%</td></tr><tr><td>2026-08-04</td><td class="n">$259.43</td><td class="n">+3.77%</td></tr><tr><td>2026-08-05</td><td class="n">$257.83</td><td class="n">+3.13%</td></tr><tr><td>2026-08-06</td><td class="n">$248.04</td><td class="n">−0.78%</td></tr></table></details>
-  </section>
+def page_css(font_base: str | None) -> str:
+    return font_face(font_base) + TOKENS + BASE
 
-  <section class="card full">
-    <h2>Positions at close</h2>
-    <div class="scroll"><table>
-      <tr><th>name</th><th class="n">qty</th><th class="n">mark</th>
-        <th class="n">value</th><th class="n">weight</th></tr>
-      <tr><td class="sym">STX</td><td class="n">0.060050</td><td class="n">$860.50</td><td class="n">$51.67</td><td class="n">20.8%</td></tr><tr><td class="sym">LRCX</td><td class="n">0.163604</td><td class="n">$308.64</td><td class="n">$50.49</td><td class="n">20.4%</td></tr><tr><td class="sym">MU</td><td class="n">0.042777</td><td class="n">$893.45</td><td class="n">$38.22</td><td class="n">15.4%</td></tr><tr><td class="sym">INTC</td><td class="n">0.373392</td><td class="n">$100.45</td><td class="n">$37.51</td><td class="n">15.1%</td></tr><tr><td class="sym">WDC</td><td class="n">0.079220</td><td class="n">$453.80</td><td class="n">$35.95</td><td class="n">14.5%</td></tr><tr><td class="sym">SNDK</td><td class="n">0.023001</td><td class="n">$1,285.55</td><td class="n">$29.57</td><td class="n">11.9%</td></tr><tr class="muted"><td class="sym">CASH</td><td class="n">—</td><td class="n">—</td><td class="n">$4.63</td><td class="n">1.9%</td></tr>
-    </table></div>
-  </section>
 
-  <section class="card full">
-    <h2>Trades <span class="n">2026-08-07</span></h2>
-    <div class="scroll"><table>
-      <tr><th>utc</th><th>name</th><th>side</th><th class="n">price</th>
-        <th class="n">amount</th></tr>
-      <tr><td colspan="5" class="empty">no trades — every holding stayed inside its rank band</td></tr>
-    </table></div>
-  </section>
+# --------------------------------------------------------------------------
+# formatters
+# --------------------------------------------------------------------------
 
-  <section class="card">
-    <h2>Incidents</h2>
-    <ul class="notes"><li>none — reconciliation clean, no risk limits touched</li></ul>
-  </section>
+def money(x: float, sign: bool = False) -> str:
+    s = f"{abs(x):,.2f}"
+    if sign:
+        return ("+$" if x >= 0 else "−$") + s
+    return "$" + s
 
-  <section class="card">
-    <h2>Desks</h2>
-    <div class="chips">
-      <span class="chip"><span class="dot-i live"></span>
-        equity&nbsp;<b>live</b></span>
-      <span class="chip"><span class="dot-i idle"></span>crypto&nbsp;<b>no-go</b></span>
-      <span class="chip"><span class="dot-i idle"></span>research&nbsp;<b>weekly, Mon</b></span>
-      <span class="chip"><span class="dot-i idle"></span>risk&nbsp;<b>daily, 14:00 UTC</b></span>
-    </div>
-  </section>
-</div>
 
-<footer>Agent-operated systematic trading. Books and code:
-<b>github.com/vinilpolepalli/quantfirm</b>. Every figure above is generated from
-the committed state files — positions and cash are reconciled against the broker
-before this report is written. High-risk principal mandate, documented in the
-repo. Not investment advice.</footer>
-</div>
-</body>
-</html>
+def pct(x: float, dp: int = 2) -> str:
+    return f"{'+' if x >= 0 else '−'}{abs(x) * 100:.{dp}f}%"
+
+
+def dircls(x: float) -> str:
+    return "up" if x >= 0 else "down"
+
+
+def delta_pill(amount: float, share: float, label: str) -> str:
+    """Signed money + its percentage, against a named period."""
+    c = dircls(amount)
+    arrow = "▲" if amount >= 0 else "▼"
+    return (f'<span class="pill {c}"><span class="arw">{arrow}</span>'
+            f'{money(amount, True)} <span class="per">{pct(share)} {label}</span></span>')
+
+
+# --------------------------------------------------------------------------
+# equity chart
+# --------------------------------------------------------------------------
+
+def equity_chart(hist, cost_basis: float, width: int = 760, height: int = 250,
+                 uid: str = "eq") -> str:
+    """Single-series equity curve.
+
+    One series, so no legend — the card heading names what is plotted. Labels
+    ride only the points that carry the story: the last mark, the peak (when it
+    is not the last mark), and the cost-basis rule. Everything else is reachable
+    from the hover peek and the table twin the caller renders beneath.
+    """
+    pts = [(ts[:10], float(v)) for ts, v in hist] or [("", cost_basis)]
+    if len(pts) == 1:
+        pts = pts * 2
+
+    vals = [v for _, v in pts] + [cost_basis]
+    lo, hi = min(vals), max(vals)
+    pad = (hi - lo) * 0.18 or max(1.0, hi * 0.02)
+    lo, hi = lo - pad, hi + pad
+    span = hi - lo
+
+    L, R, T, B = 46, 92, 22, 30          # right pad holds the end label
+    pw, ph = width - L - R, height - T - B
+    step = pw / (len(pts) - 1)
+
+    def X(i):
+        return round(L + i * step, 2)
+
+    def Y(v):
+        return round(T + (hi - v) / span * ph, 2)
+
+    coords = [(X(i), Y(v)) for i, (_, v) in enumerate(pts)]
+    line = " ".join(f"{x},{y}" for x, y in coords)
+    base_y = round(T + ph, 2)
+    area = f"{coords[0][0]},{base_y} " + line + f" {coords[-1][0]},{base_y}"
+
+    ex, ey = coords[-1]
+    last_v = pts[-1][1]
+    peak_i = max(range(len(pts)), key=lambda i: pts[i][1])
+    peak_v = pts[peak_i][1]
+
+    # peak marker only when it isn't already the labelled endpoint
+    peak_svg = ""
+    if peak_i != len(pts) - 1 and peak_v > last_v:
+        px, py = coords[peak_i]
+        anchor = "middle" if L + 40 < px < L + pw - 40 else ("start" if px <= L + 40 else "end")
+        peak_svg = (f'<circle cx="{px}" cy="{py}" r="3" fill="var(--accent)"/>'
+                    f'<text class="lbl" x="{px}" y="{py - 10:.2f}" '
+                    f'text-anchor="{anchor}">peak {money(peak_v)}</text>')
+
+    by = Y(cost_basis)
+    hits = ""
+    for i, ((d, v), (x, y)) in enumerate(zip(pts, coords)):
+        hits += (
+            f'<g><rect class="hit" x="{x - step/2:.2f}" y="{T}" '
+            f'width="{step:.2f}" height="{ph:.2f}" tabindex="0" role="img" '
+            f'aria-label="{d}: {money(v)}"><title>{d} · {money(v)}</title></rect>'
+            f'<g class="peek"><circle cx="{x}" cy="{y}" r="4.5"/></g></g>')
+
+    return f"""<svg class="chart" viewBox="0 0 {width} {height}"
+  role="img" aria-label="Equity history, {pts[0][0]} to {pts[-1][0]}">
+  <polygon class="wash" points="{area}"/>
+  <line class="axis" x1="{L}" y1="{base_y}" x2="{L + pw:.2f}" y2="{base_y}"/>
+  <line class="basis" x1="{L}" y1="{by}" x2="{L + pw:.2f}" y2="{by}"/>
+  <text class="lbl" x="{L - 6}" y="{by + 3.5:.2f}" text-anchor="end">{money(cost_basis)}</text>
+  <text class="lbl" x="{L - 6}" y="{by + 15:.2f}" text-anchor="end">basis</text>
+  <polyline class="series" points="{line}"/>
+  {peak_svg}
+  <circle class="dot" cx="{ex}" cy="{ey}" r="4.5"/>
+  <text class="val" x="{ex + 12:.2f}" y="{ey + 4:.2f}">{money(last_v)}</text>
+  <text class="lbl" x="{L}" y="{height - 10}">{pts[0][0]}</text>
+  <text class="lbl" x="{L + pw:.2f}" y="{height - 10}" text-anchor="end">{pts[-1][0]}</text>
+  {hits}
+</svg>"""
+
+
+def equity_table(hist, cost_basis: float) -> str:
+    rows = "".join(
+        f'<tr><td>{ts[:10]}</td><td class="n">{money(float(v))}</td>'
+        f'<td class="n">{pct(float(v) / cost_basis - 1)}</td></tr>'
+        for ts, v in hist)
+    return (f'<details class="table-twin"><summary>data table</summary>'
+            f'<table><tr><th>mark date</th><th class="n">book value</th>'
+            f'<th class="n">vs basis</th></tr>{rows}</table></details>')
