@@ -9,7 +9,7 @@
     "INTC": 0.373392,
     "SNDK": 0.023001
   },
-  "settled_cash": 4.63,
+  "settled_cash": 16.19,
   "unsettled_cash": 0.0,
   "unsettled_date": null,
   "peak_equity": 259.43,
@@ -37,6 +37,10 @@
     [
       "2026-08-06T19:37:26.387580+00:00",
       248.04
+    ],
+    [
+      "2026-08-07T13:22:32.656800+00:00",
+      257.13
     ]
   ],
   "last_rebalance": "2026-08-05T19:38:30.385479+00:00",
@@ -51,14 +55,28 @@
       "ts": "2026-08-05T04:30:00Z",
       "type": "rogue_routine_liquidation",
       "detail": "Legacy 'eod-review-3:30pm' routine (daily_stock_analysis project, +7% take-profit rule) sold INTC 0.412944 @100.7101 ($41.58) and SNDK 0.025628 @1423.86 ($36.49) at 2026-08-04 19:41Z, 8 minutes after the desk's own cycle. Combined with its 2026-08-03 STX sale, it liquidated 3 of 6 firm positions. All four legacy trading routines confirmed deleted by the principal (update_trigger probe returned not-found for each). Books reconciled to venue truth; the desk will redeploy the freed cash per strategy ranks on the next cycle."
+    },
+    {
+      "ts": "2026-08-07T13:21:10.418284+00:00",
+      "type": "cash_contribution",
+      "detail": "settled_cash 4.63 -> 16.19 (+11.56); cost_basis -> 261.56",
+      "note": "Broker settled cash 16.19 vs books 4.63. 4.23 is proceeds from the owner's own pre-existing WFC/FHN/SPY lots sold 2026-08-05 (placed_agent=user, outside the mandate). The remaining 7.33 is unattributed: no agentic or user order accounts for it. All six positions reconciled to the venue exactly, so this is cash entering the account, not a books error. Booked as added capital, not profit."
     }
   ],
   "last_prices": {
-    "STX": 860.505,
-    "LRCX": 308.64,
-    "WDC": 453.8,
-    "INTC": 100.45,
-    "MU": 893.45,
-    "SNDK": 1285.545
-  }
+    "STX": 852.95,
+    "LRCX": 305.77,
+    "WDC": 451.52,
+    "INTC": 99.81,
+    "MU": 881.47,
+    "SNDK": 1258.58
+  },
+  "cost_basis": 261.56,
+  "contributions": [
+    {
+      "ts": "2026-08-07T13:21:10.418261+00:00",
+      "amount": 11.56,
+      "note": "Broker settled cash 16.19 vs books 4.63. 4.23 is proceeds from the owner's own pre-existing WFC/FHN/SPY lots sold 2026-08-05 (placed_agent=user, outside the mandate). The remaining 7.33 is unattributed: no agentic or user order accounts for it. All six positions reconciled to the venue exactly, so this is cash entering the account, not a books error. Booked as added capital, not profit."
+    }
+  ]
 }

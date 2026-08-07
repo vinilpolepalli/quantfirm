@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import theme  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
-START = 250.0
+DEFAULT_BASIS = 250.0
 
 
 def arg(flag, default=None):
@@ -58,15 +58,18 @@ def main() -> None:
     money, pct, dircls = theme.money, theme.pct, theme.dircls
 
     hist = eq.get("equity_history", [])
+    # Capital added after inception raises the bar, it is not profit.
+    basis = float(eq.get("cost_basis", DEFAULT_BASIS))
+    added = round(basis - DEFAULT_BASIS, 2)
     equity = hist[-1][1] if hist else 0.0
     peak = eq.get("peak_equity", equity) or equity
     dd = equity / peak - 1 if peak else 0.0
     kill_line = float(eq_cfg.get("risk", {}).get("kill_drawdown", 0.5))
     dd_used = min(1.0, abs(dd) / kill_line) if kill_line else 0.0
 
-    total_pl = equity - START
+    total_pl = equity - basis
     day_base = next((v for ts, v in reversed(hist[:-1])
-                     if ts[:10] != hist[-1][0][:10]), START) if len(hist) > 1 else START
+                     if ts[:10] != hist[-1][0][:10]), basis) if len(hist) > 1 else basis
     day_pl = equity - day_base
 
     positions = eq.get("positions", {})
@@ -135,11 +138,11 @@ def main() -> None:
   <span class="fig">{money(equity)}</span>
   <div class="deltas">
     {theme.delta_pill(day_pl, day_pl / day_base if day_base else 0, "today")}
-    {theme.delta_pill(total_pl, total_pl / START, "since inception")}
+    {theme.delta_pill(total_pl, total_pl / basis, "since inception")}
   </div>
   <div class="line">{n_pos} position{"" if n_pos == 1 else "s"} ·
     strategy <b>{eq_cfg.get("strategy", "—")}</b> ·
-    funded <b>{money(START)}</b> on {hist[0][0][:10] if hist else "—"} ·
+    funded <b>{money(DEFAULT_BASIS)}</b> on {hist[0][0][:10] if hist else "—"}{f" + {money(added)} added" if added else ""} ·
     peak <b>{money(peak)}</b></div>
   <div class="meter">
     <div class="track"><div class="fill"
@@ -152,8 +155,8 @@ def main() -> None:
 <div class="grid">
   <section class="card full">
     <h2>Equity curve <span class="n">marked at each close</span></h2>
-    {theme.equity_chart(hist, START, uid="dash")}
-    {theme.equity_table(hist, START)}
+    {theme.equity_chart(hist, basis, uid="dash")}
+    {theme.equity_table(hist, basis)}
   </section>
 
   <section class="card">
