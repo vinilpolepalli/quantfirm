@@ -316,6 +316,7 @@ def mark(args) -> None:
     prices = json.loads(args.prices)
     equity = state["settled_cash"] + state.get("unsettled_cash", 0.0) + sum(
         q * float(prices.get(s, 0) or 0) for s, q in state["positions"].items())
+    state["last_prices"] = {k: float(v) for k, v in prices.items()}
     state["peak_equity"] = round(max(state.get("peak_equity", 0.0), equity), 2)
     state.setdefault("equity_history", []).append([_now(), round(equity, 2)])
     state["equity_history"] = state["equity_history"][-1000:]
