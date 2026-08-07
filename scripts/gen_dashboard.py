@@ -56,9 +56,11 @@ def main() -> None:
     except Exception:
         pass
     # last marked prices from trade log fallback: use avg prices per symbol
-    last_px = {}
+    # Marked prices are authoritative; the trade log only covers recently
+    # traded names, so pricing off it silently zeroes long-held positions.
+    last_px = {k: float(v) for k, v in (eq.get("last_prices") or {}).items()}
     for t in trades[::-1]:
-        last_px[t["symbol"]] = float(t["price"])
+        last_px.setdefault(t["symbol"], float(t["price"]))
 
     def money(x, sign=False):
         s = f"{abs(x):,.2f}"

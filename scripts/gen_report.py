@@ -94,11 +94,11 @@ def main() -> None:
             trades_today = [t for t in csv.DictReader(f) if t["ts"][:10] == today]
     except Exception:
         pass
-    last_px = {}
+    last_px = {k: float(v) for k, v in (eq.get("last_prices") or {}).items()}
     try:
         with open(os.path.join(ROOT, "state/equity_trade_log.csv")) as f:
             for t in csv.DictReader(f):
-                last_px[t["symbol"]] = float(t["price"])
+                last_px.setdefault(t["symbol"], float(t["price"]))
     except Exception:
         pass
 

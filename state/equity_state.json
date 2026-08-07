@@ -52,5 +52,13 @@
       "type": "rogue_routine_liquidation",
       "detail": "Legacy 'eod-review-3:30pm' routine (daily_stock_analysis project, +7% take-profit rule) sold INTC 0.412944 @100.7101 ($41.58) and SNDK 0.025628 @1423.86 ($36.49) at 2026-08-04 19:41Z, 8 minutes after the desk's own cycle. Combined with its 2026-08-03 STX sale, it liquidated 3 of 6 firm positions. All four legacy trading routines confirmed deleted by the principal (update_trigger probe returned not-found for each). Books reconciled to venue truth; the desk will redeploy the freed cash per strategy ranks on the next cycle."
     }
-  ]
+  ],
+  "last_prices": {
+    "STX": 860.505,
+    "LRCX": 308.64,
+    "WDC": 453.8,
+    "INTC": 100.45,
+    "MU": 893.45,
+    "SNDK": 1285.545
+  }
 }
