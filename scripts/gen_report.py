@@ -26,7 +26,7 @@ import theme  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 OUT = os.path.join(ROOT, "dashboard", "reports")
-START = 250.0
+DEFAULT_BASIS = 250.0
 
 
 def arg(flag, default=None):
@@ -95,15 +95,18 @@ def main() -> None:
     money, pct, dircls = theme.money, theme.pct, theme.dircls
 
     hist = eq.get("equity_history", [])
+    # Capital added after inception raises the bar, it is not profit.
+    basis = float(eq.get("cost_basis", DEFAULT_BASIS))
+    added = round(basis - DEFAULT_BASIS, 2)
     today = arg("--date", datetime.now(timezone.utc).date().isoformat())
     equity = hist[-1][1] if hist else 0.0
     peak = eq.get("peak_equity", equity) or equity
     dd = equity / peak - 1 if peak else 0.0
     kill_line = float(eq_cfg.get("risk", {}).get("kill_drawdown", 0.5))
 
-    day_base = next((v for ts, v in reversed(hist) if ts[:10] < today), START)
+    day_base = next((v for ts, v in reversed(hist) if ts[:10] < today), basis)
     day_pl = equity - day_base
-    total_pl = equity - START
+    total_pl = equity - basis
 
     try:
         with open(os.path.join(ROOT, state_dir, "equity_trade_log.csv")) as f:
@@ -141,7 +144,8 @@ def main() -> None:
         trade_rows = ('<tr><td colspan="5" class="empty">no trades — every holding '
                       'stayed inside its rank band</td></tr>')
 
-    incidents = []
+    incidents = [i["detail"] for i in eq.get("incidents", [])
+                 if i.get("ts", "")[:10] == today and i.get("detail")]
     if kill_eq:
         incidents.append("<b>equity kill switch active</b> — book flattened, trading halted")
     if eq.get("pending_order"):
@@ -170,7 +174,7 @@ def main() -> None:
   <span class="fig">{money(equity)}</span>
   <div class="deltas">
     {theme.delta_pill(day_pl, day_pl / day_base if day_base else 0, "today")}
-    {theme.delta_pill(total_pl, total_pl / START, "since inception")}
+    {theme.delta_pill(total_pl, total_pl / basis, "since inception")}
   </div>
   <div class="tiles">
     <div class="tile"><div class="l">Drawdown from peak</div>
@@ -188,8 +192,8 @@ def main() -> None:
 <div class="grid">
   <section class="card full">
     <h2>Equity curve <span class="n">through {today}</span></h2>
-    {theme.equity_chart(hist, START, uid="rep")}
-    {theme.equity_table(hist, START)}
+    {theme.equity_chart(hist, basis, uid="rep")}
+    {theme.equity_table(hist, basis)}
   </section>
 
   <section class="card full">

@@ -14,7 +14,7 @@
 
 ## TIER 1 — Next Tournament Candidates
 
-Five entries; the sixth slot is deliberately left empty rather than padded. Ordered by probability-weighted expected uplift against the incumbent, not by standalone Sharpe.
+Six entries. The sixth slot was deliberately left empty rather than padded in the 2026-08-01 cycle; 1.6 was added 2026-08-07 from a live-desk observation and is graded honestly rather than promoted to fill space — its expected uplift is the lowest in the tier and it is blocked on a data adoption. Ordered by probability-weighted expected uplift against the incumbent, not by standalone Sharpe.
 
 ### 1.1 XSEC-CANARY — Momentum-selected canary defense for `xsec_refined`
 
@@ -56,6 +56,16 @@ Five entries; the sixth slot is deliberately left empty rather than padded. Orde
 - **Honest net expectation:** ±0.05-0.1 Sharpe around zero. The incumbent already vol-adjusts, capturing much of the same effect. One cheap A/B; kill immediately if no fold-consistent improvement. Never standalone.
 - **Designer brief:** For each of the 200 names, run a rolling 252d regression of daily returns on SPY and its sector ETF; compute 6-1 momentum on the residual series, scaled by residual vol. Swap this ranking into `xsec_refined` in place of the raw vol-adjusted 6-1 rank; keep top-6, rank-band, and rotation modules untouched. A/B against the incumbent on identical folds. Declare the full parameter surface up front (regression window, momentum window) with no sweeping — use the paper's spec, one variant, one trial. Success criterion: fold-consistent net-Sharpe improvement OR materially reduced drawdown in the 2018/2020/2022 fold segments at equal Sharpe. Pre-declared kill: anything less, the experiment closes permanently and this file's Rejected table gains a row.
 
+### 1.6 XSEC-INSIDER — Opportunistic Form 4 insider-buy overlay on the incumbent ranking
+
+- **Origin:** Desk owner, 2026-08-07, from TipRanks "Trading Trends" panels on SNDK. Filed with a correction: those panels showed net insider *selling* over the trailing three months and two net-selling hedge-fund quarters — the eye-catching green bars were 9-15 months stale. The idea is worth testing anyway; the specific observation that prompted it was not evidence for it.
+- **Thesis:** Insider *purchases* are among the better-surviving anomalies, but only once routine trades are stripped out. Cohen, Malloy & Pomorski (2012, JF) show insiders who trade in the same calendar month every year carry no information, while "opportunistic" traders earn ~82bps/month abnormal — the pooled signal is a blend of the two and is correspondingly weak. Purchases inform; sales barely do (Jeng/Metrick/Zeckhauser 2003), because executives sell constantly for diversification and scheduled comp. Form 4 is due within 2 business days, so unlike 13F the data is genuinely timely.
+- **Cadence:** Overlay only — no change to the incumbent's 21-bar cadence. Turnover impact ~0.
+- **Evidence grade:** A for the anomaly in its published universe. **D for our universe.** The effect concentrates in small caps with thin analyst coverage; our 227 names are large/mega-cap, where it is weakest and most arbitraged.
+- **Honest net expectation:** Low. The binding problem is not signal quality, it is **breadth**: we rank 227 names and hold 6, so a ranking input needs a value for most of the universe most of the time. Opportunistic insider *buys* in mega-caps are rare — likely single digits per month across the whole universe. That rules it out as a standalone ranker before any backtest is run. The only shapes worth registering are the cheap ones: (a) a tie-breaker among names already close in momentum rank, (b) a veto/underweight on a held name with clustered opportunistic insider selling. Expected uplift if real: +0.02-0.08 Sharpe. Register with that expectation, not with the 82bps/month headline.
+- **Blocked on:** Tier 3.7 (EDGAR Form 4 ingestion). No work starts until filing-date-stamped data exists — a signal built on trade dates rather than filing dates is lookahead, and would pass a backtest it does not deserve.
+- **Designer brief:** Ingest Form 4 non-derivative acquisitions/dispositions per symbol, stamped by *filing* datetime. Classify each insider routine-vs-opportunistic on a trailing 3-year window per CMP 2012 (same-calendar-month repeat = routine). Build a monthly per-name score from opportunistic net buys only, scaled by insider count and by dollar value relative to the insider's holdings. Register three variants against the incumbent on identical folds: (A) tie-break within +/-2 momentum ranks, (B) veto a held name on clustered opportunistic selling, (C) A+B. Pre-declared kill: if fewer than 25% of universe-months carry a non-zero opportunistic score, the family dies on breadth grounds regardless of Sharpe — measure this *first*, before any backtest, because it is a cheap check that probably ends the experiment.
+
 ---
 
 ## TIER 2 — Worth Testing Later (one line each)
@@ -70,6 +80,8 @@ Five entries; the sixth slot is deliberately left empty rather than padded. Orde
 8. **52-week-high proximity blend into incumbent ranking** — replication SR 0.153 says the standalone edge is mostly gone; one cheap weight-sweep for reduced crash beta (+0.05 best case), then kill.
 9. **Vol-targeting overlay on the ETF sleeve (Moreira-Muir)** — Cederburg et al. (JFE 2020) show implementable versions generally don't beat unmanaged; one ablation on the best canary strategy, capped at 1x, reject if deflated Sharpe doesn't improve.
 10. **Crypto long-flat trend gate (BTC/ETH, 10m-SMA or 13612W, hysteresis band, monthly)** — NOT a reopening of the desk: filed as the documented *precondition* under which crypto exposure could ever be allowed at 93bps/side (~1-3 flips/yr survives the cost math; nothing faster does), with 5pp-threshold monthly rebalancing as its construction rule.
+
+11. **13F hedge-fund holdings tilt** — the other half of the owner's 2026-08-07 observation, graded well below the Form 4 leg: 13F is filed up to 45 days after quarter end, so a position you can see may be 4.5 months old, and the panel that prompted this showed a +50K-share quarterly change on a name with millions of shares of quarterly flow — noise, not signal. Only worth touching as Cohen/Polk/Silli "best ideas" concentration (manager's top position by weight), and only after 1.6 has cleared its breadth check.
 
 ---
 
@@ -96,6 +108,10 @@ One-call HTML tear sheets (~50 metrics, drawdown tables, rolling Sharpe, benchma
 No-key CSV endpoints with split+dividend-adjusted option; quarterly reconciliation pulls (incumbent vs Tiingo vs Stooq majority vote isolates a bad feed) plus one-off delisting spot-audits. Grade C (informal terms, throttling); never a production dependency. Hours.
 
 **Explicitly not adopting:** yfinance (ToS/stability — fails the legal-reachable bar for pipeline use), FMP free fundamentals (restated, not point-in-time — any factor backtested on it embeds lookahead), vectorbt OSS (frozen; paid PRO successor; same paradigm as our engine so it wouldn't catch our bug classes), zipline/backtrader/Lean migration (dead/frozen/cloud-tied; migration risk exceeds benefit at monthly cadence), pyfolio (abandoned), indicator libraries (multiple-testing surface, dependency risk), portfolio optimizers for a top-6 book (estimation error dominates below ~20 assets; DeMiguel 1/N), MlFinLab (relicensed closed-source — see Tier 4 for the open replacements).
+
+### 3.7 SEC EDGAR Form 4 ingestion — unblocks 1.6
+
+Free, authoritative, and filing-timestamped, which is the part that matters: building an insider signal off trade dates instead of filing dates is lookahead. Reachability verified 2026-08-07 from this environment — `data.sec.gov/submissions/CIK*.json` and the browse-edgar Atom feed both return 200 with a declared User-Agent (SEC requires a contact string; unattended jobs must set one or get blocked). Work: CIK map for the 227-name universe, Form 4 XML parse (non-derivative table, transaction code P/S, shares, price, filing datetime), routine-vs-opportunistic classification per CMP 2012, cached to `data/insider/`. Estimated 1-2 days. Do the breadth check in 1.6 *before* building the full pipeline.
 
 ---
 

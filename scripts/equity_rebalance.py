@@ -24,6 +24,8 @@ Usage:
     python scripts/equity_rebalance.py record --symbol AAPL --side buy \
         --dollars 25.00 --filled-qty 0.0824 --price 303.31 --order-id <uuid>
     python scripts/equity_rebalance.py mark --prices '{"AAPL": 303.1, ...}'
+    python scripts/equity_rebalance.py reconcile-cash --venue-cash 16.19 \
+        --note "owner deposit"
 """
 
 from __future__ import annotations
@@ -32,7 +34,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime, timezone, date
+from datetime import datetime, timedelta, timezone, date
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -51,6 +53,33 @@ KILL = os.path.join(ROOT, "state", "KILL_SWITCH_EQ")
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+# NYSE full closures. Only used to decide whether the panel is missing a
+# session — a wrong entry costs at most one deferred rebalance, never a trade
+# on stale data. Past 2027 the check degrades to weekdays-only, which is
+# stricter (a holiday reads as a missing session), so it stays fail-closed.
+NYSE_HOLIDAYS = {
+    "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",
+    "2026-06-19", "2026-07-03", "2026-09-07", "2026-11-26", "2026-12-25",
+    "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26", "2027-05-31",
+    "2027-06-18", "2027-07-05", "2027-09-06", "2027-11-25", "2027-12-24",
+}
+
+
+def missing_sessions(panel_end: date, today: date) -> list[str]:
+    """Trading sessions that closed after `panel_end` and before `today`.
+
+    Non-empty means the panel is missing at least one completed close, so the
+    strategy would rank and band-check against a market it cannot see. Today
+    itself is excluded — its close does not exist while the desk is planning.
+    """
+    out, d = [], panel_end + timedelta(days=1)
+    while d < today:
+        if d.weekday() < 5 and d.isoformat() not in NYSE_HOLIDAYS:
+            out.append(d.isoformat())
+        d += timedelta(days=1)
+    return out
 
 
 def resolve_account(cfg: dict) -> str | None:
@@ -105,6 +134,56 @@ def settle(state: dict) -> None:
         state["unsettled_date"] = None
 
 
+def reconcile_cash(args) -> None:
+    """Bring recorded settled cash to the broker's figure.
+
+    The runbook has always said "reconcile before planning", but there was no
+    primitive for the cash leg, so the books could only ever drift. Cash that
+    appears after inception (an owner deposit, proceeds from lots that were in
+    the account before the mandate started) is real spendable money, but it is
+    NOT profit — so it raises the cost basis rather than the P&L. Without that,
+    every dollar added to the account would show up on a public dashboard as
+    performance.
+
+    Direction matters. A surplus is booked as a contribution. A shortfall is
+    the signature of an outside actor moving money out, and this desk has seen
+    that happen: it is recorded and refused, never silently absorbed.
+    """
+    state = load_state()
+    books = round(state.get("settled_cash", 0.0), 2)
+    venue = round(float(args.venue_cash), 2)
+    delta = round(venue - books, 2)
+
+    if abs(delta) < 0.01:
+        print(json.dumps({"action": "cash_in_sync", "settled_cash": books})); return
+
+    if delta < 0:
+        state.setdefault("incidents", []).append(
+            {"ts": _now(), "type": "cash_shortfall_refused",
+             "detail": f"venue settled cash {venue} is {abs(delta)} BELOW books "
+                       f"{books}; not absorbed. Investigate before trading.",
+             "note": args.note or ""})
+        save_state(state)
+        print(json.dumps({"action": "cash_shortfall_refused", "books": books,
+                          "venue": venue, "delta": delta,
+                          "hint": "money left the account — audit orders and "
+                                  "transfers before the desk trades again"}, indent=2))
+        sys.exit(1)
+
+    state["settled_cash"] = venue
+    state["cost_basis"] = round(state.get("cost_basis", 250.0) + delta, 2)
+    state.setdefault("contributions", []).append(
+        {"ts": _now(), "amount": delta, "note": args.note or ""})
+    state.setdefault("incidents", []).append(
+        {"ts": _now(), "type": "cash_contribution",
+         "detail": f"settled_cash {books} -> {venue} (+{delta}); cost_basis "
+                   f"-> {state['cost_basis']}", "note": args.note or ""})
+    save_state(state)
+    print(json.dumps({"action": "cash_reconciled", "added": delta,
+                      "settled_cash": venue,
+                      "cost_basis": state["cost_basis"]}, indent=2))
+
+
 def plan() -> None:
     with open(CONFIG) as f:
         cfg = json.load(f)
@@ -129,6 +208,32 @@ def plan() -> None:
 
     closes = load_panel()
     last_date = str(closes.index[-1].date())
+
+    # Stale-panel guard. EQUITY.md has always documented "plan refuses stale
+    # panels" but nothing enforced it, and nothing refreshed the panel either,
+    # so the desk silently ranked and band-checked on a market it could not
+    # see. A holding can breach its rebalance band on a session the planner is
+    # blind to — exactly the failure that left cash idle while WDC drifted
+    # 21% below target. Refuse rather than trade on a stale view.
+    missing = missing_sessions(closes.index[-1].date(), date.today())
+    if missing:
+        # Record it: a day with no trades and no explanation is
+        # indistinguishable on the dashboard from a day the strategy chose to
+        # hold, and those are very different things.
+        incs = state.setdefault("incidents", [])
+        if not any(i.get("type") == "stale_panel" and i["ts"][:10] == today
+                   for i in incs):
+            incs.append({"ts": _now(), "type": "stale_panel",
+                         "detail": f"panel ends {last_date}; missing "
+                                   f"{', '.join(missing)} — refused to plan"})
+            save_state(state)
+        print(json.dumps({
+            "action": "stale_panel_refusing_to_trade",
+            "panel_last_date": last_date,
+            "missing_sessions": missing,
+            "hint": "run scripts/update_equities.py, then re-run plan",
+        }, indent=2))
+        return
     # One-shot book reconstruction after an outside actor liquidated part of
     # the book (see quantfirm/equities/reconstruct.py). Consumes the flag so
     # it can never fire twice; every later cycle returns to the strategy's
@@ -337,8 +442,13 @@ def main() -> None:
     r.add_argument("--order-id", default=""); r.add_argument("--init-cash", type=float)
     m = sub.add_parser("mark")
     m.add_argument("--prices", required=True)
+    rc = sub.add_parser("reconcile-cash")
+    rc.add_argument("--venue-cash", type=float, required=True,
+                    help="broker settled cash, from get_portfolio/get_accounts")
+    rc.add_argument("--note", default="", help="why the books differ")
     args = ap.parse_args()
-    {"plan": lambda a: plan(), "record": record, "mark": mark}[args.cmd](args)
+    {"plan": lambda a: plan(), "record": record, "mark": mark,
+     "reconcile-cash": reconcile_cash}[args.cmd](args)
 
 
 if __name__ == "__main__":
