@@ -3,11 +3,18 @@ execution session after mark-to-market. Two outputs:
 
   python scripts/gen_dashboard.py > fragment.html
       page content only — for the claude.ai Artifact publisher, which wraps
-      it in its own document skeleton
+      it in its own document skeleton (and whose CSP blocks the webfonts, so
+      the fragment falls back to the system stack)
 
   python scripts/gen_dashboard.py --standalone > dashboard/index.html
       complete HTML document — for Vercel (or any static host), which
       serves the file raw
+
+  python scripts/gen_dashboard.py --standalone --state DIR
+      render from an alternate state directory (used to regenerate a
+      point-in-time view; never writes anything back)
+
+The visual system lives in scripts/theme.py, shared with gen_report.py.
 """
 
 from __future__ import annotations
@@ -18,7 +25,19 @@ import os
 import sys
 from datetime import datetime, timezone
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import theme  # noqa: E402
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
+START = 250.0
+
+
+def arg(flag, default=None):
+    if flag in sys.argv:
+        i = sys.argv.index(flag)
+        if i + 1 < len(sys.argv):
+            return sys.argv[i + 1]
+    return default
 
 
 def load(path, default):
@@ -30,220 +49,164 @@ def load(path, default):
 
 
 def main() -> None:
-    eq = load("state/equity_state.json", {})
+    state_dir = arg("--state", "state")
+    eq = load(os.path.join(state_dir, "equity_state.json"), {})
     eq_cfg = load("config/equity_live.json", {})
-    cr_cfg = load("config/live.json", {})
-    kill_eq = os.path.exists(os.path.join(ROOT, "state/KILL_SWITCH_EQ"))
-    kill_cr = os.path.exists(os.path.join(ROOT, "state/KILL_SWITCH"))
+    kill_eq = os.path.exists(os.path.join(ROOT, state_dir, "KILL_SWITCH_EQ"))
+    kill_cr = os.path.exists(os.path.join(ROOT, state_dir, "KILL_SWITCH"))
+
+    money, pct, dircls = theme.money, theme.pct, theme.dircls
 
     hist = eq.get("equity_history", [])
     equity = hist[-1][1] if hist else 0.0
     peak = eq.get("peak_equity", equity) or equity
     dd = equity / peak - 1 if peak else 0.0
     kill_line = float(eq_cfg.get("risk", {}).get("kill_drawdown", 0.5))
-    dd_used = min(1.0, abs(dd) / kill_line) if kill_line else 0
-    start = 250.0
-    total_pl = equity - start
+    dd_used = min(1.0, abs(dd) / kill_line) if kill_line else 0.0
+
+    total_pl = equity - START
     day_base = next((v for ts, v in reversed(hist[:-1])
-                     if ts[:10] != hist[-1][0][:10]), start) if len(hist) > 1 else start
+                     if ts[:10] != hist[-1][0][:10]), START) if len(hist) > 1 else START
     day_pl = equity - day_base
 
     positions = eq.get("positions", {})
-    trades = []
     try:
-        with open(os.path.join(ROOT, "state/equity_trade_log.csv")) as f:
-            trades = list(csv.DictReader(f))[-8:][::-1]
+        with open(os.path.join(ROOT, state_dir, "equity_trade_log.csv")) as f:
+            all_trades = list(csv.DictReader(f))
     except Exception:
-        pass
-    # last marked prices from trade log fallback: use avg prices per symbol
-    # Marked prices are authoritative; the trade log only covers recently
-    # traded names, so pricing off it silently zeroes long-held positions.
+        all_trades = []
+    trades = all_trades[-8:][::-1]
+
+    # Marked prices are authoritative; the trade log only covers recently traded
+    # names, so pricing off it alone silently zeroes long-held positions.
     last_px = {k: float(v) for k, v in (eq.get("last_prices") or {}).items()}
-    for t in trades[::-1]:
+    for t in all_trades:
         last_px.setdefault(t["symbol"], float(t["price"]))
 
-    def money(x, sign=False):
-        s = f"{abs(x):,.2f}"
-        if sign:
-            return ("+$" if x >= 0 else "−$") + s
-        return "$" + s
+    cash = eq.get("settled_cash", 0.0) + eq.get("unsettled_cash", 0.0)
 
-    def cls(x):
-        return "up" if x >= 0 else "down"
-
-    # sparkline from equity history
-    pts = [v for _, v in hist] or [start]
-    if len(pts) == 1:
-        pts = pts * 2
-    lo, hi = min(pts), max(pts)
-    rng = (hi - lo) or 1.0
-    W, H = 320, 64
-    step = W / (len(pts) - 1)
-    coords = [(round(i * step, 1), round(H - 6 - (v - lo) / rng * (H - 12), 1))
-              for i, v in enumerate(pts)]
-    line = " ".join(f"{x},{y}" for x, y in coords)
-    area = f"0,{H} " + line + f" {W},{H}"
-    end_x, end_y = coords[-1]
+    holdings = sorted(((s, q, q * last_px.get(s, 0.0)) for s, q in positions.items()),
+                      key=lambda r: -r[2])
+    book = sum(v for _, _, v in holdings) + cash or 1.0
 
     pos_rows = ""
-    total_pos = 0.0
-    for sym, qty in sorted(positions.items(), key=lambda kv: -kv[1] * last_px.get(kv[0], 0)):
-        px = last_px.get(sym, 0.0)
-        val = qty * px
-        total_pos += val
-        pos_rows += (f'<tr><td class="sym">{sym}</td><td>{qty:.6f}</td>'
-                     f'<td>{money(px)}</td><td class="num">{money(val)}</td></tr>')
-    cash = eq.get("settled_cash", 0.0) + eq.get("unsettled_cash", 0.0)
-    pos_rows += (f'<tr class="cashrow"><td class="sym">CASH</td><td>—</td><td>—</td>'
-                 f'<td class="num">{money(cash)}</td></tr>')
+    for sym, qty, val in holdings:
+        w = val / book
+        pos_rows += (
+            f'<tr><td class="sym">{sym}</td>'
+            f'<td class="n">{money(last_px.get(sym, 0.0))}</td>'
+            f'<td class="n">{money(val)}</td>'
+            f'<td class="n">{w * 100:.1f}%</td></tr>')
+    pos_rows += (
+        f'<tr class="muted"><td class="sym">CASH</td><td class="n">—</td>'
+        f'<td class="n">{money(cash)}</td>'
+        f'<td class="n">{cash / book * 100:.1f}%</td></tr>')
 
     trade_rows = "".join(
-        f'<tr><td>{t["ts"][5:16].replace("T", " ")}</td><td class="sym">{t["symbol"]}</td>'
-        f'<td class="{ "buy" if t["side"]=="buy" else "sell"}">{t["side"].upper()}</td>'
-        f'<td class="num">{money(float(t["dollars"]))}</td><td>{float(t["price"]):,.2f}</td></tr>'
+        f'<tr><td>{t["ts"][5:10]}</td><td class="sym">{t["symbol"]}</td>'
+        f'<td class="side-{t["side"]}">{t["side"].upper()}</td>'
+        f'<td class="n">{money(float(t["dollars"]))}</td>'
+        f'<td class="n">{float(t["price"]):,.2f}</td></tr>'
         for t in trades) or '<tr><td colspan="5" class="empty">no trades yet</td></tr>'
 
-    eq_live = eq_cfg.get("enabled") and not kill_eq
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    eq_live = bool(eq_cfg.get("enabled")) and not kill_eq
+    meter_col = ("var(--loss)" if dd_used > 0.6 else
+                 "var(--warn)" if dd_used > 0.3 else "var(--accent)")
+    # stamp the mark the figures describe, not wall-clock: a page regenerated
+    # later must not claim numbers fresher than the book behind them
+    mark_ts = hist[-1][0] if hist else datetime.now(timezone.utc).isoformat()
+    now = datetime.fromisoformat(mark_ts).strftime(
+        "marked %d %b %Y · %H:%M UTC").upper()
+    n_pos = len(holdings)
+    dd_txt = "0.0%" if dd >= -0.0005 else f"{dd * 100:.1f}%"
 
-    html = f"""<title>quantfirm — the book</title>
-<style>
-:root {{
-  --bg:#F4F5F3; --panel:#FFFFFF; --ink:#1B2528; --dim:#5C6B70; --faint:#D8DDDB;
-  --accent:#B8860B; --gain:#1E7A52; --loss:#B03A31; --warn:#A8741F;
-  --meter:#E4E7E5;
-}}
-@media (prefers-color-scheme: dark) {{ :root {{
-  --bg:#0E1517; --panel:#151D20; --ink:#DCE3E2; --dim:#7E8F93; --faint:#243034;
-  --accent:#D9A441; --gain:#3DAE7A; --loss:#D25A50; --warn:#C78A2D;
-  --meter:#1D272B;
-}} }}
-:root[data-theme="dark"] {{
-  --bg:#0E1517; --panel:#151D20; --ink:#DCE3E2; --dim:#7E8F93; --faint:#243034;
-  --accent:#D9A441; --gain:#3DAE7A; --loss:#D25A50; --warn:#C78A2D; --meter:#1D272B;
-}}
-:root[data-theme="light"] {{
-  --bg:#F4F5F3; --panel:#FFFFFF; --ink:#1B2528; --dim:#5C6B70; --faint:#D8DDDB;
-  --accent:#B8860B; --gain:#1E7A52; --loss:#B03A31; --warn:#A8741F; --meter:#E4E7E5;
-}}
-* {{ box-sizing:border-box; }}
-body {{ margin:0; background:var(--bg); color:var(--ink);
-  font:15px/1.45 ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
-  font-variant-numeric: tabular-nums; }}
-.wrap {{ max-width:640px; margin:0 auto; padding:20px 16px 48px; display:flex;
-  flex-direction:column; gap:14px; }}
-header {{ display:flex; align-items:baseline; justify-content:space-between;
-  border-bottom:2px solid var(--accent); padding-bottom:10px; }}
-header h1 {{ font-size:15px; margin:0; letter-spacing:.08em; }}
-header h1 .tick {{ color:var(--accent); }}
-.stamp {{ color:var(--dim); font-size:11px; }}
-.card {{ background:var(--panel); border:1px solid var(--faint); border-radius:4px;
-  padding:14px 16px; }}
-.hero {{ display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 18px; }}
-.hero .big {{ font-size:40px; font-weight:700; letter-spacing:-.02em; }}
-.pill {{ font-size:13px; font-weight:600; padding:3px 10px; border-radius:99px; }}
-.pill.up {{ background:color-mix(in srgb, var(--gain) 14%, transparent); color:var(--gain); }}
-.pill.down {{ background:color-mix(in srgb, var(--loss) 14%, transparent); color:var(--loss); }}
-.sub {{ width:100%; color:var(--dim); font-size:12.5px; }}
-.meter {{ margin-top:10px; }}
-.meter .bar {{ height:6px; background:var(--meter); border-radius:3px; overflow:hidden; }}
-.meter .fill {{ height:100%; width:{dd_used*100:.1f}%; background:{'var(--loss)' if dd_used>0.6 else 'var(--warn)' if dd_used>0.3 else 'var(--gain)'};
-  border-radius:3px; }}
-.meter .lbl {{ display:flex; justify-content:space-between; color:var(--dim);
-  font-size:11px; margin-top:4px; letter-spacing:.05em; }}
-h2 {{ font-size:11.5px; letter-spacing:.14em; color:var(--dim); margin:0 0 10px;
-  text-transform:uppercase; font-weight:600; }}
-.tablewrap {{ overflow-x:auto; }}
-table {{ width:100%; border-collapse:collapse; font-size:13.5px; }}
-th {{ text-align:left; color:var(--dim); font-weight:500; font-size:11px;
-  letter-spacing:.08em; text-transform:uppercase; padding:0 8px 6px 0; }}
-td {{ padding:5px 8px 5px 0; border-top:1px solid var(--faint); }}
-td.num, th.num {{ text-align:right; padding-right:0; }}
-td:last-child, th:last-child {{ text-align:right; padding-right:0; }}
-.sym {{ font-weight:700; }}
-.buy {{ color:var(--gain); font-weight:600; }} .sell {{ color:var(--loss); font-weight:600; }}
-.cashrow td {{ color:var(--dim); }}
-.empty {{ color:var(--dim); text-align:center; padding:14px 0; }}
-.spark {{ display:block; width:100%; height:auto; }}
-.chips {{ display:flex; flex-wrap:wrap; gap:8px; }}
-.chip {{ display:flex; align-items:center; gap:7px; font-size:12.5px;
-  border:1px solid var(--faint); border-radius:99px; padding:5px 12px; }}
-.dot {{ width:8px; height:8px; border-radius:50%; }}
-.dot.live {{ background:var(--gain); box-shadow:0 0 0 3px color-mix(in srgb, var(--gain) 22%, transparent); }}
-.dot.halt {{ background:var(--loss); }}
-.dot.idle {{ background:var(--dim); }}
-footer {{ color:var(--dim); font-size:11.5px; line-height:1.6; }}
-footer b {{ color:var(--ink); }}
-</style>
-<div class="wrap">
-<header><h1><span class="tick">▮</span> QUANTFIRM / THE BOOK</h1>
-  <span class="stamp"><a href="reports/" style="color:var(--accent);text-decoration:none">reports ↗</a> · {now}</span></header>
-
-<section class="card">
-  <div class="hero">
-    <span class="big">{money(equity)}</span>
-    <span class="pill {cls(day_pl)}">{money(day_pl, sign=True)} today</span>
-    <span class="pill {cls(total_pl)}">{money(total_pl, sign=True)} all-time</span>
-    <span class="sub">strategy <b>{eq_cfg.get("strategy","—")}</b> · started $250.00 · peak {money(peak)}</span>
+    body = f"""<div class="wrap">
+<header>
+  <div class="mast">
+    <h1 class="name">Quant<em>firm</em></h1>
+    <div class="meta"><a href="reports/">daily reports ↗</a><span>{now}</span></div>
   </div>
+  <div class="rule"></div>
+  <div class="kicker">The book · agent-operated systematic equity</div>
+</header>
+
+<section class="hero">
+  <div class="kicker">Book value</div>
+  <span class="fig">{money(equity)}</span>
+  <div class="deltas">
+    {theme.delta_pill(day_pl, day_pl / day_base if day_base else 0, "today")}
+    {theme.delta_pill(total_pl, total_pl / START, "since inception")}
+  </div>
+  <div class="line">{n_pos} position{"" if n_pos == 1 else "s"} ·
+    strategy <b>{eq_cfg.get("strategy", "—")}</b> ·
+    funded <b>{money(START)}</b> on {hist[0][0][:10] if hist else "—"} ·
+    peak <b>{money(peak)}</b></div>
   <div class="meter">
-    <div class="bar"><div class="fill"></div></div>
-    <div class="lbl"><span>drawdown {dd:.1%}</span><span>kill switch at −{kill_line:.0%}</span></div>
+    <div class="track"><div class="fill"
+      style="width:{dd_used * 100:.1f}%;background:{meter_col}"></div></div>
+    <div class="cap"><span>drawdown from peak <b>{dd_txt}</b></span>
+      <span>kill switch at <b>−{kill_line:.0%}</b></span></div>
   </div>
 </section>
 
-<section class="card">
-  <h2>Equity curve</h2>
-  <svg class="spark" viewBox="0 0 {W} {H}" role="img" aria-label="equity history">
-    <polygon points="{area}" fill="color-mix(in srgb, var(--accent) 12%, transparent)"/>
-    <polyline points="{line}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
-    <circle cx="{end_x}" cy="{end_y}" r="3" fill="var(--accent)"/>
-  </svg>
-</section>
+<div class="grid">
+  <section class="card full">
+    <h2>Equity curve <span class="n">marked at each close</span></h2>
+    {theme.equity_chart(hist, START, uid="dash")}
+    {theme.equity_table(hist, START)}
+  </section>
 
-<section class="card">
-  <h2>Positions</h2>
-  <div class="tablewrap"><table>
-    <tr><th>name</th><th>qty</th><th>last</th><th class="num">value</th></tr>
-    {pos_rows}
-  </table></div>
-</section>
+  <section class="card">
+    <h2>Positions <span class="n">{n_pos} names</span></h2>
+    <div class="scroll"><table>
+      <tr><th>name</th><th class="n">last</th><th class="n">value</th>
+        <th class="n">weight</th></tr>
+      {pos_rows}
+    </table></div>
+  </section>
 
-<section class="card">
-  <h2>Desks</h2>
-  <div class="chips">
-    <span class="chip"><span class="dot {'live' if eq_live else 'halt'}"></span>
-      equity · {'LIVE' if eq_live else 'HALTED' if kill_eq else 'disabled'}</span>
-    <span class="chip"><span class="dot {'halt' if kill_cr else 'idle'}"></span>
-      crypto · {'HALTED' if kill_cr else 'NO-GO (disabled)'}</span>
-    <span class="chip"><span class="dot idle"></span>research · weekly Mon</span>
-    <span class="chip"><span class="dot idle"></span>risk committee · daily 14:00 UTC</span>
-  </div>
-</section>
+  <section class="card">
+    <h2>Recent trades <span class="n">last {len(trades)}</span></h2>
+    <div class="scroll"><table>
+      <tr><th>date</th><th>name</th><th>side</th><th class="n">amount</th>
+        <th class="n">price</th></tr>
+      {trade_rows}
+    </table></div>
+  </section>
 
-<section class="card">
-  <h2>Recent trades</h2>
-  <div class="tablewrap"><table>
-    <tr><th>time</th><th>name</th><th>side</th><th class="num">amount</th><th>price</th></tr>
-    {trade_rows}
-  </table></div>
-</section>
-
-<footer>Agent-operated. Rebalances only when a holding falls out of its momentum
-rank band (~monthly). High-risk mandate: expect large swings; the
-<b>−{kill_line:.0%} kill switch</b> flattens to cash and halts.
-Books live in the repo; this page regenerates after each trading day.</footer>
+  <section class="card full">
+    <h2>Desks</h2>
+    <div class="chips">
+      <span class="chip"><span class="dot-i {'live' if eq_live else 'halt'}"></span>
+        equity&nbsp;<b>{'live' if eq_live else 'halted' if kill_eq else 'disabled'}</b></span>
+      <span class="chip"><span class="dot-i {'halt' if kill_cr else 'idle'}"></span>
+        crypto&nbsp;<b>{'halted' if kill_cr else 'no-go'}</b></span>
+      <span class="chip"><span class="dot-i idle"></span>research&nbsp;<b>weekly, Mon</b></span>
+      <span class="chip"><span class="dot-i idle"></span>risk&nbsp;<b>daily, 14:00 UTC</b></span>
+    </div>
+  </section>
 </div>
-"""
+
+<footer>Agent-operated. The book rebalances only when a holding drops out of its
+momentum rank band, which works out to roughly monthly — quiet days are the
+strategy working, not a stall. High-risk mandate by design: expect swings, and
+the <b>−{kill_line:.0%} kill switch</b> flattens to cash and halts trading if it
+trips. Every figure on this page is generated from the committed state files in
+the repo; nothing here is hand-entered. Not investment advice.</footer>
+</div>"""
+
     if "--standalone" in sys.argv:
-        html = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
-                '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-                '<meta name="robots" content="noindex, nofollow">\n'
-                + html.replace("<title>", "<title>", 1).split("<style>")[0]
-                + "<style>" + html.split("<style>", 1)[1]
-                  .replace("</style>", "</style>\n</head>\n<body>", 1)
-                + "\n</body>\n</html>\n")
-    sys.stdout.write(html)
+        sys.stdout.write(
+            '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+            '<meta name="robots" content="noindex, nofollow">\n'
+            '<meta name="color-scheme" content="light dark">\n'
+            "<title>quantfirm — the book</title>\n"
+            f"<style>{theme.page_css('fonts/')}</style>\n</head>\n<body>\n"
+            f"{body}\n</body>\n</html>\n")
+    else:
+        sys.stdout.write("<title>quantfirm — the book</title>\n"
+                         f"<style>{theme.page_css(None)}</style>\n{body}\n")
 
 
 if __name__ == "__main__":

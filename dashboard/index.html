@@ -4,136 +4,347 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
 <title>quantfirm — the book</title>
 <style>
+@font-face { font-family:"Instrument Serif"; src:url("fonts/instrument-serif-400.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"JetBrains Mono"; src:url("fonts/jetbrains-mono-400.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"JetBrains Mono"; src:url("fonts/jetbrains-mono-500.woff2") format("woff2");
+  font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:"JetBrains Mono"; src:url("fonts/jetbrains-mono-700.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+
 :root {
-  --bg:#F4F5F3; --panel:#FFFFFF; --ink:#1B2528; --dim:#5C6B70; --faint:#D8DDDB;
-  --accent:#B8860B; --gain:#1E7A52; --loss:#B03A31; --warn:#A8741F;
-  --meter:#E4E7E5;
+
+  --page:      oklch(0.977 0.007 92);
+  --card:      oklch(1 0 0);
+  --sunk:      oklch(0.955 0.008 92);
+  --ink-1:     oklch(0.245 0.018 250);
+  --ink-2:     oklch(0.395 0.016 250);
+  --ink-3:     oklch(0.480 0.014 250);
+  --rule:      oklch(0.895 0.008 250);
+  --rule-soft: oklch(0.935 0.006 250);
+  --accent:    oklch(0.545 0.125 58);
+  --accent-w:  oklch(0.925 0.038 70);
+  --gain:      oklch(0.505 0.125 156);
+  --gain-w:    oklch(0.930 0.045 156);
+  --loss:      oklch(0.520 0.170 27);
+  --loss-w:    oklch(0.930 0.050 27);
+  --warn:      oklch(0.600 0.125 76);
+
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --s7:48px; --s8:72px;
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --ease-out:cubic-bezier(.22,.61,.36,1);
 }
-@media (prefers-color-scheme: dark) { :root {
-  --bg:#0E1517; --panel:#151D20; --ink:#DCE3E2; --dim:#7E8F93; --faint:#243034;
-  --accent:#D9A441; --gain:#3DAE7A; --loss:#D25A50; --warn:#C78A2D;
-  --meter:#1D272B;
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page:      oklch(0.168 0.012 250);
+  --card:      oklch(0.212 0.014 250);
+  --sunk:      oklch(0.188 0.013 250);
+  --ink-1:     oklch(0.930 0.008 250);
+  --ink-2:     oklch(0.775 0.012 250);
+  --ink-3:     oklch(0.605 0.015 250);
+  --rule:      oklch(0.310 0.016 250);
+  --rule-soft: oklch(0.258 0.014 250);
+  --accent:    oklch(0.790 0.115 68);
+  --accent-w:  oklch(0.268 0.030 68);
+  --gain:      oklch(0.760 0.135 157);
+  --gain-w:    oklch(0.310 0.055 157);
+  --loss:      oklch(0.688 0.155 25);
+  --loss-w:    oklch(0.300 0.058 25);
+  --warn:      oklch(0.790 0.115 80);
 } }
 :root[data-theme="dark"] {
-  --bg:#0E1517; --panel:#151D20; --ink:#DCE3E2; --dim:#7E8F93; --faint:#243034;
-  --accent:#D9A441; --gain:#3DAE7A; --loss:#D25A50; --warn:#C78A2D; --meter:#1D272B;
+  --page:      oklch(0.168 0.012 250);
+  --card:      oklch(0.212 0.014 250);
+  --sunk:      oklch(0.188 0.013 250);
+  --ink-1:     oklch(0.930 0.008 250);
+  --ink-2:     oklch(0.775 0.012 250);
+  --ink-3:     oklch(0.605 0.015 250);
+  --rule:      oklch(0.310 0.016 250);
+  --rule-soft: oklch(0.258 0.014 250);
+  --accent:    oklch(0.790 0.115 68);
+  --accent-w:  oklch(0.268 0.030 68);
+  --gain:      oklch(0.760 0.135 157);
+  --gain-w:    oklch(0.310 0.055 157);
+  --loss:      oklch(0.688 0.155 25);
+  --loss-w:    oklch(0.300 0.058 25);
+  --warn:      oklch(0.790 0.115 80);
 }
 :root[data-theme="light"] {
-  --bg:#F4F5F3; --panel:#FFFFFF; --ink:#1B2528; --dim:#5C6B70; --faint:#D8DDDB;
-  --accent:#B8860B; --gain:#1E7A52; --loss:#B03A31; --warn:#A8741F; --meter:#E4E7E5;
+  --page:      oklch(0.977 0.007 92);
+  --card:      oklch(1 0 0);
+  --sunk:      oklch(0.955 0.008 92);
+  --ink-1:     oklch(0.245 0.018 250);
+  --ink-2:     oklch(0.395 0.016 250);
+  --ink-3:     oklch(0.480 0.014 250);
+  --rule:      oklch(0.895 0.008 250);
+  --rule-soft: oklch(0.935 0.006 250);
+  --accent:    oklch(0.545 0.125 58);
+  --accent-w:  oklch(0.925 0.038 70);
+  --gain:      oklch(0.505 0.125 156);
+  --gain-w:    oklch(0.930 0.045 156);
+  --loss:      oklch(0.520 0.170 27);
+  --loss-w:    oklch(0.930 0.050 27);
+  --warn:      oklch(0.600 0.125 76);
 }
-* { box-sizing:border-box; }
-body { margin:0; background:var(--bg); color:var(--ink);
-  font:15px/1.45 ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
-  font-variant-numeric: tabular-nums; }
-.wrap { max-width:640px; margin:0 auto; padding:20px 16px 48px; display:flex;
-  flex-direction:column; gap:14px; }
-header { display:flex; align-items:baseline; justify-content:space-between;
-  border-bottom:2px solid var(--accent); padding-bottom:10px; }
-header h1 { font-size:15px; margin:0; letter-spacing:.08em; }
-header h1 .tick { color:var(--accent); }
-.stamp { color:var(--dim); font-size:11px; }
-.card { background:var(--panel); border:1px solid var(--faint); border-radius:4px;
-  padding:14px 16px; }
-.hero { display:flex; flex-wrap:wrap; align-items:baseline; gap:10px 18px; }
-.hero .big { font-size:40px; font-weight:700; letter-spacing:-.02em; }
-.pill { font-size:13px; font-weight:600; padding:3px 10px; border-radius:99px; }
-.pill.up { background:color-mix(in srgb, var(--gain) 14%, transparent); color:var(--gain); }
-.pill.down { background:color-mix(in srgb, var(--loss) 14%, transparent); color:var(--loss); }
-.sub { width:100%; color:var(--dim); font-size:12.5px; }
-.meter { margin-top:10px; }
-.meter .bar { height:6px; background:var(--meter); border-radius:3px; overflow:hidden; }
-.meter .fill { height:100%; width:8.8%; background:var(--gain);
-  border-radius:3px; }
-.meter .lbl { display:flex; justify-content:space-between; color:var(--dim);
-  font-size:11px; margin-top:4px; letter-spacing:.05em; }
-h2 { font-size:11.5px; letter-spacing:.14em; color:var(--dim); margin:0 0 10px;
-  text-transform:uppercase; font-weight:600; }
-.tablewrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; font-size:13.5px; }
-th { text-align:left; color:var(--dim); font-weight:500; font-size:11px;
-  letter-spacing:.08em; text-transform:uppercase; padding:0 8px 6px 0; }
-td { padding:5px 8px 5px 0; border-top:1px solid var(--faint); }
-td.num, th.num { text-align:right; padding-right:0; }
-td:last-child, th:last-child { text-align:right; padding-right:0; }
-.sym { font-weight:700; }
-.buy { color:var(--gain); font-weight:600; } .sell { color:var(--loss); font-weight:600; }
-.cashrow td { color:var(--dim); }
-.empty { color:var(--dim); text-align:center; padding:14px 0; }
-.spark { display:block; width:100%; height:auto; }
-.chips { display:flex; flex-wrap:wrap; gap:8px; }
-.chip { display:flex; align-items:center; gap:7px; font-size:12.5px;
-  border:1px solid var(--faint); border-radius:99px; padding:5px 12px; }
-.dot { width:8px; height:8px; border-radius:50%; }
-.dot.live { background:var(--gain); box-shadow:0 0 0 3px color-mix(in srgb, var(--gain) 22%, transparent); }
-.dot.halt { background:var(--loss); }
-.dot.idle { background:var(--dim); }
-footer { color:var(--dim); font-size:11.5px; line-height:1.6; }
-footer b { color:var(--ink); }
+@media print { :root {
+  --page:#fff; --card:#fff; --sunk:#fff;
+  --ink-1:#14181c; --ink-2:#4a5157; --ink-3:#6b7278;
+  --rule:#c6cbd0; --rule-soft:#e2e6e9;
+  --accent:oklch(0.480 0.125 58);  --accent-w:oklch(0.900 0.040 70);
+  --gain:oklch(0.470 0.125 156);   --gain-w:oklch(0.915 0.048 156);
+  --loss:oklch(0.480 0.170 27);    --loss-w:oklch(0.915 0.052 27);
+  --warn:oklch(0.560 0.125 76);
+} }
+
+*,*::before,*::after { box-sizing:border-box; }
+html,body { overflow-x:clip; }
+body {
+  margin:0; background:var(--page); color:var(--ink-1);
+  font:400 14px/1.55 var(--mono);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.wrap { max-width:860px; margin:0 auto; padding:var(--s6) var(--s4) var(--s8); }
+
+/* ---- masthead ---------------------------------------------------------- */
+.mast { display:flex; align-items:flex-end; justify-content:space-between;
+  gap:var(--s4); flex-wrap:wrap; }
+.mast .name { font:400 34px/1 var(--display); letter-spacing:.005em;
+  margin:0; color:var(--ink-1); }
+.mast .name em { font-style:normal; color:var(--accent); }
+.mast .meta { font-size:11px; color:var(--ink-3); letter-spacing:.06em;
+  text-transform:uppercase; display:flex; gap:var(--s3); align-items:center;
+  flex-wrap:wrap; }
+.rule { height:1px; background:var(--ink-1); margin:var(--s3) 0 var(--s2); }
+.rule.thin { background:var(--rule); }
+.kicker { font-size:10.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-3); }
+
+a { color:var(--ink-2); text-decoration:none;
+  border-bottom:1px solid var(--rule); padding-bottom:1px;
+  transition:color .16s var(--ease-out), border-color .16s var(--ease-out); }
+a:hover { color:var(--accent); border-bottom-color:var(--accent); }
+a:active { color:var(--accent); opacity:.75; }
+a:focus-visible { outline:2px solid var(--accent); outline-offset:3px;
+  border-radius:2px; border-bottom-color:transparent; }
+
+/* ---- hero -------------------------------------------------------------- */
+.hero { margin:var(--s6) 0 var(--s5); }
+.hero .fig { font:700 clamp(46px,10vw,76px)/1 var(--mono);
+  letter-spacing:-.045em; display:block; margin:var(--s2) 0 var(--s4); }
+.deltas { display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; }
+.pill { display:inline-flex; align-items:center; gap:var(--s2);
+  font-size:12.5px; font-weight:500; padding:5px 11px 5px 9px;
+  border-radius:999px; white-space:nowrap; }
+.pill .arw { font-size:10px; line-height:1; }
+.pill.up   { background:var(--gain-w); color:var(--gain); }
+.pill.down { background:var(--loss-w); color:var(--loss); }
+.pill .per { color:inherit; opacity:.72; }
+.hero .line { margin-top:var(--s4); font-size:12.5px; color:var(--ink-2); }
+.hero .line b { color:var(--ink-1); font-weight:500; }
+
+/* ---- drawdown meter ---------------------------------------------------- */
+.meter { margin-top:var(--s5); max-width:520px; }
+.meter .track { height:6px; border-radius:999px; background:var(--accent-w);
+  position:relative; overflow:hidden; }
+.meter .fill { position:absolute; inset:0 auto 0 0; border-radius:999px; }
+.meter .cap { display:flex; justify-content:space-between; gap:var(--s3);
+  font-size:11px; color:var(--ink-3); margin-top:var(--s2);
+  letter-spacing:.04em; }
+.meter .cap b { color:var(--ink-2); font-weight:500; }
+
+/* ---- stat tiles -------------------------------------------------------- */
+.tiles { display:grid; gap:var(--s3); margin-top:var(--s5);
+  grid-template-columns:repeat(3,minmax(0,1fr)); }
+@media (max-width:560px) { .tiles { grid-template-columns:minmax(0,1fr); } }
+.tile { background:var(--sunk); border:1px solid var(--rule-soft);
+  border-radius:var(--r-sm); padding:var(--s3) var(--s4) var(--s4); }
+.tile .l { font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); }
+.tile .v { font:500 24px/1.15 var(--mono); letter-spacing:-.03em;
+  margin-top:var(--s2); }
+.tile .s { font-size:11px; color:var(--ink-3); margin-top:var(--s1); }
+.tile .v.up { color:var(--gain); } .tile .v.down { color:var(--loss); }
+
+/* ---- layout ------------------------------------------------------------ */
+.grid { display:grid; gap:var(--s4); margin-top:var(--s6);
+  grid-template-columns:repeat(2,minmax(0,1fr)); }
+.grid .full { grid-column:1 / -1; }
+@media (max-width:720px) { .grid { grid-template-columns:minmax(0,1fr); } }
+
+.card { background:var(--card); border:1px solid var(--rule-soft);
+  border-radius:var(--r-md); padding:var(--s5) var(--s5) var(--s4); }
+.card > h2 { font:400 17px/1.2 var(--display); margin:0 0 var(--s4);
+  color:var(--ink-1); letter-spacing:.01em; }
+.card > h2 .n { font:500 10.5px/1 var(--mono); color:var(--ink-3);
+  letter-spacing:.16em; text-transform:uppercase; margin-left:var(--s2);
+  vertical-align:.28em; }
+
+/* ---- tables ------------------------------------------------------------ */
+.scroll { overflow-x:auto; margin:0 calc(var(--s5) * -1); padding:0 var(--s5); }
+table { width:100%; border-collapse:collapse; font-size:13px;
+  font-variant-numeric:tabular-nums; }
+th { text-align:left; font-weight:500; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); padding:0 var(--s3) var(--s2) 0;
+  white-space:nowrap; }
+td { padding:var(--s2) var(--s3) var(--s2) 0; border-top:1px solid var(--rule-soft);
+  white-space:nowrap; }
+th.n, td.n { text-align:right; padding-right:0; }
+tr:last-child td { padding-bottom:0; }
+.sym { font-weight:700; letter-spacing:.01em; }
+.muted td { color:var(--ink-3); }
+.side-buy  { color:var(--gain); font-weight:500; }
+.side-sell { color:var(--loss); font-weight:500; }
+.empty { color:var(--ink-3); text-align:center; padding:var(--s5) 0;
+  white-space:normal; }
+
+/* ---- chart ------------------------------------------------------------- */
+.chart { display:block; width:100%; height:auto; overflow:visible; }
+.chart .axis   { stroke:var(--rule); stroke-width:1; }
+.chart .basis  { stroke:var(--ink-3); stroke-width:1; }
+.chart .lbl    { fill:var(--ink-3); font:400 10px var(--mono); letter-spacing:.04em; }
+.chart .val    { fill:var(--ink-1); font:500 11.5px var(--mono); }
+.chart .series { fill:none; stroke:var(--accent); stroke-width:2;
+  stroke-linejoin:round; stroke-linecap:round; }
+.chart .wash   { fill:var(--accent); opacity:.10; }
+.chart .dot    { fill:var(--accent); stroke:var(--card); stroke-width:2; }
+.chart .hit    { fill:transparent; }
+.chart .hit:hover + .peek, .chart .hit:focus-visible + .peek { opacity:1; }
+.chart .peek   { opacity:0; transition:opacity .12s var(--ease-out); }
+.chart .peek circle { fill:var(--accent); stroke:var(--card); stroke-width:2; }
+.chart .hit:focus-visible { outline:none; }
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration:.01ms !important; animation-duration:.01ms !important; }
+}
+
+details.table-twin { margin-top:var(--s4); }
+details.table-twin summary { font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); cursor:pointer;
+  list-style:none; display:inline-block; border-bottom:1px solid var(--rule);
+  padding-bottom:2px; }
+details.table-twin summary::-webkit-details-marker { display:none; }
+details.table-twin summary:hover { color:var(--accent); border-color:var(--accent); }
+details.table-twin summary:focus-visible { outline:2px solid var(--accent);
+  outline-offset:3px; }
+details.table-twin table { margin-top:var(--s3); }
+
+/* ---- desk chips -------------------------------------------------------- */
+.chips { display:flex; flex-wrap:wrap; gap:var(--s2); }
+.chip { display:inline-flex; align-items:center; gap:var(--s2); font-size:12px;
+  border:1px solid var(--rule); border-radius:999px; padding:5px 12px 5px 10px;
+  color:var(--ink-2); }
+.chip b { color:var(--ink-1); font-weight:500; }
+.dot-i { width:7px; height:7px; border-radius:50%; flex:none; }
+.dot-i.live { background:var(--gain);
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--gain) 20%, transparent); }
+.dot-i.halt { background:var(--loss); }
+.dot-i.idle { background:var(--ink-3); }
+
+/* ---- notes / footer ---------------------------------------------------- */
+ul.notes { margin:0; padding-left:1.15em; font-size:13px; color:var(--ink-2); }
+ul.notes li { margin-bottom:var(--s1); }
+ul.notes li::marker { color:var(--ink-3); }
+footer { margin-top:var(--s7); padding-top:var(--s4);
+  border-top:1px solid var(--rule); font-size:11.5px; line-height:1.7;
+  color:var(--ink-3); max-width:68ch; }
+footer b { color:var(--ink-2); font-weight:500; }
+@media print { .card { border-color:var(--rule); break-inside:avoid; }
+  .wrap { padding:0; max-width:none; } a { border-bottom:none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><h1><span class="tick">▮</span> QUANTFIRM / THE BOOK</h1>
-  <span class="stamp"><a href="reports/" style="color:var(--accent);text-decoration:none">reports ↗</a> · 2026-08-07 09:07 UTC</span></header>
-
-<section class="card">
-  <div class="hero">
-    <span class="big">$248.04</span>
-    <span class="pill down">−$9.79 today</span>
-    <span class="pill down">−$1.96 all-time</span>
-    <span class="sub">strategy <b>xsec_refined</b> · started $250.00 · peak $259.43</span>
+<header>
+  <div class="mast">
+    <h1 class="name">Quant<em>firm</em></h1>
+    <div class="meta"><a href="reports/">daily reports ↗</a><span>MARKED 06 AUG 2026 · 19:37 UTC</span></div>
   </div>
+  <div class="rule"></div>
+  <div class="kicker">The book · agent-operated systematic equity</div>
+</header>
+
+<section class="hero">
+  <div class="kicker">Book value</div>
+  <span class="fig">$248.04</span>
+  <div class="deltas">
+    <span class="pill down"><span class="arw">▼</span>−$9.79 <span class="per">−3.80% today</span></span>
+    <span class="pill down"><span class="arw">▼</span>−$1.96 <span class="per">−0.78% since inception</span></span>
+  </div>
+  <div class="line">6 positions ·
+    strategy <b>xsec_refined</b> ·
+    funded <b>$250.00</b> on 2026-07-31 ·
+    peak <b>$259.43</b></div>
   <div class="meter">
-    <div class="bar"><div class="fill"></div></div>
-    <div class="lbl"><span>drawdown -4.4%</span><span>kill switch at −50%</span></div>
+    <div class="track"><div class="fill"
+      style="width:8.8%;background:var(--accent)"></div></div>
+    <div class="cap"><span>drawdown from peak <b>-4.4%</b></span>
+      <span>kill switch at <b>−50%</b></span></div>
   </div>
 </section>
 
-<section class="card">
-  <h2>Equity curve</h2>
-  <svg class="spark" viewBox="0 0 320 64" role="img" aria-label="equity history">
-    <polygon points="0,64 0.0,39.7 64.0,45.5 128.0,58.0 192.0,6.0 256.0,11.7 320.0,46.7 320,64" fill="color-mix(in srgb, var(--accent) 12%, transparent)"/>
-    <polyline points="0.0,39.7 64.0,45.5 128.0,58.0 192.0,6.0 256.0,11.7 320.0,46.7" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
-    <circle cx="320.0" cy="46.7" r="3" fill="var(--accent)"/>
-  </svg>
-</section>
+<div class="grid">
+  <section class="card full">
+    <h2>Equity curve <span class="n">marked at each close</span></h2>
+    <svg class="chart" viewBox="0 0 760 250"
+  role="img" aria-label="Equity history, 2026-07-31 to 2026-08-06">
+  <polygon class="wash" points="46.0,220 46.0,142.43 170.4,158.72 294.8,193.79 419.2,48.21 543.6,64.19 668.0,162.02 668.0,220"/>
+  <line class="axis" x1="46" y1="220" x2="668.00" y2="220"/>
+  <line class="basis" x1="46" y1="142.43" x2="668.00" y2="142.43"/>
+  <text class="lbl" x="40" y="145.93" text-anchor="end">$250.00</text>
+  <text class="lbl" x="40" y="157.43" text-anchor="end">basis</text>
+  <polyline class="series" points="46.0,142.43 170.4,158.72 294.8,193.79 419.2,48.21 543.6,64.19 668.0,162.02"/>
+  <circle cx="419.2" cy="48.21" r="3" fill="var(--accent)"/><text class="lbl" x="419.2" y="38.21" text-anchor="middle">peak $259.43</text>
+  <circle class="dot" cx="668.0" cy="162.02" r="4.5"/>
+  <text class="val" x="680.00" y="166.02">$248.04</text>
+  <text class="lbl" x="46" y="240">2026-07-31</text>
+  <text class="lbl" x="668.00" y="240" text-anchor="end">2026-08-06</text>
+  <g><rect class="hit" x="-16.20" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-07-31: $250.00"><title>2026-07-31 · $250.00</title></rect><g class="peek"><circle cx="46.0" cy="142.43" r="4.5"/></g></g><g><rect class="hit" x="108.20" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-07-31: $248.37"><title>2026-07-31 · $248.37</title></rect><g class="peek"><circle cx="170.4" cy="158.72" r="4.5"/></g></g><g><rect class="hit" x="232.60" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-03: $244.86"><title>2026-08-03 · $244.86</title></rect><g class="peek"><circle cx="294.8" cy="193.79" r="4.5"/></g></g><g><rect class="hit" x="357.00" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-04: $259.43"><title>2026-08-04 · $259.43</title></rect><g class="peek"><circle cx="419.2" cy="48.21" r="4.5"/></g></g><g><rect class="hit" x="481.40" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-05: $257.83"><title>2026-08-05 · $257.83</title></rect><g class="peek"><circle cx="543.6" cy="64.19" r="4.5"/></g></g><g><rect class="hit" x="605.80" y="22" width="124.40" height="198.00" tabindex="0" role="img" aria-label="2026-08-06: $248.04"><title>2026-08-06 · $248.04</title></rect><g class="peek"><circle cx="668.0" cy="162.02" r="4.5"/></g></g>
+</svg>
+    <details class="table-twin"><summary>data table</summary><table><tr><th>mark date</th><th class="n">book value</th><th class="n">vs basis</th></tr><tr><td>2026-07-31</td><td class="n">$250.00</td><td class="n">+0.00%</td></tr><tr><td>2026-07-31</td><td class="n">$248.37</td><td class="n">−0.65%</td></tr><tr><td>2026-08-03</td><td class="n">$244.86</td><td class="n">−2.06%</td></tr><tr><td>2026-08-04</td><td class="n">$259.43</td><td class="n">+3.77%</td></tr><tr><td>2026-08-05</td><td class="n">$257.83</td><td class="n">+3.13%</td></tr><tr><td>2026-08-06</td><td class="n">$248.04</td><td class="n">−0.78%</td></tr></table></details>
+  </section>
 
-<section class="card">
-  <h2>Positions</h2>
-  <div class="tablewrap"><table>
-    <tr><th>name</th><th>qty</th><th>last</th><th class="num">value</th></tr>
-    <tr><td class="sym">STX</td><td>0.060050</td><td>$860.50</td><td class="num">$51.67</td></tr><tr><td class="sym">LRCX</td><td>0.163604</td><td>$308.64</td><td class="num">$50.49</td></tr><tr><td class="sym">MU</td><td>0.042777</td><td>$893.45</td><td class="num">$38.22</td></tr><tr><td class="sym">INTC</td><td>0.373392</td><td>$100.45</td><td class="num">$37.51</td></tr><tr><td class="sym">WDC</td><td>0.079220</td><td>$453.80</td><td class="num">$35.95</td></tr><tr><td class="sym">SNDK</td><td>0.023001</td><td>$1,285.55</td><td class="num">$29.57</td></tr><tr class="cashrow"><td class="sym">CASH</td><td>—</td><td>—</td><td class="num">$4.63</td></tr>
-  </table></div>
-</section>
+  <section class="card">
+    <h2>Positions <span class="n">6 names</span></h2>
+    <div class="scroll"><table>
+      <tr><th>name</th><th class="n">last</th><th class="n">value</th>
+        <th class="n">weight</th></tr>
+      <tr><td class="sym">STX</td><td class="n">$860.50</td><td class="n">$51.67</td><td class="n">20.8%</td></tr><tr><td class="sym">LRCX</td><td class="n">$308.64</td><td class="n">$50.49</td><td class="n">20.4%</td></tr><tr><td class="sym">MU</td><td class="n">$893.45</td><td class="n">$38.22</td><td class="n">15.4%</td></tr><tr><td class="sym">INTC</td><td class="n">$100.45</td><td class="n">$37.51</td><td class="n">15.1%</td></tr><tr><td class="sym">WDC</td><td class="n">$453.80</td><td class="n">$35.95</td><td class="n">14.5%</td></tr><tr><td class="sym">SNDK</td><td class="n">$1,285.55</td><td class="n">$29.57</td><td class="n">11.9%</td></tr><tr class="muted"><td class="sym">CASH</td><td class="n">—</td><td class="n">$4.63</td><td class="n">1.9%</td></tr>
+    </table></div>
+  </section>
 
-<section class="card">
-  <h2>Desks</h2>
-  <div class="chips">
-    <span class="chip"><span class="dot live"></span>
-      equity · LIVE</span>
-    <span class="chip"><span class="dot idle"></span>
-      crypto · NO-GO (disabled)</span>
-    <span class="chip"><span class="dot idle"></span>research · weekly Mon</span>
-    <span class="chip"><span class="dot idle"></span>risk committee · daily 14:00 UTC</span>
-  </div>
-</section>
+  <section class="card">
+    <h2>Recent trades <span class="n">last 8</span></h2>
+    <div class="scroll"><table>
+      <tr><th>date</th><th>name</th><th>side</th><th class="n">amount</th>
+        <th class="n">price</th></tr>
+      <tr><td>08-05</td><td class="sym">SNDK</td><td class="side-buy">BUY</td><td class="n">$32.02</td><td class="n">1,392.06</td></tr><tr><td>08-05</td><td class="sym">INTC</td><td class="side-buy">BUY</td><td class="n">$38.31</td><td class="n">102.60</td></tr><tr><td>08-05</td><td class="sym">STX</td><td class="side-buy">BUY</td><td class="n">$51.05</td><td class="n">850.12</td></tr><tr><td>08-05</td><td class="sym">SNDK</td><td class="side-sell">SELL</td><td class="n">$36.49</td><td class="n">1,423.86</td></tr><tr><td>08-05</td><td class="sym">INTC</td><td class="side-sell">SELL</td><td class="n">$41.58</td><td class="n">100.71</td></tr><tr><td>08-04</td><td class="sym">STX</td><td class="side-sell">SELL</td><td class="n">$47.94</td><td class="n">826.51</td></tr><tr><td>07-31</td><td class="sym">SNDK</td><td class="side-buy">BUY</td><td class="n">$31.83</td><td class="n">1,242.00</td></tr><tr><td>07-31</td><td class="sym">MU</td><td class="side-buy">BUY</td><td class="n">$35.84</td><td class="n">837.82</td></tr>
+    </table></div>
+  </section>
 
-<section class="card">
-  <h2>Recent trades</h2>
-  <div class="tablewrap"><table>
-    <tr><th>time</th><th>name</th><th>side</th><th class="num">amount</th><th>price</th></tr>
-    <tr><td>08-05 19:38</td><td class="sym">SNDK</td><td class="buy">BUY</td><td class="num">$32.02</td><td>1,392.06</td></tr><tr><td>08-05 19:38</td><td class="sym">INTC</td><td class="buy">BUY</td><td class="num">$38.31</td><td>102.60</td></tr><tr><td>08-05 19:38</td><td class="sym">STX</td><td class="buy">BUY</td><td class="num">$51.05</td><td>850.12</td></tr><tr><td>08-05 04:26</td><td class="sym">SNDK</td><td class="sell">SELL</td><td class="num">$36.49</td><td>1,423.86</td></tr><tr><td>08-05 04:26</td><td class="sym">INTC</td><td class="sell">SELL</td><td class="num">$41.58</td><td>100.71</td></tr><tr><td>08-04 19:36</td><td class="sym">STX</td><td class="sell">SELL</td><td class="num">$47.94</td><td>826.51</td></tr><tr><td>07-31 17:05</td><td class="sym">SNDK</td><td class="buy">BUY</td><td class="num">$31.83</td><td>1,242.00</td></tr><tr><td>07-31 17:05</td><td class="sym">MU</td><td class="buy">BUY</td><td class="num">$35.84</td><td>837.82</td></tr>
-  </table></div>
-</section>
-
-<footer>Agent-operated. Rebalances only when a holding falls out of its momentum
-rank band (~monthly). High-risk mandate: expect large swings; the
-<b>−50% kill switch</b> flattens to cash and halts.
-Books live in the repo; this page regenerates after each trading day.</footer>
+  <section class="card full">
+    <h2>Desks</h2>
+    <div class="chips">
+      <span class="chip"><span class="dot-i live"></span>
+        equity&nbsp;<b>live</b></span>
+      <span class="chip"><span class="dot-i idle"></span>
+        crypto&nbsp;<b>no-go</b></span>
+      <span class="chip"><span class="dot-i idle"></span>research&nbsp;<b>weekly, Mon</b></span>
+      <span class="chip"><span class="dot-i idle"></span>risk&nbsp;<b>daily, 14:00 UTC</b></span>
+    </div>
+  </section>
 </div>
 
+<footer>Agent-operated. The book rebalances only when a holding drops out of its
+momentum rank band, which works out to roughly monthly — quiet days are the
+strategy working, not a stall. High-risk mandate by design: expect swings, and
+the <b>−50% kill switch</b> flattens to cash and halts trading if it
+trips. Every figure on this page is generated from the committed state files in
+the repo; nothing here is hand-entered. Not investment advice.</footer>
+</div>
 </body>
 </html>
