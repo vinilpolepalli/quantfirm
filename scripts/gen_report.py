@@ -144,7 +144,8 @@ def main() -> None:
         trade_rows = ('<tr><td colspan="5" class="empty">no trades — every holding '
                       'stayed inside its rank band</td></tr>')
 
-    incidents = []
+    incidents = [i["detail"] for i in eq.get("incidents", [])
+                 if i.get("ts", "")[:10] == today and i.get("detail")]
     if kill_eq:
         incidents.append("<b>equity kill switch active</b> — book flattened, trading halted")
     if eq.get("pending_order"):

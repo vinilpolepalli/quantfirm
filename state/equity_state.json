@@ -41,6 +41,10 @@
     [
       "2026-08-07T13:22:32.656800+00:00",
       257.13
+    ],
+    [
+      "2026-08-07T19:39:38.800656+00:00",
+      254.16
     ]
   ],
   "last_rebalance": "2026-08-05T19:38:30.385479+00:00",
@@ -61,15 +65,20 @@
       "type": "cash_contribution",
       "detail": "settled_cash 4.63 -> 16.19 (+11.56); cost_basis -> 261.56",
       "note": "Broker settled cash 16.19 vs books 4.63. 4.23 is proceeds from the owner's own pre-existing WFC/FHN/SPY lots sold 2026-08-05 (placed_agent=user, outside the mandate). The remaining 7.33 is unattributed: no agentic or user order accounts for it. All six positions reconciled to the venue exactly, so this is cash entering the account, not a books error. Booked as added capital, not profit."
+    },
+    {
+      "ts": "2026-08-07T19:41:28.505180+00:00",
+      "type": "stale_panel",
+      "detail": "panel ends 2026-08-05; missing 2026-08-06 \u2014 refused to plan"
     }
   ],
   "last_prices": {
-    "STX": 852.95,
-    "LRCX": 305.77,
-    "WDC": 451.52,
-    "INTC": 99.81,
-    "MU": 881.47,
-    "SNDK": 1258.58
+    "STX": 822.36,
+    "LRCX": 310.13,
+    "WDC": 437.49,
+    "INTC": 101.17,
+    "MU": 875.25,
+    "SNDK": 1216.32
   },
   "cost_basis": 261.56,
   "contributions": [

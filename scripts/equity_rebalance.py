@@ -217,6 +217,16 @@ def plan() -> None:
     # 21% below target. Refuse rather than trade on a stale view.
     missing = missing_sessions(closes.index[-1].date(), date.today())
     if missing:
+        # Record it: a day with no trades and no explanation is
+        # indistinguishable on the dashboard from a day the strategy chose to
+        # hold, and those are very different things.
+        incs = state.setdefault("incidents", [])
+        if not any(i.get("type") == "stale_panel" and i["ts"][:10] == today
+                   for i in incs):
+            incs.append({"ts": _now(), "type": "stale_panel",
+                         "detail": f"panel ends {last_date}; missing "
+                                   f"{', '.join(missing)} — refused to plan"})
+            save_state(state)
         print(json.dumps({
             "action": "stale_panel_refusing_to_trade",
             "panel_last_date": last_date,
