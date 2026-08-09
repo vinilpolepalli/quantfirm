@@ -84,11 +84,14 @@ def test_apply_replaces_params_wholesale_and_round_trips():
 def test_apply_refuses_on_a_funded_book_without_acknowledgement():
     with tempfile.TemporaryDirectory() as tmp:
         _sandbox(tmp, positions={"AAPL": 1.0}, enabled=True)
+        cfg_path = os.path.join(tmp, "config", "equity_live.json")
+        before = json.load(open(cfg_path))
         r = _run(tmp, "profile.py", "apply", "aggressive")
         assert r.returncode != 0, "must refuse to rebalance a funded book silently"
         assert "REFUSING" in r.stdout + r.stderr
-        live = json.load(open(os.path.join(tmp, "config", "equity_live.json")))
-        assert live["params"]["top_n"] == 6, "config must be untouched after refusal"
+        # Compare against what the config WAS, not against a hardcoded top_n —
+        # a clone whose owner tuned their own params must pass this too.
+        assert json.load(open(cfg_path)) == before, "config must be untouched after refusal"
 
 
 def test_setup_never_auto_acknowledges_the_live_book_guard():
@@ -96,10 +99,11 @@ def test_setup_never_auto_acknowledges_the_live_book_guard():
     whenever positions existed, defeating the guard it was meant to respect."""
     with tempfile.TemporaryDirectory() as tmp:
         _sandbox(tmp, positions={"AAPL": 1.0}, enabled=True)
+        cfg_path = os.path.join(tmp, "config", "equity_live.json")
+        before = json.load(open(cfg_path))
         r = _run(tmp, "setup.py", "--profile", "aggressive")
         assert r.returncode != 0, "setup must refuse on a funded book"
-        live = json.load(open(os.path.join(tmp, "config", "equity_live.json")))
-        assert live["params"]["top_n"] == 6, "setup changed a funded book"
+        assert json.load(open(cfg_path)) == before, "setup changed a funded book"
 
 
 ETFS = {"SPY", "QQQ", "IWM", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI", "XLP",
