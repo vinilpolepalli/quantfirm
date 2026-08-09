@@ -94,18 +94,43 @@ reporting) and the documented process.
    `state/*.json`, `state/*.csv`, `dashboard/reports/*`, and any
    `state/KILL_SWITCH*` files. Never let a new firm inherit someone else's
    positions.
-2. **Replace identity in `config/equity_live.json`**: `account_number` (the
-   new owner's *agentic-enabled* brokerage account) and `bankroll_usd`. Keep
-   the risk block's structure; `max_growth_mult` lets profits compound,
-   `max_single_name_frac` caps concentration, `kill_drawdown` is the halt
-   line.
+2. **Ask the new owner how much risk they want, and show them the numbers.**
+   Do not guess, and do not inherit the previous owner's posture — it is an
+   explicit maximum-risk override, which is almost certainly not what a new
+   owner wants by default. Run:
+
+   ```
+   python scripts/profile.py list
+   ```
+
+   That prints three pre-measured profiles (`conservative`, `balanced`,
+   `aggressive`) with the drawdown and return each actually produced, and a
+   disclosure block covering what they do **not** protect against. Read the
+   disclosure to the owner — especially that the two stock rungs have no
+   working in-strategy drawdown defense, so the kill switch is the only thing
+   between a drawdown and the halt. Then apply their choice:
+
+   ```
+   python scripts/setup.py --profile <their choice>
+   ```
+
+   `conservative` is a genuinely different strategy (`allweather_trend`, ETF
+   trend-following, ~−15% drawdown), not a de-risked version of the momentum
+   book. `balanced` and `aggressive` differ only by concentration and are not
+   statistically distinguishable — do not sell `aggressive` as higher-return.
+
+   Then replace identity: `account_number` (the new owner's *agentic-enabled*
+   brokerage account) and `bankroll_usd`. The profile sets the rest of the
+   risk block.
 3. **Re-run the data layer.** `data/equities/` holds daily bars fetched via
    the Robinhood MCP (`scripts/` has the patterns); `data/equities/universe.json`
    is a screener snapshot. Refresh both — a stale universe is a
    survivorship-biased universe, and the honest treatment of that bias is
    documented in `universe.json` and applied as a 30% haircut in judging.
-4. **Re-run a tournament before trading.** Do not assume `xsec_refined` is
-   right for the new owner or the new regime. `docs/TOURNAMENT_EQ.md` and
+4. **Re-run a tournament before trading.** A profile is a *risk posture*,
+   not a validation — picking one does not re-establish that the strategy
+   works for a new owner or a new regime. Do not assume `xsec_refined` is
+   right for either. `docs/TOURNAMENT_EQ.md` and
    `docs/TOURNAMENT3.md` show the format: parallel designer agents on
    distinct hypotheses, independent replication of every claim, a judge who
    opens the holdout exactly once, then adversarial attackers. Scale depth,

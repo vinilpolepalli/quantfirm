@@ -206,3 +206,26 @@ even at equal return. Pre-declared kill: if every capped variant loses more
 than 0.15 Sharpe on dev, the concentration is load-bearing and the firm
 should instead raise the declared cap to match reality rather than keep a
 limit that fights the strategy.
+
+### L.2 The per-name absolute-momentum defense is dead code ★ BLOCKER-GRADE DISCLOSURE
+
+- **Found:** 2026-08-09, building the v0.1.1 risk profiles.
+- **What:** `xsec_refined`'s `abs_filter` — documented as routing failing slots into defensive ETFs — never fires. `abs_filter=false` yields bit-identical weight matrices (`DataFrame.equals() == True`, max elementwise diff 0.0 over 98x227); the filter rejects a name on **0 of 89** dev rebalance dates at every `top_n` from 3 to 12. Derived binding condition: a non-positive-momentum name can only enter the rank band when fewer than `band_mult*top_n` of ~193 names have positive 8-month momentum — 9.3% breadth at `top_n=6`, against a dev floor of 16.6%. This is structural to ranking by momentum/vol, not a sample artifact. It is also blind to the last ~21 days by construction (`skip=21`): at the 2020-03-04 rebalance, three weeks into COVID, it did not fire.
+- **Why it matters:** `config/equity_live.json` credited this routing with capping the holdout at −39%. It never engaged; −39% is what *no* defense looks like, in a +37% bull whose worst index drop was −19%. Corrected in the config as of v0.1.1. Confirms and generalises TOURNAMENT3's finding that the `gate_mode` risk-off path is dead under champion params — both defensive mechanisms are inert.
+- **Also:** `quantfirm/equities/reconstruct.py:57-66` reimplements the same dead branch, so the post-incident recovery path carries it.
+- **Next:** tournament candidate — either delete both dead branches (FIRM.md lists "dead code in prod = 0" as a platform standard) or replace the defense with one that can actually fire. `gate_mode="half"` is the only setting that ever routes to the sleeve (19 of 89 dev dates) and the incumbent research rejected it as whipsaw-prone; it also measures fold-fragile (worst fold 0.112 vs 0.514). Do not deploy either change untested.
+
+### M.1 `walk_forward` is not walk-forward ★ NAMING DEFECT WITH EVIDENTIAL CONSEQUENCES
+
+- **Found:** 2026-08-09, adversarial review of the profile ladder.
+- **What:** `quantfirm/equities/backtest.py:walk_forward` takes a fixed `params` dict and calls the strategy per fold. Nothing is estimated in-sample. Concatenating the fold slices reproduces a single run over the same bars bit-identically. So `oos_sharpe` is an **in-sample dev-window** figure, for every strategy in this repo, including the incumbent's 1.349.
+- **Why it matters:** every "out-of-sample" claim in the docs derives from this. The sealed holdout remains genuinely out-of-sample and unaffected; the dev numbers are not what their field name says.
+- **Next:** either rename the field to `dev_sharpe` repo-wide, or implement real parameter fitting per fold. Renaming is cheap and honest; fitting changes what every recorded number means and needs its own tournament round.
+
+### M.2 There is no trial registry ★ BLOCKS EVERY DEFLATED-SHARPE CLAIM
+
+- **Found:** 2026-08-09.
+- **What:** `docs/FIRM.md` §2 specifies an append-only registry (family ID, code hash, parameter vector, daily P&L) as "the only path to a score". No such artifact exists; `quantfirm/equities/cli.py` prints JSON and logs nothing. The ~486 trial count quoted in TOURNAMENT3 is not reconstructible.
+- **Why it matters:** the deflated-Sharpe denominator is unknowable, so no DSR figure in this repo is verifiable. CSCV run on the v0.1.1 sweep matrix (24 unique configs) gives **PBO = 0.496** against the firm's own ≤0.10 bar, with the in-sample-best config landing at median out-of-sample rank 0.52 — i.e. sweep rank carried no information. That is why the shipped profiles were chosen on mechanical grounds, not by sweep rank.
+- **Next:** land a JSONL registry written by the equity CLI, backfill the v0.1.1 sweep's 24 configs, and re-derive the incumbent's DSR. Expect the answer to be unflattering: E[max pure-noise annualized Sharpe] at N≈486 on T=1755 is ~1.15, and the incumbent's survivorship-haircut Sharpe is 0.94.
+

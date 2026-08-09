@@ -184,6 +184,55 @@ def reconcile_cash(args) -> None:
                       "cost_basis": state["cost_basis"]}, indent=2))
 
 
+def resume(args) -> None:
+    """Clear a tripped kill switch and rebase the drawdown reference.
+
+    Deleting state/KILL_SWITCH_EQ by hand does not work: peak_equity never
+    decays, so the very next plan measures drawdown against the old high-water
+    mark and re-trips immediately. Recovery therefore has to rebase the peak to
+    current equity, which is a real decision — it forfeits the old high-water
+    mark — so it is explicit, logged, and never automatic.
+    """
+    state = load_state()
+    hist = state.get("equity_history", [])
+    if not hist:
+        sys.exit("no equity history — cannot rebase a peak that does not exist")
+    equity = float(hist[-1][1])
+    old_peak = float(state.get("peak_equity", equity) or equity)
+    tripped = os.path.exists(KILL)
+
+    if not tripped and equity >= old_peak:
+        print(json.dumps({"action": "nothing_to_resume",
+                          "kill_switch": False, "equity": equity,
+                          "peak_equity": old_peak})); return
+
+    if not args.i_accept:
+        dd = equity / old_peak - 1 if old_peak else 0.0
+        sys.exit(json.dumps({
+            "action": "resume_requires_acknowledgement",
+            "kill_switch_present": tripped,
+            "equity": equity, "peak_equity": old_peak,
+            "drawdown_vs_peak": round(dd, 4),
+            "what_this_does": (
+                f"clears state/KILL_SWITCH_EQ and rebases peak_equity "
+                f"{old_peak} -> {equity}, so the {dd:.1%} drawdown is written "
+                f"off and future drawdown is measured from here"),
+            "how": "re-run with --i-accept",
+        }, indent=2))
+
+    if tripped:
+        os.remove(KILL)
+    state["peak_equity"] = round(equity, 2)
+    state.setdefault("incidents", []).append({
+        "ts": _now(), "type": "kill_switch_resume",
+        "detail": (f"kill switch cleared (present={tripped}); peak_equity "
+                   f"rebased {old_peak} -> {round(equity, 2)}; prior drawdown "
+                   f"{equity / old_peak - 1:.2%} written off")})
+    save_state(state)
+    print(json.dumps({"action": "resumed", "kill_switch_cleared": tripped,
+                      "peak_equity": round(equity, 2)}, indent=2))
+
+
 def plan() -> None:
     with open(CONFIG) as f:
         cfg = json.load(f)
@@ -442,13 +491,17 @@ def main() -> None:
     r.add_argument("--order-id", default=""); r.add_argument("--init-cash", type=float)
     m = sub.add_parser("mark")
     m.add_argument("--prices", required=True)
+    rs = sub.add_parser("resume")
+    rs.add_argument("--i-accept", action="store_true",
+                    help="acknowledge that resuming writes off the drawdown "
+                         "by rebasing peak_equity to current equity")
     rc = sub.add_parser("reconcile-cash")
     rc.add_argument("--venue-cash", type=float, required=True,
                     help="broker settled cash, from get_portfolio/get_accounts")
     rc.add_argument("--note", default="", help="why the books differ")
     args = ap.parse_args()
     {"plan": lambda a: plan(), "record": record, "mark": mark,
-     "reconcile-cash": reconcile_cash}[args.cmd](args)
+     "reconcile-cash": reconcile_cash, "resume": resume}[args.cmd](args)
 
 
 if __name__ == "__main__":
