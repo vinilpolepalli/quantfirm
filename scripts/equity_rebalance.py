@@ -395,12 +395,13 @@ def plan() -> None:
                 buys.append({"symbol": s, "side": "buy", "dollars": amt})
                 budget -= amt
 
-    # Concentration surveillance. config's max_single_name_frac was never
-    # enforced in code, and the strategy's inverse-vol weighting breaches it
-    # in ~8% of historical rebalances (a low-vol name can draw 5x the dollars
-    # of a volatile one at the same rank). Enforcing it live would deviate
-    # from the backtested weights, so the plan REPORTS the breach and leaves
-    # sizing untouched — the research desk owns whether to cap it.
+    # Concentration surveillance, for the plan JSON only. The cap IS enforced
+    # above (it mutates target_val before the order lists are built); this
+    # block just records which raw strategy weights exceeded it, so the plan
+    # shows both what the strategy wanted and what the desk will actually
+    # trade to. The previous comment here claimed the cap "was never enforced
+    # in code" and that sizing was left untouched — stale since enforcement
+    # landed, and two reviewers reasoned from it before it was caught.
     cap = float(cfg["risk"].get("max_single_name_frac", 1.0))
     breaches = {s: round(float(f), 4) for s, f in target_w.items() if float(f) > cap}
 
