@@ -25,6 +25,13 @@ python scripts/profile.py current       # what is actually running, and why
 | conservative | `allweather_trend` | −14.8% (−18.0% … −9.7%) | 5.6% | not measured |
 | balanced | `xsec_refined` top_n=6 | −30.9% (−38.3% … −27.1%) | 31.6% | Sharpe 1.47, DD −39% |
 | aggressive | `xsec_refined` top_n=4 | −32.9% (−36.5% … −24.2%) | 34.4% | not measured |
+| ultra_aggressive | `xsec_refined` top_n=2 | −36.4% (−48.6% … −23.7%) | 39.7% | not measured |
+
+`ultra_aggressive` is the only setting above `aggressive` that buys anything: more
+return (39.7% vs 34.4%) for more risk (−36.4% vs −32.9%). Everything more extreme
+was measured and rejected — `top_n=1` returns *less* than `top_n=4` at a −50.9%
+drawdown with a negative fold; dropping vol-scaling reaches −52.8% worst-anchor,
+which would need a −79% halt line, i.e. no meaningful kill switch at all.
 
 Every rung carries the numbers it actually produced, the disclosure of what it
 does *not* protect against, and a `not_for` line. `apply` refuses on a funded

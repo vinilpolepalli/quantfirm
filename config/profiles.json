@@ -16,7 +16,8 @@
     "The choice between 'balanced' and 'aggressive' is not statistically resolvable on this data. Their Sharpes are identical to three decimals and their return streams correlate 0.947; a Jobson-Korkie test on the pair returns z = 0.00. Treat it as a concentration preference, not a performance upgrade.",
     "The published figures are UNCAPPED backtests; the live planner enforces max_single_name_frac and redistributes the excess. Over the same dev window the cap binds on 2.2% of rebalances for balanced and aggressive and 0% for conservative, and the effect is immaterial \u2014 re-measuring balanced with the cap applied gives Sharpe 1.348 against 1.349 uncapped, drawdown unchanged. (Over the longer panel including the live period it binds more often \u2014 8.5% balanced, 4.2% aggressive \u2014 because inverse-vol weighting concentrates harder in recent low-dispersion ranks; see IDEA_BACKLOG L.1.)",
     "balanced's -50% halt line is only 1.31x its worst measured drawdown (-38.3%) and 1.28x its actual holdout drawdown (-39%). That is thin, and it is a deliberate pre-existing owner choice, not a recommendation. conservative sits at 1.94x and aggressive at 1.51x.",
-    "If the kill switch trips, recovery is deliberate, not automatic: `python scripts/equity_rebalance.py resume --i-accept`. Deleting the state/KILL_SWITCH_EQ file by hand does NOT work \u2014 peak_equity does not decay, so the next plan re-trips it immediately."
+    "If the kill switch trips, recovery is deliberate, not automatic: `python scripts/equity_rebalance.py resume --i-accept`. Deleting the state/KILL_SWITCH_EQ file by hand does NOT work \u2014 peak_equity does not decay, so the next plan re-trips it immediately.",
+    "Halt-line headroom across the ladder (kill / worst measured anchor): conservative 1.94x, balanced 1.31x, aggressive 1.51x, ultra_aggressive 1.54x. Higher rungs do not get a tighter halt \u2014 a tight line on a violent book converts a survivable drawdown into a permanent exit. It means the opposite of safety."
   ],
   "profiles": {
     "conservative": {
@@ -143,11 +144,63 @@
       },
       "honest_note": "Four names instead of six. Median drawdown -32.9% against balanced's -30.9%, median CAGR 34.4% against 31.6% \u2014 a real but small difference that this data cannot distinguish from noise. Its worst measured anchor is -36.5%, which is close enough to the -50% halt that a bad sequence can end the book rather than ride through. We also tested three names: strictly worse on both axes (CAGR 37.8% at -31.1% drawdown on phase 0, and lower Sharpe), so the ladder stops at four rather than continuing. kill_drawdown is 0.55 here rather than balanced's 0.50: 1.5x this rung's worst measured anchor (-36.5%), per the headroom rule in docs/EQUITY.md. A tighter line on a more concentrated book buys nothing except a higher chance of a permanent exit during a survivable drawdown.",
       "not_for": "Anyone expecting materially higher returns. The honest read is 'slightly more concentrated', not 'more aggressive' in any sense the data supports."
+    },
+    "ultra_aggressive": {
+      "headline": "Two names. The most concentrated setting that is not simply worse than the one below it.",
+      "strategy": "xsec_refined",
+      "params": {
+        "formation": 189,
+        "skip": 21,
+        "vol_days": 63,
+        "top_n": 2,
+        "band_mult": 3,
+        "weighting": "inv_vol",
+        "every": 21,
+        "vol_scale": true,
+        "abs_filter": true,
+        "gate_mode": "none",
+        "def_menu": [
+          "IEF",
+          "TLT",
+          "GLD",
+          "SHY"
+        ],
+        "def_lookback": 63,
+        "def_k": 1
+      },
+      "risk": {
+        "bankroll_usd": 250.0,
+        "max_growth_mult": 5.0,
+        "min_order_usd": 5.0,
+        "rebalance_band_frac": 0.15,
+        "kill_drawdown": 0.75,
+        "max_positions": 15,
+        "max_single_name_frac": 0.8
+      },
+      "measured": {
+        "max_drawdown": -0.3635,
+        "max_drawdown_range": [
+          -0.4859,
+          -0.2367
+        ],
+        "cagr": 0.3967,
+        "oos_sharpe": 1.21,
+        "worst_fold": 0.411,
+        "annual_turnover": 11.4,
+        "sharpe_haircut": 0.847,
+        "holdout": "not measured \u2014 the sealed holdout is deliberately not re-opened per profile"
+      },
+      "honest_note": "This is the only rung above 'aggressive' that actually buys something: median CAGR 39.7% against 34.4%, for a median drawdown of -36.4% against -32.9%. More return for more risk, which is what the word is supposed to mean. Everything more extreme was tested and rejected \u2014 see `rejected` below. Two names means one bad earnings report is roughly half the book, and the -48.6% worst anchor is why the halt line sits at -75%: at this concentration the kill switch is a backstop against a spiral, not protection of capital. If it trips you have lost three quarters of the account. Sharpe after the survivorship haircut is 0.85, the lowest of any rung and well under the ~1.15 noise ceiling \u2014 there is no evidence of skill here, only of leverage-by-concentration.",
+      "not_for": "Almost everyone. Losing half the account is a normal outcome at this setting, not a malfunction, and there is nothing in the strategy that will act to prevent it."
     }
   },
   "rejected": {
     "xsec_refined top_n=8 gate_mode=half": "Drafted as the conservative rung on a phase-0 drawdown of -25.4%. Rejected: the anchor median is -29.2% (range -36.1% .. -19.6%), statistically indistinguishable from balanced, and it loses on every duration-aware measure \u2014 Ulcer index, average drawdown, time below -20%, recovery time (24 months vs 10 weeks for balanced), and 2022 return (-19.5% vs -5.4%). It bought a 2.7pp headline improvement, set by a single COVID observation, at the cost of 13pp of CAGR.",
     "kill_drawdown 0.35 on a stock rung": "Drafted for the conservative rung. Rejected: it sits inside the strategy family's own measured drawdown distribution (1 of 21 anchors already breaches it at -36.1%) and below its only out-of-sample drawdown (-39%), so it would convert a normal momentum drawdown into a permanent liquidating exit. This is the crypto-tournament lesson already recorded in config/equity_live.json.",
-    "max_single_name_frac 0.25 on a stock rung": "Rejected: the live planner enforces the cap and redistributes the excess (scripts/equity_rebalance.py), which would dismantle the defensive sleeve weighting that produced the measured figure \u2014 the published number would not describe the portfolio actually held."
+    "max_single_name_frac 0.25 on a stock rung": "Rejected: the live planner enforces the cap and redistributes the excess (scripts/equity_rebalance.py), which would dismantle the defensive sleeve weighting that produced the measured figure \u2014 the published number would not describe the portfolio actually held.",
+    "xsec_refined top_n=1": "Single name. CAGR 39.4% (LOWER than top_n=4's 41.2%) at a -50.9% drawdown, with a NEGATIVE out-of-sample fold (-0.342). Strictly worse than a less concentrated book on both axes \u2014 concentration past two names stops buying return and only buys variance.",
+    "xsec_refined top_n=3": "CAGR 37.8% against top_n=4's 41.2% at a slightly worse drawdown. Dominated on both axes; the return/concentration curve is not monotone and 3 sits in a dip.",
+    "vol_scale=false variants": "Removing the volatility scaling from the ranking does raise return (n=3: CAGR 41.3% median) but takes median drawdown to -43.1% and the worst anchor to -52.8%, which would need a halt line at -79%. At that point the kill switch no longer exists in any meaningful sense, and phase 0 printed a negative fold (-0.073). Rejected as beyond the point where a risk control can be said to be present.",
+    "faster rebalancing (every=10) and faster momentum (formation=126)": "Both lower return AND raise drawdown versus the shipped rungs \u2014 turnover cost eats the responsiveness. Not aggressive, just expensive."
   }
 }
