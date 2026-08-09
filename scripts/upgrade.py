@@ -158,6 +158,13 @@ def dirty_system_paths() -> list[str]:
     dirty = []
     for line in out.splitlines():
         path = line[3:].strip().strip('"')
+        # This script excepts itself. On a clone predating it the documented
+        # bootstrap is `git checkout upstream/main -- scripts/upgrade.py`,
+        # which leaves it staged — so without this the upgrade refuses to run
+        # on exactly the clones that most need it. Harmless either way: it is
+        # about to be replaced from upstream anyway.
+        if path == "scripts/upgrade.py":
+            continue
         if any(path == p or path.startswith(p.rstrip("/") + "/") for p in SYSTEM_PATHS):
             dirty.append(path)
     return dirty
