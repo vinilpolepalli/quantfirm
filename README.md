@@ -53,6 +53,35 @@ python tests/test_backtest.py
 
 ---
 
+## Upgrading an existing clone
+
+Your books are committed (`state/`, `config/equity_live.json`,
+`dashboard/reports/`), so `git pull` conflicts on exactly the files you have
+diverged on — and resolving it the obvious way merges someone else's positions
+into your ledger. Use the upgrade script instead:
+
+```bash
+python scripts/upgrade.py --check     # what would change, touches nothing
+python scripts/upgrade.py             # do it (books backed up first)
+```
+
+It takes code, docs and profiles from upstream, never touches your books or
+live config except through explicit per-version migrations, and prints any
+change that alters trading behaviour. It refuses to run with a tripped kill
+switch, a pending order, or local edits to system files.
+
+On a clone older than the script itself, fetch it with git — not by piping
+anything into a shell:
+
+```bash
+git remote add upstream https://github.com/vinilpolepalli/quantfirm.git
+git fetch upstream main
+git checkout upstream/main -- scripts/upgrade.py
+python scripts/upgrade.py --check
+```
+
+See `CHANGELOG.md` for what each version changed.
+
 ## 🤖 FOR AN AI AGENT: replicating this firm for a new owner
 
 *If you are an LLM/agent reading this repo because someone asked you to set
