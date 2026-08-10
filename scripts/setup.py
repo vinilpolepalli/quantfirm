@@ -113,6 +113,13 @@ def cmd_check() -> int:
         rows.append(("capital deployable",
                      f"${deployable:,.0f} cap vs ${equity:,.0f} funded — "
                      f"${equity - deployable:,.0f} would sit idle", False))
+    if not live.get("enabled") and not st.get("positions"):
+        pass
+    elif st.get("positions") and not os.environ.get("QF_EQUITY_ACCOUNT") \
+            and not str(_load(LOCAL_ACCT).get("account_number", "")).isdigit():
+        rows.append(("book provenance",
+                     "positions present but no account configured — these may be "
+                     "the previous owner's; see --clear-books", False))
     print(f"\n{B}Readiness{RESET}")
     for k, v, good in rows:
         print(f"  [{'x' if good else ' '}] {k:<20} {v}")
@@ -160,6 +167,59 @@ def set_bankroll(value: float | None) -> None:
     print(f"  bankroll_usd set to ${value:,.2f}")
 
 
+INHERITED_MSG = """
+REFUSING: this clone still holds the previous owner's book.
+
+  positions : {pos}
+  cash      : ${cash:,.2f}
+  marks     : {marks}
+  trading   : {enabled}
+
+Those are not your positions. If a desk cycle fires against your account with
+this state loaded, the planner believes it owns six things you do not own and
+plans against a book that is not yours.
+
+  python scripts/setup.py --clear-books --profile <name>   # fresh start (usual)
+  python scripts/setup.py --keep-books   --profile <name>  # this really is my book
+"""
+
+
+def inherited_books() -> dict | None:
+    """A fresh clone carries the upstream owner's positions, because the books
+    are committed. Detect that rather than trusting anyone to read the README."""
+    st = _load(STATE)
+    pos = st.get("positions") or {}
+    hist = st.get("equity_history") or []
+    if not pos and not hist:
+        return None
+    return {"pos": ", ".join(sorted(pos)) or "none",
+            "cash": float(st.get("settled_cash", 0) or 0),
+            "marks": len(hist),
+            "enabled": "ENABLED" if _load(LIVE).get("enabled") else "disabled"}
+
+
+def clear_books() -> None:
+    """Erase owner data and disarm. Deliberately leaves config/profiles.json,
+    the code and the docs alone — this resets the firm's books, not the firm."""
+    import glob
+    removed = []
+    for pat in ("state/*.json", "state/*.csv", "state/KILL_SWITCH*",
+                "dashboard/reports/*.html", "dashboard/reports/*.pdf"):
+        for f in glob.glob(os.path.join(ROOT, pat)):
+            os.remove(f)
+            removed.append(os.path.relpath(f, ROOT))
+    live = _load(LIVE)
+    live["enabled"] = False
+    live.pop("risk_profile_applied_at", None)
+    tmp = LIVE + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(live, f, indent=2)
+        f.write("\n")
+    os.replace(tmp, LIVE)
+    print(f"  cleared {len(removed)} file(s) of the previous owner's data")
+    print("  trading disabled — re-enable deliberately once your books are seeded")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -167,10 +227,22 @@ def main() -> None:
     ap.add_argument("--check", action="store_true", help="report readiness only")
     ap.add_argument("--bankroll", type=float,
                     help="starting capital in USD (skips the prompt)")
+    ap.add_argument("--clear-books", action="store_true", dest="clear_books",
+                    help="erase the previous owner's positions, trade log and "
+                         "reports, and disable trading (do this on a fresh clone)")
+    ap.add_argument("--keep-books", action="store_true", dest="keep_books",
+                    help="this book is mine — skip the inherited-books check")
     args = ap.parse_args()
 
     if args.check:
         sys.exit(cmd_check())
+
+    if args.clear_books:
+        clear_books()
+    elif not args.keep_books:
+        inh = inherited_books()
+        if inh:
+            sys.exit(INHERITED_MSG.format(**inh))
 
     print(f"\n{B}quantfirm setup{RESET}")
     print(f"{DIM}Two decisions the previous owner's config cannot make for you.{RESET}")
