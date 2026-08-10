@@ -12,15 +12,7 @@
     "every": 21,
     "vol_scale": true,
     "abs_filter": true,
-    "gate_mode": "none",
-    "def_menu": [
-      "IEF",
-      "TLT",
-      "GLD",
-      "SHY"
-    ],
-    "def_lookback": 63,
-    "def_k": 1
+    "gate_mode": "none"
   },
   "fallback_strategy": "allweather_trend",
   "account_number": "SET_VIA_QF_EQUITY_ACCOUNT_ENV",

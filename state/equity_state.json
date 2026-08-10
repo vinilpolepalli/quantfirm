@@ -80,6 +80,11 @@
       "ts": "2026-08-09T17:27:43.542238+00:00",
       "type": "risk_profile_change",
       "detail": "risk profile aggressive -> balanced; strategy xsec_refined -> xsec_refined; top_n 4 -> 6; kill_drawdown 0.5 -> 0.5"
+    },
+    {
+      "ts": "2026-08-09T18:01:12.007997+00:00",
+      "type": "stale_panel",
+      "detail": "panel ends 2026-08-05; missing 2026-08-06, 2026-08-07 \u2014 refused to plan"
     }
   ],
   "last_prices": {

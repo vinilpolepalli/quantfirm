@@ -1,5 +1,5 @@
 {
-  "version": "0.1.1",
+  "version": "0.1.2",
   "measured_on": {
     "split": "dev",
     "window": "2016-06-01 .. 2024-07-31",
@@ -17,7 +17,8 @@
     "The published figures are UNCAPPED backtests; the live planner enforces max_single_name_frac and redistributes the excess. Over the same dev window the cap binds on 2.2% of rebalances for balanced and aggressive and 0% for conservative, and the effect is immaterial \u2014 re-measuring balanced with the cap applied gives Sharpe 1.348 against 1.349 uncapped, drawdown unchanged. (Over the longer panel including the live period it binds more often \u2014 8.5% balanced, 4.2% aggressive \u2014 because inverse-vol weighting concentrates harder in recent low-dispersion ranks; see IDEA_BACKLOG L.1.)",
     "balanced's -50% halt line is only 1.31x its worst measured drawdown (-38.3%) and 1.28x its actual holdout drawdown (-39%). That is thin, and it is a deliberate pre-existing owner choice, not a recommendation. conservative sits at 1.94x and aggressive at 1.51x.",
     "If the kill switch trips, recovery is deliberate, not automatic: `python scripts/equity_rebalance.py resume --i-accept`. Deleting the state/KILL_SWITCH_EQ file by hand does NOT work \u2014 peak_equity does not decay, so the next plan re-trips it immediately.",
-    "Halt-line headroom across the ladder (kill / worst measured anchor): conservative 1.94x, balanced 1.31x, aggressive 1.51x, ultra_aggressive 1.54x. Higher rungs do not get a tighter halt \u2014 a tight line on a violent book converts a survivable drawdown into a permanent exit. It means the opposite of safety."
+    "Halt-line headroom across the ladder (kill / worst measured anchor): conservative 1.94x, balanced 1.31x, aggressive 1.51x, ultra_aggressive 1.54x. Higher rungs do not get a tighter halt \u2014 a tight line on a violent book converts a survivable drawdown into a permanent exit. It means the opposite of safety.",
+    "ETF exposure is explicit per rung (`holds_etfs`). balanced, aggressive and ultra_aggressive hold single-name stocks only \u2014 verified max ETF weight 0.0000 across the whole dev window. conservative is entirely ETFs by design."
   ],
   "profiles": {
     "conservative": {
@@ -46,8 +47,9 @@
         "sharpe_haircut": null,
         "holdout": "not measured \u2014 the sealed holdout is deliberately not re-opened per profile"
       },
-      "honest_note": "The only rung that is conservative in the everyday sense, and the only one whose universe is bias-free (6 broad ETFs \u2014 SPY/QQQ/IWM/TLT/GLD/DBC \u2014 so no survivorship haircut applies). It is also the most fold-consistent thing measured here: worst fold +0.49. You are giving up most of the return to get that: 5.6%/yr median versus 31.6% for balanced. kill_drawdown 0.35 sits well outside this strategy's worst measured anchor (-18.0%), so a normal drawdown will not trigger a permanent exit.",
-      "not_for": "Anyone who wants the momentum book's returns. This is a different strategy, not a de-risked version of the same one."
+      "honest_note": "The only rung that is conservative in the everyday sense, and the only one whose universe is bias-free (6 broad ETFs \u2014 SPY/QQQ/IWM/TLT/GLD/DBC \u2014 so no survivorship haircut applies). It is also the most fold-consistent thing measured here: worst fold +0.49. You are giving up most of the return to get that: 5.6%/yr median versus 31.6% for balanced. kill_drawdown 0.35 sits well outside this strategy's worst measured anchor (-18.0%), so a normal drawdown will not trigger a permanent exit. NOTE ON ETFs: this rung is entirely ETFs (currently SPY/IWM/QQQ/DBC/GLD), and that is precisely why it is the only conservative option. Every stock-only alternative was measured and none goes below -28% drawdown \u2014 not low-vol ranking (-28.1%), not holding 12 names (-32.5%), not 20 names (-32.9%). On a long-only single-stock universe you are always fully exposed to the equity market; the bonds, gold and commodities are what break that. If you do not want an agent trading ETFs, the honest consequence is that this firm has one risk class, not four.",
+      "not_for": "Anyone who wants the momentum book's returns. This is a different strategy, not a de-risked version of the same one.",
+      "holds_etfs": true
     },
     "balanced": {
       "headline": "The incumbent. Concentrated stock momentum, six names.",
@@ -62,15 +64,7 @@
         "every": 21,
         "vol_scale": true,
         "abs_filter": true,
-        "gate_mode": "none",
-        "def_menu": [
-          "IEF",
-          "TLT",
-          "GLD",
-          "SHY"
-        ],
-        "def_lookback": 63,
-        "def_k": 1
+        "gate_mode": "none"
       },
       "risk": {
         "bankroll_usd": 250.0,
@@ -94,8 +88,9 @@
         "sharpe_haircut": 0.944,
         "holdout": "Sharpe 1.47, max drawdown -39% (2024-08 .. 2026-07, opened once \u2014 docs/TOURNAMENT_EQ.md)"
       },
-      "honest_note": "This is what has been running with real money since 2026-07-31, and the only rung with any out-of-sample evidence at all. That evidence is not flattering: -39% drawdown on the holdout, in a +37% bull market whose worst index drop was -19%. The -50% kill line is only 11pp below that. Sharpe after the mandatory survivorship haircut is 0.94, which is below the expected maximum of pure noise at the firm's registry size (~1.15) \u2014 the alpha claim did not pass the firm's own gate and is live only on an explicit owner override.",
-      "not_for": "Anyone who would sell at -30%. That is inside normal behaviour for this book, not a malfunction."
+      "honest_note": "This is what has been running with real money since 2026-07-31, and the only rung with any out-of-sample evidence at all. That evidence is not flattering: -39% drawdown on the holdout, in a +37% bull market whose worst index drop was -19%. The -50% kill line is only 11pp below that. Sharpe after the mandatory survivorship haircut is 0.94, which is below the expected maximum of pure noise at the firm's registry size (~1.15) \u2014 the alpha claim did not pass the firm's own gate and is live only on an explicit owner override. Holds no ETFs: the defensive sleeve config was removed in v0.1.2 after measurement showed it allocated exactly 0.0 weight on every rebalance date (max ETF weight ever held: 0.0000). Removing it is bit-identical, so this rung is and always was 100% single-name stocks.",
+      "not_for": "Anyone who would sell at -30%. That is inside normal behaviour for this book, not a malfunction.",
+      "holds_etfs": false
     },
     "aggressive": {
       "headline": "Same strategy as balanced, concentrated into four names instead of six.",
@@ -110,15 +105,7 @@
         "every": 21,
         "vol_scale": true,
         "abs_filter": true,
-        "gate_mode": "none",
-        "def_menu": [
-          "IEF",
-          "TLT",
-          "GLD",
-          "SHY"
-        ],
-        "def_lookback": 63,
-        "def_k": 1
+        "gate_mode": "none"
       },
       "risk": {
         "bankroll_usd": 250.0,
@@ -142,8 +129,9 @@
         "sharpe_haircut": 0.944,
         "holdout": "not measured \u2014 the sealed holdout is deliberately not re-opened per profile"
       },
-      "honest_note": "Four names instead of six. Median drawdown -32.9% against balanced's -30.9%, median CAGR 34.4% against 31.6% \u2014 a real but small difference that this data cannot distinguish from noise. Its worst measured anchor is -36.5%, which is close enough to the -50% halt that a bad sequence can end the book rather than ride through. We also tested three names: strictly worse on both axes (CAGR 37.8% at -31.1% drawdown on phase 0, and lower Sharpe), so the ladder stops at four rather than continuing. kill_drawdown is 0.55 here rather than balanced's 0.50: 1.5x this rung's worst measured anchor (-36.5%), per the headroom rule in docs/EQUITY.md. A tighter line on a more concentrated book buys nothing except a higher chance of a permanent exit during a survivable drawdown.",
-      "not_for": "Anyone expecting materially higher returns. The honest read is 'slightly more concentrated', not 'more aggressive' in any sense the data supports."
+      "honest_note": "Four names instead of six. Median drawdown -32.9% against balanced's -30.9%, median CAGR 34.4% against 31.6% \u2014 a real but small difference that this data cannot distinguish from noise. Its worst measured anchor is -36.5%, which is close enough to the -50% halt that a bad sequence can end the book rather than ride through. We also tested three names: strictly worse on both axes (CAGR 37.8% at -31.1% drawdown on phase 0, and lower Sharpe), so the ladder stops at four rather than continuing. kill_drawdown is 0.55 here rather than balanced's 0.50: 1.5x this rung's worst measured anchor (-36.5%), per the headroom rule in docs/EQUITY.md. A tighter line on a more concentrated book buys nothing except a higher chance of a permanent exit during a survivable drawdown. Holds no ETFs \u2014 same as balanced, the dead defensive-sleeve config was removed in v0.1.2 with bit-identical results.",
+      "not_for": "Anyone expecting materially higher returns. The honest read is 'slightly more concentrated', not 'more aggressive' in any sense the data supports.",
+      "holds_etfs": false
     },
     "ultra_aggressive": {
       "headline": "Two names. The most concentrated setting that is not simply worse than the one below it.",
@@ -158,15 +146,7 @@
         "every": 21,
         "vol_scale": true,
         "abs_filter": true,
-        "gate_mode": "none",
-        "def_menu": [
-          "IEF",
-          "TLT",
-          "GLD",
-          "SHY"
-        ],
-        "def_lookback": 63,
-        "def_k": 1
+        "gate_mode": "none"
       },
       "risk": {
         "bankroll_usd": 250.0,
@@ -190,8 +170,9 @@
         "sharpe_haircut": 0.847,
         "holdout": "not measured \u2014 the sealed holdout is deliberately not re-opened per profile"
       },
-      "honest_note": "This is the only rung above 'aggressive' that actually buys something: median CAGR 39.7% against 34.4%, for a median drawdown of -36.4% against -32.9%. More return for more risk, which is what the word is supposed to mean. Everything more extreme was tested and rejected \u2014 see `rejected` below. Two names means one bad earnings report is roughly half the book, and the -48.6% worst anchor is why the halt line sits at -75%: at this concentration the kill switch is a backstop against a spiral, not protection of capital. If it trips you have lost three quarters of the account. Sharpe after the survivorship haircut is 0.85, the lowest of any rung and well under the ~1.15 noise ceiling \u2014 there is no evidence of skill here, only of leverage-by-concentration.",
-      "not_for": "Almost everyone. Losing half the account is a normal outcome at this setting, not a malfunction, and there is nothing in the strategy that will act to prevent it."
+      "honest_note": "This is the only rung above 'aggressive' that actually buys something: median CAGR 39.7% against 34.4%, for a median drawdown of -36.4% against -32.9%. More return for more risk, which is what the word is supposed to mean. Everything more extreme was tested and rejected \u2014 see `rejected` below. Two names means one bad earnings report is roughly half the book, and the -48.6% worst anchor is why the halt line sits at -75%: at this concentration the kill switch is a backstop against a spiral, not protection of capital. If it trips you have lost three quarters of the account. Sharpe after the survivorship haircut is 0.85, the lowest of any rung and well under the ~1.15 noise ceiling \u2014 there is no evidence of skill here, only of leverage-by-concentration. Holds no ETFs \u2014 same as balanced, the dead defensive-sleeve config was removed in v0.1.2 with bit-identical results.",
+      "not_for": "Almost everyone. Losing half the account is a normal outcome at this setting, not a malfunction, and there is nothing in the strategy that will act to prevent it.",
+      "holds_etfs": false
     }
   },
   "rejected": {

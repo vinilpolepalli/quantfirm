@@ -84,11 +84,14 @@ def test_apply_replaces_params_wholesale_and_round_trips():
 def test_apply_refuses_on_a_funded_book_without_acknowledgement():
     with tempfile.TemporaryDirectory() as tmp:
         _sandbox(tmp, positions={"AAPL": 1.0}, enabled=True)
+        cfg_path = os.path.join(tmp, "config", "equity_live.json")
+        before = json.load(open(cfg_path))
         r = _run(tmp, "profile.py", "apply", "aggressive")
         assert r.returncode != 0, "must refuse to rebalance a funded book silently"
         assert "REFUSING" in r.stdout + r.stderr
-        live = json.load(open(os.path.join(tmp, "config", "equity_live.json")))
-        assert live["params"]["top_n"] == 6, "config must be untouched after refusal"
+        # Compare against what the config WAS, not against a hardcoded top_n —
+        # a clone whose owner tuned their own params must pass this too.
+        assert json.load(open(cfg_path)) == before, "config must be untouched after refusal"
 
 
 def test_setup_never_auto_acknowledges_the_live_book_guard():
@@ -96,7 +99,29 @@ def test_setup_never_auto_acknowledges_the_live_book_guard():
     whenever positions existed, defeating the guard it was meant to respect."""
     with tempfile.TemporaryDirectory() as tmp:
         _sandbox(tmp, positions={"AAPL": 1.0}, enabled=True)
+        cfg_path = os.path.join(tmp, "config", "equity_live.json")
+        before = json.load(open(cfg_path))
         r = _run(tmp, "setup.py", "--profile", "aggressive")
         assert r.returncode != 0, "setup must refuse on a funded book"
-        live = json.load(open(os.path.join(tmp, "config", "equity_live.json")))
-        assert live["params"]["top_n"] == 6, "setup changed a funded book"
+        assert json.load(open(cfg_path)) == before, "setup changed a funded book"
+
+
+ETFS = {"SPY", "QQQ", "IWM", "DIA", "XLK", "XLF", "XLE", "XLV", "XLI", "XLP",
+        "XLY", "XLU", "XLB", "XLRE", "XLC", "TLT", "IEF", "SHY", "GLD", "DBC",
+        "EFA", "EEM", "VNQ", "HYG", "LQD", "TIP", "BIL", "VEU"}
+
+
+def test_declared_etf_exposure_matches_what_the_strategy_actually_holds():
+    """holds_etfs is a promise to the owner, so check it against the weights
+    rather than trusting the label."""
+    from quantfirm.equities.data import load_panel
+    from quantfirm.equities.strategies import load_all
+    closes, reg = load_panel(), load_all()
+    for name, p in PROFILES["profiles"].items():
+        assert "holds_etfs" in p, f"{name}: must declare holds_etfs"
+        w = reg[p["strategy"]](closes, **p.get("params", {}))
+        cols = [c for c in w.columns if c in ETFS]
+        worst = float(w[cols].abs().to_numpy().max()) if cols else 0.0
+        if p["holds_etfs"] is False:
+            assert worst == 0.0, (
+                f"{name} declares holds_etfs=False but reaches {worst:.4f} ETF weight")

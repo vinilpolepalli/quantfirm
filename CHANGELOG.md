@@ -6,6 +6,74 @@ moved and what evidence backs it.
 
 ---
 
+## 0.1.2 — 2026-08-09 — upgrading an existing clone, and no ETFs on the stock rungs
+
+### Added
+
+**`scripts/upgrade.py`** — moving a running clone to a newer version.
+
+This is not `git pull`, because the books are committed. `state/`,
+`config/equity_live.json` and `dashboard/reports/` are all tracked, so a clone
+that has been trading has diverged on exactly the paths upstream also changes.
+A plain pull conflicts, and the tempting resolution — take theirs — merges the
+upstream owner's positions into your ledger. For a live trading system that is
+a corrupted book, not a merge conflict.
+
+So the repo is split in two and the halves are treated differently:
+
+| | |
+|---|---|
+| **SYSTEM** — code, docs, workflows, profiles | taken from upstream wholesale |
+| **OWNER** — books, live config, reports, keys | never overwritten, only migrated |
+
+```
+python scripts/upgrade.py --check     # what would change, touches nothing
+python scripts/upgrade.py             # do it (books backed up first)
+```
+
+If you are on a version that predates this script, bootstrap it with git
+rather than piping anything into a shell:
+
+```
+git remote add upstream https://github.com/vinilpolepalli/quantfirm.git
+git fetch upstream main
+git checkout upstream/main -- scripts/upgrade.py
+python scripts/upgrade.py --check
+```
+
+It refuses to run with local edits to system files, with the kill switch
+tripped, or with an unresolved pending order — an upgrade should never be
+tangled up with an incident. Migrations are a registry keyed by version, so
+adding 0.1.3 means appending one function.
+
+The 0.1.0 → 0.1.1 migration tags your existing configuration against the
+profile ladder **without changing it**: if your params match a shipped
+profile it is labelled as that, and if you tuned your own they are left
+untouched and marked `custom`. It seeds `cost_basis` from your own bankroll,
+and prints the two behaviour changes that release introduced.
+
+### Changed
+
+**The stock rungs no longer carry defensive-ETF config.** `balanced`,
+`aggressive` and `ultra_aggressive` declare `holds_etfs: false`, and
+`def_menu` / `def_lookback` / `def_k` are gone from their params.
+
+This is a truth-in-config change, not a behaviour change. Those three rungs
+never held an ETF: measured max ETF weight across the entire dev window is
+**0.0000**, and removing the config produces bit-identical weight matrices.
+The sleeve was dead for the reason recorded in 0.1.1 — `abs_filter` never
+fires, so `def_total` is always zero at `gate_mode=none`.
+
+`conservative` still holds ETFs, and now says so loudly, because that is
+where its conservatism comes from. Every stock-only alternative was measured
+and none reaches below −28% drawdown: low-vol ranking −28.1%, twelve names
+−32.5%, twenty names −32.9%, against the ETF book's −14.8%. On a long-only
+single-stock universe you are always fully exposed to the equity market. A
+new test asserts the declared `holds_etfs` against the actual weights rather
+than trusting the label.
+
+---
+
 ## 0.1.1 — 2026-08-09 — selectable risk profiles
 
 ### Added
