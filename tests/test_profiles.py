@@ -125,3 +125,24 @@ def test_declared_etf_exposure_matches_what_the_strategy_actually_holds():
         if p["holds_etfs"] is False:
             assert worst == 0.0, (
                 f"{name} declares holds_etfs=False but reaches {worst:.4f} ETF weight")
+
+
+def test_setup_refuses_a_clone_still_holding_the_previous_owners_book():
+    """The books are committed, so a fresh clone arrives holding someone else's
+    positions with trading enabled. Setup must not walk past that."""
+    with tempfile.TemporaryDirectory() as tmp:
+        _sandbox(tmp, positions={"LRCX": 0.16, "WDC": 0.08}, enabled=True)
+        cfg_path = os.path.join(tmp, "config", "equity_live.json")
+        before = json.load(open(cfg_path))
+        r = _run(tmp, "setup.py", "--profile", "balanced")
+        assert r.returncode != 0, "setup must refuse an inherited book"
+        assert "REFUSING" in r.stdout + r.stderr
+        assert json.load(open(cfg_path)) == before
+
+        r = _run(tmp, "setup.py", "--clear-books", "--profile", "conservative")
+        assert r.returncode == 0, r.stdout + r.stderr
+        after = json.load(open(cfg_path))
+        assert after["enabled"] is False, "clearing must disarm trading"
+        assert after["risk_profile"] == "conservative"
+        st_path = os.path.join(tmp, "state", "equity_state.json")
+        assert not os.path.exists(st_path), "previous owner's state must be gone"

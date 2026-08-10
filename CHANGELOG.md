@@ -6,6 +6,44 @@ moved and what evidence backs it.
 
 ---
 
+## 0.1.3 — 2026-08-09 — a fresh clone no longer arrives holding someone else's book
+
+### Fixed
+
+**A new owner's first clone came with the previous owner's live positions and
+trading switched on.** The books are committed (`state/`,
+`dashboard/reports/`), so `git clone` handed over six real positions, $16.19 of
+cash, eight equity marks and `enabled: true`. Point that at your own brokerage
+account and the planner believes it owns things you do not own, and it is armed
+from the first minute. The README told an *agent* to clear the books; nothing
+enforced it, and nobody following the quickstart by hand would have.
+
+`scripts/setup.py` now detects an inherited book and refuses, printing exactly
+what it found:
+
+```
+REFUSING: this clone still holds the previous owner's book.
+  positions : INTC, LRCX, MU, SNDK, STX, WDC
+  cash      : $16.19
+  marks     : 8
+  trading   : ENABLED
+```
+
+`--clear-books` wipes their state, trade log and reports and disarms trading;
+`--keep-books` is the escape hatch for an owner who really is resuming their
+own book. `--check` flags positions held with no account configured. A test
+covers both paths.
+
+Found by cloning the public repo the way a new owner would, rather than
+assuming the documented setup order would be followed.
+
+### Added
+
+A **Getting started (new owner)** quickstart at the top of the README with the
+correct three commands.
+
+---
+
 ## 0.1.2 — 2026-08-09 — upgrading an existing clone, and no ETFs on the stock rungs
 
 ### Added

@@ -53,6 +53,26 @@ python tests/test_backtest.py
 
 ---
 
+## Getting started (new owner)
+
+```bash
+git clone https://github.com/vinilpolepalli/quantfirm.git && cd quantfirm
+pip install -r requirements.txt
+python scripts/setup.py --clear-books
+```
+
+`--clear-books` matters. The books are committed to this repo, so a fresh clone
+arrives holding the previous owner's positions with trading enabled. Setup
+refuses to continue until you clear them; that flag wipes their state, trade
+log and reports, and leaves trading **disabled** until you turn it on
+deliberately. Setup then walks you through picking a risk profile and your
+starting capital, and prints the remaining steps (account, funding, price
+panel).
+
+Read `python scripts/profile.py list` before choosing — the profiles carry
+their measured drawdowns and an explicit list of what they do *not* protect
+against.
+
 ## Upgrading an existing clone
 
 Your books are committed (`state/`, `config/equity_live.json`,
