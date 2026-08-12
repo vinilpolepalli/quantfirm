@@ -36,11 +36,11 @@ jobs:
           set -euo pipefail
           python scripts/update_data.py
       - name: Update equity panel
-        # Nothing refreshed data/equities until now, so the equity desk ranked
-        # and band-checked on a panel that fell further behind every session.
-        # Not fatal to the run if it fails — the desk's own stale-panel guard
-        # refuses to trade rather than act on an old view — so don't let a
-        # flaky upstream take the crypto revalidation down with it.
+        # Deliberately still non-fatal HERE: a flaky upstream should not take
+        # the crypto revalidation and the report commit down with it. The run
+        # is failed at the end instead, by "Assert equity panel advanced", so
+        # everything that can still succeed does — and the job goes red on the
+        # thing that actually matters rather than on the fetch attempt.
         continue-on-error: true
         run: |
           set -euo pipefail
@@ -68,3 +68,15 @@ jobs:
             sleep $((i*2))
           done
           [ "$pushed" = "1" ]
+
+      # Last, and always — including when the fetch above swallowed its own
+      # failure. Four consecutive runs reported success while data/equities sat
+      # five sessions behind and the desk had quietly stopped rebalancing; a
+      # skipped refresh was indistinguishable from a working one. This is the
+      # step that makes that visible. It shares its definition of "stale" with
+      # plan()'s trading guard, so a green run means the desk can trade.
+      - name: Assert equity panel advanced
+        if: always()
+        run: |
+          set -euo pipefail
+          python scripts/check_panel_fresh.py
