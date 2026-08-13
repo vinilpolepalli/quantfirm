@@ -32,20 +32,33 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: Update crypto candle data
+        # Per-step timeouts everywhere: this job was cancelled for five nights
+        # because ONE step with a rate-limited upstream absorbed the whole
+        # 30-minute job budget and took the commit step down with it. A step
+        # that hangs should now fail as itself, loudly and early.
+        timeout-minutes: 8
         run: |
           set -euo pipefail
           python scripts/update_data.py
-      - name: Update equity panel
-        # Deliberately still non-fatal HERE: a flaky upstream should not take
-        # the crypto revalidation and the report commit down with it. The run
-        # is failed at the end instead, by "Assert equity panel advanced", so
-        # everything that can still succeed does — and the job goes red on the
-        # thing that actually matters rather than on the fetch attempt.
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          python scripts/update_equities.py
+      # The equity panel is deliberately NOT fetched here.
+      #
+      # Yahoo answers 429 to GitHub's egress, and update_equities.py responds by
+      # pacing 227 symbols through retries and 90s cool-offs. Measured: 17
+      # minutes without writing a single file. Against this job's 30-minute
+      # timeout that does not merely fail — it consumes the budget, the job is
+      # cancelled mid-flight, and the steps AFTER it never run. That is why
+      # state/research_report.json sat unchanged from 2026-08-07 while the
+      # workflow kept reporting success: the report was being computed and then
+      # thrown away with the cancelled job.
+      #
+      # The panel is now fed by the equity desk session, which can reach the
+      # broker's API (scripts/import_bars.py). Freshness is enforced there and
+      # by plan()'s own stale-panel guard, which refuses to trade on an old
+      # view. Asserting it *here* would also be wrong: at 06:23 UTC the desk has
+      # not yet imported the previous session, so the panel is one session
+      # behind by design and a check in this slot would fail every night.
       - name: Re-validate live strategy (walk-forward, all data)
+        timeout-minutes: 12
         run: |
           set -euo pipefail
           STRAT=$(python -c "import json;print(json.load(open('config/live.json'))['strategy'])")
@@ -53,6 +66,7 @@ jobs:
           python -m quantfirm.cli walkforward --strategy "$STRAT" --params "$PARAMS" --symbol BTCUSDT --split all > state/research_report.json
           python -m json.tool state/research_report.json   # reject corrupt reports
       - name: Commit data + report
+        timeout-minutes: 5
         run: |
           set -euo pipefail
           git config user.name "vinilpolepalli"
@@ -69,14 +83,14 @@ jobs:
           done
           [ "$pushed" = "1" ]
 
-      # Last, and always — including when the fetch above swallowed its own
-      # failure. Four consecutive runs reported success while data/equities sat
-      # five sessions behind and the desk had quietly stopped rebalancing; a
-      # skipped refresh was indistinguishable from a working one. This is the
-      # step that makes that visible. It shares its definition of "stale" with
-      # plan()'s trading guard, so a green run means the desk can trade.
-      - name: Assert equity panel advanced
+      # Last, and always. This job's deliverable is the report, and a report the
+      # risk committee cannot trust is the failure worth going red for: stale
+      # candles behind it, a strategy that no longer matches what is on watch,
+      # a walk-forward that produced no folds, or a bar count that went
+      # backwards. Runs green for five days while shipping nothing taught us
+      # that "the steps exited 0" is not the same as "the artifact is good".
+      - name: Assert the report is usable
         if: always()
         run: |
           set -euo pipefail
-          python scripts/check_panel_fresh.py
+          python scripts/check_report.py
