@@ -103,3 +103,54 @@ def test_shares_its_staleness_definition_with_the_trading_guard():
     import check_panel_fresh
     from equity_rebalance import missing_sessions
     assert check_panel_fresh.missing_sessions is missing_sessions
+
+
+def _bars(sym, dates, price=100.0):
+    return [{"date": d, "open": price, "high": price, "low": price,
+             "close": price, "volume": 1} for d in dates]
+
+
+def test_import_refuses_an_import_that_would_leave_the_panel_ragged(tmp_path):
+    """The trap that is NOT a failure of any single symbol: some advance, the
+    rest report 'current' because the vendor had nothing new for them, and the
+    panel ends up ragged. Seen live when the broker had published real daily
+    bars for 6 of 227 symbols and synthesized gap-fill for the other 221."""
+    import gzip
+    import json as _json
+
+    src = os.path.join(EQ, "AAPL_1d.csv.gz")
+    with gzip.open(src, "rt") as f:
+        real = pd.read_csv(f, index_col=0, parse_dates=True)
+    last = real.index[-1]
+    nxt = (last + timedelta(days=1)).date().isoformat()
+
+    panel = tmp_path / "panel"
+    panel.mkdir()
+    for s in ("AAA", "BBB"):
+        with gzip.open(panel / f"{s}_1d.csv.gz", "wt") as f:
+            real.tail(30).to_csv(f, index_label="ts", date_format="%Y-%m-%d")
+
+    shared = [d.date().isoformat() for d in real.index[-3:]]
+    closes = [float(c) for c in real["close"].iloc[-3:]]
+    payload = {
+        # AAA gets a genuinely new session, BBB does not
+        "AAA": [{"date": d, "open": c, "high": c, "low": c, "close": c,
+                 "volume": 1} for d, c in zip(shared, closes)]
+               + [{"date": nxt, "open": closes[-1], "high": closes[-1],
+                   "low": closes[-1], "close": closes[-1], "volume": 1}],
+        "BBB": [{"date": d, "open": c, "high": c, "low": c, "close": c,
+                 "volume": 1} for d, c in zip(shared, closes)],
+    }
+    blob = tmp_path / "bars.json"
+    blob.write_text(_json.dumps(payload))
+
+    r = subprocess.run(
+        [sys.executable, os.path.join(ROOT, "scripts", "import_bars.py"),
+         str(blob)],
+        capture_output=True, text=True, cwd=ROOT,
+        env=dict(os.environ, QF_EQ_DATA_DIR=str(panel)))
+    assert r.returncode == 1, "a ragged result must refuse to write"
+    assert "RAGGED" in r.stdout
+    with gzip.open(panel / "AAA_1d.csv.gz", "rt") as f:
+        after = pd.read_csv(f, index_col=0, parse_dates=True)
+    assert after.index[-1] == last, "nothing may be written when refusing"

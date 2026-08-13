@@ -71,7 +71,10 @@ import sys
 import pandas as pd
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-EQ_DIR = os.path.join(ROOT, "data", "equities")
+# Honour the same override quantfirm/equities/data.py uses. If these two ever
+# disagree about where the panel lives, this script would validate one series
+# and the strategy would rank another.
+EQ_DIR = os.environ.get("QF_EQ_DATA_DIR", os.path.join(ROOT, "data", "equities"))
 COLS = ["open", "high", "low", "close", "volume"]
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -135,29 +138,33 @@ def to_frame(bars: list[dict]) -> pd.DataFrame:
 
 
 def one(sym: str, bars: list[dict], tol: float, write: bool,
-        fix_splits: bool = True) -> tuple[str, int, str]:
-    """-> (status, rows_added, detail). Status 'ok' is the only one that writes."""
+        fix_splits: bool = True) -> tuple[str, int, str, object]:
+    """-> (status, rows_added, detail, resulting_end_date).
+
+    The end date is what this symbol's series would finish on after the import,
+    which is what the uniformity check in main() is built from.
+    """
     try:
         local = read_local(sym)
     except FileNotFoundError:
         # Not in the universe. A batched fetch will over-collect; that is not a
         # failure, it just is not ours to write.
-        return "extra", 0, "not in the panel universe, ignored"
+        return "extra", 0, "not in the panel universe, ignored", None
     except Exception as e:
-        return "skip", 0, f"unreadable local file: {e}"
+        return "skip", 0, f"unreadable local file: {e}", None
 
     try:
         new = to_frame(bars)
     except Exception as e:
-        return "skip", 0, f"bad input: {e}"
+        return "skip", 0, f"bad input: {e}", None
     if new.empty:
-        return "skip", 0, "no bars supplied"
+        return "skip", 0, "no bars supplied", None
 
     # -- overlap gate ------------------------------------------------------
     shared = local.index.intersection(new.index)
     if len(shared) == 0:
         return "skip", 0, ("no overlapping date with the panel — cannot verify "
-                           "the vendor agrees, refusing to merge unverified bars")
+                           "the vendor agrees, refusing to merge unverified bars"), None
     a = local.loc[shared, "close"].astype(float)
     b = new.loc[shared, "close"].astype(float)
     rel = ((b - a) / a).abs()
@@ -190,7 +197,7 @@ def one(sym: str, bars: list[dict], tol: float, write: bool,
             return "skip", 0, (
                 f"overlap mismatch on {len(shared)} shared date(s): worst "
                 f"{worst.date()} panel {a[worst]:.4f} vs vendor {b[worst]:.4f} "
-                f"({rel.max():.2%} > tol {tol:.2%}){hint}")
+                f"({rel.max():.2%} > tol {tol:.2%}){hint}"), None
     overlap_note = (f"{rescaled}{len(shared)} overlap date(s) agree "
                     f"(max {rel.max():.2e})")
 
@@ -198,19 +205,20 @@ def one(sym: str, bars: list[dict], tol: float, write: bool,
     last = local.index[-1]
     add = new[new.index > last]
     if add.empty:
-        return "current", 0, overlap_note
+        return "current", 0, overlap_note, last.date()
 
     bad = sane(sym, local, add)          # same split / future-bar guard as Yahoo
     if bad:
-        return "reject", 0, f"{bad}; {overlap_note}"
+        return "reject", 0, f"{bad}; {overlap_note}", last.date()
 
+    end = add.index[-1].date()
     if not write:
-        return "ok", len(add), f"{overlap_note}; {len(add)} row(s) available"
+        return "ok", len(add), f"{overlap_note}; {len(add)} row(s) available", end
 
     merged = pd.concat([local, add[COLS]]).sort_index()
     merged = merged[~merged.index.duplicated(keep="first")]
     write_local(sym, merged)
-    return "ok", len(add), f"{overlap_note}; appended through {add.index[-1].date()}"
+    return "ok", len(add), f"{overlap_note}; appended through {end}", end
 
 
 def main() -> None:
@@ -238,7 +246,7 @@ def main() -> None:
 
     # Dry-run everything first. Nothing is written until the whole universe is
     # accounted for, so a failed batch cannot leave the panel half-updated.
-    plan: dict[str, tuple[str, int, str]] = {}
+    plan: dict[str, tuple[str, int, str, object]] = {}
     for sym in sorted(payload):
         plan[sym] = one(sym, payload[sym], args.tol, write=False,
                         fix_splits=not args.no_fix_splits)
@@ -246,10 +254,28 @@ def main() -> None:
     on_disk = {f[:-len("_1d.csv.gz")] for f in os.listdir(EQ_DIR)
                if f.endswith("_1d.csv.gz")}
     absent = sorted(on_disk - set(payload))
-    failed = sorted(s for s, (st, _, _) in plan.items() if st in ("skip", "reject"))
+    failed = sorted(s for s, (st, _, _, _) in plan.items() if st in ("skip", "reject"))
+
+    # Would this import leave every symbol finishing on the same date? A mixed
+    # outcome is the trap: some symbols advance, the rest report "current"
+    # because the vendor had nothing new for them, and the result is the exact
+    # ragged panel this script exists to prevent. It is not enough that no
+    # symbol FAILED — they must all land on the same last date.
+    ends = {s: e for s, (st, _, _, e) in plan.items() if st != "extra" and e}
+    end_tally: dict[object, int] = {}
+    for e in ends.values():
+        end_tally[e] = end_tally.get(e, 0) + 1
+    ragged = len(end_tally) > 1
+    if ragged:
+        newest = max(end_tally)
+        behind = sorted(s for s, e in ends.items() if e != newest)
+        print(f"\n  RAGGED: {len(behind)} symbol(s) would stay behind {newest}: "
+              f"{', '.join(behind[:10])}{' …' if len(behind) > 10 else ''}")
+        print("  end dates after import: "
+              + ", ".join(f"{e}={n}" for e, n in sorted(end_tally.items())))
 
     for sym in sorted(plan):
-        st, _, detail = plan[sym]
+        st, _, detail, _end = plan[sym]
         if st != "current":
             print(f"  {st:<8} {sym:<6} {detail}")
     if absent:
@@ -257,20 +283,21 @@ def main() -> None:
               f"{', '.join(absent[:12])}{' …' if len(absent) > 12 else ''}")
 
     counts: dict[str, int] = {}
-    for st, _, _ in plan.values():
+    for st, _, _, _ in plan.values():
         counts[st] = counts.get(st, 0) + 1
-    would_add = sum(n for _, n, _ in plan.values())
+    would_add = sum(n for _, n, _, _ in plan.values())
     print("\n" + ", ".join(f"{k}={v}" for k, v in sorted(counts.items()))
           + f", rows={would_add}")
 
-    incomplete = bool(absent or failed)
+    incomplete = bool(absent or failed or ragged)
     if args.check:
         print("(--check, nothing written)")
         return sys.exit(1 if incomplete else 0)
     if incomplete and not args.allow_partial:
         sys.exit(
             f"\nREFUSING to write: {len(absent)} symbol(s) missing from the "
-            f"input and {len(failed)} failed validation.\n"
+            f"input, {len(failed)} failed validation"
+            f"{', and the result would be ragged' if ragged else ''}.\n"
             "A partial import appends rows the rest of the universe does not "
             "have, which collapses the cross-sectional rank AND makes plan()'s "
             "stale-panel guard read the panel as current. Supply every symbol, "
@@ -280,8 +307,8 @@ def main() -> None:
     for sym in sorted(payload):
         if plan[sym][0] != "ok":
             continue
-        _, n, detail = one(sym, payload[sym], args.tol, write=True,
-                          fix_splits=not args.no_fix_splits)
+        _, n, _detail, _end = one(sym, payload[sym], args.tol, write=True,
+                                  fix_splits=not args.no_fix_splits)
         written += n
     print(f"wrote {written} row(s) across "
           f"{sum(1 for s in plan.values() if s[0] == 'ok')} symbol(s)")
