@@ -57,11 +57,15 @@ def _last_weekday(d: date) -> date:
     return d
 
 
-def test_current_panel_passes():
-    """The real committed panel should be current; if it is not, CI should be
-    telling us so, and this test failing is that message."""
-    r = _run(EQ)
-    assert r.returncode == 0, r.stdout + r.stderr
+# There is deliberately NO test asserting the committed panel is current.
+#
+# The desk imports a session's bar during the FOLLOWING session, so between any
+# close and the next desk run the panel is legitimately one session behind. A
+# test on the real panel would therefore go red every night on wall-clock time
+# rather than on anything about the code, and a suite that fails for reasons
+# unrelated to the change under test stops being read. Panel currency is an
+# operational signal: it belongs to the desk cycle and to plan()'s stale-panel
+# guard, which refuses to trade rather than acting on an old view.
 
 
 def test_stale_panel_fails():
