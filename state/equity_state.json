@@ -2,17 +2,16 @@
   "version": 1,
   "initialized": true,
   "positions": {
-    "LRCX": 0.163604,
-    "WDC": 0.100856,
-    "MU": 0.042777,
-    "STX": 0.06005,
+    "WDC": 0.076066,
+    "MU": 0.036857,
+    "STX": 0.04563,
     "INTC": 0.373392,
     "SNDK": 0.023001
   },
   "settled_cash": 6.3,
-  "unsettled_cash": 0.0,
-  "unsettled_date": null,
-  "peak_equity": 280.81,
+  "unsettled_cash": 86.3,
+  "unsettled_date": "2026-08-14",
+  "peak_equity": 286.01,
   "equity_history": [
     [
       "2026-07-31T17:05:29.121285+00:00",
@@ -69,10 +68,14 @@
     [
       "2026-08-13T19:37:41.190133+00:00",
       280.81
+    ],
+    [
+      "2026-08-14T19:42:32.801761+00:00",
+      286.01
     ]
   ],
-  "last_rebalance": "2026-08-12T13:48:11.761872+00:00",
-  "last_plan_date": "2026-08-13",
+  "last_rebalance": "2026-08-14T19:41:58.525749+00:00",
+  "last_plan_date": "2026-08-14",
   "incidents": [
     {
       "ts": "2026-08-04T19:40:00Z",
@@ -132,12 +135,11 @@
     }
   ],
   "last_prices": {
-    "INTC": 104.33,
-    "LRCX": 337.13,
-    "MU": 957.4,
-    "SNDK": 1526.7124,
-    "STX": 919.64,
-    "WDC": 486.85
+    "INTC": 102.865,
+    "MU": 968.66,
+    "SNDK": 1622.535,
+    "STX": 968.65,
+    "WDC": 496.69
   },
   "cost_basis": 261.56,
   "contributions": [
