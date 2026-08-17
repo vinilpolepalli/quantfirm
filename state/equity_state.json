@@ -6,12 +6,13 @@
     "MU": 0.036857,
     "STX": 0.04563,
     "INTC": 0.373392,
-    "SNDK": 0.023001
+    "SNDK": 0.019771,
+    "RY": 0.450382
   },
-  "settled_cash": 6.3,
-  "unsettled_cash": 86.3,
-  "unsettled_date": "2026-08-14",
-  "peak_equity": 286.01,
+  "settled_cash": -5.18,
+  "unsettled_cash": 5.72,
+  "unsettled_date": "2026-08-17",
+  "peak_equity": 295.88,
   "equity_history": [
     [
       "2026-07-31T17:05:29.121285+00:00",
@@ -72,10 +73,14 @@
     [
       "2026-08-14T19:42:32.801761+00:00",
       286.01
+    ],
+    [
+      "2026-08-17T13:55:31.280134+00:00",
+      295.88
     ]
   ],
-  "last_rebalance": "2026-08-14T19:41:58.525749+00:00",
-  "last_plan_date": "2026-08-14",
+  "last_rebalance": "2026-08-17T13:54:42.161479+00:00",
+  "last_plan_date": "2026-08-17",
   "incidents": [
     {
       "ts": "2026-08-04T19:40:00Z",
@@ -135,11 +140,12 @@
     }
   ],
   "last_prices": {
-    "INTC": 102.865,
-    "MU": 968.66,
-    "SNDK": 1622.535,
-    "STX": 968.65,
-    "WDC": 496.69
+    "INTC": 103.445,
+    "MU": 1016.24,
+    "RY": 217.28,
+    "SNDK": 1773.23,
+    "STX": 990.72,
+    "WDC": 540.835
   },
   "cost_basis": 261.56,
   "contributions": [
@@ -148,5 +154,8 @@
       "amount": 11.56,
       "note": "Broker settled cash 16.19 vs books 4.63. 4.23 is proceeds from the owner's own pre-existing WFC/FHN/SPY lots sold 2026-08-05 (placed_agent=user, outside the mandate). The remaining 7.33 is unattributed: no agentic or user order accounts for it. All six positions reconciled to the venue exactly, so this is cash entering the account, not a books error. Booked as added capital, not profit."
     }
-  ]
+  ],
+  "gfv_hold": {
+    "RY": "2026-08-17"
+  }
 }
