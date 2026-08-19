@@ -222,6 +222,32 @@ limit that fights the strategy.
 - **Why it matters:** every "out-of-sample" claim in the docs derives from this. The sealed holdout remains genuinely out-of-sample and unaffected; the dev numbers are not what their field name says.
 - **Next:** either rename the field to `dev_sharpe` repo-wide, or implement real parameter fitting per fold. Renaming is cheap and honest; fitting changes what every recorded number means and needs its own tournament round.
 
+### R.1 Universe breadth — MEASURED, NOT SUPPORTED (2026-08-18)
+
+Asked whether the 200-name universe should be widened "as much as possible".
+Measured before building: `research/breadth_sensitivity.py` varies only the
+number of rankable stocks (top-N by cap, same screen) across all 21 rebalance
+anchors on dev, paired.
+
+| step | mean Δ net Sharpe | anchors won | paired t | verdict |
+|---|---|---|---|---|
+| 40 → 80 | −0.061 | 0/21 | −16.51 | worse |
+| 80 → 120 | +0.206 | 21/21 | +30.57 | improves |
+| 120 → 160 | +0.035 | 20/21 | +8.18 | improves |
+| 160 → 200 | −0.009 | 5/21 | −1.46 | **no effect** |
+
+The curve saturates before the live universe size. Worst-anchor drawdown moves
+the wrong way as N grows: −31.3% (120) → −33.8% (160) → −38.3% (200).
+
+**Not doing it.** Expanding past 200 would cost a full-history backfill,
+invalidate every number in `config/profiles.json`, and add a trial to a space
+whose PBO is already 0.496 — for a marginal Sharpe that measures as zero.
+
+What this does NOT settle: a *point-in-time* universe (membership as of each
+rebalance date). That is not about returns, it is about whether the returns we
+report are honest — it is the fix for the survivorship bias the 0.70 haircut
+currently papers over. Still worth doing, for a different reason than breadth.
+
 ### M.2 There is no trial registry ★ BLOCKS EVERY DEFLATED-SHARPE CLAIM
 
 - **Found:** 2026-08-09.
