@@ -94,7 +94,10 @@ git checkout -B claude/quantfirm-options-trading-y0yq67 origin/claude/quantfirm-
     `dashboard/options.html` to the branch
     (`git push -u origin claude/quantfirm-options-trading-y0yq67`, retry with
     backoff on network errors). Commit message:
-    `options-paper: tick <date>` plus a one-line summary.
+    `options-paper: tick <date>` plus a one-line summary. If no OPEN pull
+    request exists for the branch (the original was merged), open a new
+    draft PR to `main` titled `options-paper: daily ticks` so the running
+    state stays reviewable; a merged PR is never reused.
 11. **Email the reports** (owner's standing instruction, 2026-08-26: email
     yes, phone push no): send the daily report text to
     `vinil.polepalli@gmail.com` via Gmail, subject
