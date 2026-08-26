@@ -95,13 +95,17 @@ git checkout -B claude/quantfirm-options-trading-y0yq67 origin/claude/quantfirm-
     (`git push -u origin claude/quantfirm-options-trading-y0yq67`, retry with
     backoff on network errors). Commit message:
     `options-paper: tick <date>` plus a one-line summary.
-11. **No notifications** (owner's standing instruction, 2026-08-26): do not
-    email or push-notify. The dashboard is the report surface; daily/weekly
-    text files stay committed for the record. On failure, commit whatever
-    state is consistent and record an incident — it shows on the dashboard.
-    Never improvise trades; the tick script is the only decision-maker. A
-    market holiday shows up as stale quotes — the tick records the incident
-    and skips entries; move on.
+11. **Email the reports** (owner's standing instruction, 2026-08-26: email
+    yes, phone push no): send the daily report text to
+    `vinil.polepalli@gmail.com` via Gmail, subject
+    `quantfirm options paper — day N (<date>)`; on Fridays also email the
+    weekly report, subject `quantfirm options paper — weekly (<date>)`. The
+    dashboard is the always-on surface; the email is the daily digest. On
+    failure, email what failed, commit whatever state is consistent, and
+    record an incident — it shows on the dashboard. Never improvise trades;
+    the tick script is the only decision-maker. A market holiday shows up as
+    stale quotes — the tick records the incident and skips entries; say so
+    in the email and move on.
 
 ## Files
 
