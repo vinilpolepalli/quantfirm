@@ -1,0 +1,36 @@
+{
+  "desk": "options_paper",
+  "version": 1,
+  "started": "2026-08-25",
+  "ends": "2026-09-09",
+  "bankroll_usd": 500.0,
+  "cash": 500.0,
+  "equity": 500.0,
+  "halted": false,
+  "seq": 0,
+  "positions": [],
+  "history": [
+    {
+      "date": "2026-08-25",
+      "equity": 500.0,
+      "cash": 500.0,
+      "open": 0,
+      "spy": 765.85
+    }
+  ],
+  "incidents": [],
+  "registry": {},
+  "last_report": {
+    "date": "2026-08-25",
+    "day": 1,
+    "equity": 500.0,
+    "bankroll": 500.0,
+    "pnl_total": 0.0,
+    "pnl_realized": 0.0,
+    "open": [],
+    "events": [],
+    "incidents": [],
+    "halted": false,
+    "spy": 765.85
+  }
+}

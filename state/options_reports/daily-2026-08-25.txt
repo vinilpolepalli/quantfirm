@@ -1,0 +1,12 @@
+quantfirm options paper desk — day 1 (2026-08-25)
+============================================================
+equity        $500.00  (+0.00 vs $500 start)
+realized P&L  $+0.00
+SPY           765.85
+
+open positions: none
+
+today:
+  - (no actions)
+
+paper simulation — fills modeled at 60% of combined half-spread plus $0.04/contract/side; not real orders, not investment advice.
