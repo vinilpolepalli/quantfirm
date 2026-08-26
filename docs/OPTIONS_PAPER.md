@@ -85,20 +85,23 @@ git checkout -B claude/quantfirm-options-trading-y0yq67 origin/claude/quantfirm-
 
 7. **Tick:** `python scripts/options_paper.py tick --quotes <file> --date <date>`.
    The last stdout line is the daily report path.
-8. **Commit + push** state, reports, quotes archive and registry to the branch
-   (`git push -u origin claude/quantfirm-options-trading-y0yq67`, retry with
-   backoff on network errors). Commit message:
-   `options-paper: tick <date>` plus a one-line summary.
-9. **Email** the daily report text to `vinil.polepalli@gmail.com` via Gmail,
-   subject `quantfirm options paper — day N (<date>)`.
-10. **Fridays:** also run
-    `python scripts/options_paper.py report --weekly --date <date>` and email
-    it, subject `quantfirm options paper — weekly (<date>)`.
-11. **Failures:** if any step fails, still send the email describing what
-    failed and commit whatever state is consistent. Never improvise trades;
-    the tick script is the only decision-maker. A market holiday shows up as
-    stale quotes — the tick records the incident and skips entries; say so in
-    the email and move on.
+8. **Dashboard:** `python scripts/gen_options_dashboard.py` — regenerates
+   `dashboard/options.html` from the new state. Vercel redeploys it on push.
+9. **Fridays:** also run
+   `python scripts/options_paper.py report --weekly --date <date>` (the text
+   file is committed; it feeds the final verdict).
+10. **Commit + push** state, reports, quotes archive, registry and
+    `dashboard/options.html` to the branch
+    (`git push -u origin claude/quantfirm-options-trading-y0yq67`, retry with
+    backoff on network errors). Commit message:
+    `options-paper: tick <date>` plus a one-line summary.
+11. **No notifications** (owner's standing instruction, 2026-08-26): do not
+    email or push-notify. The dashboard is the report surface; daily/weekly
+    text files stay committed for the record. On failure, commit whatever
+    state is consistent and record an incident — it shows on the dashboard.
+    Never improvise trades; the tick script is the only decision-maker. A
+    market holiday shows up as stale quotes — the tick records the incident
+    and skips entries; move on.
 
 ## Files
 
