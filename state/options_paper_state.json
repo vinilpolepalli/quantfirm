@@ -23,23 +23,30 @@
       "cash": 500.0,
       "open": 0,
       "spy": 766.89
+    },
+    {
+      "date": "2026-08-27",
+      "equity": 500.0,
+      "cash": 500.0,
+      "open": 0,
+      "spy": 770.705
     }
   ],
   "incidents": [],
   "registry": {},
   "last_report": {
-    "date": "2026-08-26",
-    "day": 2,
+    "date": "2026-08-27",
+    "day": 3,
     "equity": 500.0,
     "bankroll": 500.0,
     "pnl_total": 0.0,
     "pnl_realized": 0.0,
     "open": [],
     "events": [
-      "no entry: best candidate credit 0.10 after modeled slippage fell below the floor"
+      "no entry: best candidate credit 0.11 after modeled slippage fell below the floor"
     ],
     "incidents": [],
     "halted": false,
-    "spy": 766.89
+    "spy": 770.705
   }
 }
