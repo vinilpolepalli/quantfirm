@@ -4,11 +4,42 @@
   "started": "2026-08-25",
   "ends": "2026-09-09",
   "bankroll_usd": 500.0,
-  "cash": 500.0,
-  "equity": 500.0,
+  "cash": 511.92,
+  "equity": 499.92,
   "halted": false,
-  "seq": 0,
-  "positions": [],
+  "seq": 1,
+  "positions": [
+    {
+      "id": "PCS-20260828-01",
+      "underlying": "SPY",
+      "structure": "put_credit_spread",
+      "short": {
+        "option_id": "ee775ee3-7171-4843-afb9-d8c18dd5d6ee",
+        "strike": 743.0,
+        "expiry": "2026-10-02"
+      },
+      "long": {
+        "option_id": "9765c8d9-df81-4de8-a0f4-7e128ca224eb",
+        "strike": 742.0,
+        "expiry": "2026-10-02"
+      },
+      "qty": 1,
+      "width": 1.0,
+      "opened": "2026-08-28",
+      "entry_credit": 0.12,
+      "entry_net_mid": 0.14,
+      "entry_slippage": 0.02,
+      "entry_legspread": 0.06,
+      "entry_short_delta": -0.204525,
+      "entry_short_iv": 0.154302,
+      "fees_open": 0.08,
+      "status": "open",
+      "mark": 0.12,
+      "dte": 35,
+      "profit_target": 0.06,
+      "stop_level": 0.3
+    }
+  ],
   "history": [
     {
       "date": "2026-08-25",
@@ -30,23 +61,39 @@
       "cash": 500.0,
       "open": 0,
       "spy": 770.705
+    },
+    {
+      "date": "2026-08-28",
+      "equity": 499.92,
+      "cash": 511.92,
+      "open": 1,
+      "spy": 769.385
     }
   ],
   "incidents": [],
   "registry": {},
   "last_report": {
-    "date": "2026-08-27",
-    "day": 3,
-    "equity": 500.0,
+    "date": "2026-08-28",
+    "day": 4,
+    "equity": 499.92,
     "bankroll": 500.0,
-    "pnl_total": 0.0,
+    "pnl_total": -0.08,
     "pnl_realized": 0.0,
-    "open": [],
+    "open": [
+      {
+        "id": "PCS-20260828-01",
+        "legs": "-743P/+742P 2026-10-02",
+        "dte": 35,
+        "entry_credit": 0.12,
+        "mark": 0.12,
+        "unrealized": -0.08
+      }
+    ],
     "events": [
-      "no entry: best candidate credit 0.11 after modeled slippage fell below the floor"
+      "OPENED PCS-20260828-01: short 743.0P / long 742.0P 2026-10-02 (dte 35, delta -0.20) credit 0.12 (mid 0.14), max loss $88"
     ],
     "incidents": [],
     "halted": false,
-    "spy": 770.705
+    "spy": 769.385
   }
 }
