@@ -4,9 +4,10 @@
 Run by the daily execution agent (see docs/OPTIONS_PAPER.md for the runbook):
 
     python scripts/options_paper.py init --start 2026-08-26 --end 2026-09-09
-    python scripts/options_paper.py tick --quotes state/options_quotes/2026-08-26.json
+    python scripts/options_paper.py migrate            # v1 book -> v2 schema
+    python scripts/options_paper.py tick --quotes state/options_quotes/2026-09-01.json
     python scripts/options_paper.py tick --quotes ... --no-entry     # plumbing check
-    python scripts/options_paper.py report --weekly --date 2026-08-28
+    python scripts/options_paper.py report --weekly --date 2026-09-04
     python scripts/options_paper.py status
 
 The tick reads/writes state/options_paper_state.json, gzips the quotes file it
@@ -100,11 +101,64 @@ def cmd_report(args) -> None:
         print(paper.render_daily(state["last_report"]))
 
 
+def cmd_migrate(args) -> None:
+    """Rewrite a v1 book into the v2 multi-leg schema, value-for-value.
+
+    v1 stored a credit as a positive `entry_credit` with implicit short/long put
+    legs; v2 stores a signed `paid_open` and an explicit leg list. Cash carries
+    over untouched (both versions credit the account on open), so equity is
+    unchanged by construction — the migration asserts that.
+    """
+    state = _load_state()
+    if state.get("version") == 2:
+        sys.exit("state is already v2; nothing to migrate")
+    before = state["equity"]
+    for p in state["positions"]:
+        if "legs" in p:
+            continue
+        credit = float(p["entry_credit"])
+        p["legs"] = [
+            {"option_id": p["short"]["option_id"], "strike": float(p["short"]["strike"]),
+             "expiry": p["short"]["expiry"], "type": "put", "side": "short", "ratio": 1},
+            {"option_id": p["long"]["option_id"], "strike": float(p["long"]["strike"]),
+             "expiry": p["long"]["expiry"], "type": "put", "side": "long", "ratio": 1},
+        ]
+        p["sleeve"] = "legacy"
+        p["paid_open"] = -credit
+        p["entry_mid"] = -float(p.get("entry_net_mid", credit))
+        p["entry_slippage"] = round(p["paid_open"] - p["entry_mid"], 4)
+        p["entry_legspread"] = p.get("entry_legspread", 0.0)
+        p["entry_delta"] = p.get("entry_short_delta")
+        p["entry_iv"] = p.get("entry_short_iv")
+        p["max_loss"] = round((float(p["width"]) - credit) * 100 * p["qty"], 2)
+        if p.get("mark") is not None:
+            p["mark"] = -float(p["mark"])
+        if p["status"] == "closed":
+            p["exit_price"] = -float(p.get("exit_debit", 0.0))
+            p["exit_mid"] = -float(p.get("exit_net_mid", 0.0))
+        for dead in ("short", "long", "entry_credit", "entry_net_mid", "entry_short_delta",
+                     "entry_short_iv", "profit_target", "stop_level", "exit_debit",
+                     "exit_net_mid", "mark_width"):
+            p.pop(dead, None)
+    state["version"] = 2
+    state["mandate"] = "HIGH_RISK"
+    state["migrated_at"] = args.date
+    after = paper._equity(state)
+    if abs(after - before) > 0.01:
+        sys.exit(f"migration changed equity {before} -> {after}; refusing to save")
+    state["equity"] = after
+    _save_state(state)
+    print(f"migrated {len(state['positions'])} position(s) to v2; "
+          f"equity unchanged at ${after:.2f}")
+
+
 def cmd_status(args) -> None:
     state = _load_state()
-    open_n = sum(1 for p in state["positions"] if p["status"] == "open")
-    print(f"equity ${state['equity']:.2f} / bankroll ${state['bankroll_usd']:.0f} | "
-          f"open {open_n} | halted {state.get('halted', False)} | "
+    open_p = [p for p in state["positions"] if p["status"] == "open"]
+    risk = sum(p.get("max_loss", 0.0) for p in open_p)
+    print(f"v{state.get('version', 1)} {state.get('mandate', 'BASELINE')} | "
+          f"equity ${state['equity']:.2f} / bankroll ${state['bankroll_usd']:.0f} | "
+          f"open {len(open_p)} (risk ${risk:.0f}) | halted {state.get('halted', False)} | "
           f"window {state['started']} -> {state['ends']} | "
           f"ticks {len(state['history'])}")
 
@@ -130,6 +184,10 @@ def main() -> None:
     p.add_argument("--weekly", action="store_true")
     p.add_argument("--date", default=None)
     p.set_defaults(fn=cmd_report)
+
+    p = sub.add_parser("migrate")
+    p.add_argument("--date", default=None)
+    p.set_defaults(fn=cmd_migrate)
 
     p = sub.add_parser("status")
     p.set_defaults(fn=cmd_status)

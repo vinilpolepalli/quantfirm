@@ -265,7 +265,8 @@ footer b { color:var(--ink-2); font-weight:500; }
     <div class="meta"><a href="index.html">main book ↗</a><span>MARKED 31 AUG 2026 · TICK 5</span></div>
   </div>
   <div class="rule"></div>
-  <div class="kicker">Options desk · PAPER SIMULATION — no real orders, no real money</div>
+  <div class="kicker">Options desk · PAPER SIMULATION · <b>HIGH-RISK MANDATE</b>
+    — no real orders, no real money</div>
 </header>
 
 <section class="hero">
@@ -276,13 +277,13 @@ footer b { color:var(--ink-2); font-weight:500; }
     <span class="pill down"><span class="arw">▼</span>−$3.16 <span class="per">−0.63% since start</span></span>
   </div>
   <div class="line">2 open · 0 closed ·
-    window <b>2026-08-25 → 2026-09-09</b> · status <b>RUNNING</b> ·
-    SPY put credit spreads, $1 wide, ~18Δ, 28–45 DTE</div>
+    capital at risk <b>$175.00</b> of $500.00 ·
+    window <b>2026-08-25 → 2026-09-09</b> · status <b>RUNNING</b></div>
   <div class="meter">
     <div class="track"><div class="fill"
-      style="width:1.3%;background:var(--accent)"></div></div>
-    <div class="cap"><span>entries halt below <b>$375.00</b></span>
-      <span>flatten below <b>$250.00</b></span></div>
+      style="width:0.8%;background:var(--accent)"></div></div>
+    <div class="cap"><span>entries halt below <b>$200.00</b> (40%)</span>
+      <span>flatten below <b>$100.00</b> (20%)</span></div>
   </div>
 </section>
 
@@ -308,25 +309,26 @@ footer b { color:var(--ink-2); font-weight:500; }
   </section>
 
   <section class="card">
-    <h2>Open positions <span class="n">2 of 3 max</span></h2>
+    <h2>Open positions <span class="n">2 of 8 max</span></h2>
     <div class="scroll"><table>
-      <tr><th>id</th><th>legs</th><th class="n">dte</th>
-        <th class="n">credit</th><th class="n">mark</th><th class="n">unrlzd</th></tr>
-      <tr><td class="sym">PCS-20260828-01</td><td>−743P/+742P 10-02</td><td class="n">32</td><td class="n">0.12</td><td class="n">0.15</td><td class="n">−$3.08</td></tr><tr><td class="sym">PCS-20260831-02</td><td>−744P/+743P 10-02</td><td class="n">32</td><td class="n">0.13</td><td class="n">0.13</td><td class="n">−$0.08</td></tr>
+      <tr><th>id</th><th>sleeve</th><th>legs</th><th class="n">dte</th>
+        <th class="n">entry</th><th class="n">mark</th><th class="n">risk</th>
+        <th class="n">unrlzd</th></tr>
+      <tr><td class="sym">PCS-20260828-01</td><td>legacy</td><td>SPY +742P/−743P 10-02</td><td class="n">32</td><td class="n">-0.12</td><td class="n">-0.15</td><td class="n">$88.00</td><td class="n down">−$3.08</td></tr><tr><td class="sym">PCS-20260831-02</td><td>legacy</td><td>SPY +743P/−744P 10-02</td><td class="n">32</td><td class="n">-0.13</td><td class="n">-0.13</td><td class="n">$87.00</td><td class="n down">−$0.08</td></tr>
     </table></div>
   </section>
 
   <section class="card">
     <h2>Closed trades <span class="n">0</span></h2>
     <div class="scroll"><table>
-      <tr><th>date</th><th>id</th><th>exit</th><th class="n">credit→debit</th>
-        <th class="n">P&L</th></tr>
-      <tr><td colspan="5" class="empty">no closed trades yet</td></tr>
+      <tr><th>date</th><th>id</th><th>sleeve</th><th>exit</th>
+        <th class="n">entry→exit</th><th class="n">P&L</th></tr>
+      <tr><td colspan="6" class="empty">no closed trades yet</td></tr>
     </table></div>
   </section>
 
   <section class="card">
-    <h2>Cost meter <span class="n">what this window measures</span></h2>
+    <h2>Cost meter <span class="n">friction paid to date</span></h2>
     <div class="scroll"><table>
       <tr><td>modeled slippage</td><td class="n">$4.00</td></tr>
       <tr><td>regulatory fees</td><td class="n">$0.16</td></tr>
@@ -343,12 +345,15 @@ footer b { color:var(--ink-2); font-weight:500; }
   </section>
 </div>
 
-<footer>PAPER SIMULATION. Every trading decision is made by deterministic code
-(<b>quantfirm/options/paper.py</b>, pre-registered in docs/OPTIONS_PAPER.md);
-the agent only fetches quotes and runs the tick. Two weeks measures execution
-costs and ops reliability — it cannot validate a strategy, and nothing here is
-a promise about real-money results. Generated from committed state; nothing is
-hand-entered. Not investment advice.</footer>
+<footer>PAPER SIMULATION under an explicit <b>maximum-risk mandate</b> from the
+owner. Every trading decision is made by deterministic code
+(<b>quantfirm/options/paper.py</b>, pre-registered in docs/OPTIONS_PAPER_V2.md);
+the agent only fetches quotes and runs the tick. The published evidence says
+these aggressive structures carry <b>negative expected value</b> — short-dated
+premium selling, long lottery options and event bets all lose on average, and
+this book is expected to swing hard and may well end at zero. Losses are bounded
+(no naked shorts) but the whole simulated $500 is genuinely at stake. Generated
+from committed state; nothing is hand-entered. Not investment advice.</footer>
 </div>
 </body>
 </html>

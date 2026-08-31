@@ -17,6 +17,9 @@ from datetime import date, datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import theme  # noqa: E402
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from quantfirm.options import paper  # noqa: E402
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 OUT = os.path.join(ROOT, "dashboard", "options.html")
 
@@ -37,41 +40,53 @@ def main() -> None:
     opens = [p for p in st["positions"] if p["status"] == "open"]
     closed = [p for p in st["positions"] if p["status"] == "closed"]
 
-    # drawdown ladder: entries halt at 75% of bankroll, flatten at 50%
-    halt_lv, flat_lv = 0.75 * bank, 0.50 * bank
+    # drawdown ladder (v2 HIGH-RISK): entries halt at 40%, flatten at 20%
+    halt_lv, flat_lv = 0.40 * bank, 0.20 * bank
+    risk_open = sum(float(p.get("max_loss", 0)) for p in opens)
     used = min(1.0, max(0.0, (bank - equity) / (bank - flat_lv))) if equity < bank else 0.0
     meter_col = ("var(--loss)" if equity < halt_lv else
                  "var(--warn)" if used > 0.3 else "var(--accent)")
 
     # cost meter — the number this desk exists to measure
-    slip = sum(float(p.get("entry_slippage", 0)) * 100 * p["qty"] for p in st["positions"])
-    slip += sum((float(p.get("exit_debit", 0)) - float(p.get("exit_net_mid", 0))) * 100 * p["qty"]
-                for p in closed)
+    slip = sum(abs(float(p.get("entry_slippage", 0))) * 100 * p["qty"]
+               for p in st["positions"])
+    slip = abs(slip)
+    slip += sum(abs(float(p["exit_mid"]) - float(p["exit_price"])) * 100 * p["qty"]
+                for p in closed if p.get("exit_mid") is not None)
     fees = sum(float(p.get("fees_open", 0)) + float(p.get("fees_close", 0))
                for p in st["positions"])
 
+    def legdesc(p):
+        legs = sorted(p["legs"], key=lambda l: float(l["strike"]))
+        body = "/".join(("+" if l["side"] == "long" else "\u2212")
+                        + f'{float(l["strike"]):.0f}{l["type"][0].upper()}' for l in legs)
+        return f'{p["underlying"]} {body} {min(l["expiry"] for l in p["legs"])[5:]}'
+
     def pos_row(p):
         mark = p.get("mark")
-        mark_txt = "stale" if mark is None else f"{mark:.2f}"
-        unrl = (p["entry_credit"] - (mark if mark is not None else p["entry_credit"])) \
-            * 100 * p["qty"] - p["fees_open"]
+        entry = float(p["paid_open"])
+        mark_txt = "stale" if mark is None else f"{mark:+.2f}"
+        unrl = ((mark if mark is not None else entry) - entry) * 100 * p["qty"] \
+            - p["fees_open"]
         return (
             f'<tr><td class="sym">{p["id"]}</td>'
-            f'<td>−{p["short"]["strike"]:.0f}P/+{p["long"]["strike"]:.0f}P {p["short"]["expiry"][5:]}</td>'
+            f'<td>{p.get("sleeve", "—")}</td>'
+            f'<td>{legdesc(p)}</td>'
             f'<td class="n">{p["dte"]}</td>'
-            f'<td class="n">{p["entry_credit"]:.2f}</td>'
+            f'<td class="n">{entry:+.2f}</td>'
             f'<td class="n">{mark_txt}</td>'
-            f'<td class="n">{money(unrl, True)}</td></tr>')
+            f'<td class="n">{money(float(p.get("max_loss", 0)))}</td>'
+            f'<td class="n {theme.dircls(unrl)}">{money(unrl, True)}</td></tr>')
 
     pos_rows = "".join(pos_row(p) for p in opens) \
-        or '<tr><td colspan="6" class="empty">no open positions</td></tr>'
+        or '<tr><td colspan="8" class="empty">no open positions</td></tr>'
 
     closed_rows = "".join(
-        f'<tr><td>{p["closed"][5:]}</td><td class="sym">{p["id"]}</td>'
+        f'<tr><td>{p["closed"][5:]}</td><td class="sym">{p["id"]}</td><td>{p.get("sleeve","—")}</td>'
         f'<td>{p["exit_reason"].replace("_", " ")}</td>'
-        f'<td class="n">{p["entry_credit"]:.2f} → {p["exit_debit"]:.2f}</td>'
+        f'<td class="n">{float(p["paid_open"]):+.2f} → {float(p.get("exit_price", 0)):+.2f}</td>'
         f'<td class="n {theme.dircls(p["realized_pnl"])}">{money(p["realized_pnl"], True)}</td></tr>'
-        for p in reversed(closed)) or '<tr><td colspan="5" class="empty">no closed trades yet</td></tr>'
+        for p in reversed(closed)) or '<tr><td colspan="6" class="empty">no closed trades yet</td></tr>'
 
     inc = st.get("incidents", [])
     inc_rows = "".join(f"<li>{i}</li>" for i in inc[-8:]) or "<li>none</li>"
@@ -93,7 +108,8 @@ def main() -> None:
     <div class="meta"><a href="index.html">main book ↗</a><span>{now}</span></div>
   </div>
   <div class="rule"></div>
-  <div class="kicker">Options desk · PAPER SIMULATION — no real orders, no real money</div>
+  <div class="kicker">Options desk · PAPER SIMULATION · <b>HIGH-RISK MANDATE</b>
+    — no real orders, no real money</div>
 </header>
 
 <section class="hero">
@@ -104,13 +120,13 @@ def main() -> None:
     {theme.delta_pill(total_pl, total_pl / bank, "since start")}
   </div>
   <div class="line">{len(opens)} open · {len(closed)} closed ·
-    window <b>{started} → {ends}</b> · status <b>{status}</b> ·
-    SPY put credit spreads, $1 wide, ~18Δ, 28–45 DTE</div>
+    capital at risk <b>{money(risk_open)}</b> of {money(bank)} ·
+    window <b>{started} → {ends}</b> · status <b>{status}</b></div>
   <div class="meter">
     <div class="track"><div class="fill"
       style="width:{used * 100:.1f}%;background:{meter_col}"></div></div>
-    <div class="cap"><span>entries halt below <b>{money(halt_lv)}</b></span>
-      <span>flatten below <b>{money(flat_lv)}</b></span></div>
+    <div class="cap"><span>entries halt below <b>{money(halt_lv)}</b> (40%)</span>
+      <span>flatten below <b>{money(flat_lv)}</b> (20%)</span></div>
   </div>
 </section>
 
@@ -122,10 +138,11 @@ def main() -> None:
   </section>
 
   <section class="card">
-    <h2>Open positions <span class="n">{len(opens)} of 3 max</span></h2>
+    <h2>Open positions <span class="n">{len(opens)} of {paper.MAX_OPEN_TOTAL} max</span></h2>
     <div class="scroll"><table>
-      <tr><th>id</th><th>legs</th><th class="n">dte</th>
-        <th class="n">credit</th><th class="n">mark</th><th class="n">unrlzd</th></tr>
+      <tr><th>id</th><th>sleeve</th><th>legs</th><th class="n">dte</th>
+        <th class="n">entry</th><th class="n">mark</th><th class="n">risk</th>
+        <th class="n">unrlzd</th></tr>
       {pos_rows}
     </table></div>
   </section>
@@ -133,14 +150,14 @@ def main() -> None:
   <section class="card">
     <h2>Closed trades <span class="n">{len(closed)}</span></h2>
     <div class="scroll"><table>
-      <tr><th>date</th><th>id</th><th>exit</th><th class="n">credit→debit</th>
-        <th class="n">P&L</th></tr>
+      <tr><th>date</th><th>id</th><th>sleeve</th><th>exit</th>
+        <th class="n">entry→exit</th><th class="n">P&L</th></tr>
       {closed_rows}
     </table></div>
   </section>
 
   <section class="card">
-    <h2>Cost meter <span class="n">what this window measures</span></h2>
+    <h2>Cost meter <span class="n">friction paid to date</span></h2>
     <div class="scroll"><table>
       <tr><td>modeled slippage</td><td class="n">{money(slip)}</td></tr>
       <tr><td>regulatory fees</td><td class="n">{money(fees)}</td></tr>
@@ -157,12 +174,15 @@ def main() -> None:
   </section>
 </div>
 
-<footer>PAPER SIMULATION. Every trading decision is made by deterministic code
-(<b>quantfirm/options/paper.py</b>, pre-registered in docs/OPTIONS_PAPER.md);
-the agent only fetches quotes and runs the tick. Two weeks measures execution
-costs and ops reliability — it cannot validate a strategy, and nothing here is
-a promise about real-money results. Generated from committed state; nothing is
-hand-entered. Not investment advice.</footer>
+<footer>PAPER SIMULATION under an explicit <b>maximum-risk mandate</b> from the
+owner. Every trading decision is made by deterministic code
+(<b>quantfirm/options/paper.py</b>, pre-registered in docs/OPTIONS_PAPER_V2.md);
+the agent only fetches quotes and runs the tick. The published evidence says
+these aggressive structures carry <b>negative expected value</b> — short-dated
+premium selling, long lottery options and event bets all lose on average, and
+this book is expected to swing hard and may well end at zero. Losses are bounded
+(no naked shorts) but the whole simulated $500 is genuinely at stake. Generated
+from committed state; nothing is hand-entered. Not investment advice.</footer>
 </div>"""
 
     doc = (
