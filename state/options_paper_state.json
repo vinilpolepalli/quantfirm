@@ -4,10 +4,10 @@
   "started": "2026-08-25",
   "ends": "2026-09-09",
   "bankroll_usd": 500.0,
-  "cash": 511.92,
-  "equity": 499.92,
+  "cash": 524.84,
+  "equity": 496.84,
   "halted": false,
-  "seq": 1,
+  "seq": 2,
   "positions": [
     {
       "id": "PCS-20260828-01",
@@ -34,10 +34,41 @@
       "entry_short_iv": 0.154302,
       "fees_open": 0.08,
       "status": "open",
-      "mark": 0.12,
-      "dte": 35,
+      "mark": 0.15,
+      "dte": 32,
       "profit_target": 0.06,
-      "stop_level": 0.3
+      "stop_level": 0.3,
+      "mark_width": 0.06
+    },
+    {
+      "id": "PCS-20260831-02",
+      "underlying": "SPY",
+      "structure": "put_credit_spread",
+      "short": {
+        "option_id": "92da886a-d8ca-457f-82bc-b8463430d0f3",
+        "strike": 744.0,
+        "expiry": "2026-10-02"
+      },
+      "long": {
+        "option_id": "ee775ee3-7171-4843-afb9-d8c18dd5d6ee",
+        "strike": 743.0,
+        "expiry": "2026-10-02"
+      },
+      "qty": 1,
+      "width": 1.0,
+      "opened": "2026-08-31",
+      "entry_credit": 0.13,
+      "entry_net_mid": 0.15,
+      "entry_slippage": 0.02,
+      "entry_legspread": 0.06,
+      "entry_short_delta": -0.224726,
+      "entry_short_iv": 0.1546,
+      "fees_open": 0.08,
+      "status": "open",
+      "mark": 0.13,
+      "dte": 32,
+      "profit_target": 0.07,
+      "stop_level": 0.33
     }
   ],
   "history": [
@@ -68,32 +99,47 @@
       "cash": 511.92,
       "open": 1,
       "spy": 769.385
+    },
+    {
+      "date": "2026-08-31",
+      "equity": 496.84,
+      "cash": 524.84,
+      "open": 2,
+      "spy": 767.065
     }
   ],
   "incidents": [],
   "registry": {},
   "last_report": {
-    "date": "2026-08-28",
-    "day": 4,
-    "equity": 499.92,
+    "date": "2026-08-31",
+    "day": 7,
+    "equity": 496.84,
     "bankroll": 500.0,
-    "pnl_total": -0.08,
+    "pnl_total": -3.16,
     "pnl_realized": 0.0,
     "open": [
       {
         "id": "PCS-20260828-01",
         "legs": "-743P/+742P 2026-10-02",
-        "dte": 35,
+        "dte": 32,
         "entry_credit": 0.12,
-        "mark": 0.12,
+        "mark": 0.15,
+        "unrealized": -3.08
+      },
+      {
+        "id": "PCS-20260831-02",
+        "legs": "-744P/+743P 2026-10-02",
+        "dte": 32,
+        "entry_credit": 0.13,
+        "mark": 0.13,
         "unrealized": -0.08
       }
     ],
     "events": [
-      "OPENED PCS-20260828-01: short 743.0P / long 742.0P 2026-10-02 (dte 35, delta -0.20) credit 0.12 (mid 0.14), max loss $88"
+      "OPENED PCS-20260831-02: short 744.0P / long 743.0P 2026-10-02 (dte 32, delta -0.22) credit 0.13 (mid 0.15), max loss $87"
     ],
     "incidents": [],
     "halted": false,
-    "spy": 769.385
+    "spy": 767.065
   }
 }
