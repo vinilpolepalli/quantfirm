@@ -144,10 +144,18 @@ Branch `claude/quantfirm-options-trading-y0yq67`.
    **without** `strike_price` and paginate. This is the single biggest efficiency
    win over v1, which burned one call per strike (~30/tick). Cache into
    `state/options_registry.json` keyed `SYM|EXPIRY|P|STRIKE`.
-5. **Strike ranges to quote** (keeps the day inside ~120 contracts):
-   FAT — puts from `S×0.94` to `S×0.99`, calls from `S×1.01` to `S×1.06`, both
-   ETFs; LOTTO — strikes within ±12% of spot on the momentum side only, plus
-   **every leg of every open position**.
+5. **Strike ranges to quote** — *delta-aware, and narrower than intuition
+   suggests*. Verified against the live 2026-09-04 SPY chain (4 DTE, IV ~15%):
+   strike 750 with spot 767 carries delta **−0.069**, not −0.30. At 2–9 DTE the
+   0.28–0.45 band sits within **~1% of spot**, so a "far OTM" range would return
+   nothing and the sleeve would silently no-trade.
+   - FAT: **one expiry per symbol** (nearest 5 DTE). Puts `S×0.975 … S×1.00`,
+     calls `S×1.00 … S×1.025`, at the chain's strike increment (~19 + 19 per
+     symbol). SPY and QQQ.
+   - LOTTO: strikes within ±12% of spot on the momentum side only.
+   - Plus **every leg of every open position**, always.
+   Budget: ≈76 (FAT) + ≈30 (LOTTO) + open legs ≈ **115 contracts**, inside the
+   120/day ceiling.
 6. **Quotes:** `get_option_quotes` in batches ≤30.
 7. **Settle prices:** for any open position whose expiry has passed since the last
    tick, add `SYM|EXPIRY → close` from `get_equity_historicals` on that date.
