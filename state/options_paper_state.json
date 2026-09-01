@@ -4,10 +4,10 @@
   "started": "2026-08-25",
   "ends": "2026-09-09",
   "bankroll_usd": 500.0,
-  "cash": 524.84,
-  "equity": 496.84,
+  "cash": 576.76,
+  "equity": 485.76,
   "halted": false,
-  "seq": 2,
+  "seq": 3,
   "positions": [
     {
       "id": "PCS-20260828-01",
@@ -20,8 +20,8 @@
       "entry_legspread": 0.06,
       "fees_open": 0.08,
       "status": "open",
-      "mark": -0.15,
-      "dte": 32,
+      "mark": -0.19,
+      "dte": 31,
       "legs": [
         {
           "option_id": "ee775ee3-7171-4843-afb9-d8c18dd5d6ee",
@@ -45,7 +45,8 @@
       "entry_mid": -0.14,
       "entry_delta": -0.204525,
       "entry_iv": 0.154302,
-      "max_loss": 88.0
+      "max_loss": 88.0,
+      "mark_spread": 0.07
     },
     {
       "id": "PCS-20260831-02",
@@ -58,8 +59,8 @@
       "entry_legspread": 0.06,
       "fees_open": 0.08,
       "status": "open",
-      "mark": -0.13,
-      "dte": 32,
+      "mark": -0.2,
+      "dte": 31,
       "legs": [
         {
           "option_id": "92da886a-d8ca-457f-82bc-b8463430d0f3",
@@ -83,7 +84,47 @@
       "entry_mid": -0.15,
       "entry_delta": -0.224726,
       "entry_iv": 0.1546,
-      "max_loss": 87.0
+      "max_loss": 87.0,
+      "mark_spread": 0.07
+    },
+    {
+      "id": "FAT-20260901-03",
+      "sleeve": "fat",
+      "underlying": "SPY",
+      "structure": "put_credit_spread",
+      "legs": [
+        {
+          "option_id": "8702f2bd-de33-473e-9217-e2acee79ad30",
+          "strike": 758.0,
+          "expiry": "2026-09-04",
+          "type": "put",
+          "side": "short",
+          "ratio": 1
+        },
+        {
+          "option_id": "ef89a472-71a0-436a-bbd9-ce6e1c49baa1",
+          "strike": 756.0,
+          "expiry": "2026-09-04",
+          "type": "put",
+          "side": "long",
+          "ratio": 1
+        }
+      ],
+      "qty": 1,
+      "width": 2.0,
+      "opened": "2026-09-01",
+      "paid_open": -0.52,
+      "entry_mid": -0.53,
+      "entry_slippage": 0.01,
+      "entry_legspread": 0.03,
+      "entry_delta": -0.35593,
+      "entry_iv": 0.14402,
+      "entry_underlying": 761.02,
+      "max_loss": 148.0,
+      "fees_open": 0.08,
+      "status": "open",
+      "mark": -0.52,
+      "dte": 3
     }
   ],
   "history": [
@@ -121,41 +162,68 @@
       "cash": 524.84,
       "open": 2,
       "spy": 767.065
+    },
+    {
+      "date": "2026-09-01",
+      "equity": 485.76,
+      "cash": 576.76,
+      "open": 3,
+      "risk": 323.0,
+      "spy": 761.02
     }
   ],
   "incidents": [],
   "registry": {},
   "last_report": {
-    "date": "2026-08-31",
-    "day": 7,
-    "equity": 496.84,
+    "date": "2026-09-01",
+    "day": 8,
+    "equity": 485.76,
     "bankroll": 500.0,
-    "pnl_total": -3.16,
+    "pnl_total": -14.24,
     "pnl_realized": 0.0,
+    "risk_open": 323.0,
+    "cash": 576.76,
+    "closed_n": 0,
+    "win_rate": null,
     "open": [
       {
         "id": "PCS-20260828-01",
-        "legs": "-743P/+742P 2026-10-02",
-        "dte": 32,
-        "entry_credit": 0.12,
-        "mark": 0.15,
-        "unrealized": -3.08
+        "sleeve": "legacy",
+        "desc": "SPY +742P/-743P 10-02",
+        "dte": 31,
+        "entry": -0.12,
+        "mark": -0.19,
+        "max_loss": 88.0,
+        "unrl": -7.08
       },
       {
         "id": "PCS-20260831-02",
-        "legs": "-744P/+743P 2026-10-02",
-        "dte": 32,
-        "entry_credit": 0.13,
-        "mark": 0.13,
-        "unrealized": -0.08
+        "sleeve": "legacy",
+        "desc": "SPY +743P/-744P 10-02",
+        "dte": 31,
+        "entry": -0.13,
+        "mark": -0.2,
+        "max_loss": 87.0,
+        "unrl": -7.08
+      },
+      {
+        "id": "FAT-20260901-03",
+        "sleeve": "fat",
+        "desc": "SPY +756P/-758P 09-04",
+        "dte": 3,
+        "entry": -0.52,
+        "mark": -0.52,
+        "max_loss": 148.0,
+        "unrl": -0.08
       }
     ],
     "events": [
-      "OPENED PCS-20260831-02: short 744.0P / long 743.0P 2026-10-02 (dte 32, delta -0.22) credit 0.13 (mid 0.15), max loss $87"
+      "OPENED FAT-20260901-03 [fat] SPY 2026-09-04 -758P/+756P 3dte 0.36d credit 0.52 (mid 0.53) x1, max loss $148",
+      "lotto: no entry (no candidate passed delta/DTE/ticket/OI gates)"
     ],
     "incidents": [],
     "halted": false,
-    "spy": 767.065
+    "spy": 761.02
   },
   "mandate": "HIGH_RISK",
   "migrated_at": "2026-09-01"
