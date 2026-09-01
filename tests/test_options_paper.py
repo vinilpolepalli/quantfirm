@@ -11,12 +11,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from quantfirm.options import paper
 
+# captured before any _install_sleeves() call so tests can assert on the real config
+PROD_SLEEVES = {k: dict(v) for k, v in paper.SLEEVES.items()}
+
 ASOF = "2026-09-01T19:47:00Z"
 FRESH = "2026-09-01T19:46:00Z"
 
 CREDIT_SLEEVE = {
     "fat": {"enabled": True, "kind": "credit_spread", "tag": "FAT",
-            "underlyings": ["SPY"], "sides": ["put"], "width": 5.0,
+            "underlyings": ["QQQ"], "sides": ["put"], "width": 5.0,
             "delta_band": (0.25, 0.45), "target_delta": 0.35, "dte_band": (1, 10),
             "qty": 1, "min_credit_frac": 0.10, "min_oi": 100,
             "max_legspread_frac": 1.5, "max_open": 3,
@@ -24,14 +27,14 @@ CREDIT_SLEEVE = {
 }
 DEBIT_SLEEVE = {
     "lotto": {"enabled": True, "kind": "long_option", "tag": "LOT",
-              "underlyings": ["SPY"], "sides": ["call", "put"],
+              "underlyings": ["QQQ"], "sides": ["call", "put"],
               "delta_band": (0.15, 0.40), "target_delta": 0.25, "dte_band": (1, 10),
               "min_oi": 100, "max_legspread_frac": 1.5, "ticket_usd": 60.0,
               "max_open": 3, "profit_mult": 1.0, "stop_frac": None, "dte_exit": None},
 }
 
 
-def c(strike, bid, ask, delta, kind="put", expiry="2026-09-04", oi=5000, sym="SPY",
+def c(strike, bid, ask, delta, kind="put", expiry="2026-09-04", oi=5000, sym="QQQ",
       updated=FRESH):
     return {"underlying": sym, "strike": float(strike), "type": kind,
             "expiry": expiry, "bid": bid, "ask": ask, "delta": delta,
@@ -40,7 +43,7 @@ def c(strike, bid, ask, delta, kind="put", expiry="2026-09-04", oi=5000, sym="SP
 
 def snap(contracts, spot=766.0, asof=ASOF, settle=None, mom=0.01):
     return {"asof": asof,
-            "underlyings": {"SPY": {"last": spot, "momentum": mom}},
+            "underlyings": {"QQQ": {"last": spot, "momentum": mom}},
             "contracts": contracts, "settle_prices": settle or {}}
 
 
@@ -89,7 +92,7 @@ def test_expiry_settlement_itm():
 
     # jump past expiry with SPY at 757 -> short 760P is 3.00 ITM, long 755P worthless
     st2 = paper.tick(st, snap({}, spot=757.0, asof="2026-09-08T19:47:00Z",
-                              settle={"SPY|2026-09-04": 757.0}), "2026-09-08")
+                              settle={"QQQ|2026-09-04": 757.0}), "2026-09-08")
     cl = [q for q in st2["positions"] if q["status"] == "closed"][0]
     assert cl["exit_reason"] == "expired", cl["exit_reason"]
     assert cl["exit_price"] == -3.00, cl["exit_price"]        # -max(0,760-757) + 0
@@ -107,7 +110,7 @@ def test_expiry_settlement_max_loss_capped():
     paper.tick(st, snap(credit_chain()), "2026-09-01")
     p = st["positions"][0]
     st2 = paper.tick(st, snap({}, spot=600.0, asof="2026-09-08T19:47:00Z",
-                              settle={"SPY|2026-09-04": 600.0}), "2026-09-08")
+                              settle={"QQQ|2026-09-04": 600.0}), "2026-09-08")
     cl = [q for q in st2["positions"] if q["status"] == "closed"][0]
     assert cl["exit_price"] == -5.00, cl["exit_price"]        # capped at the width
     assert abs(cl["realized_pnl"] + p["max_loss"]) < 0.2, (cl["realized_pnl"], p["max_loss"])
@@ -120,7 +123,7 @@ def test_expiry_worthless():
     st = paper.new_state("2026-09-01", "2026-09-09")
     paper.tick(st, snap(credit_chain()), "2026-09-01")
     st2 = paper.tick(st, snap({}, spot=800.0, asof="2026-09-08T19:47:00Z",
-                              settle={"SPY|2026-09-04": 800.0}), "2026-09-08")
+                              settle={"QQQ|2026-09-04": 800.0}), "2026-09-08")
     cl = [q for q in st2["positions"] if q["status"] == "closed"][0]
     assert cl["exit_price"] == 0.0 and cl["realized_pnl"] > 97, cl
     print("  expiry worthless ok: kept full credit, P&L", cl["realized_pnl"])
@@ -176,7 +179,7 @@ def test_long_option_expires_worthless():
     paper.tick(st, snap({"c770": c(770, 0.58, 0.62, 0.25, kind="call")}), "2026-09-01")
     p = st["positions"][0]
     st2 = paper.tick(st, snap({}, spot=740.0, asof="2026-09-08T19:47:00Z",
-                              settle={"SPY|2026-09-04": 740.0}), "2026-09-08")
+                              settle={"QQQ|2026-09-04": 740.0}), "2026-09-08")
     cl = [q for q in st2["positions"] if q["status"] == "closed"][0]
     assert cl["exit_price"] == 0.0, cl["exit_price"]
     assert abs(cl["realized_pnl"] + p["max_loss"]) < 0.1, cl["realized_pnl"]
@@ -224,6 +227,44 @@ def test_gates():
     print("  gates ok: staleness, OI, credit floor all block")
 
 
+def test_spy_is_banned():
+    """Owner instruction 2026-09-01: SPY must never be selected, even if a
+    config edit puts it back in a sleeve's underlyings."""
+    paper._install_sleeves({"fat": dict(CREDIT_SLEEVE["fat"], underlyings=["SPY"])})
+    st = paper.new_state("2026-09-01", "2026-09-09")
+    spy_chain = {"s760": c(760, 1.98, 2.02, -0.35, sym="SPY"),
+                 "l755": c(755, 0.98, 1.02, -0.22, sym="SPY")}
+    spy_snap = {"asof": ASOF, "underlyings": {"SPY": {"last": 766.0, "momentum": 0.01}},
+                "contracts": spy_chain, "settle_prices": {}}
+    paper.tick(st, spy_snap, "2026-09-01")
+    assert not st["positions"], "SPY was traded despite the ban"
+    # same chain on a permitted symbol still trades, proving the gate is symbol-specific
+    paper._install_sleeves(CREDIT_SLEEVE)
+    st2 = paper.new_state("2026-09-01", "2026-09-09")
+    paper.tick(st2, snap(credit_chain()), "2026-09-01")
+    assert st2["positions"], "control case should still open on QQQ"
+    assert "SPY" in paper.BANNED_UNDERLYINGS
+    print("  SPY ban ok: config re-adding SPY still opens nothing")
+
+
+def test_legacy_positions_keep_v1_exits():
+    """Migrated v1 positions must retain their profit/stop/time exits; an
+    unknown sleeve name silently gives them none."""
+    assert "legacy" in PROD_SLEEVES, "legacy exit rules missing"
+    cfg = PROD_SLEEVES["legacy"]
+    assert cfg["enabled"] is False and cfg["profit_frac"] == 0.50
+    assert cfg["stop_mult"] == 2.5 and cfg["dte_exit"] == 21
+    # a legacy credit position at 50% decay must trigger the profit target
+    p = {"paid_open": -0.12, "mark": -0.06}
+    assert paper._hit_profit(p, cfg), "legacy profit target did not fire"
+    p = {"paid_open": -0.12, "mark": -0.30}
+    assert paper._hit_stop(p, cfg), "legacy stop did not fire"
+    for name, sl in PROD_SLEEVES.items():
+        assert "SPY" not in sl.get("underlyings", []), f"{name} still lists SPY"
+    print("  legacy exits ok: 50% profit / 2.5x stop / 21 DTE restored; "
+          "no shipped sleeve lists SPY")
+
+
 def test_reports():
     paper._install_sleeves(CREDIT_SLEEVE)
     st = paper.new_state("2026-09-01", "2026-09-09")
@@ -248,5 +289,7 @@ if __name__ == "__main__":
     test_long_option_expires_worthless()
     test_risk_cap_and_ladder()
     test_gates()
+    test_spy_is_banned()
+    test_legacy_positions_keep_v1_exits()
     test_reports()
     print("ALL OK")

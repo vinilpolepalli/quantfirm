@@ -50,6 +50,11 @@ QUOTE_MAX_AGE_MIN = 30           # staleness gate vs snapshot asof
 HALT_EQUITY_FRAC = 0.40          # no new entries below this fraction of bankroll
 FLATTEN_EQUITY_FRAC = 0.20       # close everything below this
 
+# Owner instruction 2026-09-01: do not trade SPY any more. Enforced here rather
+# than only by editing a sleeve's underlyings, so re-adding SPY to a config
+# cannot quietly resume trading it.
+BANNED_UNDERLYINGS = {"SPY"}
+
 MAX_OPEN_TOTAL = 8               # across all sleeves
 MAX_NEW_PER_TICK = 3             # across all sleeves
 MAX_TOTAL_RISK_FRAC = 1.00       # 100% of bankroll may be at risk simultaneously
@@ -67,7 +72,7 @@ MAX_TOTAL_RISK_FRAC = 1.00       # 100% of bankroll may be at risk simultaneousl
 SLEEVES = {
     "fat": {
         "enabled": True, "kind": "credit_spread", "tag": "FAT",
-        "underlyings": ["SPY", "QQQ"],
+        "underlyings": ["QQQ"],         # SPY removed 2026-09-01 by owner instruction
         "sides": ["put", "call"],       # both sides at once = defined-risk strangle
         "width": 2.0,
         "delta_band": (0.28, 0.45),     # v1 was 0.12-0.25
@@ -81,6 +86,19 @@ SLEEVES = {
         "profit_frac": 0.25,            # buy back once 75% of the credit is captured
         "stop_mult": None,              # NO STOP — ride it into expiry
         "dte_exit": None,               # no time exit either; let it settle
+    },
+    # Not a trading sleeve: it only carries the v1 exit rules for the two
+    # migrated positions. Without this entry SLEEVES.get("legacy") returns {} and
+    # those positions have NO profit target, stop, or time exit at all.
+    "legacy": {
+        "enabled": False, "kind": "credit_spread", "tag": "PCS",
+        "underlyings": [], "sides": [], "width": 1.0,
+        "delta_band": (0.0, 0.0), "target_delta": 0.18, "dte_band": (0, 0),
+        "qty": 1, "min_credit_frac": 0.0, "min_oi": 0,
+        "max_legspread_frac": 0.0, "max_open": 0,
+        "profit_frac": 0.50,            # v1: buy back at 50% of credit
+        "stop_mult": 2.5,               # v1: stop at 2.5x credit
+        "dte_exit": 21,                 # v1: time exit at 21 DTE
     },
     "lotto": {
         "enabled": True, "kind": "long_option", "tag": "LOT",
@@ -294,10 +312,13 @@ def tick(state: dict, quotes: dict, today: str, allow_entry: bool = True) -> dic
     state["equity"] = _equity(state)
     state["incidents"].extend(f"{today}: {i}" for i in incidents)
     open_now = [q for q in state["positions"] if q["status"] == "open"]
+    ref_sym = next((u for c in SLEEVES.values() if c.get("enabled")
+                    for u in c.get("underlyings", [])), None)
     row = {"date": today, "equity": state["equity"], "cash": _round2(state["cash"]),
            "open": len(open_now),
            "risk": _round2(sum(q["max_loss"] for q in open_now)),
-           "spy": unders.get("SPY", {}).get("last")}
+           "ref_sym": ref_sym,
+           "ref_px": unders.get(ref_sym, {}).get("last") if ref_sym else None}
     state["history"].append(row)
     state["last_report"] = _report(state, row, events, incidents, on)
     return state
@@ -402,6 +423,8 @@ def _pick(name: str, cfg: dict, quotes: dict, contracts: dict, unders: dict,
 def _pick_credit_spread(name, cfg, quotes, contracts, unders, state, on, asof, events):
     held, best = _held_ids(state), None
     for sym in cfg["underlyings"]:
+        if sym in BANNED_UNDERLYINGS:
+            continue
         spot = unders.get(sym, {}).get("last")
         if spot is None:
             continue
@@ -457,6 +480,8 @@ def _pick_credit_spread(name, cfg, quotes, contracts, unders, state, on, asof, e
 def _pick_long_option(name, cfg, quotes, contracts, unders, state, on, asof, events):
     held, best = _held_ids(state), None
     for sym in cfg["underlyings"]:
+        if sym in BANNED_UNDERLYINGS:
+            continue
         u = unders.get(sym, {})
         spot, mom = u.get("last"), u.get("momentum")
         if spot is None or mom is None:
@@ -533,7 +558,8 @@ def _report(state: dict, row: dict, events: list, incidents: list, on: date) -> 
                                   * 100 * p["qty"] - p["fees_open"])}
                  for p in state["positions"] if p["status"] == "open"],
         "events": events, "incidents": incidents,
-        "halted": bool(state.get("halted")), "spy": row.get("spy"),
+        "halted": bool(state.get("halted")),
+        "ref_sym": row.get("ref_sym"), "ref_px": row.get("ref_px"),
     }
 
 
@@ -551,8 +577,8 @@ def render_daily(r: dict) -> str:
          f'realized P&L  ${r["pnl_realized"]:+.2f}   closed {r["closed_n"]}'
          + (f'   win rate {r["win_rate"]:.0f}%' if r["win_rate"] is not None else ""),
          f'capital at risk ${r["risk_open"]:.2f}   cash ${r["cash"]:.2f}']
-    if r.get("spy"):
-        L.append(f'SPY           {r["spy"]:.2f}')
+    if r.get("ref_px"):
+        L.append(f'{r["ref_sym"]:<13} {r["ref_px"]:.2f}')
     if r["halted"]:
         L.append("STATUS        HALTED — drawdown ladder tripped, no new entries")
     L += ["", "open positions:" if r["open"] else "open positions: none"]

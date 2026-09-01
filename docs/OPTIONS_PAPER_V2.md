@@ -44,7 +44,7 @@ It is a stress test of the *machinery and the cost model*, not a hunt for alpha.
 ### FAT — short-dated defined-risk strangles on index ETFs
 | Parameter | Value | v1 was |
 |---|---|---|
-| Underlyings | SPY, QQQ | SPY |
+| Underlyings | **QQQ** (SPY banned 2026-09-01) | SPY |
 | Sides | **put and call simultaneously** | put only |
 | Width | $2 | $1 |
 | Short-leg delta | 0.28–0.45, target **0.35** | 0.12–0.25, target 0.18 |
@@ -75,6 +75,11 @@ gamma exposure with no ability to react (the tick runs once a day).
 | Earnings | names printing inside the contract's life sort **first** |
 
 ### Account level
+- **Banned underlyings: SPY.** Owner instruction 2026-09-01. Enforced by
+  `BANNED_UNDERLYINGS` in the engine, checked inside both candidate pickers, so
+  re-adding SPY to a sleeve's `underlyings` cannot resume trading it. The three
+  open SPY positions (one FAT, two legacy) are left to wind down under their own
+  exit rules; they are existing exposure, not new trades.
 - Max open across sleeves: **8**; max new per tick: **3**
 - Total capital at risk: **100% of bankroll** (v1: 60%). Sleeve maxima sum to
   $663, so this cap binds first and the book runs ~100% deployed.
@@ -87,7 +92,10 @@ gamma exposure with no ability to react (the tick runs once a day).
 The two v1 spreads (SPY Oct-2 743/742 and 744/743, $88 risk each) were migrated
 value-for-value into the v2 schema under sleeve `legacy` and are left to wind
 down on their own. They are not re-priced or rewritten — `migrate` asserts
-equity is unchanged.
+equity is unchanged. The `legacy` sleeve entry is disabled for entries but
+**carries the v1 exit rules** (50% profit / 2.5x stop / 21 DTE); without it
+`SLEEVES.get("legacy")` returns `{}` and those positions would have had no
+exits at all.
 
 ## Engine mechanics new in v2
 
@@ -132,8 +140,8 @@ is the 5-day return from daily bars. `earnings_in_days` is optional.
 
 Branch `claude/quantfirm-options-trading-y0yq67`.
 
-1. **Underlyings:** `get_equity_quotes` for SPY, QQQ, NVDA, TSLA, PLTR, AMD, COIN
-   (one call). For each, `get_equity_historicals` (interval=day, ~7 bars) →
+1. **Underlyings:** `get_equity_quotes` for QQQ, NVDA, TSLA, PLTR, AMD, COIN
+   (one call). SPY is banned — quote it only for legs of the open SPY positions. For each, `get_equity_historicals` (interval=day, ~7 bars) →
    `momentum` = last close / close 5 bars ago − 1.
 2. **Earnings:** `get_earnings_calendar` for the LOTTO names (optional but
    preferred) → `earnings_in_days`.
@@ -150,8 +158,8 @@ Branch `claude/quantfirm-options-trading-y0yq67`.
    0.28–0.45 band sits within **~1% of spot**, so a "far OTM" range would return
    nothing and the sleeve would silently no-trade.
    - FAT: **one expiry per symbol** (nearest 5 DTE). Puts `S×0.975 … S×1.00`,
-     calls `S×1.00 … S×1.025`, at the chain's strike increment (~19 + 19 per
-     symbol). SPY and QQQ.
+     calls `S×1.00 … S×1.025`, at the chain's strike increment. QQQ only —
+     **never quote or trade SPY**.
    - LOTTO: strikes within ±12% of spot on the momentum side only.
    - Plus **every leg of every open position**, always.
    Budget: ≈76 (FAT) + ≈30 (LOTTO) + open legs ≈ **115 contracts**, inside the
