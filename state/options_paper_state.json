@@ -4,10 +4,10 @@
   "started": "2026-08-25",
   "ends": "2026-09-09",
   "bankroll_usd": 500.0,
-  "cash": 576.76,
-  "equity": 485.76,
+  "cash": 645.68,
+  "equity": 522.68,
   "halted": false,
-  "seq": 3,
+  "seq": 4,
   "positions": [
     {
       "id": "PCS-20260828-01",
@@ -20,8 +20,8 @@
       "entry_legspread": 0.06,
       "fees_open": 0.08,
       "status": "open",
-      "mark": -0.19,
-      "dte": 31,
+      "mark": -0.16,
+      "dte": 30,
       "legs": [
         {
           "option_id": "ee775ee3-7171-4843-afb9-d8c18dd5d6ee",
@@ -46,7 +46,7 @@
       "entry_delta": -0.204525,
       "entry_iv": 0.154302,
       "max_loss": 88.0,
-      "mark_spread": 0.07
+      "mark_spread": 0.04
     },
     {
       "id": "PCS-20260831-02",
@@ -59,8 +59,8 @@
       "entry_legspread": 0.06,
       "fees_open": 0.08,
       "status": "open",
-      "mark": -0.2,
-      "dte": 31,
+      "mark": -0.16,
+      "dte": 30,
       "legs": [
         {
           "option_id": "92da886a-d8ca-457f-82bc-b8463430d0f3",
@@ -85,7 +85,7 @@
       "entry_delta": -0.224726,
       "entry_iv": 0.1546,
       "max_loss": 87.0,
-      "mark_spread": 0.07
+      "mark_spread": 0.05
     },
     {
       "id": "FAT-20260901-03",
@@ -123,8 +123,48 @@
       "max_loss": 148.0,
       "fees_open": 0.08,
       "status": "open",
-      "mark": -0.52,
-      "dte": 3
+      "mark": -0.22,
+      "dte": 2,
+      "mark_spread": 0.02
+    },
+    {
+      "id": "FAT-20260902-04",
+      "sleeve": "fat",
+      "underlying": "QQQ",
+      "structure": "call_credit_spread",
+      "legs": [
+        {
+          "option_id": "33240ee8-321a-4ad0-8002-5c800308fc42",
+          "strike": 714.0,
+          "expiry": "2026-09-08",
+          "type": "call",
+          "side": "short",
+          "ratio": 1
+        },
+        {
+          "option_id": "d7531696-58de-40f5-8417-d0944cc42974",
+          "strike": 716.0,
+          "expiry": "2026-09-08",
+          "type": "call",
+          "side": "long",
+          "ratio": 1
+        }
+      ],
+      "qty": 1,
+      "width": 2.0,
+      "opened": "2026-09-02",
+      "paid_open": -0.69,
+      "entry_mid": -0.72,
+      "entry_slippage": 0.03,
+      "entry_legspread": 0.1,
+      "entry_delta": 0.354413,
+      "entry_iv": 0.13046,
+      "entry_underlying": 709.04,
+      "max_loss": 131.0,
+      "fees_open": 0.08,
+      "status": "open",
+      "mark": -0.69,
+      "dte": 6
     }
   ],
   "history": [
@@ -170,19 +210,28 @@
       "open": 3,
       "risk": 323.0,
       "spy": 761.02
+    },
+    {
+      "date": "2026-09-02",
+      "equity": 522.68,
+      "cash": 645.68,
+      "open": 4,
+      "risk": 454.0,
+      "ref_sym": "QQQ",
+      "ref_px": 709.04
     }
   ],
   "incidents": [],
   "registry": {},
   "last_report": {
-    "date": "2026-09-01",
-    "day": 8,
-    "equity": 485.76,
+    "date": "2026-09-02",
+    "day": 9,
+    "equity": 522.68,
     "bankroll": 500.0,
-    "pnl_total": -14.24,
+    "pnl_total": 22.68,
     "pnl_realized": 0.0,
-    "risk_open": 323.0,
-    "cash": 576.76,
+    "risk_open": 454.0,
+    "cash": 645.68,
     "closed_n": 0,
     "win_rate": null,
     "open": [
@@ -190,40 +239,51 @@
         "id": "PCS-20260828-01",
         "sleeve": "legacy",
         "desc": "SPY +742P/-743P 10-02",
-        "dte": 31,
+        "dte": 30,
         "entry": -0.12,
-        "mark": -0.19,
+        "mark": -0.16,
         "max_loss": 88.0,
-        "unrl": -7.08
+        "unrl": -4.08
       },
       {
         "id": "PCS-20260831-02",
         "sleeve": "legacy",
         "desc": "SPY +743P/-744P 10-02",
-        "dte": 31,
+        "dte": 30,
         "entry": -0.13,
-        "mark": -0.2,
+        "mark": -0.16,
         "max_loss": 87.0,
-        "unrl": -7.08
+        "unrl": -3.08
       },
       {
         "id": "FAT-20260901-03",
         "sleeve": "fat",
         "desc": "SPY +756P/-758P 09-04",
-        "dte": 3,
+        "dte": 2,
         "entry": -0.52,
-        "mark": -0.52,
+        "mark": -0.22,
         "max_loss": 148.0,
+        "unrl": 29.92
+      },
+      {
+        "id": "FAT-20260902-04",
+        "sleeve": "fat",
+        "desc": "QQQ -714C/+716C 09-08",
+        "dte": 6,
+        "entry": -0.69,
+        "mark": -0.69,
+        "max_loss": 131.0,
         "unrl": -0.08
       }
     ],
     "events": [
-      "OPENED FAT-20260901-03 [fat] SPY 2026-09-04 -758P/+756P 3dte 0.36d credit 0.52 (mid 0.53) x1, max loss $148",
-      "lotto: no entry (no candidate passed delta/DTE/ticket/OI gates)"
+      "OPENED FAT-20260902-04 [fat] QQQ 2026-09-08 -714C/+716C 6dte 0.35d credit 0.69 (mid 0.72) x1, max loss $131",
+      "lotto: candidate skipped, open risk $454 + $64 exceeds $500 cap"
     ],
     "incidents": [],
     "halted": false,
-    "spy": 761.02
+    "ref_sym": "QQQ",
+    "ref_px": 709.04
   },
   "mandate": "HIGH_RISK",
   "migrated_at": "2026-09-01"
