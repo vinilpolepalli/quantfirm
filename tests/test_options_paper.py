@@ -276,6 +276,18 @@ def test_reports():
     print("  reports render ok")
 
 
+def test_half_strikes_render_exactly():
+    """A 232.5 strike must never print as 232 — that is a different contract."""
+    assert paper._strike(232.5) == "232.5"
+    assert paper._strike(714.0) == "714"
+    assert paper._strike(447.5) == "447.5"
+    pos = {"underlying": "NVDA", "qty": 1,
+           "legs": [{"strike": 232.5, "expiry": "2026-09-04", "type": "call",
+                     "side": "long", "ratio": 1}]}
+    assert "232.5C" in paper._desc(pos)
+    print("  half-strike rendering ok")
+
+
 if __name__ == "__main__":
     print("test_options_paper (v2):")
     st = test_credit_open()
@@ -292,4 +304,5 @@ if __name__ == "__main__":
     test_spy_is_banned()
     test_legacy_positions_keep_v1_exits()
     test_reports()
+    test_half_strikes_render_exactly()
     print("ALL OK")

@@ -59,7 +59,7 @@ def main() -> None:
     def legdesc(p):
         legs = sorted(p["legs"], key=lambda l: float(l["strike"]))
         body = "/".join(("+" if l["side"] == "long" else "\u2212")
-                        + f'{float(l["strike"]):.0f}{l["type"][0].upper()}' for l in legs)
+                        + f'{paper._strike(l["strike"])}{l["type"][0].upper()}' for l in legs)
         return f'{p["underlying"]} {body} {min(l["expiry"] for l in p["legs"])[5:]}'
 
     def pos_row(p):

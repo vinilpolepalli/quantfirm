@@ -128,6 +128,15 @@ def _install_sleeves(table: dict) -> None:
 # small helpers
 # ---------------------------------------------------------------------------
 
+def _strike(x: float) -> str:
+    """Render a strike without lying about it.
+
+    ``f"{232.5:.0f}"`` is ``"232"`` — a different, real contract. Single names
+    list half-strikes, so every strike shown to a human goes through here.
+    """
+    return f"{float(x):g}"
+
+
 def _round2(x: float) -> float:
     return round(x + 1e-9, 2)
 
@@ -462,8 +471,8 @@ def _pick_credit_spread(name, cfg, quotes, contracts, unders, state, on, asof, e
                         paid_open=paid, delta=float(d), iv=float(c.get("iv", 0)),
                         spot=float(spot), dte=dte,
                         max_loss=_max_loss(False, paid, cfg["qty"], cfg["width"]),
-                        desc=f'{sym} {expiry} -{strike:.0f}{kind[0].upper()}/'
-                             f'+{long_strike:.0f}{kind[0].upper()} {dte}dte '
+                        desc=f'{sym} {expiry} -{_strike(strike)}{kind[0].upper()}/'
+                             f'+{_strike(long_strike)}{kind[0].upper()} {dte}dte '
                              f'{abs(float(d)):.2f}d',
                         legs=[
                             {"option_id": c["option_id"], "strike": strike,
@@ -524,7 +533,7 @@ def _pick_long_option(name, cfg, quotes, contracts, unders, state, on, asof, eve
                     net_mid=net_mid, legspread=legspread, paid_open=paid,
                     delta=float(d), iv=float(c.get("iv", 0)), spot=float(spot), dte=dte,
                     max_loss=_max_loss(True, paid, qty, 0.0),
-                    desc=f'{sym} {expiry} +{strike:.0f}{kind[0].upper()} {dte}dte '
+                    desc=f'{sym} {expiry} +{_strike(strike)}{kind[0].upper()} {dte}dte '
                          f'{abs(float(d)):.2f}d mom {float(mom):+.2%}'
                          + ('' if hot else ' [earnings]'),
                     legs=[{"option_id": c["option_id"], "strike": strike,
@@ -565,7 +574,7 @@ def _report(state: dict, row: dict, events: list, incidents: list, on: date) -> 
 
 def _desc(p: dict) -> str:
     legs = sorted(p["legs"], key=lambda l: float(l["strike"]))
-    body = "/".join(f'{"+" if l["side"] == "long" else "-"}{float(l["strike"]):.0f}'
+    body = "/".join(f'{"+" if l["side"] == "long" else "-"}{_strike(l["strike"])}'
                     f'{l["type"][0].upper()}' for l in legs)
     return f'{p["underlying"]} {body} {_expiry_of(p)[5:]}'
 
