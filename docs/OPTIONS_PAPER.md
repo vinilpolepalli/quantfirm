@@ -1,3 +1,7 @@
+> **ARCHIVED (v1).** Superseded 2026-09-01 by `docs/OPTIONS_PAPER_V2.md`
+> (high-risk mandate). Kept as the record of the conservative window
+> 2026-08-25 → 2026-08-31.
+
 # OPTIONS_PAPER.md — options paper desk: pre-registered spec + runbook
 
 **Status: PAPER ONLY. Nothing in this program places real orders. The
