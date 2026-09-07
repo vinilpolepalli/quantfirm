@@ -355,7 +355,9 @@
       "ref_px": 718.375
     }
   ],
-  "incidents": [],
+  "incidents": [
+    "2026-09-07: market holiday (Labor Day) \u2014 no session, tick skipped"
+  ],
   "registry": {},
   "last_report": {
     "date": "2026-09-04",

@@ -177,10 +177,16 @@ Branch `claude/quantfirm-options-trading-y0yq67`.
 13. **Email** the daily report to `vinil.polepalli@gmail.com`, subject
     `quantfirm options paper — day N (<date>)`; Fridays also the weekly. Email
     only — no phone push (owner instruction 2026-08-26).
-14. **Failures:** email what failed, commit whatever state is consistent, record
+14. **Market holidays:** confirm with `get_equity_quotes` (a closed session shows
+    the previous session's `venue_last_trade_time`), then run
+    `python3 scripts/options_paper.py holiday --date <date> --reason "<name>"`.
+    Do NOT run `tick` — on stale quotes it would append a history row for a day
+    the market never opened and log one incident per open position. The holiday
+    command records a single incident, leaves the book untouched, and is
+    idempotent; it refuses a date that already has a tick.
+15. **Failures:** email what failed, commit whatever state is consistent, record
     the incident. Never improvise a trade; the tick script is the only
-    decision-maker. Market holidays surface as stale quotes — the tick logs an
-    incident and skips entries.
+    decision-maker.
 
 ## Files
 

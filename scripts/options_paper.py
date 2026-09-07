@@ -8,6 +8,7 @@ Run by the daily execution agent (see docs/OPTIONS_PAPER.md for the runbook):
     python scripts/options_paper.py tick --quotes state/options_quotes/2026-09-01.json
     python scripts/options_paper.py tick --quotes ... --no-entry     # plumbing check
     python scripts/options_paper.py report --weekly --date 2026-09-04
+    python scripts/options_paper.py holiday --reason "Labor Day"   # non-trading day
     python scripts/options_paper.py status
 
 The tick reads/writes state/options_paper_state.json, gzips the quotes file it
@@ -152,6 +153,29 @@ def cmd_migrate(args) -> None:
           f"equity unchanged at ${after:.2f}")
 
 
+def cmd_holiday(args) -> None:
+    """Record a non-trading day without advancing the book.
+
+    A market holiday is not a missed tick and not a failure — there is simply
+    no session to mark against. Running `tick` on stale quotes would append a
+    history row for a day the market never opened (corrupting the equity curve
+    with a non-observation) and log one "stale quotes" incident per open
+    position. This records the fact instead: no history row, no position
+    changes, one honest incident line for the ops verdict.
+    """
+    state = _load_state()
+    day = args.date or date.today().isoformat()
+    note = f"{day}: market holiday ({args.reason}) — no session, tick skipped"
+    if note in state["incidents"]:
+        print(f"holiday for {day} already recorded; no-op")
+        return
+    if any(h["date"] == day for h in state["history"]):
+        sys.exit(f"{day} already has a tick recorded; refusing to mark it a holiday")
+    state["incidents"].append(note)
+    _save_state(state)
+    print(note)
+
+
 def cmd_status(args) -> None:
     state = _load_state()
     open_p = [p for p in state["positions"] if p["status"] == "open"]
@@ -188,6 +212,11 @@ def main() -> None:
     p = sub.add_parser("migrate")
     p.add_argument("--date", default=None)
     p.set_defaults(fn=cmd_migrate)
+
+    p = sub.add_parser("holiday")
+    p.add_argument("--date", default=None)
+    p.add_argument("--reason", required=True)
+    p.set_defaults(fn=cmd_holiday)
 
     p = sub.add_parser("status")
     p.set_defaults(fn=cmd_status)
