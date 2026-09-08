@@ -119,6 +119,16 @@ Robinhood's 15:45 ET sellout); anything that expired **unseen** settles from
 `settle_prices` in the snapshot. A missing settle price logs an incident and
 holds the position rather than guessing.
 
+**A stated `max_loss` is a settlement-basis cap, not a sellout-basis one.**
+Confirmed in production 2026-09-08: FAT-20260902-04 (QQQ −714C/+716C, both
+legs ITM at expiry) carried `max_loss` $131 — width minus credit — and the
+expiry-day sellout realized **−$137.16**, because closing at live quotes pays
+the bid-ask spread on the way out where settlement does not. The excess is the
+exit slippage plus fees, bounded by `SLIP_FRAC × legspread + fees`. The
+bounded-loss invariant is unaffected (no naked shorts; the book can reach $0
+but not below), but per-position risk shown on the dashboard understates the
+force-close worst case by roughly that amount.
+
 ## Snapshot schema (changed — multi-underlying)
 
 ```json

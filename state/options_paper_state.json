@@ -4,10 +4,10 @@
   "started": "2026-08-25",
   "ends": "2026-09-09",
   "bankroll_usd": 500.0,
-  "cash": 598.4,
-  "equity": 418.4,
+  "cash": 458.16,
+  "equity": 369.16,
   "halted": false,
-  "seq": 7,
+  "seq": 8,
   "positions": [
     {
       "id": "PCS-20260828-01",
@@ -20,8 +20,8 @@
       "entry_legspread": 0.06,
       "fees_open": 0.08,
       "status": "open",
-      "mark": -0.12,
-      "dte": 28,
+      "mark": -0.14,
+      "dte": 24,
       "legs": [
         {
           "option_id": "ee775ee3-7171-4843-afb9-d8c18dd5d6ee",
@@ -46,7 +46,7 @@
       "entry_delta": -0.204525,
       "entry_iv": 0.154302,
       "max_loss": 88.0,
-      "mark_spread": 0.06
+      "mark_spread": 0.04
     },
     {
       "id": "PCS-20260831-02",
@@ -59,8 +59,8 @@
       "entry_legspread": 0.06,
       "fees_open": 0.08,
       "status": "open",
-      "mark": -0.12,
-      "dte": 28,
+      "mark": -0.14,
+      "dte": 24,
       "legs": [
         {
           "option_id": "92da886a-d8ca-457f-82bc-b8463430d0f3",
@@ -85,7 +85,7 @@
       "entry_delta": -0.224726,
       "entry_iv": 0.1546,
       "max_loss": 87.0,
-      "mark_spread": 0.06
+      "mark_spread": 0.05
     },
     {
       "id": "FAT-20260901-03",
@@ -168,10 +168,16 @@
       "entry_underlying": 709.04,
       "max_loss": 131.0,
       "fees_open": 0.08,
-      "status": "open",
-      "mark": -1.47,
-      "dte": 4,
-      "mark_spread": 0.09
+      "status": "closed",
+      "mark": -1.98,
+      "dte": 0,
+      "mark_spread": 0.28,
+      "closed": "2026-09-08",
+      "exit_reason": "expiry_day_sellout",
+      "exit_price": -2.06,
+      "exit_mid": -1.98,
+      "fees_close": 0.08,
+      "realized_pnl": -137.16
     },
     {
       "id": "FAT-20260903-05",
@@ -208,10 +214,16 @@
       "entry_underlying": 717.69,
       "max_loss": 131.0,
       "fees_open": 0.08,
-      "status": "open",
-      "mark": -0.64,
-      "dte": 4,
-      "mark_spread": 0.02
+      "status": "closed",
+      "mark": -0.01,
+      "dte": 0,
+      "mark_spread": 0.02,
+      "closed": "2026-09-08",
+      "exit_reason": "expiry_day_sellout",
+      "exit_price": -0.02,
+      "exit_mid": -0.01,
+      "fees_close": 0.08,
+      "realized_pnl": 66.84
     },
     {
       "id": "LOT-20260903-06",
@@ -279,8 +291,48 @@
       "max_loss": 55.0,
       "fees_open": 0.04,
       "status": "open",
-      "mark": 0.55,
-      "dte": 5
+      "mark": 0.07,
+      "dte": 1,
+      "mark_spread": 0.01
+    },
+    {
+      "id": "FAT-20260908-08",
+      "sleeve": "fat",
+      "underlying": "QQQ",
+      "structure": "call_credit_spread",
+      "legs": [
+        {
+          "option_id": "e68f70fa-163d-4d4e-80d3-01560bbc63a6",
+          "strike": 723.0,
+          "expiry": "2026-09-11",
+          "type": "call",
+          "side": "short",
+          "ratio": 1
+        },
+        {
+          "option_id": "ef564f55-dd19-48e3-a3c0-e0a310cec090",
+          "strike": 725.0,
+          "expiry": "2026-09-11",
+          "type": "call",
+          "side": "long",
+          "ratio": 1
+        }
+      ],
+      "qty": 1,
+      "width": 2.0,
+      "opened": "2026-09-08",
+      "paid_open": -0.68,
+      "entry_mid": -0.7,
+      "entry_slippage": 0.02,
+      "entry_legspread": 0.07,
+      "entry_delta": 0.35148,
+      "entry_iv": 0.180677,
+      "entry_underlying": 718.13,
+      "max_loss": 132.0,
+      "fees_open": 0.08,
+      "status": "open",
+      "mark": -0.68,
+      "dte": 3
     }
   ],
   "history": [
@@ -353,6 +405,15 @@
       "risk": 492.0,
       "ref_sym": "QQQ",
       "ref_px": 718.375
+    },
+    {
+      "date": "2026-09-08",
+      "equity": 369.16,
+      "cash": 458.16,
+      "open": 4,
+      "risk": 362.0,
+      "ref_sym": "QQQ",
+      "ref_px": 718.13
     }
   ],
   "incidents": [
@@ -360,77 +421,68 @@
   ],
   "registry": {},
   "last_report": {
-    "date": "2026-09-04",
-    "day": 11,
-    "equity": 418.4,
+    "date": "2026-09-08",
+    "day": 15,
+    "equity": 369.16,
     "bankroll": 500.0,
-    "pnl_total": -81.6,
-    "pnl_realized": -9.24,
-    "risk_open": 492.0,
-    "cash": 598.4,
-    "closed_n": 2,
+    "pnl_total": -130.84,
+    "pnl_realized": -79.56,
+    "risk_open": 362.0,
+    "cash": 458.16,
+    "closed_n": 4,
     "win_rate": 50.0,
     "open": [
       {
         "id": "PCS-20260828-01",
         "sleeve": "legacy",
         "desc": "SPY +742P/-743P 10-02",
-        "dte": 28,
+        "dte": 24,
         "entry": -0.12,
-        "mark": -0.12,
+        "mark": -0.14,
         "max_loss": 88.0,
-        "unrl": -0.08
+        "unrl": -2.08
       },
       {
         "id": "PCS-20260831-02",
         "sleeve": "legacy",
         "desc": "SPY +743P/-744P 10-02",
-        "dte": 28,
+        "dte": 24,
         "entry": -0.13,
-        "mark": -0.12,
+        "mark": -0.14,
         "max_loss": 87.0,
-        "unrl": 0.92
-      },
-      {
-        "id": "FAT-20260902-04",
-        "sleeve": "fat",
-        "desc": "QQQ -714C/+716C 09-08",
-        "dte": 4,
-        "entry": -0.69,
-        "mark": -1.47,
-        "max_loss": 131.0,
-        "unrl": -78.08
-      },
-      {
-        "id": "FAT-20260903-05",
-        "sleeve": "fat",
-        "desc": "QQQ -721C/+723C 09-08",
-        "dte": 4,
-        "entry": -0.69,
-        "mark": -0.64,
-        "max_loss": 131.0,
-        "unrl": 4.92
+        "unrl": -1.08
       },
       {
         "id": "LOT-20260904-07",
         "sleeve": "lotto",
         "desc": "NVDA +237.5C 09-09",
-        "dte": 5,
+        "dte": 1,
         "entry": 0.55,
-        "mark": 0.55,
+        "mark": 0.07,
         "max_loss": 55.0,
-        "unrl": -0.04
+        "unrl": -48.04
+      },
+      {
+        "id": "FAT-20260908-08",
+        "sleeve": "fat",
+        "desc": "QQQ -723C/+725C 09-11",
+        "dte": 3,
+        "entry": -0.68,
+        "mark": -0.68,
+        "max_loss": 132.0,
+        "unrl": -0.08
       }
     ],
     "events": [
-      "CLOSED LOT-20260903-06 [lotto] expiry_day_sellout at +0.01 vs entry +0.60 -> P&L $-59.08",
-      "fat: candidate skipped, open risk $437 + $150 exceeds $500 cap",
-      "OPENED LOT-20260904-07 [lotto] NVDA 2026-09-09 +237.5C 5dte 0.16d mom +0.94% debit 0.55 (mid 0.55) x1, max loss $55"
+      "CLOSED FAT-20260902-04 [fat] expiry_day_sellout at -2.06 vs entry -0.69 -> P&L $-137.16",
+      "CLOSED FAT-20260903-05 [fat] expiry_day_sellout at -0.02 vs entry -0.69 -> P&L $+66.84",
+      "OPENED FAT-20260908-08 [fat] QQQ 2026-09-11 -723C/+725C 3dte 0.35d credit 0.68 (mid 0.70) x1, max loss $132",
+      "lotto: no entry (no candidate passed delta/DTE/ticket/OI gates)"
     ],
     "incidents": [],
     "halted": false,
     "ref_sym": "QQQ",
-    "ref_px": 718.375
+    "ref_px": 718.13
   },
   "mandate": "HIGH_RISK",
   "migrated_at": "2026-09-01"
