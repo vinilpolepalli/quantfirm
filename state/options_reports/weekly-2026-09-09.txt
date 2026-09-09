@@ -1,0 +1,32 @@
+quantfirm options paper desk — weekly report (week ending 2026-09-09)
+==================================================================
+equity $373.04 | week P&L $-116.44 | since start $-126.96 on $500
+
+trades closed this week: 5 (2 winners, 40% hit rate)
+  FAT-20260901-03        fat      SPY +756P/-758P 09-04        profit_target      P&L $  +49.84
+  FAT-20260902-04        fat      QQQ -714C/+716C 09-08        expiry_day_sellout P&L $ -137.16
+  FAT-20260903-05        fat      QQQ -721C/+723C 09-08        expiry_day_sellout P&L $  +66.84
+  LOT-20260903-06        lotto    NVDA +232.5C 09-04           expiry_day_sellout P&L $  -59.08
+  LOT-20260904-07        lotto    NVDA +237.5C 09-09           expiry_day_sellout P&L $  -54.08
+
+per-sleeve realized P&L (cumulative):
+  fat          3 trades   $  -20.48
+  lotto        2 trades   $ -113.16
+
+cost meter (cumulative): modeled slippage $23.00 (entry+exit), fees $0.96 — 4.8% of bankroll
+incidents to date: 1
+
+equity curve:
+  2026-08-25  $ 500.00  open 0  risk $  0.00
+  2026-08-26  $ 500.00  open 0  risk $  0.00
+  2026-08-27  $ 500.00  open 0  risk $  0.00
+  2026-08-28  $ 499.92  open 1  risk $  0.00
+  2026-08-31  $ 496.84  open 2  risk $  0.00
+  2026-09-01  $ 485.76  open 3  risk $323.00
+  2026-09-02  $ 522.68  open 4  risk $454.00
+  2026-09-03  $ 489.48  open 5  risk $497.00
+  2026-09-04  $ 418.40  open 5  risk $492.00
+  2026-09-08  $ 369.16  open 4  risk $362.00
+  2026-09-09  $ 373.04  open 4  risk $452.00
+
+paper simulation under an explicit maximum-risk mandate — see docs/OPTIONS_PAPER_V2.md for the pre-registered spec.

@@ -1,0 +1,20 @@
+quantfirm options paper desk — day 15 (2026-09-08)  [HIGH-RISK MANDATE]
+==================================================================
+equity        $369.16  (-130.84 vs $500 start)
+realized P&L  $-79.56   closed 4   win rate 50%
+capital at risk $362.00   cash $458.16
+QQQ           718.13
+
+open positions:
+  PCS-20260828-01        legacy   SPY +742P/-743P 10-02        dte 24  entry -0.12 -> -0.14  risk $    88  unrl $-2.08
+  PCS-20260831-02        legacy   SPY +743P/-744P 10-02        dte 24  entry -0.13 -> -0.14  risk $    87  unrl $-1.08
+  LOT-20260904-07        lotto    NVDA +237.5C 09-09           dte  1  entry +0.55 -> +0.07  risk $    55  unrl $-48.04
+  FAT-20260908-08        fat      QQQ -723C/+725C 09-11        dte  3  entry -0.68 -> -0.68  risk $   132  unrl $-0.08
+
+today:
+  - CLOSED FAT-20260902-04 [fat] expiry_day_sellout at -2.06 vs entry -0.69 -> P&L $-137.16
+  - CLOSED FAT-20260903-05 [fat] expiry_day_sellout at -0.02 vs entry -0.69 -> P&L $+66.84
+  - OPENED FAT-20260908-08 [fat] QQQ 2026-09-11 -723C/+725C 3dte 0.35d credit 0.68 (mid 0.70) x1, max loss $132
+  - lotto: no entry (no candidate passed delta/DTE/ticket/OI gates)
+
+paper simulation under an explicit maximum-risk mandate — fills modeled at 60% of combined half-spread plus $0.04/contract/side. Not real orders, not investment advice.
