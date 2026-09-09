@@ -637,7 +637,8 @@ def render_weekly(state: dict, today: str) -> str:
     slip += sum(abs(p["exit_mid"] - p["exit_price"]) * 100 * p["qty"]
                 for p in closed if p.get("exit_mid") is not None)
     fees = sum(p.get("fees_open", 0.0) + p.get("fees_close", 0.0) for p in state["positions"])
-    L += ["", f"cost meter (cumulative): modeled entry slippage ${slip:.2f}, fees ${fees:.2f} "
+    L += ["", f"cost meter (cumulative): modeled slippage ${slip:.2f} (entry+exit), "
+          f"fees ${fees:.2f} "
           f'— {100 * (slip + fees) / state["bankroll_usd"]:.1f}% of bankroll',
           f'incidents to date: {len(state["incidents"])}', "", "equity curve:"]
     for h in hist:
