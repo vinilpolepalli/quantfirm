@@ -135,7 +135,24 @@ week of shadow is NOT sufficient — see the walk-forward table for what
 
 ## Session log
 
-* 2026-09-10 16:35–16:45Z (shakeout, loose defaults): gold NO 32@0.77 →
-  settled no, **+$6.96** (model right); silver YES 58@0.19 (longshot buy,
-  now gated out) → settled no, **−$11.65**. Net −$4.69. Settlement
-  accounting verified end-to-end.
+* 2026-09-10 16:35–16:45Z (shakeout, loose defaults, pre-fix): gold NO
+  32@0.77 → settled no, **+$6.96** (model right); silver YES 58@0.19
+  (longshot buy, now gated out) → settled no, **−$11.65**. Net −$4.69.
+  Settlement accounting verified end-to-end. Book archived under
+  `state/kalshi_archive/` (superseded by the per-adapter engine).
+
+* 2026-09-10 ~17:28–19:18Z (first clean session, registered config +
+  fixed engine; taker two-phase, maker leg, per-book cash):
+  - **Taker book: 0 fills.** The restrictive gates plus the two-phase
+    race-loss check (re-fetch the book before filling) admitted no taker
+    trades — the live confirmation of the backtest verdict: at REST latency
+    there is nothing to take. Shadow cash unchanged at $500.
+  - **Maker book: +$13.16 (+2.6%), 2 wins / 0 losses, $0 fees.**
+    - `KXGOLD15M-26SEP101400` NO 22 @ 0.62 (fair 0.34) → settled no, **+$8.36**
+    - `KXGOLD15M-26SEP101430` NO 30 @ 0.84 (fair 0.12) → settled no, **+$4.80**
+    Both are favorite-side passive quotes filled BY takers (tape traded
+    through the level), held to settlement at zero fee — the mechanism the
+    maker thesis predicts. **n=2 is anecdote, not evidence**: per-trade sd
+    from the backtest is ~$22, so this is well inside noise; the ≥2-week
+    live bar stands. But the sign and the mechanism are the right ones, and
+    the taker/maker split came out exactly as the review predicted.
