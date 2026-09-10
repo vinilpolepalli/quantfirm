@@ -115,6 +115,8 @@ class PaperEngine:
         self._last_1m: dict[str, tuple[int, float]] = {}
         self._mkt_cache: dict[str, dict] = {}
         self._mkt_cache_ts: dict[str, float] = {}
+        # per-ticker (ts, mid, fair) samples for the 3-min regime lookback
+        self._hist: dict[str, list[tuple[float, float, float]]] = {}
 
     # ------------------------------------------------------------ vol warmup
     def warm_vol_from_prints(self, series: str, metal: str, n: int = 400):
@@ -198,11 +200,25 @@ class PaperEngine:
             ask = float(q.yes_ask) if q.yes_ask is not None else None
             sigma = self.vol[metal].sigma_1m(now)
             k = float(m["floor_strike"])
+            # 3-min regime lookback from the sample history
+            from .fair import fair_yes
+            fair_now = fair_yes(s_now, k, sigma, (close_ts - now) / 60.0)
+            mid_now = (bid + ask) / 2 if (bid is not None and ask is not None) else None
+            hist = self._hist.setdefault(tkr, [])
+            mkt_move = fair_move = 0.0
+            past = [h for h in hist if h[0] <= now - 170]
+            if past and mid_now is not None:
+                _, mid_p, fair_p = past[-1]
+                mkt_move, fair_move = mid_now - mid_p, fair_now - fair_p
+            if mid_now is not None:
+                hist.append((now, mid_now, fair_now))
+                self._hist[tkr] = [h for h in hist if h[0] > now - 330]
             shadow_open = [p for p in self.state.open if p.adapter == "shadow"]
             intent = decide(ticker=tkr, ts=now, s=s_now, k=k, sigma_1m=sigma,
                             close_ts=close_ts, yes_bid=bid, yes_ask=ask,
                             bankroll=self.state.d["cash"]["shadow"],
-                            open_positions=len(shadow_open), params=self.params)
+                            open_positions=len(shadow_open), params=self.params,
+                            recent_fair_move=fair_move, recent_mkt_move=mkt_move)
             if self.decisions_path:
                 self._log_decision(now, metal, tkr, s_now, k, sigma, bid, ask,
                                    close_ts, intent)

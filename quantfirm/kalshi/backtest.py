@@ -251,13 +251,29 @@ class Backtest:
 
             recent_vol = sum((cnds.get(ts - 60 * j, {}) or {}).get("volume") or 0.0
                              for j in range(3))
+            # 3-min lookback: how much did the contract move vs the model fair?
+            mkt_move = fair_move = 0.0
+            c_prev = cnds.get(ts - 180)
+            f_prev = bars.get(ts - 180)
+            if (c_prev and c_prev["bid_close"] is not None
+                    and c_prev["ask_close"] is not None and f_prev is not None):
+                mid_now = (bid + ask) / 2
+                mid_prev = (c_prev["bid_close"] + c_prev["ask_close"]) / 2
+                mkt_move = mid_now - mid_prev
+                from .fair import fair_yes as _fy
+                sig = vol[metal].sigma_1m(ts)
+                s_prev = f_prev * (m["strike"] / f_open)
+                fair_move = (_fy(s_now, m["strike"], sig, (m["close_ts"] - ts) / 60.0)
+                             - _fy(s_prev, m["strike"], sig,
+                                   (m["close_ts"] - ts + 180) / 60.0))
             # correlated-direction gate: gold+silver same direction share a slot
             intent = decide(
                 ticker=tkr, ts=ts, s=s_now, k=m["strike"],
                 sigma_1m=vol[metal].sigma_1m(ts), close_ts=m["close_ts"],
                 yes_bid=bid, yes_ask=ask, bankroll=cash,
                 open_positions=len(open_pos), params=params,
-                recent_volume=recent_vol)
+                recent_volume=recent_vol,
+                recent_fair_move=fair_move, recent_mkt_move=mkt_move)
             if intent is None:
                 continue
             if metal in ("gold", "silver"):

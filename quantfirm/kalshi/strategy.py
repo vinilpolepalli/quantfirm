@@ -55,6 +55,13 @@ class Params:
     slippage_extra: float = 0.0   # extra dollars/contract on entry (stress)
     min_recent_volume: float = 100.0  # contracts traded in last 3 min; proxies
     # real counterparties. Live equivalent: size at the touch >= our count.
+    # Regime condition on WHERE the divergence came from (3-min lookback):
+    #   'off'        — take any divergence >= theta
+    #   'flow_only'  — contract price moved (>=4c) while fair was calm (<1.5c):
+    #                  fade uninformed flow (the Turbine-surviving archetype)
+    #   'stale_only' — fair moved (>=4c) while the contract lagged (<1.5c):
+    #                  classic stale-quote repricing
+    flow_gate: str = "off"
 
     def blackout(self, ts: int) -> bool:
         """True if ts (unix) is within pad of a macro-release ET time."""
@@ -108,6 +115,13 @@ def decide(*, ticker: str, ts: int, s: float, k: float, sigma_1m: float,
 
     fair = fair_yes(s, k, sigma_1m, tau_s / 60.0)
 
+    is_flow = abs(recent_mkt_move) >= 0.04 and abs(recent_fair_move) < 0.015
+    is_stale = abs(recent_fair_move) >= 0.04 and abs(recent_mkt_move) < 0.015
+    if p.flow_gate == "flow_only" and not is_flow:
+        return None
+    if p.flow_gate == "stale_only" and not is_stale:
+        return None
+
     # YES leg: pay yes_ask (+stress), win $1 with prob fair
     # NO leg:  pay 1-yes_bid (+stress), win $1 with prob 1-fair
     cands = []
@@ -130,8 +144,7 @@ def decide(*, ticker: str, ts: int, s: float, k: float, sigma_1m: float,
     if count < p.min_count:
         return None
 
-    tag = "flow" if (abs(recent_mkt_move) >= 0.04
-                     and abs(recent_fair_move) < 0.01) else "stale"
+    tag = "flow" if is_flow else ("stale" if is_stale else "mixed")
     limit = cost - p.slippage_extra  # book the stress in the fill, not the order
     return Intent(ticker=ticker, side=side, count=count,
                   limit_price=round(limit, 4), fair=fair, edge=edge,

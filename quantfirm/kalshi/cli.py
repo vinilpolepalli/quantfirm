@@ -141,6 +141,12 @@ def main():
         sp.add_argument("--theta", type=float)
         sp.add_argument("--vol-halflife-min", dest="vol_halflife_min", type=float)
         sp.add_argument("--slippage-extra", dest="slippage_extra", type=float)
+        sp.add_argument("--tau-min-s", dest="tau_min_s", type=int)
+        sp.add_argument("--tau-max-s", dest="tau_max_s", type=int)
+        sp.add_argument("--price-min", dest="price_min", type=float)
+        sp.add_argument("--price-max", dest="price_max", type=float)
+        sp.add_argument("--flow-gate", dest="flow_gate",
+                        choices=["off", "flow_only", "stale_only"])
         sp.add_argument("--bankroll", type=float, default=500.0)
 
     sp = sub.add_parser("backtest")
