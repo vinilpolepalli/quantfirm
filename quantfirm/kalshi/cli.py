@@ -102,7 +102,8 @@ def cmd_paper(a):
                         if a.log_decisions else None),
         metals=tuple(a.metals.split(",")),
         use_demo=not a.no_demo,
-        bankroll0=a.bankroll)
+        bankroll0=a.bankroll,
+        maker=not a.no_maker)
     eng.run(minutes=a.minutes, poll_s=a.poll)
 
 
@@ -174,6 +175,7 @@ def main():
     sp.add_argument("--poll", type=float, default=2.0)
     sp.add_argument("--metals", default="gold,silver")
     sp.add_argument("--no-demo", action="store_true")
+    sp.add_argument("--no-maker", action="store_true")
     sp.add_argument("--log-decisions", action="store_true")
     add_params(sp)
     sp.set_defaults(fn=cmd_paper)

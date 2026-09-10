@@ -65,6 +65,10 @@ class PaperState:
             d = {"bankroll0": bankroll0, "cash": {"shadow": bankroll0, "demo": bankroll0},
                  "open": [], "n_settled": 0, "realized": {"shadow": 0.0, "demo": 0.0},
                  "fees": {"shadow": 0.0, "demo": 0.0}, "started": _now_iso()}
+        for book in ("shadow", "demo", "maker"):  # maker book added later
+            d.setdefault("cash", {}).setdefault(book, bankroll0)
+            d.setdefault("realized", {}).setdefault(book, 0.0)
+            d.setdefault("fees", {}).setdefault(book, 0.0)
         self.d = d
         self.open: list[PaperPosition] = [PaperPosition(**p) for p in d.get("open", [])]
 
@@ -90,11 +94,23 @@ def append_trade_log(path: str, row: dict):
         w.writerow(row)
 
 
+class MakerQuote:
+    """One resting shadow quote. side is the OUTCOME we would end up long."""
+
+    def __init__(self, ticker: str, metal: str, side: str, price: float,
+                 count: int, fair: float, placed_ts: float, close_ts: int):
+        self.ticker, self.metal, self.side = ticker, metal, side
+        self.price, self.count, self.fair = price, count, fair
+        self.placed_ts, self.close_ts = placed_ts, close_ts
+
+
 class PaperEngine:
     def __init__(self, params: Params, state_path: str, log_path: str,
                  decisions_path: str | None = None,
                  metals: tuple[str, ...] = ("gold", "silver"),
-                 use_demo: bool = True, bankroll0: float = 500.0):
+                 use_demo: bool = True, bankroll0: float = 500.0,
+                 maker: bool = True, maker_margin: float = 0.04,
+                 maker_fade: float = 0.02):
         from .feeds import SwissquoteFeed
         self.params = params
         self.metals = metals
@@ -117,6 +133,12 @@ class PaperEngine:
         self._mkt_cache_ts: dict[str, float] = {}
         # per-ticker (ts, mid, fair) samples for the 3-min regime lookback
         self._hist: dict[str, list[tuple[float, float, float]]] = {}
+        # maker shadow leg (zero-fee passive quotes on the favorite side)
+        self.maker = maker
+        self.maker_margin = maker_margin
+        self.maker_fade = maker_fade
+        self._quotes: dict[str, MakerQuote] = {}
+        self._day: dict = {}
 
     # ------------------------------------------------------------ vol warmup
     def warm_vol_from_prints(self, series: str, metal: str, n: int = 400):
@@ -158,10 +180,124 @@ class PaperEngine:
             self._mkt_cache_ts[series] = now
         return m
 
+    # ------------------------------------------------------------- daily stop
+    def _entries_allowed(self) -> dict:
+        """Per-book daily loss stop, mirroring the backtest gate."""
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        eq = {}
+        for book in ("shadow", "maker"):
+            eq[book] = self.state.d["cash"][book] + sum(
+                p.count * p.fill_price for p in self.state.open
+                if p.adapter == book)
+        if self._day.get("date") != today:
+            self._day = {"date": today, "start": dict(eq)}
+        lim = 1.0 - self.params.daily_stop_frac
+        return {b: eq[b] >= lim * self._day["start"][b] for b in eq}
+
+    # ------------------------------------------------------------- maker leg
+    def _maker_tick(self, metal: str, tkr: str, now: float, fair: float,
+                    bid: float | None, ask: float | None, close_ts: int,
+                    allowed: bool) -> list[str]:
+        notes = []
+        tau = close_ts - now
+        quote = self._quotes.get(tkr)
+        if quote is not None:
+            try:
+                trades = self.prod.get_trades(tkr, limit=100)
+            except Exception:
+                trades = []
+            if self._maker_filled(quote, trades):
+                cost = quote.count * quote.price
+                if cost <= self.state.d["cash"]["maker"]:
+                    self.state.d["cash"]["maker"] -= cost
+                    self.state.open.append(PaperPosition(
+                        ticker=quote.ticker, metal=quote.metal, side=quote.side,
+                        count=quote.count, fill_price=quote.price, fee=0.0,
+                        fair=quote.fair, entry_ts=int(now), close_ts=quote.close_ts,
+                        adapter="maker", tag="maker"))
+                    notes.append(f"MAKER FILL {quote.side} {quote.count} {tkr}"
+                                 f" @ {quote.price:.2f} fair@quote={quote.fair:.3f}")
+                del self._quotes[tkr]
+            elif (tau < 180
+                  or (quote.side == "yes" and fair < quote.fair - self.maker_fade)
+                  or (quote.side == "no" and fair > quote.fair + self.maker_fade)):
+                notes.append(f"maker cancel {tkr} tau={int(tau)}")
+                del self._quotes[tkr]
+            return notes
+
+        if not allowed or not (180 <= tau <= 660) or bid is None or ask is None:
+            return notes
+        if ask - bid <= 0.01:
+            pass  # 1c book: joining the touch is still fine
+        if any(p.ticker == tkr and p.adapter == "maker" for p in self.state.open):
+            return notes
+        m = self.maker_margin
+        side = px = None
+        if fair >= 0.55:  # rest a YES bid below fair (favorite side long yes)
+            px = min(round(fair - m, 2), round(bid + 0.01, 2), 0.90)
+            if px >= ask:  # never cross
+                px = round(ask - 0.01, 2)
+            if px >= bid and px >= 0.35 and fair - px >= m:
+                side = "yes"
+        elif fair <= 0.45:  # rest a NO bid ⇔ YES ask at 1-px
+            fair_no = 1.0 - fair
+            no_bid = round(1.0 - ask, 2)
+            px = min(round(fair_no - m, 2), round(no_bid + 0.01, 2), 0.90)
+            if 1.0 - px <= bid:  # would cross the yes bid
+                px = round(1.0 - bid - 0.01, 2)
+            if px >= no_bid and px >= 0.35 and fair_no - px >= m:
+                side = "no"
+        if side is None or px is None or px <= 0:
+            return notes
+        from .fair import kelly_fraction
+        q_side = fair if side == "yes" else 1.0 - fair
+        f = self.params.kelly_mult * kelly_fraction(q_side, px)
+        stake = min(f, self.params.max_stake_frac) * self.state.d["cash"]["maker"]
+        count = int(stake / px)
+        if count < self.params.min_count:
+            return notes
+        self._quotes[tkr] = MakerQuote(tkr, metal, side, px, count, fair,
+                                       now, close_ts)
+        notes.append(f"maker quote {side} {count} {tkr} @ {px:.2f} fair={fair:.3f}")
+        return notes
+
+    @staticmethod
+    def _maker_filled(q: MakerQuote, trades: list[dict]) -> bool:
+        """Conservative tape-based fill: the book must trade THROUGH our
+        price (strictly better for the taker than our level), or sweep 3x
+        our size exactly at it. Queue priority is unknowable publicly."""
+        thru = at = 0.0
+        for t in trades:  # newest first
+            ct = t.get("created_time")
+            try:
+                ts = datetime.fromisoformat(ct.replace("Z", "+00:00")).timestamp()
+            except Exception:
+                continue
+            if ts <= q.placed_ts:
+                break
+            try:
+                yp = float(t["yes_price_dollars"])
+                c = float(t["count_fp"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if q.side == "yes" and t.get("taker_side") == "no":
+                if yp < q.price - 1e-9:
+                    thru += c
+                elif abs(yp - q.price) < 1e-9:
+                    at += c
+            elif q.side == "no" and t.get("taker_side") == "yes":
+                ask_lvl = 1.0 - q.price
+                if yp > ask_lvl + 1e-9:
+                    thru += c
+                elif abs(yp - ask_lvl) < 1e-9:
+                    at += c
+        return thru >= q.count or at >= 3 * q.count
+
     # ------------------------------------------------------------------ tick
     def tick(self) -> list[str]:
         notes = []
         now = int(time.time())
+        allowed = self._entries_allowed()
         for metal in self.metals:
             feed = self.feeds.get(metal)
             if feed is None:
@@ -214,14 +350,19 @@ class PaperEngine:
                 hist.append((now, mid_now, fair_now))
                 self._hist[tkr] = [h for h in hist if h[0] > now - 330]
             shadow_open = [p for p in self.state.open if p.adapter == "shadow"]
-            intent = decide(ticker=tkr, ts=now, s=s_now, k=k, sigma_1m=sigma,
-                            close_ts=close_ts, yes_bid=bid, yes_ask=ask,
-                            bankroll=self.state.d["cash"]["shadow"],
-                            open_positions=len(shadow_open), params=self.params,
-                            recent_fair_move=fair_move, recent_mkt_move=mkt_move)
+            intent = None
+            if allowed["shadow"]:
+                intent = decide(ticker=tkr, ts=now, s=s_now, k=k, sigma_1m=sigma,
+                                close_ts=close_ts, yes_bid=bid, yes_ask=ask,
+                                bankroll=self.state.d["cash"]["shadow"],
+                                open_positions=len(shadow_open), params=self.params,
+                                recent_fair_move=fair_move, recent_mkt_move=mkt_move)
             if self.decisions_path:
                 self._log_decision(now, metal, tkr, s_now, k, sigma, bid, ask,
                                    close_ts, intent)
+            if self.maker:
+                notes.extend(self._maker_tick(metal, tkr, now, fair_now, bid,
+                                              ask, close_ts, allowed["maker"]))
             if intent is None:
                 continue
             # correlated-direction cap (gold/silver same direction share a slot)

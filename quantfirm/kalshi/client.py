@@ -149,6 +149,13 @@ class KalshiClient:
         yes_ask = (Decimal(1) - no_bid) if no_bid is not None else None
         return Quote(ticker, yes_bid, yes_ask, yes_bid_size, no_bid_size, time.time())
 
+    def get_trades(self, ticker: str, limit: int = 100) -> list[dict]:
+        """Public trade tape, newest first. Fields: yes_price_dollars,
+        count_fp, taker_side ('yes'|'no'), created_time, trade_id."""
+        d = self._req("GET", "/markets/trades",
+                      params={"ticker": ticker, "limit": limit})
+        return d.get("trades", [])
+
     def get_candlesticks(self, series_ticker: str, ticker: str,
                          start_ts: int, end_ts: int, period_interval: int = 1) -> list[dict]:
         d = self._req("GET", f"/series/{series_ticker}/markets/{ticker}/candlesticks",
