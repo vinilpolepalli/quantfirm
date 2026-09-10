@@ -185,3 +185,19 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   at the next session's first tick. Encouraging and consistent, still far
   short of the sample needed to claim an edge (a ~$22 per-trade sd means
   even +$82 over 13 trades is ~1.7σ — suggestive, not significant).
+
+* 2026-09-10 21:31–23:16Z (session 3, confidence clamp active):
+  - **Maker: +$43.04, 7 wins / 3 losses.** The losses (−$31, −$30, −$29)
+    clustered in the 18:00Z window — a fast underlying move ran over several
+    favorite quotes at once. This is the maker leg's real risk mode
+    (adverse selection during a spike, correlated across gold+silver) and
+    it's healthy that it showed up rather than staying hidden.
+  - **Taker: +$28.68, 4 wins / 1 loss** (a −$27.92 in the same 18:00 spike).
+
+  **Cumulative (sessions 1–3): maker +$125.59 (19/23, hit 0.83, $0 fees,
+  +25.1% on $500); taker +$56.23 (8/9, +11.2%).** Over ~5.5h of trading.
+  Still not statistically decisive: ~$18 per-trade sd and heavy same-window
+  gold/silver correlation put the maker result near ~1.5σ on effective
+  sample. The trajectory and mechanism are right; the ≥2-week bar and the
+  spike-risk (size the correlated book, not the single trade) are the open
+  items. Losses now present and bounded, which is the point of the risk gates.
