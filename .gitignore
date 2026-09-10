@@ -8,3 +8,4 @@ priv_b64.txt
 .vercel
 .env*
 config/account.local.json
+state/kalshi_paper_decisions.jsonl
