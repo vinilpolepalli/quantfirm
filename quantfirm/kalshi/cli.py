@@ -90,10 +90,24 @@ def cmd_calibrate(a):
             json.dump(out, f, indent=1)
 
 
+# The pre-registered live taker config (docs/KALSHI.md). Any CLI param
+# overrides its field; the effective Params is stamped into the state file
+# so every session is auditable against this registration.
+REGISTERED = dict(theta=0.07, vol_halflife_min=30.0, tau_min_s=300,
+                  tau_max_s=600, price_min=0.35, price_max=0.92)
+
+
 def cmd_paper(a):
+    import dataclasses as _dc
     from .paper import PaperEngine
-    p = _params_from_args(a)
+    kw = dict(REGISTERED)
+    for f in dataclasses.fields(Params):
+        v = getattr(a, f.name, None)
+        if v is not None:
+            kw[f.name] = v
+    p = Params(**kw)
     os.makedirs(STATE_DIR, exist_ok=True)
+    print("effective params:", _dc.asdict(p))
     eng = PaperEngine(
         params=p,
         state_path=os.path.join(STATE_DIR, "kalshi_paper_state.json"),
@@ -148,6 +162,8 @@ def main():
         sp.add_argument("--price-max", dest="price_max", type=float)
         sp.add_argument("--flow-gate", dest="flow_gate",
                         choices=["off", "flow_only", "stale_only"])
+        sp.add_argument("--fill-mode", dest="fill_mode",
+                        choices=["touch", "lag"])
         sp.add_argument("--bankroll", type=float, default=500.0)
 
     sp = sub.add_parser("backtest")

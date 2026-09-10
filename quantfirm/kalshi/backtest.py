@@ -98,8 +98,10 @@ def load_candles(path: str) -> dict[str, dict[int, dict]]:
                 return float(v) if v not in (None, "") else None
 
             out[row["market_ticker"]][ts] = {
-                "bid_close": g("yes_bid_close"), "bid_open": g("yes_bid_open"),
-                "ask_close": g("yes_ask_close"), "ask_open": g("yes_ask_open"),
+                "bid_open": g("yes_bid_open"), "bid_high": g("yes_bid_high"),
+                "bid_low": g("yes_bid_low"), "bid_close": g("yes_bid_close"),
+                "ask_open": g("yes_ask_open"), "ask_high": g("yes_ask_high"),
+                "ask_low": g("yes_ask_low"), "ask_close": g("yes_ask_close"),
                 "volume": g("volume"),
             }
     return dict(out)
@@ -130,6 +132,7 @@ class Trade:
     edge_at_decision: float
     tag: str
     tau_s: float
+    contested: bool = False
     result: str | None = None
     pnl: float | None = None
     settle_ts: int | None = None
@@ -168,7 +171,7 @@ class Backtest:
             for m in mkts:
                 if start_ts and m["close_ts"] < start_ts:
                     continue
-                if end_ts and m["close_ts"] > end_ts:
+                if end_ts and m["close_ts"] >= end_ts:  # windows partition [start,end)
                     continue
                 o, c = m["open_ts"], m["close_ts"]
                 for T in range(o + 60, c, 60):
@@ -285,35 +288,64 @@ class Backtest:
             if intent is None:
                 continue
 
-            # ---- fill model: limit at decision touch, filled at next candle's
-            # side-price open if it is at/inside the limit
+            # ---- fill model. The fill candle covers (T, T+60]; its side-price
+            # OPEN is a carry-forward of the decision-minute close (verified
+            # ~97-99% identical), so "touch" mode is a ZERO-LATENCY CEILING,
+            # not a conservative bound. "lag" mode is the realistic floor: a
+            # slow taker (arriving within 60s) only wins fills the fast bots
+            # left behind — i.e. levels that survived the whole fill minute
+            # (uncontested) — and pays that minute's side-price close, capped
+            # at the minute's traded volume. "contested" fills (level breached
+            # mid-minute) are exactly where the race lives; a latency-bound
+            # taker misses them, so lag mode skips them (raced_out).
             c_next = cnds.get(ts + 60)
             if not c_next:
                 skipped["no_fill_candle"] += 1
                 continue
+            lim = intent.limit_price
             if intent.side == "yes":
-                nxt = c_next["ask_open"]
-                if nxt is None or nxt > intent.limit_price + 1e-9:
-                    skipped["gapped_away"] += 1
-                    continue
-                fill = min(nxt, intent.limit_price)
+                px_open, px_high, px_close = (c_next["ask_open"],
+                                              c_next["ask_high"], c_next["ask_close"])
+                contested = px_high is not None and px_high > lim + 1e-9
             else:
-                nxt = c_next["bid_open"]
-                if nxt is None or (1.0 - nxt) > intent.limit_price + 1e-9:
+                # NO leg: we pay 1 - yes_bid; "worse for us" = yes_bid LOWER,
+                # so the contested test is on bid_low.
+                bo, bl, bc = c_next["bid_open"], c_next["bid_low"], c_next["bid_close"]
+                px_open = (1.0 - bo) if bo is not None else None
+                px_high = (1.0 - bl) if bl is not None else None  # our worst price
+                px_close = (1.0 - bc) if bc is not None else None
+                contested = px_high is not None and px_high > lim + 1e-9
+
+            count = intent.count
+            if params.fill_mode == "lag":
+                if contested:
+                    skipped["raced_out"] += 1
+                    continue
+                if px_close is None or px_close > lim + 1e-9:
                     skipped["gapped_away"] += 1
                     continue
-                fill = 1.0 - nxt
+                fill = px_close
+                cap = int(recent_vol)  # depth proxy: minute's traded volume
+                if cap < params.min_count:
+                    skipped["thin_depth"] += 1
+                    continue
+                count = min(count, cap)
+            else:  # "touch"
+                if px_open is None or px_open > lim + 1e-9:
+                    skipped["gapped_away"] += 1
+                    continue
+                fill = min(px_open, lim)
             fill += params.slippage_extra
-            cost = intent.count * fill
-            fee = taker_fee(intent.count, fill)
+            cost = count * fill
+            fee = taker_fee(count, fill)
             if cost + fee > cash:
                 skipped["no_cash"] += 1
                 continue
             cash -= cost + fee
             tr = Trade(ticker=tkr, metal=metal, entry_ts=ts + 60,
-                       side=intent.side, count=intent.count, fill_price=fill,
+                       side=intent.side, count=count, fill_price=fill,
                        fee=fee, fair=intent.fair, edge_at_decision=intent.edge,
-                       tag=intent.tag, tau_s=intent.tau_s)
+                       tag=intent.tag, tau_s=intent.tau_s, contested=contested)
             open_pos[tkr] = tr
             trades.append(tr)
 
@@ -366,6 +398,10 @@ class Backtest:
             "by_metal": by(lambda t: t.metal),
             "by_side": by(lambda t: t.side),
             "by_tag": by(lambda t: t.tag),
+            # contested/uncontested split (the review's key diagnostic): in
+            # "touch" mode the uncontested subset is the certain-fill floor a
+            # slow taker actually gets — its P&L is the honest headline.
+            "by_fill": by(lambda t: "contested" if t.contested else "uncontested"),
             "by_week": by(lambda t: datetime.fromtimestamp(
                 t.entry_ts, tz=timezone.utc).strftime("%G-W%V")),
             "skipped": skipped,

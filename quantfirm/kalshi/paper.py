@@ -141,8 +141,38 @@ class PaperEngine:
         self._day: dict = {}
 
     # ------------------------------------------------------------ vol warmup
-    def warm_vol_from_prints(self, series: str, metal: str, n: int = 400):
-        """Seed the EWMA from recent settled-window prints (15-min returns)."""
+    def warm_vol_from_bars(self, metal: str, sym: str, minutes: int = 400):
+        """Seed the EWMA from recent 1-min underlying bars — the SAME estimator
+        the backtest uses (review finding: warming from 15-min prints gave a
+        ~2-4 d.o.f. estimate that swung 20% on a single print and diverged from
+        the backtest clock). Falls back to prints if yfinance is unavailable."""
+        try:
+            import datetime as dt
+            import pandas as pd
+            import yfinance as yf
+            import yfinance._http as yh
+            yh.HAS_CURL_CFFI = False
+            df = yf.download(sym, period="7d", interval="1m", progress=False,
+                             auto_adjust=False, prepost=True)
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = [c[0].lower() for c in df.columns]
+            else:
+                df.columns = [c.lower() for c in df.columns]
+            closes = df["close"].dropna()
+            prev = None
+            for tsp, v in list(closes.items())[-minutes:]:
+                ts = int(tsp.timestamp()) + 60
+                v = float(v)
+                if prev and prev[1] > 0 and v > 0 and 0 < ts - prev[0] <= 120:
+                    self.vol[metal].update(ts, math.log(v / prev[1]))
+                prev = (ts, v)
+            return
+        except Exception:
+            pass
+        self._warm_vol_from_prints(SERIES[metal], metal)
+
+    def _warm_vol_from_prints(self, series: str, metal: str, n: int = 400):
+        """Fallback seeding from settled-window 15-min prints."""
         try:
             d = self.prod.get_markets(series_ticker=series, status="settled", limit=n)
         except Exception:
@@ -155,10 +185,8 @@ class PaperEngine:
                 continue
             v = float(v)
             if prev and prev > 0 and v > 0:
-                lr15 = math.log(v / prev)
-                # spread one 15-min return over 15 one-minute updates
+                lr1 = math.log(v / prev) / math.sqrt(15.0)
                 ts = parse_market_times(m)[1]
-                lr1 = lr15 / math.sqrt(15.0)
                 for k in range(15):
                     self.vol[metal].update(ts - 60 * (14 - k), lr1)
             prev = v
@@ -182,17 +210,21 @@ class PaperEngine:
 
     # ------------------------------------------------------------- daily stop
     def _entries_allowed(self) -> dict:
-        """Per-book daily loss stop, mirroring the backtest gate."""
+        """Per-book daily loss stop, mirroring the backtest gate. The day
+        baseline is PERSISTED in state (review finding: an in-memory baseline
+        re-arms from depleted equity on every restart, defeating the stop)."""
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         eq = {}
         for book in ("shadow", "maker"):
             eq[book] = self.state.d["cash"][book] + sum(
                 p.count * p.fill_price for p in self.state.open
                 if p.adapter == book)
-        if self._day.get("date") != today:
-            self._day = {"date": today, "start": dict(eq)}
+        day = self.state.d.setdefault("day_stop", {})
+        if day.get("date") != today:
+            day.clear()
+            day.update({"date": today, "start": dict(eq)})
         lim = 1.0 - self.params.daily_stop_frac
-        return {b: eq[b] >= lim * self._day["start"][b] for b in eq}
+        return {b: eq[b] >= lim * day["start"].get(b, eq[b]) for b in eq}
 
     # ------------------------------------------------------------- maker leg
     def _maker_tick(self, metal: str, tkr: str, now: float, fair: float,
@@ -280,12 +312,13 @@ class PaperEngine:
                 c = float(t["count_fp"])
             except (KeyError, TypeError, ValueError):
                 continue
-            if q.side == "yes" and t.get("taker_side") == "no":
+            taker = t.get("taker_outcome_side") or t.get("taker_side")
+            if q.side == "yes" and taker == "no":
                 if yp < q.price - 1e-9:
                     thru += c
                 elif abs(yp - q.price) < 1e-9:
                     at += c
-            elif q.side == "no" and t.get("taker_side") == "yes":
+            elif q.side == "no" and taker == "yes":
                 ask_lvl = 1.0 - q.price
                 if yp > ask_lvl + 1e-9:
                     thru += c
@@ -326,8 +359,10 @@ class PaperEngine:
             if not (open_ts <= now < close_ts):
                 continue
             tkr = m["ticker"]
-            if any(p.ticker == tkr for p in self.state.open):
-                continue
+            # per-adapter dedupe: a maker or demo fill must NOT silence the
+            # shadow taker record for the rest of the window (review finding).
+            shadow_here = any(p.ticker == tkr and p.adapter == "shadow"
+                              for p in self.state.open)
             try:
                 q = self.prod.get_quote(tkr)
             except Exception:
@@ -351,7 +386,7 @@ class PaperEngine:
                 self._hist[tkr] = [h for h in hist if h[0] > now - 330]
             shadow_open = [p for p in self.state.open if p.adapter == "shadow"]
             intent = None
-            if allowed["shadow"]:
+            if allowed["shadow"] and not shadow_here:
                 intent = decide(ticker=tkr, ts=now, s=s_now, k=k, sigma_1m=sigma,
                                 close_ts=close_ts, yes_bid=bid, yes_ask=ask,
                                 bankroll=self.state.d["cash"]["shadow"],
@@ -377,8 +412,28 @@ class PaperEngine:
     # -------------------------------------------------------------- execution
     def _execute(self, intent, metal, m, q, now, close_ts) -> list[str]:
         notes = []
-        # shadow fill against prod top-of-book size
-        size_at_touch = q.yes_ask_size if intent.side == "yes" else q.yes_bid_size
+        # Two-phase shadow fill (review finding): the decision used quote q;
+        # a real taker's order lands ~latency later, so RE-FETCH the book and
+        # require the limit to still be marketable with size >= count. This
+        # measures the race-loss the single-snapshot fill hid. The re-fetch
+        # RTT (~0.2-0.6s) IS the latency; no artificial sleep needed.
+        try:
+            q2 = self.prod.get_quote(intent.ticker)
+        except Exception:
+            q2 = q
+        if intent.side == "yes":
+            still = (q2.yes_ask is not None
+                     and float(q2.yes_ask) <= intent.limit_price + 1e-9)
+            size_at_touch = q2.yes_ask_size
+        else:
+            no_bid = (1.0 - float(q2.yes_ask)) if q2.yes_ask is not None else None
+            # our NO fill = 1 - yes_bid; still marketable if yes_bid unchanged low
+            still = (q2.yes_bid is not None
+                     and (1.0 - float(q2.yes_bid)) <= intent.limit_price + 1e-9)
+            size_at_touch = q2.yes_bid_size
+        if not still:
+            notes.append(f"shadow race-loss (repriced) {intent.ticker}")
+            return notes + self._demo_leg(intent, metal, now, close_ts)
         size_ok = size_at_touch is not None and float(size_at_touch) >= intent.count
         if size_ok:
             fee = taker_fee(intent.count, intent.limit_price)
@@ -394,37 +449,46 @@ class PaperEngine:
                              f" @ {intent.limit_price:.3f} fair={intent.fair:.3f}")
         else:
             notes.append(f"shadow no-fill (size at touch) {intent.ticker}")
+        return notes + self._demo_leg(intent, metal, now, close_ts)
 
-        if self.use_demo:
-            try:
-                side = "bid" if intent.side == "yes" else "ask"
-                yes_price = (intent.limit_price if intent.side == "yes"
-                             else 1.0 - intent.limit_price)
-                resp = self.demo.create_order(
-                    ticker=intent.ticker, side=side, count=intent.count,
-                    price=Decimal(str(round(yes_price, 4))),
-                    time_in_force="immediate_or_cancel",
-                    client_order_id=str(uuid.uuid4()))
-                order = resp.get("order", resp)
-                filled = float(order.get("fill_count") or 0)
-                if filled > 0:
-                    afp = order.get("average_fill_price")
-                    yes_fill = float(afp) if afp else yes_price
-                    side_fill = yes_fill if intent.side == "yes" else 1.0 - yes_fill
-                    fee = float(order.get("average_fee_paid") or 0) * filled \
-                        or taker_fee(filled, side_fill)
-                    self.state.d["cash"]["demo"] -= filled * side_fill + fee
-                    self.state.open.append(PaperPosition(
-                        ticker=intent.ticker, metal=metal, side=intent.side,
-                        count=int(filled), fill_price=side_fill, fee=fee,
-                        fair=intent.fair, entry_ts=now, close_ts=close_ts,
-                        adapter="demo", tag=intent.tag,
-                        order_id=order.get("order_id")))
-                    notes.append(f"DEMO FILL {intent.side} {filled} {intent.ticker}")
-                else:
-                    notes.append(f"demo IOC no-fill {intent.ticker}")
-            except Exception as e:
-                notes.append(f"demo order error {intent.ticker}: {e}")
+    def _demo_leg(self, intent, metal, now, close_ts) -> list[str]:
+        """Send the same intent as a real IOC to the demo exchange (plumbing
+        test only). Deduped per-adapter so a demo fill never blocks shadow."""
+        if not self.use_demo:
+            return []
+        if any(p.ticker == intent.ticker and p.adapter == "demo"
+               for p in self.state.open):
+            return []
+        notes = []
+        try:
+            side = "bid" if intent.side == "yes" else "ask"
+            yes_price = (intent.limit_price if intent.side == "yes"
+                         else 1.0 - intent.limit_price)
+            resp = self.demo.create_order(
+                ticker=intent.ticker, side=side, count=intent.count,
+                price=Decimal(str(round(yes_price, 4))),
+                time_in_force="immediate_or_cancel",
+                client_order_id=str(uuid.uuid4()))
+            order = resp.get("order", resp)
+            filled = float(order.get("fill_count") or 0)
+            if filled > 0:
+                afp = order.get("average_fill_price")
+                yes_fill = float(afp) if afp else yes_price
+                side_fill = yes_fill if intent.side == "yes" else 1.0 - yes_fill
+                fee = float(order.get("average_fee_paid") or 0) * filled \
+                    or taker_fee(filled, side_fill)
+                self.state.d["cash"]["demo"] -= filled * side_fill + fee
+                self.state.open.append(PaperPosition(
+                    ticker=intent.ticker, metal=metal, side=intent.side,
+                    count=int(filled), fill_price=side_fill, fee=fee,
+                    fair=intent.fair, entry_ts=now, close_ts=close_ts,
+                    adapter="demo", tag=intent.tag,
+                    order_id=order.get("order_id")))
+                notes.append(f"DEMO FILL {intent.side} {filled} {intent.ticker}")
+            else:
+                notes.append(f"demo IOC no-fill {intent.ticker}")
+        except Exception as e:
+            notes.append(f"demo order error {intent.ticker}: {e}")
         return notes
 
     # ------------------------------------------------------------- settlement
@@ -477,9 +541,12 @@ class PaperEngine:
     def run(self, minutes: float, poll_s: float = 2.0):
         t_end = time.time() + minutes * 60
         n = 0
+        import dataclasses
+        self.state.d["effective_params"] = dataclasses.asdict(self.params)
+        yf_sym = {"gold": "GC=F", "silver": "SI=F", "copper": "HG=F"}
         for metal in self.metals:
             if metal in self.feeds:
-                self.warm_vol_from_prints(SERIES[metal], metal)
+                self.warm_vol_from_bars(metal, yf_sym[metal])
         print(f"paper engine: metals={self.metals} demo={'ON' if self.use_demo else 'off'}"
               f" cash={self.state.d['cash']}", flush=True)
         while time.time() < t_end:

@@ -53,6 +53,13 @@ class Params:
     macro_blackout_pad_s: int = 300
     signal_max_age_s: int = 150   # stale underlying bar -> no decision
     slippage_extra: float = 0.0   # extra dollars/contract on entry (stress)
+    # Backtest fill model (see backtest.py). "touch" = optimistic zero-latency
+    # ceiling (fill at next-candle open if <= limit). "lag" = realistic floor
+    # for a slow taker: fill ONLY when the level survived the whole fill minute
+    # (uncontested), at that minute's side-price close, and cap size at the
+    # minute's traded volume. The adversarial review showed candle opens are
+    # carry-forward quotes, so "touch" is NOT conservative; report both.
+    fill_mode: str = "touch"
     min_recent_volume: float = 100.0  # contracts traded in last 3 min; proxies
     # real counterparties. Live equivalent: size at the touch >= our count.
     # Regime condition on WHERE the divergence came from (3-min lookback):
@@ -138,7 +145,10 @@ def decide(*, ticker: str, ts: int, s: float, k: float, sigma_1m: float,
     if side is None or edge < p.theta:
         return None
 
-    f = p.kelly_mult * kelly_fraction(q, cost)
+    # Kelly on the ALL-IN cost (price + per-contract fee), per the registered
+    # spec f* = (q - a)/(1 - a), a = price + fee/contract.
+    all_in = cost + taker_fee(1, cost)
+    f = p.kelly_mult * kelly_fraction(q, all_in)
     stake = min(f, p.max_stake_frac) * bankroll
     count = int(stake / cost)
     if count < p.min_count:
