@@ -2,18 +2,21 @@
  "bankroll0": 500.0,
  "cash": {
   "shadow": 495.31,
-  "demo": 500.0
+  "demo": 500.0,
+  "maker": 500.0
  },
  "open": [],
  "n_settled": 2,
  "realized": {
   "shadow": -4.690000000000001,
-  "demo": 0.0
+  "demo": 0.0,
+  "maker": 0.0
  },
  "fees": {
   "shadow": 1.03,
-  "demo": 0.0
+  "demo": 0.0,
+  "maker": 0.0
  },
  "started": "2026-09-10T16:35:48Z",
- "updated": "2026-09-10T16:47:53Z"
+ "updated": "2026-09-10T16:58:10Z"
 }
