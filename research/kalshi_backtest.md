@@ -166,3 +166,22 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   live bar before any real-capital claim stands. But this is the first
   concrete evidence that the *maker* direction is the real one, and it is
   fully agentic end to end (deterministic quoting/fills/settlement).
+
+* 2026-09-10 19:35–21:22Z (session 2, same engine). Session-2 fills:
+  - **Maker book: +$45.50, 7 wins / 1 loss.** First loss appeared — a
+    silver YES that settled no, −$14.03 — which is the healthy realism the
+    2-fill session lacked. Still strongly net positive.
+  - **Taker book: +$27.55, 4 fills, 4 wins.** The two-phase leg DID fill
+    this session (unlike session 1), but every fill was a near-certain
+    favorite (model fair ≈ 0.00) bought as NO — i.e. exactly the
+    "uncontested" subset the backtest flagged as −EV, winning here on a
+    tiny sample. **Do not read this as taker vindication:** those fills
+    fired off a collapsed vol estimate returning fair=0.000, so a follow-up
+    fix now clamps model confidence to [0.02, 0.98] (no 15-min diffusion is
+    ever certain) — the fat-tail risk is a NO bought at 0.60 that flips.
+
+  **Cumulative (sessions 1–2): maker +$82.55 (12/13 wins, $0 fees); taker
+  +$27.55 (4/4).** 3 positions were still open at session-2 exit and settle
+  at the next session's first tick. Encouraging and consistent, still far
+  short of the sample needed to claim an edge (a ~$22 per-trade sd means
+  even +$82 over 13 trades is ~1.7σ — suggestive, not significant).

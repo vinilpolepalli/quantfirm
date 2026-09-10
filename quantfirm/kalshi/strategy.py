@@ -60,6 +60,11 @@ class Params:
     # minute's traded volume. The adversarial review showed candle opens are
     # carry-forward quotes, so "touch" is NOT conservative; report both.
     fill_mode: str = "touch"
+    # Confidence cap: over a 15-min diffusion the model is never truly certain,
+    # but a collapsed vol estimate can return fair=0.000/1.000, which drives
+    # overconfident sizing and quoting (seen live: taker fills at fair=0.000).
+    # Clamp fair to [prob_clamp, 1-prob_clamp] before any decision.
+    prob_clamp: float = 0.02
     min_recent_volume: float = 100.0  # contracts traded in last 3 min; proxies
     # real counterparties. Live equivalent: size at the touch >= our count.
     # Regime condition on WHERE the divergence came from (3-min lookback):
@@ -121,6 +126,7 @@ def decide(*, ticker: str, ts: int, s: float, k: float, sigma_1m: float,
         return None
 
     fair = fair_yes(s, k, sigma_1m, tau_s / 60.0)
+    fair = min(max(fair, p.prob_clamp), 1.0 - p.prob_clamp)
 
     is_flow = abs(recent_mkt_move) >= 0.04 and abs(recent_fair_move) < 0.015
     is_stale = abs(recent_fair_move) >= 0.04 and abs(recent_mkt_move) < 0.015

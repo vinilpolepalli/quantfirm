@@ -374,6 +374,8 @@ class PaperEngine:
             # 3-min regime lookback from the sample history
             from .fair import fair_yes
             fair_now = fair_yes(s_now, k, sigma, (close_ts - now) / 60.0)
+            _cl = self.params.prob_clamp
+            fair_now = min(max(fair_now, _cl), 1.0 - _cl)  # same cap as decide()
             mid_now = (bid + ask) / 2 if (bid is not None and ask is not None) else None
             hist = self._hist.setdefault(tkr, [])
             mkt_move = fair_move = 0.0
