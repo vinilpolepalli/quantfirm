@@ -38,6 +38,13 @@ settlement fee**. A taker entry held to settlement pays exactly one fee.
 * Rate limits: token bucket, ~20 reads/s + 10 writes/s at Basic; free
   self-serve upgrade to Advanced via `POST /account/api_usage_level/upgrade`.
 
+> **VERDICT (2026-09-10, post-review): the taker strategy below has no
+> demonstrable edge and loses at realistic latency.** Kept here as the
+> registered hypothesis and for the live shadow measurement; the honest
+> numbers and the adversarial review are in `research/kalshi_backtest.md`
+> and `research/kalshi_review.md`. The **maker leg (§3a)** is the only
+> surviving candidate and is a live, not backtested, experiment.
+
 ## 3. Strategy (pre-registered; quantfirm/kalshi/strategy.py is the spec)
 
 **Oracle repricer (S1)** with flow-fade tagging (S3) and macro gates (S4):
@@ -55,12 +62,24 @@ of the flow is slower/retail, and near expiry small spot moves imply large
 fair-value moves. Whelan's 313k-obs Kalshi study: makers/favorites earn,
 longshot takers lose >60% — our gates put us on the right side of that.
 
-Evidence base for the S1/S3 archetype: Turbine Research's 4,904-variant sweep
-on KXBTC15M (the crypto analog) — regime-conditioned fades of contract-price
-spikes were the ONLY surviving family (93/96 variants profitable); naive
-mean-reversion went 0-for-432. Our own calibration measurement (gold, ~3,880
-windows): longshots overpriced ~2.3¢ at τ=10min (mild FLB, fee-scale — bias
-harvesting alone is NOT enough, divergence-taking is required).
+Why it looked plausible and why it fails: the strike is public and a ~1 bp
+proxy exists, but the divergence the model sees is repriced by faster bots
+within ~1–5 s, so a REST-latency taker only reliably fills the trades where
+the signal was already wrong (winner's curse). See §5.
+
+### 3a. Maker leg (the surviving direction — live experiment)
+
+On these same markets, resting a passive quote inverts the latency problem:
+you are filled *by* the impatient taker, so being slow is an asset. The desk
+rests a quote on the favorite side (fair ≥ 0.55 → YES; fair ≤ 0.45 → NO) at
+fair − 4¢, joining or improving the touch but never crossing; books a fill
+only when the public tape trades THROUGH our level or sweeps 3× our size at
+it (queue position is unknowable, so this is conservative); fades the quote
+on a 2¢ adverse fair move; posts nothing in the last 3 minutes (gamma). Maker
+fee is $0, so a favorite held to settlement keeps its whole edge. Whelan's
+313k-obs Kalshi study (makers in ≥50¢ favorites +2.6%, longshot takers −60%)
+is the prior; a candle backtest cannot model queue/adverse-selection, so this
+runs live in shadow before any claim.
 
 ## 4. Backtest protocol & honesty constraints
 
@@ -70,8 +89,12 @@ Data: full settled-market history + per-market 1-min contract candles
 (`S_t = F_t · K/F_open`), so basis error is intra-window drift only (~1-2 bp).
 
 * Strictly causal: vol state sees only past bars; decisions use the candle
-  closing at T; fills require the NEXT candle's side-price open to be at or
-  inside our limit (book gaps away → no fill).
+  closing at T. **Fill model (`--fill-mode`):** `touch` is the zero-latency
+  ceiling (candle opens are carry-forward quotes, so this fills at the stale
+  quote — NOT conservative); `lag` is the realistic floor (fills only levels
+  that survived the fill minute, at that minute's close, capped at traded
+  volume). Reported with a contested/uncontested split; the uncontested
+  subset is the certain-fill floor a slow taker actually gets.
 * Fees: conservative cent-ceiling per order. Fill-only-at-limit and
   slippage stress variants (`--slippage-extra`).
 * Train/test: split fixed BEFORE sweeping at 2026-08-27T00:00Z; parameter

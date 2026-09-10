@@ -8,10 +8,36 @@ settlement print at every window open. $500 starting bankroll everywhere.
 
 ## Headline verdict
 
-**The taker (divergence-repricing) strategy is NOT validated by this
-backtest.** Every honest evaluation of the selection process was negative
-or unstable; the desk therefore holds at PAPER with $0 real capital, and
-the live shadow experiments below are the decisive next evidence.
+**The taker (divergence-repricing) strategy has NO demonstrable edge and
+loses at realistic latency.** A 5-agent adversarial review (findings +
+reproductions in `research/kalshi_review.md`) proved the original backtest's
+"conservative" fill was a zero-latency artifact, and the corrected,
+latency-aware backtest is negative on every split. The desk holds at PAPER
+with $0 real capital. The one structurally sound direction — a passive
+**maker** leg, where latency works *for* you — is untested by any backtest
+(candles can't model queue position) and is being measured live in shadow.
+
+### The fill-model correction (why the first pass looked profitable)
+
+Kalshi 1-min candle side-price *opens* are carry-forward snapshots of the
+prior close (ask_open(T+60) = ask_close(T) in 97–99% of minute pairs), so the
+"fill only if the next candle's open is inside our limit" gate rejected ~1%
+of intents and always filled at the very quote whose displacement triggered
+the trade — a **zero-latency, always-filled** model, not a conservative one.
+The timed trades tape shows 78% of fill-minutes reprice through the limit
+with a median deadline of ~1.4–4.1s; a REST poll loop cannot win that race.
+
+`fill_mode` now exposes both bounds (`--fill-mode touch|lag`):
+
+| mode | what it models | FULL | TEST |
+|---|---|---|---|
+| `touch` | zero-latency ceiling (fills at the stale quote) | +103.7% | −7.5% |
+| `touch`, **uncontested subset** | the certain fills a slow taker actually gets | **−$631** (hit .42) | **−$220** (hit .36) |
+| `lag` | realistic floor: fills only levels that survived the fill minute, at that minute's close, capped at traded volume | **−14.6%** | **−15.7%** |
+
+The uncontested subset is the tell: the order fills with certainty *exactly
+when the signal was wrong* (winner's curse), and only probabilistically when
+it was right. Every honest number is negative.
 
 ## What was run (in order, all pre-registered before looking at test data)
 
@@ -48,31 +74,57 @@ the live shadow experiments below are the decisive next evidence.
    never selected and their tagged trades showed no OOS edge either
    (mixed-origin divergences drove the losses).
 
-## Why this does NOT close the question
+## Statistical verdict (FIRM.md §2 applied)
 
-* The backtest's signal is a ~10-min-delayed 1-min futures bar; the live
-  engine's signal is Swissquote at ~1s / ~1bp from the settlement index.
-  The backtest refutes the SLOW version of the signal under optimistic
-  fills; it cannot measure the fast version. (It also cannot see sub-minute
-  sniping against us — its optimism and its pessimism are both unmeasured.)
-* Maker economics (zero fee; Whelan: makers in favorites +2.6% while takers
-  −31%) are invisible to a candle backtest entirely.
+* **DSR = 0.27** (0.70 under maximal trial-dedup) vs the firm's 0.95 gate;
+  the +120.9% train Sharpe (5.65) is *below* the expected max of pure noise
+  for N=192 trials — consistent with zero edge.
+* **PBO = 0.40** (gate ≤0.10); **walk-forward efficiency = −0.31** (gate
+  ≥0.5); OOS positive in **1 of 3** folds (gate ≥5/8); test max DD 58.6%
+  (gate 30%). **Score = 0.**
+* The registered defaults lose ~50% on *both* splits; the theory-motivated
+  gates were derived from the August train autopsy (in-sample) and only
+  reduce losses — they carry zero evidence of positive edge. The weekly
+  walk-forward's OOS weeks had all been inspected before it was written, so
+  it is a robustness illustration, not clean OOS evidence.
+* Effective coverage is ~4 weeks (underlying 1-min bars start Aug 13);
+  copper was "tested" with zero training history. Per-metal P&L sign-flips
+  between splits are noise, not signal.
 
-## The two live shadow experiments now running (prod books, $0 at risk)
+## Why the maker direction is still open
 
-1. **Taker leg** — the restrictive family (θ=0.07, hl30, τ∈[300,600],
-   p∈[0.35,0.92]) driven by the real-time feed, fills only when prod
-   top-of-book size covers the order. Explicitly labeled: unvalidated by
-   backtest; live shadow IS the validation attempt.
+* The taker refutation is specific: a REST-latency taker cannot win the
+  sub-second race, and at realistic latency it loses. This says nothing
+  about **resting** entries, where the race *inverts* — a passive quote is
+  filled *by* the impatient taker, so latency is an asset, not a liability.
+* Maker economics (zero fee on metals; Whelan's 313k-obs Kalshi study:
+  makers in ≥50¢ favorites +2.6% while takers −31%) are invisible to a
+  candle backtest — queue position and adverse selection need the live tape.
+  This is why the maker leg is a *live* experiment, not a backtested claim.
+
+## The live shadow experiments now running (prod books, $0 at risk)
+
+Separate $500 books, per-book sizing (quarter-Kelly on all-in cost, 5% cap,
+persisted daily −10% stop), per-adapter dedupe so the books don't censor
+each other.
+
+1. **Taker leg** — the registered config (θ=0.07, hl30, τ∈[300,600],
+   p∈[0.35,0.92]) on the ~1 bp Swissquote signal, **two-phase fill**: the
+   decision quote and the fill quote are separate REST fetches, and the
+   order fills only if the limit is still marketable on the *second* fetch —
+   so the live record MEASURES the race-loss rate instead of assuming it
+   away. Expectation given the backtest: near-flat-to-negative; the value is
+   the measured race-loss and uncontested-fill P&L, not profit.
 2. **Maker leg** — passive quotes on the favorite side at fair−4¢
    (join/improve the touch, never cross), conservative tape-based fills
    (book must trade THROUGH the level, or sweep 3× size at it), quote-fade
    on 2¢ adverse fair moves, no quotes in the last 3 minutes, zero fees.
+   This is the direction with a real chance; it needs ≥2 weeks of live fills
+   before any claim.
 
-Both legs share the $500-per-book sizing rules (quarter-Kelly, 5% cap,
-daily −10% stop). Results accumulate in `state/kalshi_paper_state.json` /
-`state/kalshi_paper_trades.csv`; first session's log below is appended by
-the desk as sessions complete.
+Results accumulate in `state/kalshi_paper_state.json` /
+`state/kalshi_paper_trades.csv`; the session log below is appended as
+sessions complete.
 
 ## Promotion bar (unchanged)
 

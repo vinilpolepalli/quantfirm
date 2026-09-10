@@ -1,0 +1,60 @@
+{
+ "bankroll0": 500.0,
+ "cash": {
+  "shadow": 500.0,
+  "demo": 500.0,
+  "maker": 500.0
+ },
+ "open": [],
+ "n_settled": 0,
+ "realized": {
+  "shadow": 0.0,
+  "demo": 0.0,
+  "maker": 0.0
+ },
+ "fees": {
+  "shadow": 0.0,
+  "demo": 0.0,
+  "maker": 0.0
+ },
+ "started": "2026-09-10T17:43:38Z",
+ "effective_params": {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "diurnal": true,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "max_spread": 0.05,
+  "kelly_mult": 0.25,
+  "max_stake_frac": 0.05,
+  "min_count": 10,
+  "max_open": 2,
+  "daily_stop_frac": 0.1,
+  "macro_blackout_et": [
+   [
+    8,
+    30
+   ],
+   [
+    14,
+    0
+   ]
+  ],
+  "macro_blackout_pad_s": 300,
+  "signal_max_age_s": 150,
+  "slippage_extra": 0.0,
+  "fill_mode": "touch",
+  "min_recent_volume": 100.0,
+  "flow_gate": "off"
+ },
+ "day_stop": {
+  "date": "2026-09-10",
+  "start": {
+   "shadow": 500.0,
+   "maker": 500.0
+  }
+ },
+ "updated": "2026-09-10T17:45:39Z"
+}
