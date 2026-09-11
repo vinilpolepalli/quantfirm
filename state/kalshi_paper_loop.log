@@ -65,3 +65,17 @@ paper engine: metals=('gold', 'silver') demo=off cash={'shadow': 591.82, 'demo':
 [2026-09-11T16:11:28Z] MAKER FILL no 27 KXGOLD15M-26SEP111215-15 @ 0.51 fair@quote=0.446
 [2026-09-11T16:16:02Z] SETTLE maker KXSILVER15M-26SEP111215-15 no pnl=-32.80
 [2026-09-11T16:16:02Z] SETTLE maker KXGOLD15M-26SEP111215-15 no pnl=+13.23
+paper engine done: cash={'shadow': 610.59, 'demo': 500.0, 'maker': 644.5600000000002} realized={'shadow': 110.59, 'demo': 0.0, 'maker': 144.55999999999995} open=0
+paper engine done: cash={'shadow': 608.5400000000001, 'demo': 500.0, 'maker': 647.0700000000002} realized={'shadow': 108.53999999999999, 'demo': 0.0, 'maker': 147.0699999999999} open=0
+[2026-09-11T16:53:37Z] session exited rc=0
+[2026-09-11T16:54:01Z] starting 110min session
+effective params: {'theta': 0.07, 'vol_halflife_min': 30.0, 'diurnal': True, 'tau_min_s': 300, 'tau_max_s': 600, 'price_min': 0.35, 'price_max': 0.92, 'max_spread': 0.05, 'kelly_mult': 0.25, 'max_stake_frac': 0.05, 'min_count': 10, 'max_open': 2, 'daily_stop_frac': 0.1, 'macro_blackout_et': ((8, 30), (14, 0)), 'macro_blackout_pad_s': 300, 'signal_max_age_s': 150, 'slippage_extra': 0.0, 'fill_mode': 'touch', 'prob_clamp': 0.02, 'min_recent_volume': 100.0, 'flow_gate': 'off'}
+curl_cffi not available; falling back to requests without browser TLS impersonation. Yahoo Finance may rate-limit or block this client. Install curl_cffi (>=0.15) for the supported configuration.
+paper engine: metals=('gold', 'silver') demo=off cash={'shadow': 608.5400000000001, 'demo': 500.0, 'maker': 647.0700000000002}
+[2026-09-11T16:54:57Z] SHADOW FILL yes 52 KXSILVER15M-26SEP111300-00 @ 0.350 fair=0.446
+[2026-09-11T17:01:01Z] SETTLE shadow KXSILVER15M-26SEP111300-00 no pnl=-19.03
+[2026-09-11T17:03:23Z] supervisor start: 110min sessions, metals=gold,silver
+[2026-09-11T17:03:28Z] starting 110min session
+effective params: {'theta': 0.07, 'vol_halflife_min': 30.0, 'diurnal': True, 'tau_min_s': 300, 'tau_max_s': 600, 'price_min': 0.35, 'price_max': 0.92, 'max_spread': 0.05, 'kelly_mult': 0.25, 'max_stake_frac': 0.05, 'min_count': 10, 'max_open': 2, 'daily_stop_frac': 0.1, 'macro_blackout_et': ((8, 30), (14, 0)), 'macro_blackout_pad_s': 300, 'signal_max_age_s': 150, 'slippage_extra': 0.0, 'fill_mode': 'touch', 'prob_clamp': 0.02, 'min_recent_volume': 100.0, 'flow_gate': 'off'}
+curl_cffi not available; falling back to requests without browser TLS impersonation. Yahoo Finance may rate-limit or block this client. Install curl_cffi (>=0.15) for the supported configuration.
+paper engine: metals=('gold', 'silver') demo=off cash={'shadow': 589.5100000000001, 'demo': 500.0, 'maker': 647.0700000000002}
