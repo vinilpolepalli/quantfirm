@@ -256,3 +256,11 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   The big per-trade variance means even this streak is consistent with luck
   at conventional thresholds; that is precisely why the promotion bar is
   weeks of data, not a good-looking equity curve.
+
+* 2026-09-11 09:39–~11:27Z (session 10). Maker +$36.96 (4/6); taker +$15.13
+  (1/1). **Cumulative (1–10): maker +$197.34 (47/62, hit 0.76, $0 fees,
+  +39.5% on $500); taker +$87.56 (15/18, +17.5%).** Maker t-stat now **1.61**
+  (was 1.38 at session 9) — rising with the sample, as a real edge should,
+  but still short of 1.96. Watch the t-stat, not the +39.5%: if the edge is
+  real it keeps climbing toward the t≥3 floor; if it's luck it stalls and
+  fades. This is the number that decides it.
