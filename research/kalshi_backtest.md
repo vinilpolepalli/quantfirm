@@ -225,3 +225,11 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   $500); taker +$57.09 (11/13, +11.4%).** The maker/taker divergence is
   starting to show through the noise — maker grinds up, taker lurches. Still
   under-powered; the read stands.
+
+* 2026-09-11 03:01–~04:04Z (session 6, PARTIAL — the container was restarted
+  mid-session; the engine is single-shot and persists per tick, so the 2
+  settled maker fills were saved and no state was lost). Maker +$15.38 (2/2).
+  **Cumulative (through session 6 partial): maker +$110.41 (29/37, hit 0.78,
+  $0 fees, +22.1% on $500); taker +$57.09 (11/13, +11.4%).** Restart handled
+  cleanly — a good live test of the persisted-state design. Session resumed
+  fresh afterward.
