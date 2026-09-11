@@ -216,3 +216,12 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   is up and to the right across ~7.5h and the mechanism keeps holding, but
   the honest read is unchanged — promising, under-powered, weeks of live
   data still required before any real-capital claim.
+
+* 2026-09-11 01:11–03:00Z (session 5). Maker near-flat **+$4.88 (5/6)** —
+  recovered from session 4's loss. Taker took its **second real loss,
+  −$29.66 (0/1)**, giving back its session-4 gain: the taker's early 8/9
+  was the toxic near-favorite subset the backtest flagged, now flipping as
+  predicted. **Cumulative (1–5): maker +$95.03 (27/35, hit 0.77, +19.0% on
+  $500); taker +$57.09 (11/13, +11.4%).** The maker/taker divergence is
+  starting to show through the noise — maker grinds up, taker lurches. Still
+  under-powered; the read stands.
