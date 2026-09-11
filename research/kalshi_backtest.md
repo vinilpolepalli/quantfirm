@@ -285,3 +285,23 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   cumulative terms, still NOT statistically significant, and the dip is a
   point against, not for. Verdict unchanged: keep trading, keep watching the
   t-stat, claim nothing.
+
+* 2026-09-11 ~15:07Z (session 12 final + session 13 start). Two further maker
+  fills, both losers: **−$36.66 (0/2)**. **Cumulative: maker +$171.88 (57/78,
+  hit 0.73, +34.4% on $500); taker +$123.12 (16/19).**
+  **t-stat trajectory has now clearly peaked and is decaying:
+  1.38 → 1.61 → 1.84 → 1.52 → 1.23.** This is the pattern I pre-registered as
+  the signature of a LUCKY STREAK rather than a real edge (a real edge keeps
+  climbing with sample; luck peaks and fades). The cumulative P&L is still
+  strongly positive, but statistical confidence is now *falling* as data
+  accumulates — which is the opposite of what validation looks like.
+
+  Structural context for why the fade matters (measured, n=78): avg win
+  $10.94 vs avg loss $21.52 (ratio 0.51) ⇒ **break-even hit rate is 66.3%**
+  and actual is 73.1% — only a **6.8pp cushion**. Losing streaks eat that
+  cushion fast, and the shadow fill model gives free queue priority that a
+  real exchange would not, biasing the true hit rate *down*.
+
+  **Read: the maker edge is NOT established and the evidence has weakened.
+  Do not treat the +34% as validated.** Continue collecting; the decisive
+  test is real demo-exchange execution (queue position), not more shadow.
