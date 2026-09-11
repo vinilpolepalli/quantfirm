@@ -130,7 +130,7 @@ def main() -> None:
     <div class="meta"><a href="reports/">daily reports ↗</a><span>{now}</span></div>
   </div>
   <div class="rule"></div>
-  <div class="kicker">Build and hide trading agents</div>
+  <div class="kicker">The book · agent-operated systematic equity</div>
 </header>
 
 <section class="hero">
