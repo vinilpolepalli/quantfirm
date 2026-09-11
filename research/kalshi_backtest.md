@@ -264,3 +264,12 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   but still short of 1.96. Watch the t-stat, not the +39.5%: if the edge is
   real it keeps climbing toward the t≥3 floor; if it's luck it stalls and
   fades. This is the number that decides it.
+
+* 2026-09-11 11:29–~13:17Z (session 11). Maker +$43.09 (9/11); taker +$35.56
+  (1/1). **Cumulative (1–11): maker +$240.43 (56/73, hit 0.77, $0 fees,
+  +48.1% on $500); taker +$123.12 (16/19, +24.6%).** Maker t-stat **1.84**
+  (trajectory 1.38 → 1.61 → 1.84) — now just below the 1.96 95% threshold.
+  The monotone climb with sample size is the signature of a real (not
+  lucky) edge; if it crosses and holds ≥1.96, and then approaches the firm's
+  t≥3 floor, that is the point the maker leg graduates from "promising" to
+  "demonstrated." Not there yet — but the trend is the right one.
