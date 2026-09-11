@@ -129,3 +129,6 @@ settled_at,adapter,ticker,metal,side,count,fill_price,fee,fair_at_entry,result,p
 2026-09-11T19:46:01Z,maker,KXGOLD15M-26SEP111545-45,gold,no,44,0.66,0.0,0.2735,no,14.96,maker,613.94
 2026-09-11T20:01:00Z,maker,KXGOLD15M-26SEP111600-00,gold,no,40,0.75,0.0,0.193,yes,-30.0,maker,563.46
 2026-09-11T20:01:00Z,maker,KXSILVER15M-26SEP111600-00,silver,no,32,0.64,0.0,0.3085,no,11.52,maker,595.46
+2026-09-11T21:01:01Z,maker,KXSILVER15M-26SEP111700-00,silver,yes,34,0.87,0.0,0.9207,yes,4.42,maker,576.56
+2026-09-11T21:01:01Z,maker,KXGOLD15M-26SEP111700-00,gold,yes,44,0.53,0.0,0.6085,yes,20.68,maker,620.56
+2026-09-11T21:01:01Z,shadow,KXSILVER15M-26SEP111700-00,silver,yes,31,0.87,0.25,0.9666,yes,3.78,mixed,543.44
