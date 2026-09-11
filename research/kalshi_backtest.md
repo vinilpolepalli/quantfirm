@@ -239,3 +239,9 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   +$100.29 (33/43, hit 0.77, $0 fees, +20.1% on $500); taker +$83.94 (13/15,
   +16.8%).** The maker leg's win rate has been stable at ~0.77 across 43
   fills — the durable stat under the session-to-session P&L noise.
+
+* 2026-09-11 05:57–~07:47Z (session 8). Maker +$25.38 (6/8); taker +$6.79
+  (1/1). **Cumulative (1–8): maker +$125.67 (39/51, hit 0.76, $0 fees,
+  +25.1% on $500); taker +$90.73 (14/16, +18.1%).** 51 maker fills, hit rate
+  pinned at ~0.76 — the stability of the win rate (not any single session's
+  P&L) is what would eventually make or break the edge claim.
