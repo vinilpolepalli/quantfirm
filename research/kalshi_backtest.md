@@ -245,3 +245,14 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   +25.1% on $500); taker +$90.73 (14/16, +18.1%).** 51 maker fills, hit rate
   pinned at ~0.76 — the stability of the win rate (not any single session's
   P&L) is what would eventually make or break the edge claim.
+
+* 2026-09-11 07:48–~09:37Z (session 9). Maker +$34.71 (4/5); taker −$18.30
+  (0/1). **Cumulative (1–9): maker +$160.38 (43/56, hit 0.77, $0 fees,
+  +32.1% on $500); taker +$72.43 (14/17, +14.5%).**
+  **Significance check (the part that keeps this honest):** the maker leg's
+  per-trade mean is $2.86 on a $15.53 sd → t = 1.38 (1.58 grouped by
+  hour-block to blunt same-window correlation). A +32% cumulative return is
+  STILL only ~1.4σ — below the 1.96 for 95%, far below the firm's t≥3 floor.
+  The big per-trade variance means even this streak is consistent with luck
+  at conventional thresholds; that is precisely why the promotion bar is
+  weeks of data, not a good-looking equity curve.
