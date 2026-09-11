@@ -35,8 +35,26 @@ def sh(cmd, **kw):
                           text=True, **kw)
 
 
+PIDFILE = os.path.join(REPO, "state", "kalshi_paper_loop.pid")
+
+
 def supervisor_alive() -> bool:
-    return bool(sh("pgrep -f kalshi_paper_loop.sh").stdout.strip())
+    """Check the PID file, not pgrep.
+
+    Regression: `pgrep -f kalshi_paper_loop.sh` also matches the /bin/sh that
+    is running that very pgrep, so it ALWAYS returned True and this check-in
+    reported "supervisor: alive" for a supervisor that had been dead for an
+    hour. Verify a real, live PID instead."""
+    try:
+        with open(PIDFILE) as f:
+            pid = int(f.read().strip())
+    except (OSError, ValueError):
+        return False
+    try:
+        os.kill(pid, 0)          # signal 0 = liveness probe, no effect
+        return True
+    except OSError:
+        return False
 
 
 def ensure_supervisor() -> str:

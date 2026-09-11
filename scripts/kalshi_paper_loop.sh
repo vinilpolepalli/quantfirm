@@ -1,51 +1,66 @@
 #!/usr/bin/env bash
 # Supervisor for the Kalshi 15M metals paper desk.
 #
-# Runs the paper engine back-to-back indefinitely, so the desk keeps trading
-# without a human (or an agent turn) restarting it every session. The engine
-# itself is deliberately single-shot — it persists state per tick and exits —
-# so this loop is what turns it into a continuous desk.
+# Runs the paper engine back-to-back indefinitely so the desk keeps trading
+# without a human restarting it. The engine is deliberately single-shot (it
+# persists state per tick and exits); this loop makes it continuous.
 #
-# Two failure modes are covered:
-#   * session end (every ~110 min)  -> this loop restarts it
-#   * container restart             -> the hourly Routine check-in restarts
-#                                      THIS loop (state is on disk, so the
-#                                      books carry across cleanly)
+# Failure modes covered:
+#   * session end (~110 min)   -> loop restarts it
+#   * engine CRASH             -> loop restarts it
+#   * engine HANG              -> watchdog below kills it, loop restarts it.
+#     (Learned the hard way: on 2026-09-11 the engine wedged at 17:10Z with
+#     the process still alive and burned ~55 min of trading, because the
+#     supervisor only reacted to process exit.)
+#   * container restart        -> hourly Routine re-launches this script
 #
-# Market-dark periods (Sat 04:00Z -> Sun 22:00Z, Thu 07:00-09:00Z maintenance)
-# need no special handling: the engine simply finds no open market and idles
-# cheaply, but we back off a little to avoid pointless API polling.
-#
-#   ./scripts/kalshi_paper_loop.sh            # run forever
-#   SESSION_MIN=110 ./scripts/kalshi_paper_loop.sh
+# Writes a PID file so liveness can be checked without pgrep self-matching.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 SESSION_MIN="${SESSION_MIN:-110}"
 METALS="${METALS:-gold,silver}"
 LOG="${LOG:-state/kalshi_paper_loop.log}"
+PIDFILE="${PIDFILE:-state/kalshi_paper_loop.pid}"
+DECISIONS="state/kalshi_paper_decisions.jsonl"
+STALE_S="${STALE_S:-300}"   # engine must log a decision at least this often
 
-echo "[$(date -u +%FT%TZ)] supervisor start: ${SESSION_MIN}min sessions, metals=${METALS}" >> "$LOG"
+echo $$ > "$PIDFILE"
+trap 'rm -f "$PIDFILE"' EXIT
+
+log() { echo "[$(date -u +%FT%TZ)] $*" >> "$LOG"; }
+log "supervisor start (pid $$): ${SESSION_MIN}min sessions, metals=${METALS}"
 
 while true; do
-  # Is there an open market right now? If not, idle instead of burning API calls.
   open_count=$(timeout 60 python3 -m quantfirm.kalshi.cli status 2>/dev/null \
       | grep -cE 'KX(GOLD|SILVER)15M-.*book=[0-9]' || echo 0)
-
   if [ "${open_count:-0}" -eq 0 ]; then
-    echo "[$(date -u +%FT%TZ)] no open metals market; sleeping 10m" >> "$LOG"
+    log "no open metals market; sleeping 10m"
     sleep 600
     continue
   fi
 
-  echo "[$(date -u +%FT%TZ)] starting ${SESSION_MIN}min session" >> "$LOG"
+  log "starting ${SESSION_MIN}min session"
   timeout $(( SESSION_MIN * 60 + 300 )) \
     python3 -m quantfirm.kalshi.cli paper \
       --minutes "$SESSION_MIN" --no-demo --log-decisions --metals "$METALS" \
-    >> "$LOG" 2>&1
-  rc=$?
-  echo "[$(date -u +%FT%TZ)] session exited rc=$rc" >> "$LOG"
+    >> "$LOG" 2>&1 &
+  engine_pid=$!
 
-  # brief pause so a crash-looping engine cannot spin the API
+  # ---- watchdog: kill the engine if it stops making decisions
+  while kill -0 "$engine_pid" 2>/dev/null; do
+    sleep 30
+    [ -f "$DECISIONS" ] || continue
+    now=$(date +%s)
+    mtime=$(stat -c %Y "$DECISIONS" 2>/dev/null || echo "$now")
+    age=$(( now - mtime ))
+    if [ "$age" -gt "$STALE_S" ]; then
+      log "WATCHDOG: no decision for ${age}s -> killing engine pid $engine_pid"
+      kill -9 "$engine_pid" 2>/dev/null
+      break
+    fi
+  done
+  wait "$engine_pid" 2>/dev/null
+  log "session ended (rc=$?)"
   sleep 20
 done
