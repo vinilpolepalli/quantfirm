@@ -201,3 +201,18 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   sample. The trajectory and mechanism are right; the ≥2-week bar and the
   spike-risk (size the correlated book, not the single trade) are the open
   items. Losses now present and bounded, which is the point of the risk gates.
+
+* 2026-09-10 23:18–2026-09-11 01:08Z (session 4). **First losing maker
+  session: −$35.44 (3 wins / 3 losses).** The maker cumulative gave back a
+  third of its gains in one session — the plainest possible demonstration of
+  why 3 good sessions were never "validated." No daily-stop breach (loss was
+  ~7% of the book, crossing the UTC-midnight reset). Taker +$30.52 (3/3,
+  still the bounded near-favorite fills).
+
+  **Cumulative (sessions 1–4): maker +$90.15 (22/29, hit 0.76, $0 fees,
+  +18.0% on $500); taker +$86.75 (11/12, +17.4%).** Both books net positive,
+  but the maker's single-session −$35 swing is the headline: this is a
+  positive-drift, real-variance strategy, NOT a sure thing. The equity curve
+  is up and to the right across ~7.5h and the mechanism keeps holding, but
+  the honest read is unchanged — promising, under-powered, weeks of live
+  data still required before any real-capital claim.
