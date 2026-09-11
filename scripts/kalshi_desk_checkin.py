@@ -19,6 +19,7 @@ import json
 import math
 import os
 import subprocess
+import shlex
 import statistics as st
 from datetime import datetime, timezone
 
@@ -128,7 +129,7 @@ def main():
            + "\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
            + "\nClaude-Session: https://claude.ai/code/session_01QEzLS4u6E7dCgjXtCZdfGQ")
     sh("git add -A state/ research/ 2>/dev/null")
-    c = sh(f"git commit -q -m {json.dumps(msg)}")
+    c = sh(f"git commit -q -m {shlex.quote(msg)}")
     if c.returncode == 0:
         pushed = sh("git push -q")
         status.append("pushed" if pushed.returncode == 0 else "PUSH FAILED")
