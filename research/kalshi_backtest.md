@@ -233,3 +233,9 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   $0 fees, +22.1% on $500); taker +$57.09 (11/13, +11.4%).** Restart handled
   cleanly — a good live test of the persisted-state design. Session resumed
   fresh afterward.
+
+* 2026-09-11 04:07–~05:57Z (session 7, post-restart). Maker −$10.12 (4/6,
+  small down session); taker +$26.85 (2/2). **Cumulative (1–7): maker
+  +$100.29 (33/43, hit 0.77, $0 fees, +20.1% on $500); taker +$83.94 (13/15,
+  +16.8%).** The maker leg's win rate has been stable at ~0.77 across 43
+  fills — the durable stat under the session-to-session P&L noise.
