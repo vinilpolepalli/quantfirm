@@ -74,12 +74,64 @@ you are filled *by* the impatient taker, so being slow is an asset. The desk
 rests a quote on the favorite side (fair ≥ 0.55 → YES; fair ≤ 0.45 → NO) at
 fair − 4¢, joining or improving the touch but never crossing; books a fill
 only when the public tape trades THROUGH our level or sweeps 3× our size at
-it (queue position is unknowable, so this is conservative); fades the quote
+it (queue position is unknowable, so the 3× is a guess — see §3b); fades the quote
 on a 2¢ adverse fair move; posts nothing in the last 3 minutes (gamma). Maker
 fee is $0, so a favorite held to settlement keeps its whole edge. Whelan's
 313k-obs Kalshi study (makers in ≥50¢ favorites +2.6%, longshot takers −60%)
 is the prior; a candle backtest cannot model queue/adverse-selection, so this
 runs live in shadow before any claim.
+
+### 3b. Why the shadow maker P&L is an upper bound
+
+The shadow leg never rests a real order, so it is *granted* queue priority it
+would otherwise have to earn. The whole fill decision is one line
+(`quantfirm/kalshi/paper.py:297`):
+
+```python
+return thru >= q.count or at >= 3 * q.count
+```
+
+Four things in that rule are assumptions, not observations:
+
+1. **The `at` branch is a pure guess.** If 3x our size prints *at* our price we
+   claim a fill, but the feed never shows how much rests ahead of us at that
+   level. Behind 10,000 contracts, 3x our 46 fills nothing. The multiplier was
+   chosen because it sounded conservative, not because it was measured.
+2. **Cancels are instant and free.** The quote is pulled on a 2c adverse fair
+   move (`paper.py:253`), and in shadow that pull always wins. Adverse
+   selection *is* losing that race: the informed taker hits you before the
+   cancel lands, so the shadow dodges exactly the fills that hurt most.
+3. **The order is a ghost.** Resting at `bid + 1c` in the real book takes the
+   touch, other makers requote, the spread tightens and the per-fill margin
+   compresses. We are measuring a book that never saw us.
+4. **The fills are a biased sample.** We are filled when someone wanted the
+   other side at that price, i.e. when they had a reason. The windows where the
+   quote sits unfilled are disproportionately the ones where we were right.
+   This is not a patchable bug; it is invisible in public tape data.
+
+`scripts/kalshi_fill_audit.py` quantifies how little that costs before the edge
+is gone. Deleting a fraction of the *winning* fills (keeping every loss) as an
+adverse-selection proxy:
+
+```
+break-even haircut   28.0% of winning fills may be phantom before edge = 0
+  haircut         P&L     hit       t
+      0%     314.21   0.725    1.50
+     25%      13.77   0.663    0.07
+     50%    -296.31   0.571   -1.72
+```
+
+**28% is a thin margin** for a model that hands itself free queue priority.
+One thing that is *not* wrong: the sample is close to independent. Gold and
+silver legs in the same window agree only 56% of the time (50% = independent)
+and clustering the t-stat by window *raises* it, 1.50 -> 1.57. The problem is
+the fill model, not the correlation structure.
+
+**Known blocker.** `state/kalshi_paper_decisions.jsonl` logs quotes only, not
+the trades tape, so `_maker_filled` cannot be replayed offline against a
+stricter queue model. Persisting the tape (`GET /markets/trades`) is a
+prerequisite to any better fill model. See `docs/HANDOFF.md`.
+
 
 ## 4. Backtest protocol & honesty constraints
 
