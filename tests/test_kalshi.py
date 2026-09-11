@@ -163,5 +163,47 @@ class TestBacktestCausality(unittest.TestCase):
             self.assertGreaterEqual(m["skipped"].get("gapped_away", 0), 1)
 
 
+class TestMakerFillRealism(unittest.TestCase):
+    """Guards against the fill artifacts that invalidated both backtests."""
+
+    def test_fill_requires_a_real_print_not_a_quote_touch(self):
+        """A maker fill must be evidenced by a TRADE at our level.
+
+        Regression: the fill test used to read the bid/ask range. Since we
+        post at best_bid+1c, `bid_low <= our_price` is true by construction,
+        so every quote filled instantly and the backtest printed a bogus
+        +944%/t=11. Quote range must not create fills.
+        """
+        from quantfirm.kalshi.maker import MakerBacktest, MakerParams
+        p = MakerParams(fill_mode="through", count=10, queue_ahead_mult=3.0)
+        # bid/ask straddle our price, but NO trade printed at or below it
+        candle = {"bid_low": 0.50, "bid_close": 0.59, "ask_high": 0.62,
+                  "px_low": 0.61, "px_high": 0.64, "volume": 5000.0}
+        filled, _ = MakerBacktest._test_fill(candle, "yes", 0.60, 0.0, p)
+        self.assertFalse(filled, "quote-range touch must not fill a maker order")
+        # now a seller actually prints through our level
+        candle["px_low"] = 0.58
+        filled, _ = MakerBacktest._test_fill(candle, "yes", 0.60, 0.0, p)
+        self.assertTrue(filled, "a real print through our level should fill")
+
+    def test_no_fill_without_volume(self):
+        from quantfirm.kalshi.maker import MakerBacktest, MakerParams
+        p = MakerParams(fill_mode="through", count=10)
+        candle = {"px_low": 0.10, "px_high": 0.90, "volume": 0.0}
+        filled, _ = MakerBacktest._test_fill(candle, "yes", 0.60, 0.0, p)
+        self.assertFalse(filled)
+
+    def test_no_side_uses_ask_side_prints(self):
+        from quantfirm.kalshi.maker import MakerBacktest, MakerParams
+        p = MakerParams(fill_mode="through", count=10)
+        # long NO at 0.60 == resting a YES ask at 0.40; needs a BUY print >0.40
+        candle = {"px_low": 0.30, "px_high": 0.35, "volume": 1000.0}
+        filled, _ = MakerBacktest._test_fill(candle, "no", 0.60, 0.0, p)
+        self.assertFalse(filled)
+        candle["px_high"] = 0.45
+        filled, _ = MakerBacktest._test_fill(candle, "no", 0.60, 0.0, p)
+        self.assertTrue(filled)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

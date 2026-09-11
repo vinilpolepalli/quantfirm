@@ -305,3 +305,58 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   **Read: the maker edge is NOT established and the evidence has weakened.
   Do not treat the +34% as validated.** Continue collecting; the decisive
   test is real demo-exchange execution (queue position), not more shadow.
+
+---
+
+## Maker backtest attempt (2026-09-11) — BUILT, THEN INVALIDATED
+
+Motivation: judging the maker leg on ~78 live fills cannot separate a
+73%-hit edge from a 66%-hit break-even run. The 6,655-market candle history
+should have supplied n in the thousands. It could not, and finding out why
+is the useful result.
+
+**First run reported +944%, t=11.07.** Two red flags: the "queue" fill mode
+produced MORE fills than the looser "through" mode, and realised P&L was
+11.5¢/contract when the strategy only demanded a 4¢ margin.
+
+**Bug 1 (fixed).** The fill test read the QUOTE range: `bid_low <= our_price`.
+Since quotes are posted at `best_bid + 1¢`, that condition is true by
+construction — every quote filled instantly and unconditionally. Fixed to
+require an actual TRADE print at our level (`px_low`/`px_high` from the
+candle's last-trade OHLC, which the loader now carries).
+
+**Bug 2 (fatal, not fixable at this resolution).** After the fix the result
+barely moved (+793%, t=10.36). The null-model control settles it:
+
+| variant | fills | P&L | hit | t |
+|---|---|---|---|---|
+| model-driven | 1,405 | +$3,963 | 0.773 | 10.36 |
+| **market-mid (NO model)** | 2,480 | **+$6,342** | 0.750 | **12.05** |
+
+Removing all predictive input makes the backtest *better*. The P&L is
+therefore not coming from prediction — it is fill mechanics. Root cause:
+trade prices swing widely inside one minute (a 0.40/0.41 quote routinely
+sees prints from 0.41 to 0.58), so "a print touched my level → fill me at my
+limit" hands the strategy the intra-minute extreme on every fill. That is
+the buy-the-low fallacy, and it is the same family of error as the taker
+backtest's zero-latency fill, arrived at by a different route.
+
+**Consequence: 1-min OHLC cannot validate a maker strategy at all.** Queue
+position, partial fills, and intra-minute path are all unmodellable from it.
+A valid version needs the per-print trades tape (`GET /markets/trades`:
+price, taker_side, timestamp) so a resting YES bid at P fills only against
+real SELL prints at ≤P, after enough volume clears the queue ahead.
+
+**What shipped from this:**
+- `quantfirm/kalshi/maker.py` — the engine, with the invalidation stated at
+  the top of the module so its numbers can never be quoted innocently.
+- `MarketMidControl` + `cli.py maker-control` — the null-model test as a
+  permanent guard. It prints `*** INVALID ***` on the current fill model.
+  **Any future fill-model change must beat this control before belief.**
+- 3 regression tests (`TestMakerFillRealism`) pinning the quote-touch bug.
+
+**Net effect on the desk's conclusions: none of them improve.** The maker
+leg's only honest evidence remains the live shadow record (n≈78, t decaying
+1.84 → 1.52 → 1.23). This exercise removed a false source of confidence
+rather than adding a true one — which is the correct outcome when the data
+cannot support the claim.

@@ -102,6 +102,10 @@ def load_candles(path: str) -> dict[str, dict[int, dict]]:
                 "bid_low": g("yes_bid_low"), "bid_close": g("yes_bid_close"),
                 "ask_open": g("yes_ask_open"), "ask_high": g("yes_ask_high"),
                 "ask_low": g("yes_ask_low"), "ask_close": g("yes_ask_close"),
+                # last-TRADE price OHLC — the only evidence of a real print,
+                # and therefore the only honest basis for a maker fill test
+                "px_open": g("price_open"), "px_high": g("price_high"),
+                "px_low": g("price_low"), "px_close": g("price_close"),
                 "volume": g("volume"),
             }
     return dict(out)

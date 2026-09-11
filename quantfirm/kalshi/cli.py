@@ -79,6 +79,63 @@ def cmd_sweep(a):
             json.dump({"grid": rows, "chosen": best}, f, indent=1)
 
 
+def cmd_maker(a):
+    """Backtest the MAKER leg over full history, across fill models."""
+    import dataclasses as _dc
+    from .maker import MakerBacktest, MakerParams
+    mb = MakerBacktest(a.data, bankroll=a.bankroll)
+    lo, hi = ((None, SPLIT_TS) if a.split == "train"
+              else (SPLIT_TS, None) if a.split == "test" else (None, None))
+    kw = {}
+    for f in _dc.fields(MakerParams):
+        v = getattr(a, f.name, None)
+        if v is not None:
+            kw[f.name] = v
+    modes = [a.fill_model] if a.fill_model else ["through", "queue", "adverse"]
+    out = {}
+    for mode in modes:
+        m = mb.run(MakerParams(**{**kw, "fill_mode": mode}), start_ts=lo, end_ts=hi)
+        out[mode] = {k: v for k, v in m.items() if k != "fills"}
+        if m["n_fills"] == 0:
+            print(f"{mode:>8}: no fills ({m.get('skipped')})")
+            continue
+        print(f"{mode:>8}: n={m['n_fills']:>5} pnl=${m['net_pnl']:>9.2f} "
+              f"({m['return_pct']:>7.1f}%) hit={m['hit_rate']:.3f} "
+              f"be={m['breakeven_hit']:.3f} cushion={m['cushion_pp']:+.2f}pp "
+              f"t={m['t_stat']:>6.2f} mdd={m['max_drawdown_pct']:.1f}%")
+    if a.out:
+        with open(a.out, "w") as f:
+            json.dump(out, f, indent=1, default=str)
+
+
+def cmd_maker_control(a):
+    """Null-model control. If this earns like the real strategy, the maker
+    backtest is measuring fill mechanics, not edge — and is invalid."""
+    from .maker import MakerBacktest, MakerParams, MarketMidControl
+    real = MakerBacktest(a.data, bankroll=a.bankroll)
+    ctrl = MarketMidControl(a.data, bankroll=a.bankroll)
+    print(f"{'mode':>8} {'variant':>12} {'n':>6} {'pnl':>11} {'hit':>7} {'t':>7}")
+    verdict_ok = True
+    for mode in ("through", "queue"):
+        rows = []
+        for name, eng in (("model", real), ("market-mid", ctrl)):
+            m = eng.run(MakerParams(fill_mode=mode))
+            rows.append((name, m))
+            print(f"{mode:>8} {name:>12} {m['n_fills']:>6} ${m['net_pnl']:>10.2f} "
+                  f"{m['hit_rate']:>7.3f} {m['t_stat']:>7.2f}")
+        model_t = rows[0][1]["t_stat"]
+        ctrl_t = rows[1][1]["t_stat"]
+        if ctrl_t >= model_t * 0.5:
+            verdict_ok = False
+    print()
+    if verdict_ok:
+        print("VERDICT: control is far weaker than the model — fill model may be sound.")
+    else:
+        print("VERDICT: *** INVALID *** the null model earns comparably or better.")
+        print("The backtest P&L is a fill-mechanics artifact, not edge. Do not")
+        print("use it as evidence. See the module docstring in maker.py.")
+
+
 def cmd_calibrate(a):
     from .backtest import Backtest
     from .calibrate import calibration
@@ -179,6 +236,27 @@ def main():
     sp.add_argument("--out")
     add_params(sp)
     sp.set_defaults(fn=cmd_sweep)
+
+    sp = sub.add_parser("maker")
+    sp.add_argument("--data", required=True)
+    sp.add_argument("--split", choices=["train", "test", "all"], default="all")
+    sp.add_argument("--fill-model", dest="fill_model",
+                    choices=["through", "queue", "adverse"])
+    sp.add_argument("--margin", type=float)
+    sp.add_argument("--fade", type=float)
+    sp.add_argument("--min-price", dest="min_price", type=float)
+    sp.add_argument("--max-price", dest="max_price", type=float)
+    sp.add_argument("--queue-ahead-mult", dest="queue_ahead_mult", type=float)
+    sp.add_argument("--favorite-hi", dest="favorite_hi", type=float)
+    sp.add_argument("--favorite-lo", dest="favorite_lo", type=float)
+    sp.add_argument("--bankroll", type=float, default=500.0)
+    sp.add_argument("--out")
+    sp.set_defaults(fn=cmd_maker)
+
+    sp = sub.add_parser("maker-control")
+    sp.add_argument("--data", required=True)
+    sp.add_argument("--bankroll", type=float, default=500.0)
+    sp.set_defaults(fn=cmd_maker_control)
 
     sp = sub.add_parser("calibrate")
     sp.add_argument("--data", required=True)
