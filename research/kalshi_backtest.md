@@ -360,3 +360,5 @@ leg's only honest evidence remains the live shadow record (n≈78, t decaying
 1.84 → 1.52 → 1.23). This exercise removed a false source of confidence
 rather than adding a true one — which is the correct outcome when the data
 cannot support the claim.
+
+* 2026-09-11T15:03Z (auto check-in). Maker +105.60 (80 fills, 57/80 won). Taker +91.82 (20). **Cumulative maker +105.60 (80 fills, hit 0.713 vs break-even 0.673, cushion +3.94pp, t=0.71).** t-history: 0.71.
