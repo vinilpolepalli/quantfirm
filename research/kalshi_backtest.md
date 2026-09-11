@@ -273,3 +273,15 @@ week of shadow is NOT sufficient — see the walk-forward table for what
   lucky) edge; if it crosses and holds ≥1.96, and then approaches the firm's
   t≥3 floor, that is the point the maker leg graduates from "promising" to
   "demonstrated." Not there yet — but the trend is the right one.
+
+* 2026-09-11 13:21–~15:07Z (session 12, IN PROGRESS at time of writing).
+  Maker −$31.89 so far (1 win / 2 losses). **Cumulative (through session 12
+  partial): maker +$208.54 (57/76, hit 0.75, $0 fees, +41.7% on $500); taker
+  +$123.12 (16/19, +24.6%).** **The maker t-stat DIPPED to 1.52** (from 1.84
+  at session 11, breaking the 1.38 → 1.61 → 1.84 climb). Recorded plainly:
+  the earlier monotone rise was not a guarantee, and this is exactly the
+  behaviour that separates a real edge (resumes climbing toward t≥3) from a
+  lucky streak (flattens and fades here). Still clearly profitable in
+  cumulative terms, still NOT statistically significant, and the dip is a
+  point against, not for. Verdict unchanged: keep trading, keep watching the
+  t-stat, claim nothing.
