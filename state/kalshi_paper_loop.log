@@ -8,3 +8,10 @@ paper engine: metals=('gold', 'silver') demo=off cash={'shadow': 591.82, 'demo':
 effective params: {'theta': 0.07, 'vol_halflife_min': 30.0, 'diurnal': True, 'tau_min_s': 300, 'tau_max_s': 600, 'price_min': 0.35, 'price_max': 0.92, 'max_spread': 0.05, 'kelly_mult': 0.25, 'max_stake_frac': 0.05, 'min_count': 10, 'max_open': 2, 'daily_stop_frac': 0.1, 'macro_blackout_et': ((8, 30), (14, 0)), 'macro_blackout_pad_s': 300, 'signal_max_age_s': 150, 'slippage_extra': 0.0, 'fill_mode': 'touch', 'prob_clamp': 0.02, 'min_recent_volume': 100.0, 'flow_gate': 'off'}
 curl_cffi not available; falling back to requests without browser TLS impersonation. Yahoo Finance may rate-limit or block this client. Install curl_cffi (>=0.15) for the supported configuration.
 paper engine: metals=('gold', 'silver') demo=off cash={'shadow': 591.82, 'demo': 500.0, 'maker': 605.6000000000001}
+[2026-09-11T15:04:01Z] maker quote no 25 KXGOLD15M-26SEP111115-15 @ 0.57 fair=0.389
+[2026-09-11T15:04:01Z] maker quote no 35 KXSILVER15M-26SEP111115-15 @ 0.62 fair=0.325
+[2026-09-11T15:04:02Z] maker quote no 30 KXSILVER15M-26SEP111115-15 @ 0.64 fair=0.314
+[2026-09-11T15:04:04Z] MAKER FILL no 25 KXGOLD15M-26SEP111115-15 @ 0.57 fair@quote=0.389
+[2026-09-11T15:04:05Z] maker quote no 25 KXGOLD15M-26SEP111115-15 @ 0.58 fair=0.378
+[2026-09-11T15:04:05Z] MAKER FILL no 30 KXSILVER15M-26SEP111115-15 @ 0.64 fair@quote=0.314
+[2026-09-11T15:04:07Z] MAKER FILL no 25 KXGOLD15M-26SEP111115-15 @ 0.58 fair@quote=0.378
