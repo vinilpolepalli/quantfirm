@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T21:28:45Z",
+ "ts": "2026-09-12T21:43:53Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,56 +13,56 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 257.5690000000002,
+  "shadow": 263.7490000000002,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 282.3312399999999
+  "live": 288.5215399999999
  },
  "realized": {
-  "shadow": 30.468999999999983,
+  "shadow": 37.56899999999998,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 55.40223999999999
+  "live": 62.50923999999999
  },
  "n_open": 4,
  "open": [
   {
-   "metal": "eth",
-   "side": "no",
-   "count": 15,
-   "ticker": "KXETH15M-26SEP121730-30",
-   "fill_price": 0.75,
+   "metal": "btc",
+   "side": "yes",
+   "count": 16,
+   "ticker": "KXBTC15M-26SEP121745-45",
+   "fill_price": 0.76,
    "adapter": "shadow"
   },
   {
-   "metal": "eth",
-   "side": "no",
-   "count": 15,
-   "ticker": "KXETH15M-26SEP121730-30",
-   "fill_price": 0.75,
+   "metal": "btc",
+   "side": "yes",
+   "count": 16,
+   "ticker": "KXBTC15M-26SEP121745-45",
+   "fill_price": 0.76,
    "adapter": "live"
   },
   {
-   "metal": "btc",
+   "metal": "eth",
    "side": "yes",
    "count": 15,
-   "ticker": "KXBTC15M-26SEP121730-30",
+   "ticker": "KXETH15M-26SEP121745-45",
    "fill_price": 0.75,
    "adapter": "shadow"
   },
   {
-   "metal": "btc",
+   "metal": "eth",
    "side": "yes",
    "count": 15,
-   "ticker": "KXBTC15M-26SEP121730-30",
+   "ticker": "KXETH15M-26SEP121745-45",
    "fill_price": 0.75,
    "adapter": "live"
   }
  ],
- "n_settled": 195,
- "updated": "2026-09-12T21:28:45Z",
+ "n_settled": 199,
+ "updated": "2026-09-12T21:43:53Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
@@ -70,9 +70,9 @@
  "poly_paper": {
   "day": "2026-09-12",
   "live_crypto": {
-   "n": 66,
-   "pnl": 57.87,
-   "hit": 0.803
+   "n": 68,
+   "pnl": 64.97,
+   "hit": 0.809
   },
   "poly_paper": {
    "n": 34,
