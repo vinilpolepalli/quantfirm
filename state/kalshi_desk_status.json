@@ -1,6 +1,6 @@
 {
- "ts": "2026-09-12T01:44:22Z",
- "strategy": "one_pct",
+ "ts": "2026-09-12T01:53:04Z",
+ "strategy": "spot_lock",
  "universe": [
   "gold",
   "silver",
@@ -15,37 +15,29 @@
  "kill_switch": false,
  "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 215.83200000000005,
+  "shadow": 247.872,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 250.0
  },
  "realized": {
-  "shadow": 3.853999999999999,
+  "shadow": 8.051999999999998,
   "demo": 0.0,
   "maker": 1.6499999999999968,
   "live": 0.0
  },
- "n_open": 2,
+ "n_open": 1,
  "open": [
   {
-   "metal": "eth",
+   "metal": "copper",
    "side": "no",
-   "count": 22,
-   "ticker": "KXETH15M-26SEP112145-45",
-   "fill_price": 0.9,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "wti",
-   "side": "no",
-   "count": 19,
-   "ticker": "KXWTI15M-26SEP112145-45",
-   "fill_price": 0.948,
+   "count": 11,
+   "ticker": "KXCOPPER15M-26SEP112200-00",
+   "fill_price": 0.92,
    "adapter": "shadow"
   }
  ],
- "n_settled": 17,
- "updated": "2026-09-12T01:44:21Z",
+ "n_settled": 21,
+ "updated": "2026-09-12T01:53:02Z",
  "started": "2026-09-12T00:46:58Z"
 }

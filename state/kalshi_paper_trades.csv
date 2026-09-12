@@ -16,3 +16,7 @@ settled_at,adapter,ticker,metal,side,count,fill_price,fee,fair_at_entry,result,p
 2026-09-12T01:31:00Z,shadow,KXSILVER15M-26SEP112130-30,silver,yes,21,0.909,0.13,0.909,yes,1.781,one_pct,217.85
 2026-09-12T01:31:00Z,shadow,KXCOPPER15M-26SEP112130-30,copper,yes,19,0.96,0.06,0.96,yes,0.7,one_pct,236.85
 2026-09-12T01:31:00Z,shadow,KXETH15M-26SEP112130-30,eth,no,17,0.961,0.05,0.039,no,0.613,one_pct,253.85
+2026-09-12T01:46:00Z,shadow,KXETH15M-26SEP112145-45,eth,no,22,0.9,0.14,0.1,no,2.06,one_pct,206.05
+2026-09-12T01:46:00Z,shadow,KXWTI15M-26SEP112145-45,wti,no,19,0.948,0.07,0.052,no,0.918,one_pct,225.05
+2026-09-12T01:46:01Z,shadow,KXCOPPER15M-26SEP112145-45,copper,yes,17,0.96,0.05,0.96,yes,0.63,one_pct,242.05
+2026-09-12T01:46:01Z,shadow,KXNATGAS15M-26SEP112145-45,natgas,yes,16,0.96,0.05,0.96,yes,0.59,one_pct,258.05
