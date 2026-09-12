@@ -20,6 +20,10 @@ STATE_PATH = os.path.join(REPO, "state", "kalshi_paper_state.json")
 STATUS_PATH = os.path.join(REPO, "state", "kalshi_desk_status.json")
 TRADES_PATH = os.path.join(REPO, "state", "kalshi_paper_trades.csv")
 LOOP = os.path.join(REPO, "scripts", "kalshi_paper_loop.sh")
+POLY_LOOP = os.path.join(REPO, "scripts", "kalshi_poly_paper_loop.sh")
+POLY_PIDFILE = os.path.join(REPO, "state", "kalshi_poly_paper.pid")
+POLY_STATE_PATH = os.path.join(REPO, "state", "kalshi_poly_paper_state.json")
+POLY_TRADES_PATH = os.path.join(REPO, "state", "kalshi_poly_paper_trades.csv")
 TMUX_SESSION = "kalshi-desk"
 TMUX_CONF = "/exec-daemon/tmux.portal.conf"
 
@@ -73,6 +77,45 @@ def ensure_supervisor() -> str:
         cwd=REPO, start_new_session=True, env=env,
         stdout=log_f, stderr=subprocess.STDOUT)
     return "supervisor: WAS DEAD -> restarted (inherited env)"
+
+
+def poly_paper_alive() -> bool:
+    try:
+        with open(POLY_PIDFILE) as f:
+            pid = int(f.read().strip())
+    except (OSError, ValueError):
+        return False
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def ensure_poly_paper() -> str:
+    """Paper-only Poly vs Kalshi sleeve. Never live."""
+    if poly_paper_alive():
+        return "poly_paper: alive"
+    if not os.path.isfile(POLY_LOOP):
+        return "poly_paper: missing loop script"
+    os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
+    try:
+        os.chmod(POLY_LOOP, 0o755)
+        env = os.environ.copy()
+        env["KALSHI_LIVE"] = "0"
+        env["STRATEGY"] = "poly_book"
+        env["METALS"] = "btc,eth"
+        env.setdefault("BANKROLL", str(int(BANKROLL)))
+        env.setdefault("SESSION_MIN", "110")
+        log_path = os.path.join(REPO, "state", "kalshi_poly_paper_loop.log")
+        log_f = open(log_path, "a")
+        subprocess.Popen(
+            ["/bin/bash", POLY_LOOP],
+            cwd=REPO, start_new_session=True, env=env,
+            stdout=log_f, stderr=subprocess.STDOUT)
+    except Exception as e:
+        return f"poly_paper: failed ({e})"
+    return "poly_paper: WAS DEAD -> restarted (paper only, no live)"
 
 
 def count_open_markets(client=None) -> int:
@@ -131,6 +174,21 @@ def write_desk_status(supervisor: str | None = None,
         "updated": state.get("updated"),
         "started": state.get("started"),
     }
+    poly_state: dict = {}
+    if os.path.exists(POLY_STATE_PATH):
+        try:
+            with open(POLY_STATE_PATH) as f:
+                poly_state = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            poly_state = {}
+    rec["poly_paper_loop"] = "alive" if poly_paper_alive() else "down"
+    rec["poly_paper_n_open"] = len(poly_state.get("open") or [])
+    rec["poly_paper_cash"] = (poly_state.get("cash") or {}).get("shadow")
+    try:
+        from .poly import compare_snapshot
+        rec["poly_paper"] = compare_snapshot()
+    except Exception:
+        pass
     os.makedirs(os.path.dirname(status_path) or ".", exist_ok=True)
     tmp = status_path + ".tmp"
     with open(tmp, "w") as f:

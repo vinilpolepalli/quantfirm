@@ -195,12 +195,21 @@ a Chainlink 60s TWAP over the whole window vs the start. Gold/WTI/natgas
 have no matching Poly 15m book.
 
 The live loop stays `desk_book` on Kalshi. The engine logs Poly CLOB BBOs
-on crypto ticks. `poly_confirm` (desk_book + sit when Poly's favorite
-disagrees) is registered and **off** the loop until that log is scored.
+on crypto ticks. Two registered (off-loop) uses of that tape:
+
+* `poly_confirm` — `desk_book`, but sit crypto when Poly's favorite disagrees.
+  Missing Poly does **not** sit.
+* `poly_book` — Poly ≥60¢ picks the side; take it on Kalshi only if Kalshi
+  also has that side ≥60¢. Missing Poly **sits**. Paper sleeve only
+  (`scripts/kalshi_poly_paper_loop.sh`, never `--live`). Compare to live
+  crypto fills at EOD (`python -m quantfirm.kalshi.cli poly-compare`)
+  before promoting. Do not auto-switch on 1–2 windows.
+
 No Polymarket orders. SOL/XRP/DOGE stay off.
 
 ```bash
 python -m quantfirm.kalshi.cli poly
+python -m quantfirm.kalshi.cli poly-compare
 ```
 
 ## Live signal
@@ -228,6 +237,7 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
 | `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC and ETH 4% | Same FLB; crypto until close; fee-eat 93¢+ |
 | `poly_confirm` | desk_book + sit crypto when Poly 15m disagrees | Off the live loop; second tape |
+| `poly_book` | Poly ≥60¢ picks side; Kalshi executes if that side is also ≥60¢ | Paper sleeve; EOD compare vs live |
 | `crypto_fav` | BTC/ETH 4% each (~$10) ≥60¢ until close | Weekend 24/7 sleeve |
 | `favorite_confirmed` | FLB + GBM agrees | Same, fewer longshots |
 | `late_lock` | Near-certain favorite, last 6 min | Reversal needed is large |
@@ -252,8 +262,10 @@ python -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
 python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
     --strategy desk_book --bankroll 250 --log-decisions
 python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi, read-only
+python -m quantfirm.kalshi.cli poly-compare # live crypto vs poly_book paper
 ./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH
-python scripts/kalshi_desk_checkin.py   # heal + commit heartbeat
+./scripts/kalshi_poly_paper_loop.sh   # paper-only Poly sleeve; never --live
+python scripts/kalshi_desk_checkin.py   # heal live + poly paper, commit heartbeat
 ```
 
 24/7 wiring is in `docs/KALSHI_ROUTINE.md`. Promotion bar is unchanged

@@ -1,12 +1,15 @@
 # Polymarket 15m next to Kalshi (2026-09-12)
 
-Read-only. No Poly orders. Live Kalshi book stays `desk_book`.
+Read-only on Polymarket. Live Kalshi book stays `desk_book`. A **paper**
+sleeve (`poly_book`) simulates the same-side Kalshi clip when Poly and
+Kalshi agree at ≥60¢. No Poly orders. Do not auto-promote.
 
 ## Why look
 
 BTC/ETH 15m is the weekend book. Polymarket runs the same ET quarter-hour
 (`btc-updown-15m-{unix}`, `eth-updown-15m-{unix}`, plus SOL/XRP/DOGE we
 do not trade). A second favorite tape can:
+
 
 1. Confirm a Kalshi ≥60¢ favorite (both venues same side).
 2. Sit out an early Kalshi flicker the other venue already faded.
@@ -49,11 +52,29 @@ log, not to arb blindly: different settlement.
 * `poly_confirm` — `desk_book` but crypto sits when Poly's ≥55¢ favorite
   is the other side. **Off the live loop.** Missing Poly quote does not
   sit (outage ≠ a signal).
+* `poly_book` paper sleeve — Poly ≥60¢ picks the side; Kalshi shadow-fills
+  that side only if Kalshi also has it ≥60¢. Missing Poly **sits**.
+  Separate state (`--state-prefix kalshi_poly_paper`), **never `--live`**.
+* `python -m quantfirm.kalshi.cli poly-compare` — today's live crypto
+  fills vs that paper sleeve.
 * SOL/XRP/DOGE stay off.
+
+## Paper sleeve (not arb)
+
+Not a locked arb: Chainlink TWAP ≠ CF last print. The sleeve is
+"both venues already have the same ≥60¢ favorite — take it on Kalshi
+at Kalshi size (4% / ~$10)." Disagreement sits. A 70¢ Poly Up with a
+50¢ Kalshi YES sits (we do not copy Poly as Kalshi fair).
+
+Supervisor: `scripts/kalshi_poly_paper_loop.sh`. Check-in heals it
+without starting a second live agent. Scoreboard is UTC day in
+`state/kalshi_poly_paper_trades.csv` (adapter `shadow`) vs live
+`kalshi_paper_trades.csv` (`adapter=live`, BTC/ETH only).
 
 ## What would change the live book
 
-A few days of `state/kalshi_paper_decisions.jsonl` with Poly fields, then
-score: would `poly_confirm` have sat the 08:30 BTC NO that lost, without
-sitting the 08:15 NOs that paid? Until that table exists, do not switch
-`PAPER_STRATEGY`.
+End of Saturday ET (2026-09-13T04:00Z) or UTC midnight, run
+`python -m quantfirm.kalshi.cli poly-compare`. Promote `PAPER_STRATEGY`
+to `poly_book` only if poly paper is ahead **and** both books have
+enough settled fills (`ready` needs n≥8 each). Do not switch on 1–2
+windows. Do not switch to a first-3-min sit-out.

@@ -13,3 +13,9 @@ state/kalshi_paper_state.json
 state/kalshi_paper_loop.log
 state/kalshi_paper_tape.jsonl
 state/kalshi_paper_loop.pid
+state/kalshi_poly_paper_decisions.jsonl
+state/kalshi_poly_paper_state.json
+state/kalshi_poly_paper_loop.log
+state/kalshi_poly_paper.log
+state/kalshi_poly_paper.pid
+

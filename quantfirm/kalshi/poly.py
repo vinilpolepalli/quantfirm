@@ -13,6 +13,7 @@ off the live Kalshi book (no harvested Kalshi tape).
 from __future__ import annotations
 
 import json
+import os
 import time
 from dataclasses import dataclass
 from typing import Any
@@ -208,3 +209,59 @@ def snapshot(assets: tuple[str, ...] = POLY_ASSETS, feed: PolymarketFeed | None 
             "favorite": poly_favorite(q),
         }
     return out
+
+
+def _crypto_settled(path: str, adapter: str, day: str | None = None) -> list[dict]:
+    import csv
+    if not os.path.exists(path):
+        return []
+    out = []
+    with open(path) as f:
+        for row in csv.DictReader(f):
+            if row.get("adapter") != adapter:
+                continue
+            if row.get("metal") not in POLY_ASSETS:
+                continue
+            if day and not str(row.get("settled_at") or "").startswith(day):
+                continue
+            out.append(row)
+    return out
+
+
+def _pnl_block(rows: list[dict]) -> dict:
+    pnls = []
+    for r in rows:
+        try:
+            pnls.append(float(r.get("pnl") or 0))
+        except (TypeError, ValueError):
+            continue
+    if not pnls:
+        return {"n": 0, "pnl": 0.0, "hit": None}
+    wins = sum(1 for x in pnls if x > 0)
+    return {"n": len(pnls), "pnl": round(sum(pnls), 2),
+            "hit": round(wins / len(pnls), 3)}
+
+
+def compare_snapshot(day: str | None = None, live_path: str | None = None,
+                     poly_path: str | None = None) -> dict:
+    """Live Kalshi crypto fills vs the poly_book paper sleeve (UTC day).
+
+    ``poly_ahead`` is a scoreboard bit, not a promote switch. Do not
+    change ``PAPER_STRATEGY`` until EOD with enough fills on both books.
+    """
+    repo = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    if live_path is None:
+        live_path = os.path.join(repo, "state", "kalshi_paper_trades.csv")
+    if poly_path is None:
+        poly_path = os.path.join(repo, "state", "kalshi_poly_paper_trades.csv")
+    if day is None:
+        day = time.strftime("%Y-%m-%d", time.gmtime())
+    live = _pnl_block(_crypto_settled(live_path, "live", day))
+    poly = _pnl_block(_crypto_settled(poly_path, "shadow", day))
+    return {
+        "day": day,
+        "live_crypto": live,
+        "poly_paper": poly,
+        "poly_ahead": (poly["n"] > 0 and poly["pnl"] > live["pnl"]),
+        "ready": poly["n"] >= 8 and live["n"] >= 8,
+    }
