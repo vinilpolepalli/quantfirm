@@ -180,7 +180,11 @@ def cmd_paper(a):
     specs = {s.name: s for s in registry()}
     if a.strategy and a.strategy in specs:
         spec = specs[a.strategy]
+        from dataclasses import replace
         p = spec.params
+        n_assets = len(a.metals.split(","))
+        if n_assets > p.max_open:
+            p = replace(p, max_open=n_assets)
         decide_fn = spec.fn
         print(f"paper taker strategy: {spec.name} — {spec.note}")
     else:
@@ -205,8 +209,45 @@ def cmd_paper(a):
         use_demo=not a.no_demo,
         bankroll0=a.bankroll,
         maker=not a.no_maker,
+        live=getattr(a, "live", False),
         decide_fn=decide_fn)
     eng.run(minutes=a.minutes, poll_s=a.poll)
+
+
+def cmd_agent(a):
+    """24/7 LangGraph desk. Same engine as paper, graph-orchestrated."""
+    from .agent import run_agent
+    import dataclasses as _dc
+    from dataclasses import replace
+    from .paper import PaperEngine
+    from .strategies import registry
+    specs = {s.name: s for s in registry()}
+    spec = specs.get(a.strategy) or specs["favorite_div"]
+    p = spec.params
+    n_assets = len(a.metals.split(","))
+    if n_assets > p.max_open:
+        p = replace(p, max_open=n_assets)
+    os.makedirs(STATE_DIR, exist_ok=True)
+    print("effective params:", _dc.asdict(p))
+    eng = PaperEngine(
+        params=p,
+        state_path=os.path.join(STATE_DIR, "kalshi_paper_state.json"),
+        log_path=os.path.join(STATE_DIR, "kalshi_paper_trades.csv"),
+        decisions_path=(os.path.join(STATE_DIR, "kalshi_paper_decisions.jsonl")
+                        if a.log_decisions else None),
+        tape_path=os.path.join(STATE_DIR, "kalshi_paper_tape.jsonl"),
+        metals=tuple(a.metals.split(",")),
+        use_demo=not a.no_demo,
+        bankroll0=a.bankroll,
+        maker=not a.no_maker,
+        live=a.live,
+        decide_fn=spec.fn)
+    from .universe import YF_SYMBOLS
+    for metal in eng.metals:
+        if metal in eng.feeds and metal in YF_SYMBOLS:
+            eng.warm_vol_from_bars(metal, YF_SYMBOLS[metal])
+    run_agent(eng, minutes=a.minutes, poll_s=a.poll, live=a.live,
+              strategy=spec.name)
 
 
 def cmd_status(a):
@@ -301,13 +342,27 @@ def main():
     sp.add_argument("--minutes", type=float, default=60.0)
     sp.add_argument("--poll", type=float, default=2.0)
     sp.add_argument("--metals", default=",".join(PAPER_ASSETS))
-    sp.add_argument("--strategy", default="late_lock",
+    sp.add_argument("--strategy", default="favorite_div",
                     help="taker strategy name from strategies.registry()")
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
+    sp.add_argument("--live", action="store_true",
+                    help="send real prod orders (also requires KALSHI_LIVE=1 + prod key)")
     sp.add_argument("--log-decisions", action="store_true")
     add_params(sp)
     sp.set_defaults(fn=cmd_paper)
+
+    sp = sub.add_parser("agent")
+    sp.add_argument("--minutes", type=float, default=60.0)
+    sp.add_argument("--poll", type=float, default=2.0)
+    sp.add_argument("--metals", default=",".join(PAPER_ASSETS))
+    sp.add_argument("--strategy", default="favorite_div")
+    sp.add_argument("--no-demo", action="store_true")
+    sp.add_argument("--no-maker", action="store_true")
+    sp.add_argument("--live", action="store_true")
+    sp.add_argument("--log-decisions", action="store_true")
+    add_params(sp)
+    sp.set_defaults(fn=cmd_agent)
 
     sp = sub.add_parser("tournament")
     sp.add_argument("--data", required=True)

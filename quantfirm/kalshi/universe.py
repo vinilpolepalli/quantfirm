@@ -54,11 +54,12 @@ SWISSQUOTE = {
     "wti": "OIL",
 }
 
-# Default paper book: the three most liquid commodity 15M series.
-# Copper/natgas are tradable once Kalshi live_data is wired (they are).
-PAPER_ASSETS = ("gold", "silver", "wti")
+# All five live 15-minute commodity books. Each has open windows and a
+# settlement-aligned Kalshi live_data feed (verified 2026-09-12).
+PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
 
-# Metals that share a directional risk slot (same-window trend tails).
+# Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
+# energy / copper) so the $250 can sit in metals AND energy at once.
 CORR_GROUP = frozenset({"gold", "silver"})
 
 # Starting paper/backtest bankroll for this research pass.

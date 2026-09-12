@@ -36,8 +36,10 @@ Hours: commodity 15M books were **open on Saturday 2026-09-12** (the prior
 note that metals go dark Sat 04:00Z is stale — treat the API as truth).
 Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
-Default paper book: gold + silver + WTI. Copper and natgas are enabled
-once Kalshi `live_data` is the signal (it is).
+Default paper book: **all five live commodities** (gold, silver, copper,
+WTI, natgas). Correlation slots: gold/silver share a side, WTI/natgas
+share a side, copper is its own. Per-trade cap 4% so five names do not
+stack the $250. 24/7 wiring is in `docs/KALSHI_ROUTINE.md`.
 
 ## Live signal
 

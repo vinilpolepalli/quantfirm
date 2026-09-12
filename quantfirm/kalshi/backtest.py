@@ -281,13 +281,9 @@ class Backtest:
                 metal=metal)
             if intent is None:
                 continue
-            if metal in ("gold", "silver"):
-                for p in open_pos.values():
-                    if p.metal in ("gold", "silver") and p.side == intent.side:
-                        intent = None
-                        skipped["corr_cap"] += 1
-                        break
-            if intent is None:
+            from .halt import blocked_by_corr
+            if blocked_by_corr(metal, intent.side, open_pos.values()):
+                skipped["corr_cap"] += 1
                 continue
 
             # ---- fill model. The fill candle covers (T, T+60]; its side-price
@@ -400,6 +396,7 @@ class Backtest:
             "fees": round(fees, 2),
             "hit_rate": round(wins / n, 3) if n else None,
             "avg_pnl_per_trade": round(pnl / n, 3) if n else None,
+            "avg_fill": round(sum(t.fill_price for t in settled) / n, 3) if n else None,
             "t_stat": round(t_stat, 2),
             "daily_sharpe_ann": round(sharpe_d, 2),
             "max_drawdown_pct": round(100 * mdd, 2),

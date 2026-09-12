@@ -362,6 +362,12 @@ def registry() -> list[Spec]:
              _p(tau_min_s=180, tau_max_s=720, price_min=0.72, price_max=0.94,
                 theta=0.0),
              "lag", "Whelan FLB: take favorites ≥72c, no model"),
+        Spec("favorite_div", favorite_blind,
+             _p(tau_min_s=180, tau_max_s=720, price_min=0.72, price_max=0.94,
+                theta=0.0, max_open=5, max_stake_frac=0.04, min_count=4),
+             "lag",
+             "Live book: same FLB signal, 4% cap, 5 concurrent slots "
+             "(gold/silver/copper/WTI/natgas)"),
         Spec("favorite_confirmed", favorite_confirmed,
              _p(tau_min_s=180, tau_max_s=720, price_min=0.68, price_max=0.94,
                 theta=0.0),

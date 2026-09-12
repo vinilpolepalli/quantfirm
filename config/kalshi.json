@@ -1,0 +1,9 @@
+{
+  "bankroll_usd": 250,
+  "strategy": "favorite_div",
+  "assets": ["gold", "silver", "copper", "wti", "natgas"],
+  "maker": true,
+  "live": false,
+  "daily_stop_frac": 0.10,
+  "note": "live stays false until a human sets it. API keys in env, never in this file."
+}

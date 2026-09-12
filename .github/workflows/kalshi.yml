@@ -1,0 +1,71 @@
+name: kalshi-15m-desk
+# Heartbeat + short trade burst. GitHub-hosted minutes cannot poll every
+# 2 seconds 24/7 (that would blow the 2,000 min/month budget), so this is
+# the backstop: four times an hour it wakes, trades the *current* window
+# if a favorite is up, commits state, and exits.
+#
+# The primary 24/7 loop is scripts/kalshi_paper_loop.sh on a persistent
+# host (or a Claude Routine every 15 minutes — see docs/KALSHI_ROUTINE.md).
+#
+# Secrets (optional; shadow paper works without them):
+#   KALSHI_PROD_KEY_ID, KALSHI_PROD_PRIVATE_KEY
+#   KALSHI_LIVE=1  — only then are real orders sent
+
+on:
+  schedule:
+    - cron: '3,18,33,48 * * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: kalshi-desk
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  desk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Tick the diversified 15m book
+        env:
+          KALSHI_PROD_KEY_ID: ${{ secrets.KALSHI_PROD_KEY_ID }}
+          KALSHI_PROD_PRIVATE_KEY: ${{ secrets.KALSHI_PROD_PRIVATE_KEY }}
+          KALSHI_LIVE: ${{ secrets.KALSHI_LIVE }}
+        run: |
+          set -euo pipefail
+          python -m quantfirm.kalshi.cli status || true
+          python -m quantfirm.kalshi.cli agent \
+            --minutes 2 --poll 2 --no-demo --log-decisions \
+            --strategy favorite_div --bankroll 250 \
+            --metals gold,silver,copper,wti,natgas \
+            ${KALSHI_LIVE:+--live}
+      - name: Commit paper state
+        run: |
+          set -euo pipefail
+          git config user.name "vinilpolepalli"
+          git config user.email "105608101+vinilpolepalli@users.noreply.github.com"
+          for f in state/kalshi_paper_state.json state/kalshi_paper_trades.csv \
+                   state/kalshi_paper_tape.jsonl state/kalshi_checkin_mark.json \
+                   research/kalshi_backtest.md research/kalshi_tournament.md; do
+            if [ -f "$f" ]; then git add -f "$f"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "no state change"; exit 0
+          fi
+          git commit -m "kalshi: desk tick $(date -u +%FT%H:%M)"
+          for i in 1 2 3 4; do
+            git push && exit 0
+            git pull --rebase || true
+            sleep $((i*2))
+          done
+          exit 1

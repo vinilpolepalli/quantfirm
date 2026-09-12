@@ -1,0 +1,2986 @@
+{
+ "bankroll": 250.0,
+ "split": "2026-08-27T00:00:00Z",
+ "fill_primary": "lag",
+ "generated": "2026-09-12T00:43:37Z",
+ "diagnostics_train": {
+  "n_windows": 3572,
+  "favorite_longshot": {
+   "tau_120s": {
+    "<0.10": {
+     "n": 1004,
+     "rate": 0.021
+    },
+    "<0.20": {
+     "n": 230,
+     "rate": 0.1
+    },
+    "<0.30": {
+     "n": 177,
+     "rate": 0.169
+    },
+    "<0.40": {
+     "n": 117,
+     "rate": 0.393
+    },
+    "<0.50": {
+     "n": 101,
+     "rate": 0.416
+    },
+    "<0.60": {
+     "n": 124,
+     "rate": 0.589
+    },
+    "<0.70": {
+     "n": 131,
+     "rate": 0.626
+    },
+    "<0.80": {
+     "n": 159,
+     "rate": 0.799
+    },
+    "<0.90": {
+     "n": 212,
+     "rate": 0.788
+    },
+    ">=0.90": {
+     "n": 1190,
+     "rate": 0.975
+    }
+   },
+   "tau_300s": {
+    "<0.10": {
+     "n": 553,
+     "rate": 0.027
+    },
+    "<0.20": {
+     "n": 357,
+     "rate": 0.087
+    },
+    "<0.30": {
+     "n": 278,
+     "rate": 0.241
+    },
+    "<0.40": {
+     "n": 217,
+     "rate": 0.327
+    },
+    "<0.50": {
+     "n": 228,
+     "rate": 0.452
+    },
+    "<0.60": {
+     "n": 205,
+     "rate": 0.576
+    },
+    "<0.70": {
+     "n": 227,
+     "rate": 0.626
+    },
+    "<0.80": {
+     "n": 250,
+     "rate": 0.752
+    },
+    "<0.90": {
+     "n": 387,
+     "rate": 0.837
+    },
+    ">=0.90": {
+     "n": 724,
+     "rate": 0.968
+    }
+   },
+   "tau_600s": {
+    "<0.10": {
+     "n": 115,
+     "rate": 0.052
+    },
+    "<0.20": {
+     "n": 282,
+     "rate": 0.131
+    },
+    "<0.30": {
+     "n": 372,
+     "rate": 0.242
+    },
+    "<0.40": {
+     "n": 407,
+     "rate": 0.295
+    },
+    "<0.50": {
+     "n": 473,
+     "rate": 0.469
+    },
+    "<0.60": {
+     "n": 443,
+     "rate": 0.578
+    },
+    "<0.70": {
+     "n": 424,
+     "rate": 0.642
+    },
+    "<0.80": {
+     "n": 401,
+     "rate": 0.763
+    },
+    "<0.90": {
+     "n": 369,
+     "rate": 0.859
+    },
+    ">=0.90": {
+     "n": 153,
+     "rate": 0.922
+    }
+   }
+  },
+  "late_certainty_hit": {
+   "tau_120s": {
+    "z<0.5": {
+     "n": 353,
+     "rate": 0.663
+    },
+    "z>=0.5": {
+     "n": 291,
+     "rate": 0.883
+    },
+    "z>=0.8": {
+     "n": 954,
+     "rate": 0.981
+    }
+   },
+   "tau_300s": {
+    "z<0.5": {
+     "n": 611,
+     "rate": 0.663
+    },
+    "z>=0.5": {
+     "n": 458,
+     "rate": 0.886
+    },
+    "z>=0.8": {
+     "n": 526,
+     "rate": 0.962
+    }
+   },
+   "tau_600s": {
+    "z<0.5": {
+     "n": 1053,
+     "rate": 0.654
+    },
+    "z>=0.5": {
+     "n": 455,
+     "rate": 0.853
+    },
+    "z>=0.8": {
+     "n": 99,
+     "rate": 0.879
+    }
+   }
+  },
+  "open_3min_then_rest": {
+   "flat": {
+    "n": 1387,
+    "mean_rest_return_bp": 0.48,
+    "rest_up_rate": 0.498
+   },
+   "up": {
+    "n": 82,
+    "mean_rest_return_bp": -1.39,
+    "rest_up_rate": 0.463
+   },
+   "down": {
+    "n": 93,
+    "mean_rest_return_bp": -0.46,
+    "rest_up_rate": 0.527
+   }
+  },
+  "gold_silver_same_window": {
+   "n": 1786,
+   "agree_rate": 0.796
+  },
+  "yes_rate_by_utc_hour": {
+   "00Z": {
+    "n": 160,
+    "rate": 0.519
+   },
+   "01Z": {
+    "n": 160,
+    "rate": 0.45
+   },
+   "02Z": {
+    "n": 160,
+    "rate": 0.525
+   },
+   "03Z": {
+    "n": 160,
+    "rate": 0.487
+   },
+   "04Z": {
+    "n": 142,
+    "rate": 0.451
+   },
+   "05Z": {
+    "n": 144,
+    "rate": 0.465
+   },
+   "06Z": {
+    "n": 144,
+    "rate": 0.576
+   },
+   "07Z": {
+    "n": 136,
+    "rate": 0.537
+   },
+   "08Z": {
+    "n": 136,
+    "rate": 0.522
+   },
+   "09Z": {
+    "n": 142,
+    "rate": 0.514
+   },
+   "10Z": {
+    "n": 144,
+    "rate": 0.465
+   },
+   "11Z": {
+    "n": 144,
+    "rate": 0.535
+   },
+   "12Z": {
+    "n": 144,
+    "rate": 0.528
+   },
+   "13Z": {
+    "n": 144,
+    "rate": 0.542
+   },
+   "14Z": {
+    "n": 144,
+    "rate": 0.583
+   },
+   "15Z": {
+    "n": 142,
+    "rate": 0.458
+   },
+   "16Z": {
+    "n": 144,
+    "rate": 0.535
+   },
+   "17Z": {
+    "n": 144,
+    "rate": 0.479
+   },
+   "18Z": {
+    "n": 150,
+    "rate": 0.473
+   },
+   "19Z": {
+    "n": 152,
+    "rate": 0.566
+   },
+   "20Z": {
+    "n": 152,
+    "rate": 0.375
+   },
+   "21Z": {
+    "n": 152,
+    "rate": 0.678
+   },
+   "22Z": {
+    "n": 164,
+    "rate": 0.543
+   },
+   "23Z": {
+    "n": 168,
+    "rate": 0.554
+   }
+  },
+  "reading": [
+   "At \u03c4=5min, contracts mid\u226590c won 97% (n=724). Supports favorite harvest.",
+   "At \u03c4=5min, contracts mid<10c won 3% (n=553). Longshots overpriced \u2014 do not buy them.",
+   "First-3-minute impulse does not predict the rest of the window.",
+   "At \u03c4=2min, model-certain favorites (z\u22650.8) hit 98% (n=954). late_lock is plausible."
+  ]
+ },
+ "strategies": [
+  {
+   "name": "ctrl_always_yes",
+   "note": "CONTROL: buy YES every window at minute 5",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 61,
+    "final_equity": 92.48,
+    "net_pnl": -157.52,
+    "return_pct": -63.01,
+    "fees": 16.49,
+    "hit_rate": 0.344,
+    "avg_pnl_per_trade": -2.582,
+    "t_stat": -2.45,
+    "daily_sharpe_ann": -13.0,
+    "max_drawdown_pct": 65.36,
+    "trading_days": 14,
+    "by_metal": {
+     "gold": {
+      "n": 38,
+      "pnl": -92.48,
+      "hit": 0.342
+     },
+     "silver": {
+      "n": 23,
+      "pnl": -65.04,
+      "hit": 0.348
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 61,
+      "pnl": -157.52,
+      "hit": 0.344
+     }
+    },
+    "by_tag": {
+     "ctrl_yes": {
+      "n": 61,
+      "pnl": -157.52,
+      "hit": 0.344
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 61,
+      "pnl": -157.52,
+      "hit": 0.344
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 6,
+      "pnl": -16.2,
+      "hit": 0.333
+     },
+     "2026-W34": {
+      "n": 40,
+      "pnl": -108.31,
+      "hit": 0.4
+     },
+     "2026-W35": {
+      "n": 15,
+      "pnl": -33.01,
+      "hit": 0.2
+     }
+    },
+    "skipped": {
+     "no_underlying": 22003,
+     "raced_out": 662,
+     "corr_cap": 151,
+     "daily_stop": 10376
+    }
+   },
+   "test": {
+    "n_trades": 100,
+    "final_equity": 108.8,
+    "net_pnl": -141.2,
+    "return_pct": -56.48,
+    "fees": 20.59,
+    "hit_rate": 0.33,
+    "avg_pnl_per_trade": -1.412,
+    "t_stat": -1.75,
+    "daily_sharpe_ann": -10.72,
+    "max_drawdown_pct": 70.64,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 44,
+      "pnl": -96.5,
+      "hit": 0.25
+     },
+     "silver": {
+      "n": 27,
+      "pnl": 23.2,
+      "hit": 0.407
+     },
+     "copper": {
+      "n": 29,
+      "pnl": -67.9,
+      "hit": 0.379
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 100,
+      "pnl": -141.2,
+      "hit": 0.33
+     }
+    },
+    "by_tag": {
+     "ctrl_yes": {
+      "n": 100,
+      "pnl": -141.2,
+      "hit": 0.33
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 100,
+      "pnl": -141.2,
+      "hit": 0.33
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 11,
+      "pnl": -71.23,
+      "hit": 0.364
+     },
+     "2026-W36": {
+      "n": 37,
+      "pnl": -89.89,
+      "hit": 0.27
+     },
+     "2026-W37": {
+      "n": 52,
+      "pnl": 19.93,
+      "hit": 0.365
+     }
+    },
+    "skipped": {
+     "no_underlying": 6792,
+     "raced_out": 719,
+     "corr_cap": 141,
+     "daily_stop": 17552,
+     "concurrency": 365
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 98,
+    "final_equity": 90.26,
+    "net_pnl": -159.74,
+    "return_pct": -63.89,
+    "fees": 20.53,
+    "hit_rate": 0.337,
+    "avg_pnl_per_trade": -1.63,
+    "t_stat": -2.11,
+    "daily_sharpe_ann": -12.98,
+    "max_drawdown_pct": 73.34,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 43,
+      "pnl": -101.66,
+      "hit": 0.256
+     },
+     "silver": {
+      "n": 27,
+      "pnl": 10.19,
+      "hit": 0.407
+     },
+     "copper": {
+      "n": 28,
+      "pnl": -68.27,
+      "hit": 0.393
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 98,
+      "pnl": -159.74,
+      "hit": 0.337
+     }
+    },
+    "by_tag": {
+     "ctrl_yes": {
+      "n": 98,
+      "pnl": -159.74,
+      "hit": 0.337
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 98,
+      "pnl": -159.74,
+      "hit": 0.337
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 11,
+      "pnl": -77.15,
+      "hit": 0.364
+     },
+     "2026-W36": {
+      "n": 35,
+      "pnl": -89.96,
+      "hit": 0.286
+     },
+     "2026-W37": {
+      "n": 52,
+      "pnl": 7.38,
+      "hit": 0.365
+     }
+    },
+    "skipped": {
+     "no_underlying": 6790,
+     "raced_out": 697,
+     "corr_cap": 138,
+     "daily_stop": 17884,
+     "concurrency": 365
+    }
+   },
+   "candidate": false,
+   "gate": "test_pnl<=0"
+  },
+  {
+   "name": "ctrl_always_no",
+   "note": "CONTROL: buy NO every window at minute 5",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 61,
+    "final_equity": 354.13,
+    "net_pnl": 104.13,
+    "return_pct": 41.65,
+    "fees": 39.67,
+    "hit_rate": 0.361,
+    "avg_pnl_per_trade": 1.707,
+    "t_stat": 0.31,
+    "daily_sharpe_ann": 1.34,
+    "max_drawdown_pct": 38.88,
+    "trading_days": 14,
+    "by_metal": {
+     "gold": {
+      "n": 36,
+      "pnl": 31.04,
+      "hit": 0.333
+     },
+     "silver": {
+      "n": 25,
+      "pnl": 73.09,
+      "hit": 0.4
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 61,
+      "pnl": 104.13,
+      "hit": 0.361
+     }
+    },
+    "by_tag": {
+     "ctrl_no": {
+      "n": 61,
+      "pnl": 104.13,
+      "hit": 0.361
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 61,
+      "pnl": 104.13,
+      "hit": 0.361
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 11,
+      "pnl": -38.66,
+      "hit": 0.273
+     },
+     "2026-W34": {
+      "n": 41,
+      "pnl": 267.43,
+      "hit": 0.439
+     },
+     "2026-W35": {
+      "n": 9,
+      "pnl": -124.64,
+      "hit": 0.111
+     }
+    },
+    "skipped": {
+     "no_underlying": 22045,
+     "corr_cap": 149,
+     "raced_out": 520,
+     "daily_stop": 12064
+    }
+   },
+   "test": {
+    "n_trades": 95,
+    "final_equity": 97.42,
+    "net_pnl": -152.58,
+    "return_pct": -61.03,
+    "fees": 21.59,
+    "hit_rate": 0.379,
+    "avg_pnl_per_trade": -1.606,
+    "t_stat": -2.04,
+    "daily_sharpe_ann": -14.12,
+    "max_drawdown_pct": 67.81,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 44,
+      "pnl": -65.48,
+      "hit": 0.341
+     },
+     "silver": {
+      "n": 17,
+      "pnl": -32.88,
+      "hit": 0.471
+     },
+     "copper": {
+      "n": 34,
+      "pnl": -54.22,
+      "hit": 0.382
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 95,
+      "pnl": -152.58,
+      "hit": 0.379
+     }
+    },
+    "by_tag": {
+     "ctrl_no": {
+      "n": 95,
+      "pnl": -152.58,
+      "hit": 0.379
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 95,
+      "pnl": -152.58,
+      "hit": 0.379
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 38,
+      "pnl": -35.64,
+      "hit": 0.474
+     },
+     "2026-W36": {
+      "n": 29,
+      "pnl": -105.09,
+      "hit": 0.31
+     },
+     "2026-W37": {
+      "n": 28,
+      "pnl": -11.85,
+      "hit": 0.321
+     }
+    },
+    "skipped": {
+     "no_underlying": 7177,
+     "raced_out": 806,
+     "corr_cap": 133,
+     "concurrency": 203,
+     "daily_stop": 16576
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 69,
+    "final_equity": 82.88,
+    "net_pnl": -167.12,
+    "return_pct": -66.85,
+    "fees": 16.08,
+    "hit_rate": 0.348,
+    "avg_pnl_per_trade": -2.422,
+    "t_stat": -3.3,
+    "daily_sharpe_ann": -16.6,
+    "max_drawdown_pct": 72.17,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 35,
+      "pnl": -61.12,
+      "hit": 0.343
+     },
+     "silver": {
+      "n": 10,
+      "pnl": -16.9,
+      "hit": 0.5
+     },
+     "copper": {
+      "n": 24,
+      "pnl": -89.1,
+      "hit": 0.292
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 69,
+      "pnl": -167.12,
+      "hit": 0.348
+     }
+    },
+    "by_tag": {
+     "ctrl_no": {
+      "n": 69,
+      "pnl": -167.12,
+      "hit": 0.348
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 69,
+      "pnl": -167.12,
+      "hit": 0.348
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 16,
+      "pnl": -57.0,
+      "hit": 0.438
+     },
+     "2026-W36": {
+      "n": 25,
+      "pnl": -92.4,
+      "hit": 0.32
+     },
+     "2026-W37": {
+      "n": 28,
+      "pnl": -17.72,
+      "hit": 0.321
+     }
+    },
+    "skipped": {
+     "no_underlying": 6668,
+     "raced_out": 651,
+     "corr_cap": 101,
+     "daily_stop": 19948,
+     "concurrency": 123
+    }
+   },
+   "candidate": false,
+   "gate": "test_pnl<=0"
+  },
+  {
+   "name": "ctrl_coin_flip",
+   "note": "CONTROL: take 45-55c YES; should lose fee+spread",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 20,
+    "final_equity": 236.19,
+    "net_pnl": -13.81,
+    "return_pct": -5.52,
+    "fees": 1.68,
+    "hit_rate": 0.25,
+    "avg_pnl_per_trade": -0.69,
+    "t_stat": -1.28,
+    "daily_sharpe_ann": -4.24,
+    "max_drawdown_pct": 7.99,
+    "trading_days": 13,
+    "by_metal": {
+     "gold": {
+      "n": 9,
+      "pnl": -13.25,
+      "hit": 0.111
+     },
+     "silver": {
+      "n": 11,
+      "pnl": -0.56,
+      "hit": 0.364
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 20,
+      "pnl": -13.81,
+      "hit": 0.25
+     }
+    },
+    "by_tag": {
+     "ctrl_atm": {
+      "n": 20,
+      "pnl": -13.81,
+      "hit": 0.25
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 20,
+      "pnl": -13.81,
+      "hit": 0.25
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 1,
+      "pnl": -2.24,
+      "hit": 0.0
+     },
+     "2026-W34": {
+      "n": 11,
+      "pnl": -16.99,
+      "hit": 0.091
+     },
+     "2026-W35": {
+      "n": 8,
+      "pnl": 5.42,
+      "hit": 0.5
+     }
+    },
+    "skipped": {
+     "no_underlying": 23654,
+     "raced_out": 174,
+     "corr_cap": 4
+    }
+   },
+   "test": {
+    "n_trades": 28,
+    "final_equity": 240.49,
+    "net_pnl": -9.51,
+    "return_pct": -3.8,
+    "fees": 2.38,
+    "hit_rate": 0.321,
+    "avg_pnl_per_trade": -0.34,
+    "t_stat": -0.73,
+    "daily_sharpe_ann": -3.45,
+    "max_drawdown_pct": 5.72,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 10,
+      "pnl": 2.01,
+      "hit": 0.4
+     },
+     "silver": {
+      "n": 12,
+      "pnl": -3.53,
+      "hit": 0.333
+     },
+     "copper": {
+      "n": 6,
+      "pnl": -7.99,
+      "hit": 0.167
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 28,
+      "pnl": -9.51,
+      "hit": 0.321
+     }
+    },
+    "by_tag": {
+     "ctrl_atm": {
+      "n": 28,
+      "pnl": -9.51,
+      "hit": 0.321
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 28,
+      "pnl": -9.51,
+      "hit": 0.321
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 2,
+      "pnl": -3.87,
+      "hit": 0.0
+     },
+     "2026-W36": {
+      "n": 17,
+      "pnl": 2.24,
+      "hit": 0.412
+     },
+     "2026-W37": {
+      "n": 9,
+      "pnl": -7.88,
+      "hit": 0.222
+     }
+    },
+    "skipped": {
+     "no_underlying": 9821,
+     "raced_out": 249,
+     "corr_cap": 3,
+     "concurrency": 19
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 28,
+    "final_equity": 238.98,
+    "net_pnl": -11.02,
+    "return_pct": -4.41,
+    "fees": 2.43,
+    "hit_rate": 0.321,
+    "avg_pnl_per_trade": -0.394,
+    "t_stat": -0.85,
+    "daily_sharpe_ann": -3.99,
+    "max_drawdown_pct": 5.99,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 10,
+      "pnl": 1.47,
+      "hit": 0.4
+     },
+     "silver": {
+      "n": 12,
+      "pnl": -4.18,
+      "hit": 0.333
+     },
+     "copper": {
+      "n": 6,
+      "pnl": -8.31,
+      "hit": 0.167
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 28,
+      "pnl": -11.02,
+      "hit": 0.321
+     }
+    },
+    "by_tag": {
+     "ctrl_atm": {
+      "n": 28,
+      "pnl": -11.02,
+      "hit": 0.321
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 28,
+      "pnl": -11.02,
+      "hit": 0.321
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 2,
+      "pnl": -3.97,
+      "hit": 0.0
+     },
+     "2026-W36": {
+      "n": 17,
+      "pnl": 1.31,
+      "hit": 0.412
+     },
+     "2026-W37": {
+      "n": 9,
+      "pnl": -8.36,
+      "hit": 0.222
+     }
+    },
+    "skipped": {
+     "no_underlying": 9821,
+     "raced_out": 249,
+     "corr_cap": 3,
+     "concurrency": 19
+    }
+   },
+   "candidate": false,
+   "gate": "n<30"
+  },
+  {
+   "name": "oracle_lag",
+   "note": "Prior-desk registered taker at realistic latency (known loser)",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 34,
+    "final_equity": 305.23,
+    "net_pnl": 55.23,
+    "return_pct": 22.09,
+    "fees": 13.61,
+    "hit_rate": 0.5,
+    "avg_pnl_per_trade": 1.624,
+    "t_stat": 0.71,
+    "daily_sharpe_ann": 3.73,
+    "max_drawdown_pct": 14.85,
+    "trading_days": 14,
+    "by_metal": {
+     "gold": {
+      "n": 18,
+      "pnl": 25.97,
+      "hit": 0.556
+     },
+     "silver": {
+      "n": 16,
+      "pnl": 29.26,
+      "hit": 0.438
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 17,
+      "pnl": 37.7,
+      "hit": 0.529
+     },
+     "no": {
+      "n": 17,
+      "pnl": 17.53,
+      "hit": 0.471
+     }
+    },
+    "by_tag": {
+     "mixed": {
+      "n": 31,
+      "pnl": 37.05,
+      "hit": 0.516
+     },
+     "flow": {
+      "n": 2,
+      "pnl": -16.45,
+      "hit": 0.0
+     },
+     "stale": {
+      "n": 1,
+      "pnl": 34.63,
+      "hit": 1.0
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 34,
+      "pnl": 55.23,
+      "hit": 0.5
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 8,
+      "pnl": 28.35,
+      "hit": 0.5
+     },
+     "2026-W34": {
+      "n": 17,
+      "pnl": -18.87,
+      "hit": 0.471
+     },
+     "2026-W35": {
+      "n": 9,
+      "pnl": 45.75,
+      "hit": 0.556
+     }
+    },
+    "skipped": {
+     "no_underlying": 11834,
+     "raced_out": 343,
+     "corr_cap": 10,
+     "concurrency": 1
+    }
+   },
+   "test": {
+    "n_trades": 35,
+    "final_equity": 219.01,
+    "net_pnl": -30.99,
+    "return_pct": -12.4,
+    "fees": 13.41,
+    "hit_rate": 0.4,
+    "avg_pnl_per_trade": -0.885,
+    "t_stat": -0.42,
+    "daily_sharpe_ann": -1.46,
+    "max_drawdown_pct": 26.71,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 5,
+      "pnl": 2.47,
+      "hit": 0.6
+     },
+     "silver": {
+      "n": 14,
+      "pnl": 55.18,
+      "hit": 0.571
+     },
+     "copper": {
+      "n": 16,
+      "pnl": -88.64,
+      "hit": 0.188
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 21,
+      "pnl": 9.58,
+      "hit": 0.381
+     },
+     "yes": {
+      "n": 14,
+      "pnl": -40.57,
+      "hit": 0.429
+     }
+    },
+    "by_tag": {
+     "mixed": {
+      "n": 33,
+      "pnl": -86.29,
+      "hit": 0.364
+     },
+     "flow": {
+      "n": 2,
+      "pnl": 55.3,
+      "hit": 1.0
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 35,
+      "pnl": -30.99,
+      "hit": 0.4
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 6,
+      "pnl": 43.2,
+      "hit": 0.833
+     },
+     "2026-W36": {
+      "n": 21,
+      "pnl": -42.91,
+      "hit": 0.333
+     },
+     "2026-W37": {
+      "n": 8,
+      "pnl": -31.28,
+      "hit": 0.25
+     }
+    },
+    "skipped": {
+     "no_underlying": 4430,
+     "raced_out": 364,
+     "corr_cap": 5,
+     "daily_stop": 2817,
+     "concurrency": 5
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 29,
+    "final_equity": 193.35,
+    "net_pnl": -56.65,
+    "return_pct": -22.66,
+    "fees": 11.18,
+    "hit_rate": 0.31,
+    "avg_pnl_per_trade": -1.953,
+    "t_stat": -0.88,
+    "daily_sharpe_ann": -3.55,
+    "max_drawdown_pct": 26.91,
+    "trading_days": 15,
+    "by_metal": {
+     "silver": {
+      "n": 8,
+      "pnl": -9.24,
+      "hit": 0.25
+     },
+     "gold": {
+      "n": 4,
+      "pnl": 5.27,
+      "hit": 0.5
+     },
+     "copper": {
+      "n": 17,
+      "pnl": -52.68,
+      "hit": 0.294
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 19,
+      "pnl": -20.44,
+      "hit": 0.316
+     },
+     "yes": {
+      "n": 10,
+      "pnl": -36.21,
+      "hit": 0.3
+     }
+    },
+    "by_tag": {
+     "mixed": {
+      "n": 27,
+      "pnl": -107.43,
+      "hit": 0.259
+     },
+     "flow": {
+      "n": 2,
+      "pnl": 50.78,
+      "hit": 1.0
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 29,
+      "pnl": -56.65,
+      "hit": 0.31
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 3,
+      "pnl": 13.59,
+      "hit": 0.667
+     },
+     "2026-W36": {
+      "n": 16,
+      "pnl": -18.92,
+      "hit": 0.312
+     },
+     "2026-W37": {
+      "n": 10,
+      "pnl": -51.32,
+      "hit": 0.2
+     }
+    },
+    "skipped": {
+     "no_underlying": 4475,
+     "raced_out": 284,
+     "corr_cap": 2,
+     "daily_stop": 1935,
+     "concurrency": 5
+    }
+   },
+   "candidate": false,
+   "gate": "test_pnl<=0"
+  },
+  {
+   "name": "oracle_flow",
+   "note": "Fade uninformed book flow (REST-latency friendly in theory)",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 5,
+    "final_equity": 219.24,
+    "net_pnl": -30.76,
+    "return_pct": -12.3,
+    "fees": 1.4,
+    "hit_rate": 0.0,
+    "avg_pnl_per_trade": -6.152,
+    "t_stat": -4.74,
+    "daily_sharpe_ann": -9.91,
+    "max_drawdown_pct": 12.3,
+    "trading_days": 9,
+    "by_metal": {
+     "gold": {
+      "n": 2,
+      "pnl": -14.06,
+      "hit": 0.0
+     },
+     "silver": {
+      "n": 3,
+      "pnl": -16.7,
+      "hit": 0.0
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 2,
+      "pnl": -6.78,
+      "hit": 0.0
+     },
+     "yes": {
+      "n": 3,
+      "pnl": -23.98,
+      "hit": 0.0
+     }
+    },
+    "by_tag": {
+     "flow": {
+      "n": 5,
+      "pnl": -30.76,
+      "hit": 0.0
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 5,
+      "pnl": -30.76,
+      "hit": 0.0
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 1,
+      "pnl": -3.9,
+      "hit": 0.0
+     },
+     "2026-W34": {
+      "n": 4,
+      "pnl": -26.86,
+      "hit": 0.0
+     }
+    },
+    "skipped": {
+     "no_underlying": 19711,
+     "raced_out": 38
+    }
+   },
+   "test": {
+    "n_trades": 14,
+    "final_equity": 309.77,
+    "net_pnl": 59.77,
+    "return_pct": 23.91,
+    "fees": 4.87,
+    "hit_rate": 0.429,
+    "avg_pnl_per_trade": 4.269,
+    "t_stat": 1.08,
+    "daily_sharpe_ann": 3.67,
+    "max_drawdown_pct": 10.03,
+    "trading_days": 14,
+    "by_metal": {
+     "silver": {
+      "n": 9,
+      "pnl": 10.82,
+      "hit": 0.222
+     },
+     "copper": {
+      "n": 4,
+      "pnl": 54.42,
+      "hit": 1.0
+     },
+     "gold": {
+      "n": 1,
+      "pnl": -5.47,
+      "hit": 0.0
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 9,
+      "pnl": 90.53,
+      "hit": 0.667
+     },
+     "yes": {
+      "n": 5,
+      "pnl": -30.76,
+      "hit": 0.0
+     }
+    },
+    "by_tag": {
+     "flow": {
+      "n": 14,
+      "pnl": 59.77,
+      "hit": 0.429
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 14,
+      "pnl": 59.77,
+      "hit": 0.429
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 3,
+      "pnl": -25.08,
+      "hit": 0.0
+     },
+     "2026-W36": {
+      "n": 9,
+      "pnl": 96.87,
+      "hit": 0.667
+     },
+     "2026-W37": {
+      "n": 2,
+      "pnl": -12.02,
+      "hit": 0.0
+     }
+    },
+    "skipped": {
+     "no_underlying": 8137,
+     "raced_out": 45,
+     "daily_stop": 141,
+     "corr_cap": 1
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 12,
+    "final_equity": 294.64,
+    "net_pnl": 44.64,
+    "return_pct": 17.86,
+    "fees": 4.0,
+    "hit_rate": 0.417,
+    "avg_pnl_per_trade": 3.72,
+    "t_stat": 0.93,
+    "daily_sharpe_ann": 3.22,
+    "max_drawdown_pct": 9.33,
+    "trading_days": 14,
+    "by_metal": {
+     "silver": {
+      "n": 8,
+      "pnl": 8.87,
+      "hit": 0.25
+     },
+     "copper": {
+      "n": 3,
+      "pnl": 40.6,
+      "hit": 1.0
+     },
+     "gold": {
+      "n": 1,
+      "pnl": -4.83,
+      "hit": 0.0
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 8,
+      "pnl": 69.61,
+      "hit": 0.625
+     },
+     "yes": {
+      "n": 4,
+      "pnl": -24.97,
+      "hit": 0.0
+     }
+    },
+    "by_tag": {
+     "flow": {
+      "n": 12,
+      "pnl": 44.64,
+      "hit": 0.417
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 12,
+      "pnl": 44.64,
+      "hit": 0.417
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 3,
+      "pnl": -23.32,
+      "hit": 0.0
+     },
+     "2026-W36": {
+      "n": 7,
+      "pnl": 78.35,
+      "hit": 0.714
+     },
+     "2026-W37": {
+      "n": 2,
+      "pnl": -10.39,
+      "hit": 0.0
+     }
+    },
+    "skipped": {
+     "no_underlying": 8180,
+     "raced_out": 35,
+     "corr_cap": 1
+    }
+   },
+   "candidate": false,
+   "gate": "n<30"
+  },
+  {
+   "name": "favorite_blind",
+   "note": "Whelan FLB: take favorites \u226572c, no model",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 329,
+    "final_equity": 248.79,
+    "net_pnl": -1.21,
+    "return_pct": -0.48,
+    "fees": 34.3,
+    "hit_rate": 0.723,
+    "avg_pnl_per_trade": -0.004,
+    "t_stat": -0.02,
+    "daily_sharpe_ann": -0.07,
+    "max_drawdown_pct": 34.0,
+    "trading_days": 14,
+    "by_metal": {
+     "silver": {
+      "n": 151,
+      "pnl": -38.55,
+      "hit": 0.689
+     },
+     "gold": {
+      "n": 178,
+      "pnl": 37.34,
+      "hit": 0.753
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 177,
+      "pnl": -20.2,
+      "hit": 0.684
+     },
+     "no": {
+      "n": 152,
+      "pnl": 18.99,
+      "hit": 0.77
+     }
+    },
+    "by_tag": {
+     "favorite": {
+      "n": 329,
+      "pnl": -1.21,
+      "hit": 0.723
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 329,
+      "pnl": -1.21,
+      "hit": 0.723
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 60,
+      "pnl": -16.68,
+      "hit": 0.683
+     },
+     "2026-W34": {
+      "n": 152,
+      "pnl": -28.79,
+      "hit": 0.711
+     },
+     "2026-W35": {
+      "n": 117,
+      "pnl": 44.26,
+      "hit": 0.761
+     }
+    },
+    "skipped": {
+     "no_underlying": 19198,
+     "raced_out": 3825,
+     "corr_cap": 1019,
+     "concurrency": 124,
+     "daily_stop": 2742
+    }
+   },
+   "test": {
+    "n_trades": 531,
+    "final_equity": 528.04,
+    "net_pnl": 278.04,
+    "return_pct": 111.22,
+    "fees": 95.9,
+    "hit_rate": 0.763,
+    "avg_pnl_per_trade": 0.524,
+    "t_stat": 1.8,
+    "daily_sharpe_ann": 7.68,
+    "max_drawdown_pct": 16.83,
+    "trading_days": 15,
+    "by_metal": {
+     "silver": {
+      "n": 147,
+      "pnl": 77.63,
+      "hit": 0.776
+     },
+     "gold": {
+      "n": 183,
+      "pnl": -154.12,
+      "hit": 0.683
+     },
+     "copper": {
+      "n": 201,
+      "pnl": 354.53,
+      "hit": 0.826
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 281,
+      "pnl": 116.38,
+      "hit": 0.751
+     },
+     "no": {
+      "n": 250,
+      "pnl": 161.66,
+      "hit": 0.776
+     }
+    },
+    "by_tag": {
+     "favorite": {
+      "n": 531,
+      "pnl": 278.04,
+      "hit": 0.763
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 531,
+      "pnl": 278.04,
+      "hit": 0.763
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 88,
+      "pnl": 77.83,
+      "hit": 0.795
+     },
+     "2026-W36": {
+      "n": 269,
+      "pnl": 128.32,
+      "hit": 0.77
+     },
+     "2026-W37": {
+      "n": 174,
+      "pnl": 71.89,
+      "hit": 0.736
+     }
+    },
+    "skipped": {
+     "no_underlying": 7797,
+     "raced_out": 5700,
+     "corr_cap": 705,
+     "concurrency": 1414,
+     "daily_stop": 2091
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 519,
+    "final_equity": 411.33,
+    "net_pnl": 161.33,
+    "return_pct": 64.53,
+    "fees": 80.05,
+    "hit_rate": 0.759,
+    "avg_pnl_per_trade": 0.311,
+    "t_stat": 1.23,
+    "daily_sharpe_ann": 5.02,
+    "max_drawdown_pct": 21.63,
+    "trading_days": 15,
+    "by_metal": {
+     "silver": {
+      "n": 144,
+      "pnl": 53.7,
+      "hit": 0.771
+     },
+     "gold": {
+      "n": 176,
+      "pnl": -165.86,
+      "hit": 0.676
+     },
+     "copper": {
+      "n": 199,
+      "pnl": 273.49,
+      "hit": 0.824
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 276,
+      "pnl": 51.32,
+      "hit": 0.746
+     },
+     "no": {
+      "n": 243,
+      "pnl": 110.01,
+      "hit": 0.774
+     }
+    },
+    "by_tag": {
+     "favorite": {
+      "n": 519,
+      "pnl": 161.33,
+      "hit": 0.759
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 519,
+      "pnl": 161.33,
+      "hit": 0.759
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 88,
+      "pnl": 69.09,
+      "hit": 0.795
+     },
+     "2026-W36": {
+      "n": 261,
+      "pnl": 62.48,
+      "hit": 0.762
+     },
+     "2026-W37": {
+      "n": 170,
+      "pnl": 29.76,
+      "hit": 0.735
+     }
+    },
+    "skipped": {
+     "no_underlying": 7488,
+     "raced_out": 5503,
+     "corr_cap": 688,
+     "concurrency": 1398,
+     "daily_stop": 3033
+    }
+   },
+   "candidate": true,
+   "gate": "candidate"
+  },
+  {
+   "name": "favorite_confirmed",
+   "note": "FLB + GBM side agreement",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 108,
+    "final_equity": 278.59,
+    "net_pnl": 28.59,
+    "return_pct": 11.44,
+    "fees": 20.78,
+    "hit_rate": 0.722,
+    "avg_pnl_per_trade": 0.265,
+    "t_stat": 0.43,
+    "daily_sharpe_ann": 2.03,
+    "max_drawdown_pct": 18.97,
+    "trading_days": 14,
+    "by_metal": {
+     "gold": {
+      "n": 66,
+      "pnl": 55.82,
+      "hit": 0.758
+     },
+     "silver": {
+      "n": 42,
+      "pnl": -27.23,
+      "hit": 0.667
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 57,
+      "pnl": 60.3,
+      "hit": 0.807
+     },
+     "yes": {
+      "n": 51,
+      "pnl": -31.71,
+      "hit": 0.627
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 108,
+      "pnl": 28.59,
+      "hit": 0.722
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 108,
+      "pnl": 28.59,
+      "hit": 0.722
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 21,
+      "pnl": 19.96,
+      "hit": 0.762
+     },
+     "2026-W34": {
+      "n": 57,
+      "pnl": 5.72,
+      "hit": 0.702
+     },
+     "2026-W35": {
+      "n": 30,
+      "pnl": 2.91,
+      "hit": 0.733
+     }
+    },
+    "skipped": {
+     "no_underlying": 19563,
+     "raced_out": 1210,
+     "corr_cap": 159,
+     "concurrency": 26,
+     "daily_stop": 1494
+    }
+   },
+   "test": {
+    "n_trades": 158,
+    "final_equity": 316.55,
+    "net_pnl": 66.55,
+    "return_pct": 26.62,
+    "fees": 31.43,
+    "hit_rate": 0.778,
+    "avg_pnl_per_trade": 0.421,
+    "t_stat": 0.69,
+    "daily_sharpe_ann": 3.33,
+    "max_drawdown_pct": 20.58,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 56,
+      "pnl": 59.81,
+      "hit": 0.821
+     },
+     "silver": {
+      "n": 46,
+      "pnl": 80.42,
+      "hit": 0.761
+     },
+     "copper": {
+      "n": 56,
+      "pnl": -73.68,
+      "hit": 0.75
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 73,
+      "pnl": -23.75,
+      "hit": 0.74
+     },
+     "yes": {
+      "n": 85,
+      "pnl": 90.3,
+      "hit": 0.812
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 158,
+      "pnl": 66.55,
+      "hit": 0.778
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 158,
+      "pnl": 66.55,
+      "hit": 0.778
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 23,
+      "pnl": 41.12,
+      "hit": 0.783
+     },
+     "2026-W36": {
+      "n": 95,
+      "pnl": 76.0,
+      "hit": 0.811
+     },
+     "2026-W37": {
+      "n": 40,
+      "pnl": -50.57,
+      "hit": 0.7
+     }
+    },
+    "skipped": {
+     "no_underlying": 8129,
+     "raced_out": 1654,
+     "corr_cap": 76,
+     "concurrency": 215,
+     "daily_stop": 561
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 158,
+    "final_equity": 296.04,
+    "net_pnl": 46.04,
+    "return_pct": 18.41,
+    "fees": 29.73,
+    "hit_rate": 0.778,
+    "avg_pnl_per_trade": 0.291,
+    "t_stat": 0.49,
+    "daily_sharpe_ann": 2.46,
+    "max_drawdown_pct": 21.45,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 56,
+      "pnl": 52.98,
+      "hit": 0.821
+     },
+     "silver": {
+      "n": 46,
+      "pnl": 70.15,
+      "hit": 0.761
+     },
+     "copper": {
+      "n": 56,
+      "pnl": -77.09,
+      "hit": 0.75
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 73,
+      "pnl": -27.71,
+      "hit": 0.74
+     },
+     "yes": {
+      "n": 85,
+      "pnl": 73.75,
+      "hit": 0.812
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 158,
+      "pnl": 46.04,
+      "hit": 0.778
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 158,
+      "pnl": 46.04,
+      "hit": 0.778
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 23,
+      "pnl": 38.08,
+      "hit": 0.783
+     },
+     "2026-W36": {
+      "n": 95,
+      "pnl": 60.19,
+      "hit": 0.811
+     },
+     "2026-W37": {
+      "n": 40,
+      "pnl": -52.23,
+      "hit": 0.7
+     }
+    },
+    "skipped": {
+     "no_underlying": 8129,
+     "raced_out": 1654,
+     "corr_cap": 76,
+     "concurrency": 215,
+     "daily_stop": 561
+    }
+   },
+   "candidate": false,
+   "gate": "t<1.5"
+  },
+  {
+   "name": "late_lock",
+   "note": "Near-certain favorite in last 6 minutes",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 10,
+    "final_equity": 231.42,
+    "net_pnl": -18.58,
+    "return_pct": -7.43,
+    "fees": 2.84,
+    "hit_rate": 0.6,
+    "avg_pnl_per_trade": -1.858,
+    "t_stat": -0.53,
+    "daily_sharpe_ann": -2.16,
+    "max_drawdown_pct": 11.23,
+    "trading_days": 13,
+    "by_metal": {
+     "silver": {
+      "n": 5,
+      "pnl": -22.4,
+      "hit": 0.4
+     },
+     "gold": {
+      "n": 5,
+      "pnl": 3.82,
+      "hit": 0.8
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 6,
+      "pnl": -10.27,
+      "hit": 0.667
+     },
+     "yes": {
+      "n": 4,
+      "pnl": -8.31,
+      "hit": 0.5
+     }
+    },
+    "by_tag": {
+     "late_lock": {
+      "n": 10,
+      "pnl": -18.58,
+      "hit": 0.6
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 10,
+      "pnl": -18.58,
+      "hit": 0.6
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 1,
+      "pnl": 9.54,
+      "hit": 1.0
+     },
+     "2026-W34": {
+      "n": 7,
+      "pnl": -7.01,
+      "hit": 0.714
+     },
+     "2026-W35": {
+      "n": 2,
+      "pnl": -21.11,
+      "hit": 0.0
+     }
+    },
+    "skipped": {
+     "no_underlying": 9797,
+     "raced_out": 254,
+     "corr_cap": 4,
+     "daily_stop": 390
+    }
+   },
+   "test": {
+    "n_trades": 14,
+    "final_equity": 289.86,
+    "net_pnl": 39.86,
+    "return_pct": 15.94,
+    "fees": 3.96,
+    "hit_rate": 0.857,
+    "avg_pnl_per_trade": 2.847,
+    "t_stat": 0.98,
+    "daily_sharpe_ann": 3.26,
+    "max_drawdown_pct": 7.38,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 2,
+      "pnl": 22.11,
+      "hit": 1.0
+     },
+     "silver": {
+      "n": 4,
+      "pnl": 1.27,
+      "hit": 0.75
+     },
+     "copper": {
+      "n": 8,
+      "pnl": 16.48,
+      "hit": 0.875
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 5,
+      "pnl": 23.71,
+      "hit": 1.0
+     },
+     "no": {
+      "n": 9,
+      "pnl": 16.15,
+      "hit": 0.778
+     }
+    },
+    "by_tag": {
+     "late_lock": {
+      "n": 14,
+      "pnl": 39.86,
+      "hit": 0.857
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 14,
+      "pnl": 39.86,
+      "hit": 0.857
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 2,
+      "pnl": -13.33,
+      "hit": 0.5
+     },
+     "2026-W36": {
+      "n": 11,
+      "pnl": 76.27,
+      "hit": 1.0
+     },
+     "2026-W37": {
+      "n": 1,
+      "pnl": -23.08,
+      "hit": 0.0
+     }
+    },
+    "skipped": {
+     "no_underlying": 4139,
+     "raced_out": 235
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 14,
+    "final_equity": 286.33,
+    "net_pnl": 36.33,
+    "return_pct": 14.53,
+    "fees": 3.86,
+    "hit_rate": 0.857,
+    "avg_pnl_per_trade": 2.595,
+    "t_stat": 0.9,
+    "daily_sharpe_ann": 3.01,
+    "max_drawdown_pct": 7.53,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 2,
+      "pnl": 21.65,
+      "hit": 1.0
+     },
+     "silver": {
+      "n": 4,
+      "pnl": 0.04,
+      "hit": 0.75
+     },
+     "copper": {
+      "n": 8,
+      "pnl": 14.64,
+      "hit": 0.875
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 5,
+      "pnl": 22.34,
+      "hit": 1.0
+     },
+     "no": {
+      "n": 9,
+      "pnl": 13.99,
+      "hit": 0.778
+     }
+    },
+    "by_tag": {
+     "late_lock": {
+      "n": 14,
+      "pnl": 36.33,
+      "hit": 0.857
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 14,
+      "pnl": 36.33,
+      "hit": 0.857
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 2,
+      "pnl": -13.79,
+      "hit": 0.5
+     },
+     "2026-W36": {
+      "n": 11,
+      "pnl": 73.44,
+      "hit": 1.0
+     },
+     "2026-W37": {
+      "n": 1,
+      "pnl": -23.32,
+      "hit": 0.0
+     }
+    },
+    "skipped": {
+     "no_underlying": 4139,
+     "raced_out": 235
+    }
+   },
+   "candidate": false,
+   "gate": "n<30"
+  },
+  {
+   "name": "open_fade",
+   "note": "Fade \u226515bp first-3-minute underlying impulse",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 33,
+    "final_equity": 319.59,
+    "net_pnl": 69.59,
+    "return_pct": 27.84,
+    "fees": 31.44,
+    "hit_rate": 0.212,
+    "avg_pnl_per_trade": 2.109,
+    "t_stat": 0.31,
+    "daily_sharpe_ann": 1.69,
+    "max_drawdown_pct": 34.02,
+    "trading_days": 13,
+    "by_metal": {
+     "silver": {
+      "n": 32,
+      "pnl": -22.08,
+      "hit": 0.188
+     },
+     "gold": {
+      "n": 1,
+      "pnl": 91.67,
+      "hit": 1.0
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 12,
+      "pnl": -40.31,
+      "hit": 0.083
+     },
+     "yes": {
+      "n": 21,
+      "pnl": 109.91,
+      "hit": 0.286
+     }
+    },
+    "by_tag": {
+     "open_fade": {
+      "n": 33,
+      "pnl": 69.59,
+      "hit": 0.212
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 33,
+      "pnl": 69.59,
+      "hit": 0.212
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 3,
+      "pnl": -27.82,
+      "hit": 0.0
+     },
+     "2026-W34": {
+      "n": 18,
+      "pnl": 94.84,
+      "hit": 0.278
+     },
+     "2026-W35": {
+      "n": 12,
+      "pnl": 2.58,
+      "hit": 0.167
+     }
+    },
+    "skipped": {
+     "no_underlying": 19030,
+     "raced_out": 162,
+     "daily_stop": 4156,
+     "corr_cap": 7,
+     "concurrency": 1
+    }
+   },
+   "test": {
+    "n_trades": 27,
+    "final_equity": 152.92,
+    "net_pnl": -97.08,
+    "return_pct": -38.83,
+    "fees": 11.84,
+    "hit_rate": 0.111,
+    "avg_pnl_per_trade": -3.596,
+    "t_stat": -1.41,
+    "daily_sharpe_ann": -4.05,
+    "max_drawdown_pct": 63.7,
+    "trading_days": 15,
+    "by_metal": {
+     "silver": {
+      "n": 22,
+      "pnl": -49.36,
+      "hit": 0.136
+     },
+     "copper": {
+      "n": 3,
+      "pnl": -30.77,
+      "hit": 0.0
+     },
+     "gold": {
+      "n": 2,
+      "pnl": -16.95,
+      "hit": 0.0
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 14,
+      "pnl": -52.09,
+      "hit": 0.071
+     },
+     "yes": {
+      "n": 13,
+      "pnl": -44.99,
+      "hit": 0.154
+     }
+    },
+    "by_tag": {
+     "open_fade": {
+      "n": 27,
+      "pnl": -97.08,
+      "hit": 0.111
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 27,
+      "pnl": -97.08,
+      "hit": 0.111
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 4,
+      "pnl": -53.51,
+      "hit": 0.0
+     },
+     "2026-W36": {
+      "n": 14,
+      "pnl": -92.89,
+      "hit": 0.0
+     },
+     "2026-W37": {
+      "n": 9,
+      "pnl": 49.32,
+      "hit": 0.333
+     }
+    },
+    "skipped": {
+     "no_underlying": 5912,
+     "raced_out": 126,
+     "daily_stop": 12624,
+     "corr_cap": 8,
+     "concurrency": 5
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 27,
+    "final_equity": 139.12,
+    "net_pnl": -110.88,
+    "return_pct": -44.35,
+    "fees": 12.02,
+    "hit_rate": 0.111,
+    "avg_pnl_per_trade": -4.106,
+    "t_stat": -1.71,
+    "daily_sharpe_ann": -4.93,
+    "max_drawdown_pct": 66.26,
+    "trading_days": 15,
+    "by_metal": {
+     "silver": {
+      "n": 22,
+      "pnl": -63.25,
+      "hit": 0.136
+     },
+     "copper": {
+      "n": 3,
+      "pnl": -30.69,
+      "hit": 0.0
+     },
+     "gold": {
+      "n": 2,
+      "pnl": -16.94,
+      "hit": 0.0
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 14,
+      "pnl": -58.54,
+      "hit": 0.071
+     },
+     "yes": {
+      "n": 13,
+      "pnl": -52.34,
+      "hit": 0.154
+     }
+    },
+    "by_tag": {
+     "open_fade": {
+      "n": 27,
+      "pnl": -110.88,
+      "hit": 0.111
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 27,
+      "pnl": -110.88,
+      "hit": 0.111
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 4,
+      "pnl": -56.25,
+      "hit": 0.0
+     },
+     "2026-W36": {
+      "n": 14,
+      "pnl": -96.73,
+      "hit": 0.0
+     },
+     "2026-W37": {
+      "n": 9,
+      "pnl": 42.11,
+      "hit": 0.333
+     }
+    },
+    "skipped": {
+     "no_underlying": 5912,
+     "raced_out": 126,
+     "daily_stop": 12624,
+     "corr_cap": 8,
+     "concurrency": 5
+    }
+   },
+   "candidate": false,
+   "gate": "n<30"
+  },
+  {
+   "name": "open_follow",
+   "note": "Follow \u226515bp first-3-minute underlying impulse",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 0,
+    "final_equity": 250.0,
+    "net_pnl": 0,
+    "return_pct": 0.0,
+    "fees": 0,
+    "hit_rate": null,
+    "avg_pnl_per_trade": null,
+    "t_stat": 0.0,
+    "daily_sharpe_ann": 0.0,
+    "max_drawdown_pct": 0.0,
+    "trading_days": 0,
+    "by_metal": {},
+    "by_side": {},
+    "by_tag": {},
+    "by_fill": {},
+    "by_week": {},
+    "skipped": {
+     "no_underlying": 19720
+    }
+   },
+   "test": {
+    "n_trades": 0,
+    "final_equity": 250.0,
+    "net_pnl": 0,
+    "return_pct": 0.0,
+    "fees": 0,
+    "hit_rate": null,
+    "avg_pnl_per_trade": null,
+    "t_stat": 0.0,
+    "daily_sharpe_ann": 0.0,
+    "max_drawdown_pct": 0.0,
+    "trading_days": 0,
+    "by_metal": {},
+    "by_side": {},
+    "by_tag": {},
+    "by_fill": {},
+    "by_week": {},
+    "skipped": {
+     "no_underlying": 8204
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 0,
+    "final_equity": 250.0,
+    "net_pnl": 0,
+    "return_pct": 0.0,
+    "fees": 0,
+    "hit_rate": null,
+    "avg_pnl_per_trade": null,
+    "t_stat": 0.0,
+    "daily_sharpe_ann": 0.0,
+    "max_drawdown_pct": 0.0,
+    "trading_days": 0,
+    "by_metal": {},
+    "by_side": {},
+    "by_tag": {},
+    "by_fill": {},
+    "by_week": {},
+    "skipped": {
+     "no_underlying": 8204
+    }
+   },
+   "candidate": false,
+   "gate": "n<30"
+  },
+  {
+   "name": "session_favorite",
+   "note": "Favorite-confirmed in London/NY overlap only",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 21,
+    "final_equity": 241.34,
+    "net_pnl": -8.66,
+    "return_pct": -3.46,
+    "fees": 3.84,
+    "hit_rate": 0.667,
+    "avg_pnl_per_trade": -0.412,
+    "t_stat": -0.28,
+    "daily_sharpe_ann": -2.68,
+    "max_drawdown_pct": 9.66,
+    "trading_days": 13,
+    "by_metal": {
+     "gold": {
+      "n": 13,
+      "pnl": 4.26,
+      "hit": 0.692
+     },
+     "silver": {
+      "n": 8,
+      "pnl": -12.92,
+      "hit": 0.625
+     }
+    },
+    "by_side": {
+     "yes": {
+      "n": 12,
+      "pnl": -14.99,
+      "hit": 0.583
+     },
+     "no": {
+      "n": 9,
+      "pnl": 6.33,
+      "hit": 0.778
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 21,
+      "pnl": -8.66,
+      "hit": 0.667
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 21,
+      "pnl": -8.66,
+      "hit": 0.667
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 2,
+      "pnl": 3.54,
+      "hit": 1.0
+     },
+     "2026-W34": {
+      "n": 14,
+      "pnl": 3.44,
+      "hit": 0.714
+     },
+     "2026-W35": {
+      "n": 5,
+      "pnl": -15.64,
+      "hit": 0.4
+     }
+    },
+    "skipped": {
+     "no_underlying": 19711,
+     "raced_out": 273,
+     "corr_cap": 26
+    }
+   },
+   "test": {
+    "n_trades": 26,
+    "final_equity": 230.49,
+    "net_pnl": -19.51,
+    "return_pct": -7.81,
+    "fees": 3.66,
+    "hit_rate": 0.769,
+    "avg_pnl_per_trade": -0.751,
+    "t_stat": -0.65,
+    "daily_sharpe_ann": -2.7,
+    "max_drawdown_pct": 12.12,
+    "trading_days": 14,
+    "by_metal": {
+     "silver": {
+      "n": 6,
+      "pnl": 0.86,
+      "hit": 0.667
+     },
+     "gold": {
+      "n": 10,
+      "pnl": -6.42,
+      "hit": 0.8
+     },
+     "copper": {
+      "n": 10,
+      "pnl": -13.95,
+      "hit": 0.8
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 15,
+      "pnl": -26.34,
+      "hit": 0.667
+     },
+     "yes": {
+      "n": 11,
+      "pnl": 6.83,
+      "hit": 0.909
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 26,
+      "pnl": -19.51,
+      "hit": 0.769
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 26,
+      "pnl": -19.51,
+      "hit": 0.769
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 2,
+      "pnl": -5.35,
+      "hit": 0.5
+     },
+     "2026-W36": {
+      "n": 19,
+      "pnl": -11.93,
+      "hit": 0.789
+     },
+     "2026-W37": {
+      "n": 5,
+      "pnl": -2.23,
+      "hit": 0.8
+     }
+    },
+    "skipped": {
+     "no_underlying": 7890,
+     "raced_out": 376,
+     "corr_cap": 15,
+     "concurrency": 29,
+     "daily_stop": 861
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 26,
+    "final_equity": 227.68,
+    "net_pnl": -22.32,
+    "return_pct": -8.93,
+    "fees": 3.57,
+    "hit_rate": 0.769,
+    "avg_pnl_per_trade": -0.858,
+    "t_stat": -0.74,
+    "daily_sharpe_ann": -3.05,
+    "max_drawdown_pct": 12.66,
+    "trading_days": 14,
+    "by_metal": {
+     "silver": {
+      "n": 6,
+      "pnl": 0.3,
+      "hit": 0.667
+     },
+     "gold": {
+      "n": 10,
+      "pnl": -7.4,
+      "hit": 0.8
+     },
+     "copper": {
+      "n": 10,
+      "pnl": -15.22,
+      "hit": 0.8
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 15,
+      "pnl": -27.95,
+      "hit": 0.667
+     },
+     "yes": {
+      "n": 11,
+      "pnl": 5.63,
+      "hit": 0.909
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 26,
+      "pnl": -22.32,
+      "hit": 0.769
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 26,
+      "pnl": -22.32,
+      "hit": 0.769
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 2,
+      "pnl": -5.55,
+      "hit": 0.5
+     },
+     "2026-W36": {
+      "n": 19,
+      "pnl": -13.98,
+      "hit": 0.789
+     },
+     "2026-W37": {
+      "n": 5,
+      "pnl": -2.79,
+      "hit": 0.8
+     }
+    },
+    "skipped": {
+     "no_underlying": 7890,
+     "raced_out": 376,
+     "corr_cap": 15,
+     "concurrency": 29,
+     "daily_stop": 861
+    }
+   },
+   "candidate": false,
+   "gate": "n<30"
+  },
+  {
+   "name": "iv_rich_favorite",
+   "note": "Buy favorite when book IV >> realized vol",
+   "fill_mode": "lag",
+   "train": {
+    "n_trades": 18,
+    "final_equity": 267.67,
+    "net_pnl": 17.67,
+    "return_pct": 7.07,
+    "fees": 5.14,
+    "hit_rate": 0.722,
+    "avg_pnl_per_trade": 0.982,
+    "t_stat": 0.49,
+    "daily_sharpe_ann": 1.82,
+    "max_drawdown_pct": 12.17,
+    "trading_days": 13,
+    "by_metal": {
+     "gold": {
+      "n": 7,
+      "pnl": 18.91,
+      "hit": 0.857
+     },
+     "silver": {
+      "n": 11,
+      "pnl": -1.24,
+      "hit": 0.636
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 12,
+      "pnl": -8.68,
+      "hit": 0.667
+     },
+     "yes": {
+      "n": 6,
+      "pnl": 26.35,
+      "hit": 0.833
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 18,
+      "pnl": 17.67,
+      "hit": 0.722
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 18,
+      "pnl": 17.67,
+      "hit": 0.722
+     }
+    },
+    "by_week": {
+     "2026-W33": {
+      "n": 2,
+      "pnl": 14.58,
+      "hit": 1.0
+     },
+     "2026-W34": {
+      "n": 10,
+      "pnl": -16.95,
+      "hit": 0.6
+     },
+     "2026-W35": {
+      "n": 6,
+      "pnl": 20.04,
+      "hit": 0.833
+     }
+    },
+    "skipped": {
+     "no_underlying": 15669,
+     "raced_out": 206,
+     "corr_cap": 3,
+     "daily_stop": 622
+    }
+   },
+   "test": {
+    "n_trades": 15,
+    "final_equity": 279.2,
+    "net_pnl": 29.2,
+    "return_pct": 11.68,
+    "fees": 5.17,
+    "hit_rate": 0.8,
+    "avg_pnl_per_trade": 1.947,
+    "t_stat": 0.59,
+    "daily_sharpe_ann": 2.17,
+    "max_drawdown_pct": 14.93,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 1,
+      "pnl": 3.1,
+      "hit": 1.0
+     },
+     "silver": {
+      "n": 8,
+      "pnl": 77.83,
+      "hit": 1.0
+     },
+     "copper": {
+      "n": 6,
+      "pnl": -51.73,
+      "hit": 0.5
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 8,
+      "pnl": -0.02,
+      "hit": 0.75
+     },
+     "yes": {
+      "n": 7,
+      "pnl": 29.22,
+      "hit": 0.857
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 15,
+      "pnl": 29.2,
+      "hit": 0.8
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 15,
+      "pnl": 29.2,
+      "hit": 0.8
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 3,
+      "pnl": 13.13,
+      "hit": 1.0
+     },
+     "2026-W36": {
+      "n": 8,
+      "pnl": 65.08,
+      "hit": 1.0
+     },
+     "2026-W37": {
+      "n": 4,
+      "pnl": -49.01,
+      "hit": 0.25
+     }
+    },
+    "skipped": {
+     "no_underlying": 6557,
+     "raced_out": 223
+    }
+   },
+   "test_slip1c": {
+    "n_trades": 15,
+    "final_equity": 275.47,
+    "net_pnl": 25.47,
+    "return_pct": 10.19,
+    "fees": 5.05,
+    "hit_rate": 0.8,
+    "avg_pnl_per_trade": 1.698,
+    "t_stat": 0.52,
+    "daily_sharpe_ann": 1.91,
+    "max_drawdown_pct": 15.38,
+    "trading_days": 15,
+    "by_metal": {
+     "gold": {
+      "n": 1,
+      "pnl": 2.89,
+      "hit": 1.0
+     },
+     "silver": {
+      "n": 8,
+      "pnl": 75.24,
+      "hit": 1.0
+     },
+     "copper": {
+      "n": 6,
+      "pnl": -52.66,
+      "hit": 0.5
+     }
+    },
+    "by_side": {
+     "no": {
+      "n": 8,
+      "pnl": -1.41,
+      "hit": 0.75
+     },
+     "yes": {
+      "n": 7,
+      "pnl": 26.88,
+      "hit": 0.857
+     }
+    },
+    "by_tag": {
+     "fav_conf": {
+      "n": 15,
+      "pnl": 25.47,
+      "hit": 0.8
+     }
+    },
+    "by_fill": {
+     "uncontested": {
+      "n": 15,
+      "pnl": 25.47,
+      "hit": 0.8
+     }
+    },
+    "by_week": {
+     "2026-W35": {
+      "n": 3,
+      "pnl": 12.46,
+      "hit": 1.0
+     },
+     "2026-W36": {
+      "n": 8,
+      "pnl": 63.07,
+      "hit": 1.0
+     },
+     "2026-W37": {
+      "n": 4,
+      "pnl": -50.06,
+      "hit": 0.25
+     }
+    },
+    "skipped": {
+     "no_underlying": 6557,
+     "raced_out": 223
+    }
+   },
+   "candidate": false,
+   "gate": "n<30"
+  }
+ ],
+ "survivors": [
+  "favorite_blind"
+ ],
+ "paper_strategy": "favorite_blind",
+ "verdict": "1 strategy(ies) cleared the $250 / lag-fill / t\u22651.5 / beat-controls gate: ['favorite_blind']."
+}

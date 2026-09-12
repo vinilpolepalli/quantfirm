@@ -66,7 +66,7 @@ class PaperState:
             d = {"bankroll0": bankroll0, "cash": {"shadow": bankroll0, "demo": bankroll0},
                  "open": [], "n_settled": 0, "realized": {"shadow": 0.0, "demo": 0.0},
                  "fees": {"shadow": 0.0, "demo": 0.0}, "started": _now_iso()}
-        for book in ("shadow", "demo", "maker"):  # maker book added later
+        for book in ("shadow", "demo", "maker", "live"):
             d.setdefault("cash", {}).setdefault(book, bankroll0)
             d.setdefault("realized", {}).setdefault(book, 0.0)
             d.setdefault("fees", {}).setdefault(book, 0.0)
@@ -112,7 +112,7 @@ class PaperEngine:
                  use_demo: bool = True, bankroll0: float = BANKROLL,
                  maker: bool = True, maker_margin: float = 0.04,
                  maker_fade: float = 0.02, decide_fn=None,
-                 tape_path: str | None = None):
+                 tape_path: str | None = None, live: bool = False):
         from .feeds import KalshiLiveFeed, SwissquoteFeed
         self.params = params
         self.metals = metals
@@ -120,6 +120,10 @@ class PaperEngine:
         self.prod = KalshiClient("prod")
         self.demo = KalshiClient("demo")
         self.use_demo = use_demo and self.demo.can_trade
+        # Live prod orders: explicit flag + prod key + no kill switch.
+        # Shadow economics still run either way.
+        from .halt import kill_switch_tripped
+        self.use_live = bool(live and self.prod.can_trade and not kill_switch_tripped())
         self.state = PaperState(state_path, bankroll0)
         self.log_path = log_path
         self.decisions_path = decisions_path
@@ -227,7 +231,7 @@ class PaperEngine:
         re-arms from depleted equity on every restart, defeating the stop)."""
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         eq = {}
-        for book in ("shadow", "maker"):
+        for book in ("shadow", "maker", "live"):
             eq[book] = self.state.d["cash"][book] + sum(
                 p.count * p.fill_price for p in self.state.open
                 if p.adapter == book)
@@ -422,10 +426,8 @@ class PaperEngine:
                 self._persist_tape(tkr)
             if intent is None:
                 continue
-            # correlated-direction cap (gold/silver same direction share a slot)
-            if metal in ("gold", "silver") and any(
-                    p.metal in ("gold", "silver") and p.side == intent.side
-                    for p in shadow_open):
+            from .halt import blocked_by_corr
+            if blocked_by_corr(metal, intent.side, shadow_open):
                 continue
             notes.extend(self._execute(intent, metal, m, q, now, close_ts))
         notes.extend(self.settle_due())
@@ -455,7 +457,8 @@ class PaperEngine:
             size_at_touch = q2.yes_bid_size
         if not still:
             notes.append(f"shadow race-loss (repriced) {intent.ticker}")
-            return notes + self._demo_leg(intent, metal, now, close_ts)
+            return notes + self._demo_leg(intent, metal, now, close_ts) \
+                + self._live_leg(intent, metal, now, close_ts)
         size_ok = size_at_touch is not None and float(size_at_touch) >= intent.count
         if size_ok:
             fee = taker_fee(intent.count, intent.limit_price)
@@ -471,14 +474,12 @@ class PaperEngine:
                              f" @ {intent.limit_price:.3f} fair={intent.fair:.3f}")
         else:
             notes.append(f"shadow no-fill (size at touch) {intent.ticker}")
-        return notes + self._demo_leg(intent, metal, now, close_ts)
+        return notes + self._demo_leg(intent, metal, now, close_ts) \
+            + self._live_leg(intent, metal, now, close_ts)
 
-    def _demo_leg(self, intent, metal, now, close_ts) -> list[str]:
-        """Send the same intent as a real IOC to the demo exchange (plumbing
-        test only). Deduped per-adapter so a demo fill never blocks shadow."""
-        if not self.use_demo:
-            return []
-        if any(p.ticker == intent.ticker and p.adapter == "demo"
+    def _place_ioc(self, client, adapter: str, intent, metal, now, close_ts) -> list[str]:
+        """Shared IOC path for demo plumbing and gated live prod orders."""
+        if any(p.ticker == intent.ticker and p.adapter == adapter
                for p in self.state.open):
             return []
         notes = []
@@ -486,7 +487,7 @@ class PaperEngine:
             side = "bid" if intent.side == "yes" else "ask"
             yes_price = (intent.limit_price if intent.side == "yes"
                          else 1.0 - intent.limit_price)
-            resp = self.demo.create_order(
+            resp = client.create_order(
                 ticker=intent.ticker, side=side, count=intent.count,
                 price=Decimal(str(round(yes_price, 4))),
                 time_in_force="immediate_or_cancel",
@@ -499,19 +500,32 @@ class PaperEngine:
                 side_fill = yes_fill if intent.side == "yes" else 1.0 - yes_fill
                 fee = float(order.get("average_fee_paid") or 0) * filled \
                     or taker_fee(filled, side_fill)
-                self.state.d["cash"]["demo"] -= filled * side_fill + fee
+                self.state.d["cash"][adapter] -= filled * side_fill + fee
                 self.state.open.append(PaperPosition(
                     ticker=intent.ticker, metal=metal, side=intent.side,
                     count=int(filled), fill_price=side_fill, fee=fee,
                     fair=intent.fair, entry_ts=now, close_ts=close_ts,
-                    adapter="demo", tag=intent.tag,
+                    adapter=adapter, tag=intent.tag,
                     order_id=order.get("order_id")))
-                notes.append(f"DEMO FILL {intent.side} {filled} {intent.ticker}")
+                notes.append(f"{adapter.upper()} FILL {intent.side} {filled} {intent.ticker}")
             else:
-                notes.append(f"demo IOC no-fill {intent.ticker}")
+                notes.append(f"{adapter} IOC no-fill {intent.ticker}")
         except Exception as e:
-            notes.append(f"demo order error {intent.ticker}: {e}")
+            notes.append(f"{adapter} order error {intent.ticker}: {e}")
         return notes
+
+    def _demo_leg(self, intent, metal, now, close_ts) -> list[str]:
+        if not self.use_demo:
+            return []
+        return self._place_ioc(self.demo, "demo", intent, metal, now, close_ts)
+
+    def _live_leg(self, intent, metal, now, close_ts) -> list[str]:
+        """Real-money IOC. Off unless --live and a prod key are both set."""
+        if not self.use_live:
+            return []
+        if os.environ.get("KALSHI_LIVE", "0") not in ("1", "true", "TRUE", "yes"):
+            return ["live blocked: set KALSHI_LIVE=1 to actually send prod orders"]
+        return self._place_ioc(self.prod, "live", intent, metal, now, close_ts)
 
     # ------------------------------------------------------------- settlement
     def settle_due(self) -> list[str]:

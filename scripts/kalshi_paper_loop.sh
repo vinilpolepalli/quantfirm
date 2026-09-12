@@ -19,8 +19,8 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 SESSION_MIN="${SESSION_MIN:-110}"
-METALS="${METALS:-gold,silver,wti}"
-STRATEGY="${STRATEGY:-late_lock}"
+METALS="${METALS:-gold,silver,copper,wti,natgas}"
+STRATEGY="${STRATEGY:-favorite_div}"
 BANKROLL="${BANKROLL:-250}"
 LOG="${LOG:-state/kalshi_paper_loop.log}"
 PIDFILE="${PIDFILE:-state/kalshi_paper_loop.pid}"
@@ -44,7 +44,7 @@ while true; do
 
   log "starting ${SESSION_MIN}min session"
   timeout $(( SESSION_MIN * 60 + 300 )) \
-    python3 -m quantfirm.kalshi.cli paper \
+    python3 -m quantfirm.kalshi.cli agent \
       --minutes "$SESSION_MIN" --no-demo --log-decisions \
       --metals "$METALS" --strategy "$STRATEGY" --bankroll "$BANKROLL" \
     >> "$LOG" 2>&1 &

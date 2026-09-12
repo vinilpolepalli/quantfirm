@@ -155,6 +155,39 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIn("KXWTI15M", SERIES)
         self.assertEqual(SERIES["KXWTI15M"], "wti")
 
+    def test_favorite_div_is_registered(self):
+        names = {s.name for s in registry()}
+        self.assertIn("favorite_div", names)
+
+
+class TestDiversifyAndHalt(unittest.TestCase):
+    def test_corr_allows_metal_and_energy(self):
+        from quantfirm.kalshi.halt import blocked_by_corr
+        from types import SimpleNamespace
+        open_ = [SimpleNamespace(metal="gold", side="yes")]
+        self.assertTrue(blocked_by_corr("silver", "yes", open_))
+        self.assertFalse(blocked_by_corr("silver", "no", open_))
+        self.assertFalse(blocked_by_corr("wti", "yes", open_))
+        self.assertFalse(blocked_by_corr("copper", "yes", open_))
+        open_.append(SimpleNamespace(metal="wti", side="no"))
+        self.assertTrue(blocked_by_corr("natgas", "no", open_))
+        self.assertFalse(blocked_by_corr("natgas", "yes", open_))
+
+    def test_langgraph_desk_compiles(self):
+        from quantfirm.kalshi.agent import build_desk
+        from quantfirm.kalshi.paper import PaperEngine
+        from quantfirm.kalshi.strategy import Params
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            eng = PaperEngine(
+                params=Params(macro_blackout_et=()),
+                state_path=os.path.join(tmp, "s.json"),
+                log_path=os.path.join(tmp, "t.csv"),
+                metals=("gold",),
+                use_demo=False, maker=False)
+            g = build_desk(eng, live=False)
+            self.assertTrue(callable(g.invoke))
+
 
 class TestBacktestCausality(unittest.TestCase):
     def _mini_data(self, tmp, gap_away=False):
