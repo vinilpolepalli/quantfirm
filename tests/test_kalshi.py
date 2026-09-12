@@ -326,14 +326,19 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(btc.side, "yes")
         self.assertEqual(btc.tag, "crypto_fav")
         self.assertGreater(gold.count, btc.count)
-        # Coin-flip and weekend longshot sit out on BTC. A 56¢ book is
-        # still a coin-flip — sit. A 63¢ favorite is in the every-interval
-        # band and clips at the 4% crypto size.
+        # Coin-flip sits. A 56¢ book is still a coin-flip. A 36¢ YES is a
+        # 64¢ NO favorite — clip NO, do not buy the longshot. Both-sides
+        # junk (5¢ / 97¢) sits via price_min + fee-eat.
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.49, "yes_ask": 0.52},
                                     metal="btc"))
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.54, "yes_ask": 0.56},
                                     metal="btc"))
-        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.36, "yes_ask": 0.37},
+        cheap_yes = desk_book(**{**kw, "yes_bid": 0.36, "yes_ask": 0.37},
+                               metal="btc")
+        self.assertIsNotNone(cheap_yes)
+        self.assertEqual(cheap_yes.side, "no")
+        self.assertAlmostEqual(cheap_yes.limit_price, 0.64, places=2)
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.03, "yes_ask": 0.05},
                                     metal="btc"))
         mid = desk_book(**{**kw, "yes_bid": 0.62, "yes_ask": 0.63}, metal="btc")
         self.assertIsNotNone(mid)
