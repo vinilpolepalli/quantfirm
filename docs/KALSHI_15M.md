@@ -39,8 +39,9 @@ Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Live strategy: **`desk_book`**. Commodities are `rich_fav` — first ≥60¢
 favorite (skip coin-flips <60¢ and when the taker fee is ≥15% of the win
 or net payout <7¢), from window open **until close**, **8% stake**.
-Crypto is half that: **4% / ≥72¢ / until close** (REST last-minute 90¢
-locks lost; that is not this trade — 93¢+ still sit out via fee-eat).
+Crypto is half that: **4% / ≥60¢ / until close** so every real-favorite
+interval can clip (REST last-minute 90¢ locks lost; that is not this
+trade — 93¢+ still sit out via fee-eat). Coin-flips still sit.
 BTC and ETH can both be on. SOL/DOGE/XRP 15m are open on Kalshi but not
 scored — stay off. Maker off. 24/7 supervisor. 8% is ~$20 at risk and
 ~$2.20 net on an 88¢ win. Crypto 4% is ~$10 at risk. 15–18% (`yolo_*`)
@@ -82,7 +83,7 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `oracle_flow` | Fade uninformed book flow | Taking an overreaction, not chasing a stale ask |
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
 | `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC and ETH 4% | Same FLB; crypto until close; fee-eat 93¢+ |
-| `crypto_fav` | BTC/ETH 4% ≥72¢ until close | Weekend 24/7 sleeve |
+| `crypto_fav` | BTC/ETH 4% ≥60¢ until close | Weekend 24/7 sleeve |
 | `favorite_confirmed` | FLB + GBM agrees | Same, fewer longshots |
 | `late_lock` | Near-certain favorite, last 6 min | Reversal needed is large |
 | `open_fade` / `open_follow` | 3-min impulse then fade/follow | Path of S, not book lag |

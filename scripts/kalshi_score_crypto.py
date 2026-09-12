@@ -4,11 +4,11 @@
 Lag-fill is the headline. Crypto data on disk starts ~2026-08-29, after
 SPLIT_TS, so TRAIN is empty — report ALL + last 7d, not a fake holdout.
 
-A priori cautious book (not a test-set fit):
-  * same FLB as commodities (buy the favorite, hold to settle)
+A priori chill book (not a test-set fit):
+  * same FLB as commodities (buy the favorite ≥60¢, hold to settle)
   * do NOT last-minute lock (one_pct touch last week: BTC −$55)
-  * do NOT buy longshots (weekend 18–37¢ books sit out)
-  * 4% stake vs 8% commodities, ≥72¢, sit out last 2 minutes
+  * do NOT buy longshots or coin-flips (weekend 18–58¢ books sit out)
+  * 4% stake vs 8% commodities, until close
 """
 from __future__ import annotations
 
@@ -64,18 +64,28 @@ def main():
     variants = []
     # What would happen if we dumped crypto into the commodity book.
     variants.append(("rich_fav_8pct", rf.params, favorite_blind))
-    # A priori cautious crypto sleeve.
+    # Live overlay: every real-favorite window, chill size.
+    variants.append((
+        "live_60_4pct",
+        replace(rf.params, price_min=0.60, price_max=0.92,
+                max_stake_frac=0.04, kelly_mult=0.25,
+                tau_min_s=0, tau_max_s=900),
+        favorite_blind,
+    ))
+    # Prior ≥72¢ sleeve (fewer windows).
+    variants.append((
+        "crypto_fav_72",
+        replace(rf.params, price_min=0.72, price_max=0.92,
+                max_stake_frac=0.04, kelly_mult=0.25,
+                tau_min_s=0, tau_max_s=900),
+        favorite_blind,
+    ))
+    # A priori cautious crypto sleeve (72¢, skip last 2 min).
     variants.append((
         "crypto_fav",
         replace(rf.params, price_min=0.72, price_max=0.92,
                 max_stake_frac=0.04, kelly_mult=0.25,
                 tau_min_s=120, tau_max_s=780),
-        favorite_blind,
-    ))
-    # Same band as commodities, half size, still until close.
-    variants.append((
-        "fav60_4pct",
-        replace(rf.params, max_stake_frac=0.04, kelly_mult=0.25),
         favorite_blind,
     ))
     # Richer favorite, skip last 2 min.

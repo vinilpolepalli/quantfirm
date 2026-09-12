@@ -149,17 +149,18 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 
 
 def crypto_params(base: Params) -> Params:
-    """Cautious crypto overlay. Not a test-set fit.
+    """Chill crypto overlay: clip every window that has a real favorite.
 
-    Last-minute 90¢ *locks* lost on this tape (BTC touch −$55). That is
-    not this trade: we still skip 93¢+ via fee-eat / price_max. The last
-    two minutes of a 72–92¢ favorite are the same FLB as commodities —
-    no extra clock. Half the commodity stake; sit out coin-flips and
-    weekend longshots. BTC and ETH can both be on.
+    Same FLB bar as commodities (≥60¢), half the stake (4%). ≥72¢ was
+    the greenest harvested sleeve but sat out 60–71¢ books — most
+    intervals. Coin-flips (50–58¢) and weekend longshots still sit.
+    Last-minute 90¢ *locks* lost (BTC touch −$55); that is not this
+    trade. 93¢+ stay out via fee-eat / price_max, not a last-2-min
+    clock. BTC and ETH can both be on.
     """
     return replace(
         base,
-        price_min=0.72,
+        price_min=0.60,
         price_max=0.92,
         max_stake_frac=0.04,
         kelly_mult=0.25,
@@ -189,7 +190,8 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
     Commodities keep 8% / ≥60¢ / until close. Crypto uses crypto_params
-    (4% / ≥72¢ / until close). Fee-eat still skips 93¢+ last ticks.
+    (4% / ≥60¢ / until close) so every real-favorite interval can clip.
+    Fee-eat still skips 93¢+ last ticks; coin-flips still sit.
     """
     if metal in CRYPTO_LIVE:
         it = favorite_blind(
@@ -676,19 +678,19 @@ def registry() -> list[Spec]:
              "lag",
              "FLB ≥60¢ until close; skip coin-flip / fee-eat; 8% half-Kelly"),
         Spec("crypto_fav", crypto_fav,
-             _p(tau_min_s=0, tau_max_s=900, price_min=0.72, price_max=0.92,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.92,
                 theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
                 signal_max_age_s=0),
              "lag",
-             "BTC/ETH 15m FLB ≥72¢ until close, 4% stake, fee-eat / longshot"),
+             "BTC/ETH 15m FLB ≥60¢ until close, 4% stake; sit coin-flip / fee-eat"),
         Spec("desk_book", desk_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Commodities 8% ≥60¢ until close; BTC and ETH 4% ≥72¢ until close"),
+             "Commodities 8% ≥60¢ until close; BTC and ETH 4% ≥60¢ until close"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

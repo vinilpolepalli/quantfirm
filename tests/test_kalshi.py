@@ -247,7 +247,7 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(spec.params.tau_min_s, 0)
         self.assertGreaterEqual(spec.params.tau_max_s, 900)
         crypto = next(s for s in registry() if s.name == "crypto_fav")
-        self.assertEqual(crypto.params.price_min, 0.72)
+        self.assertEqual(crypto.params.price_min, 0.60)
         self.assertEqual(crypto.params.max_stake_frac, 0.04)
         self.assertEqual(crypto.params.tau_min_s, 0)
         self.assertGreaterEqual(crypto.params.tau_max_s, 900)
@@ -326,11 +326,20 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(btc.side, "yes")
         self.assertEqual(btc.tag, "crypto_fav")
         self.assertGreater(gold.count, btc.count)
-        # Coin-flip and weekend longshot sit out on BTC.
+        # Coin-flip and weekend longshot sit out on BTC. A 56¢ book is
+        # still a coin-flip — sit. A 63¢ favorite is in the every-interval
+        # band and clips at the 4% crypto size.
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.49, "yes_ask": 0.52},
+                                    metal="btc"))
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.54, "yes_ask": 0.56},
                                     metal="btc"))
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.36, "yes_ask": 0.37},
                                     metal="btc"))
+        mid = desk_book(**{**kw, "yes_bid": 0.62, "yes_ask": 0.63}, metal="btc")
+        self.assertIsNotNone(mid)
+        self.assertEqual(mid.side, "yes")
+        self.assertEqual(mid.tag, "crypto_fav")
+        self.assertLess(mid.count, gold.count)
         # Last 30s: both clip. 99¢ last ticks still sit out (fee-eat).
         late_gold = desk_book(**{**kw, "ts": close - 30}, metal="gold")
         late_btc = desk_book(**{**kw, "ts": close - 30}, metal="btc")
@@ -340,8 +349,8 @@ class TestNewStrategies(unittest.TestCase):
                                   "yes_bid": 0.988, "yes_ask": 0.992},
                               metal="btc")
         self.assertIsNone(junk_late)
-        # ETH uses the same cautious overlay (4% / ≥72¢) and can clip
-        # even if BTC would also be on.
+        # ETH uses the same overlay (4% / ≥60¢) and can clip even if
+        # BTC would also be on.
         eth = desk_book(**kw, metal="eth")
         self.assertIsNotNone(eth)
         self.assertEqual(eth.tag, "crypto_fav")

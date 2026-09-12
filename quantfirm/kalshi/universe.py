@@ -27,7 +27,7 @@ SERIES_LISTED_DARK = {
 }
 
 # 15-minute crypto (live, large books). BTC and ETH both clip at 4% /
-# ≥72¢ / until close. SOL/DOGE/XRP 15m exist but are not scored.
+# ≥60¢ / until close. SOL/DOGE/XRP 15m exist but are not scored.
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
     "KXETH15M": "eth",
@@ -65,8 +65,9 @@ CRYPTO_LIVE = ("btc", "eth")
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
 
 # Live canary on the 24/7 supervisor. Commodities: 8% FLB ≥60¢ from
-# window open until close. Crypto: 4% / ≥72¢ / until close. Sit out
-# coin-flips, longshots, and fee-eat (that is the 99¢ last-tick skip).
+# window open until close. Crypto: 4% / ≥60¢ / until close so every
+# real-favorite interval can clip. Sit out coin-flips, longshots, and
+# fee-eat (that is the 99¢ last-tick skip).
 # Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
 PAPER_STRATEGY = "desk_book"
 

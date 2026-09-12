@@ -54,7 +54,7 @@ the tournament gate. W37 already gave back $22. Size stays 4%.
 | weekend 72¢ | −$9 | |
 
 ETH FLB is red as a *standalone* book. It is still in the live mix at
-4% / ≥72¢ until close, and can sit next to BTC.
+4% / ≥60¢ until close, and can sit next to BTC.
 
 SOL/DOGE/XRP 15m were open on 2026-09-12. No harvested tape. Stay off.
 
@@ -63,12 +63,16 @@ SOL/DOGE/XRP 15m were open on 2026-09-12. No harvested tape. Stay off.
 `desk_book` on **gold, silver, copper, WTI, natgas, btc, eth**:
 
 - commodities: existing `rich_fav` (8%, ≥60¢, until close, fee-eat)
-- **BTC and ETH: 4%, ≥72¢, until close, fee-eat, no longshots**
+- **BTC and ETH: 4%, ≥60¢, until close, fee-eat, no longshots**
+- clip every 15m window that has a real favorite; sit 50–58¢ coin-flips
 - both can be on in the same window
 - no `one_pct` / last-90s locks, no yolo 15–18%
 - last-2-min clock is off; 99¢ last ticks still sit out via fee-eat
 
-A 36¢ weekend BTC book sits out. That is the caution, not a clock.
+≥72¢ was the greenest harvested BTC sleeve (+$49). Owner asked to try
+every interval if we can, while staying chill: same 4% size, bar dropped
+to the commodity favorite line so 60–71¢ books clip. A 36¢ or 55¢
+weekend BTC book still sits out. That is the caution, not a clock.
 
 ```bash
 python3 scripts/kalshi_score_crypto.py
