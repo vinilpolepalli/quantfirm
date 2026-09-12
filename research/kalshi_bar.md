@@ -61,6 +61,11 @@ Sitting BTC 5–12 min (leave ETH at wait-3 + 75¢) **loses** vs live.
 `research/kalshi_btc_wait.md`. Sweep:
 `python3 scripts/kalshi_btc_wait_sweep.py`.
 
+ETH same grid: isolated wait-3 + 75¢ is red ALL, last-7d green.
+Longer ETH sits (6–8 min) can look green isolated; mixed overlay does
+not beat live enough to bounce. `research/kalshi_eth_wait.md`.
+`python3 scripts/kalshi_eth_wait_sweep.py`.
+
 ## What went live
 
 `desk_book` favorite bar **60¢ → 68¢ → 75¢**. Same 3 min wait, same
