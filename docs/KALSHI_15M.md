@@ -83,8 +83,11 @@ python -m quantfirm.kalshi.cli tournament --data data/kalshi --bankroll 250
 python -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
     --fill-mode lag --bankroll 250
 python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo \
-    --strategy late_lock --bankroll 250 --log-decisions
+    --strategy favorite_div --bankroll 250 --log-decisions
+./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, all five series
+python scripts/kalshi_desk_checkin.py   # heal + commit heartbeat
 ```
 
-Promotion bar is unchanged (`docs/KALSHI.md` §8, `docs/HANDOFF.md` §5).
-A profitable paper hour is not a go-live.
+24/7 wiring is in `docs/KALSHI_ROUTINE.md`. Promotion bar is unchanged
+(`docs/KALSHI.md` §8, `docs/HANDOFF.md` §5). A profitable paper hour is
+not a go-live.

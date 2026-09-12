@@ -1,19 +1,24 @@
 name: kalshi-15m-desk
-# Heartbeat + short trade burst. GitHub-hosted minutes cannot poll every
-# 2 seconds 24/7 (that would blow the 2,000 min/month budget), so this is
-# the backstop: four times an hour it wakes, trades the *current* window
-# if a favorite is up, commits state, and exits.
+# Backstop tick. GitHub-hosted minutes cannot poll every 2 seconds (that
+# would blow the 2,000 min/month budget). Four times an hour this job
+# wakes, trades the *current* 15-minute window if a favorite is up,
+# writes the heartbeat, and exits.
 #
-# The primary 24/7 loop is scripts/kalshi_paper_loop.sh on a persistent
-# host (or a Claude Routine every 15 minutes — see docs/KALSHI_ROUTINE.md).
+# Primary 24/7 loop: scripts/kalshi_paper_loop.sh on a persistent host
+# (this cloud box, a VPS, or a Cursor/Claude 15-minute timer — see
+# docs/KALSHI_ROUTINE.md). Scheduled workflows run only on main, so this
+# job starts after the desk PR merges.
+#
+# Keep the job short: ~90s of trading + pip cache. 96 * ~2 min ≈ the
+# whole free budget — do not lengthen the agent step.
 #
 # Secrets (optional; shadow paper works without them):
 #   KALSHI_PROD_KEY_ID, KALSHI_PROD_PRIVATE_KEY
-#   KALSHI_LIVE=1  — only then are real orders sent
+#   KALSHI_LIVE=1  — only then are real orders sent. Leave unset.
 
 on:
   schedule:
-    - cron: '3,18,33,48 * * * *'
+    - cron: '2,17,32,47 * * * *'
   workflow_dispatch: {}
 
 concurrency:
@@ -45,17 +50,18 @@ jobs:
           set -euo pipefail
           python -m quantfirm.kalshi.cli status || true
           python -m quantfirm.kalshi.cli agent \
-            --minutes 2 --poll 2 --no-demo --log-decisions \
+            --minutes 1.5 --poll 2 --no-demo --log-decisions \
             --strategy favorite_div --bankroll 250 \
             --metals gold,silver,copper,wti,natgas \
             ${KALSHI_LIVE:+--live}
-      - name: Commit paper state
+          python -m quantfirm.kalshi.cli heartbeat || true
+      - name: Commit paper heartbeat
         run: |
           set -euo pipefail
           git config user.name "vinilpolepalli"
           git config user.email "105608101+vinilpolepalli@users.noreply.github.com"
-          for f in state/kalshi_paper_state.json state/kalshi_paper_trades.csv \
-                   state/kalshi_paper_tape.jsonl state/kalshi_checkin_mark.json \
+          for f in state/kalshi_desk_status.json state/kalshi_paper_state.json \
+                   state/kalshi_paper_trades.csv state/kalshi_checkin_mark.json \
                    research/kalshi_backtest.md research/kalshi_tournament.md; do
             if [ -f "$f" ]; then git add -f "$f"; fi
           done

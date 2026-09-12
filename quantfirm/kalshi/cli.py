@@ -5,6 +5,8 @@
   python -m quantfirm.kalshi.cli calibrate --data DIR
   python -m quantfirm.kalshi.cli paper     --minutes 60 [--no-demo] [--metals gold,silver]
   python -m quantfirm.kalshi.cli status    # venue + feed + credential check
+  python -m quantfirm.kalshi.cli open-count
+  python -m quantfirm.kalshi.cli heartbeat
 """
 
 from __future__ import annotations
@@ -250,6 +252,21 @@ def cmd_agent(a):
               strategy=spec.name)
 
 
+def cmd_open_count(_a):
+    """Print how many of the five commodity series have an open window.
+
+    Supervisor uses this instead of grepping `status` (a flake there used
+    to sleep 10 minutes and miss the next window).
+    """
+    from .runtime import count_open_markets
+    print(count_open_markets())
+
+
+def cmd_heartbeat(_a):
+    from .runtime import write_desk_status
+    print(json.dumps(write_desk_status(), indent=1))
+
+
 def cmd_status(a):
     from .client import KalshiClient
     from .feeds import SwissquoteFeed
@@ -379,6 +396,12 @@ def main():
 
     sp = sub.add_parser("status")
     sp.set_defaults(fn=cmd_status)
+
+    sp = sub.add_parser("open-count")
+    sp.set_defaults(fn=cmd_open_count)
+
+    sp = sub.add_parser("heartbeat")
+    sp.set_defaults(fn=cmd_heartbeat)
 
     a = ap.parse_args()
     a.fn(a)

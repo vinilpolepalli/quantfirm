@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
-"""Hourly check-in for the Kalshi paper desk: report, commit, self-heal.
+"""Hourly / 15-minute check-in for the Kalshi paper desk.
 
-Designed to be safe to run unattended, repeatedly, for weeks:
-  * tallies any fills settled since the last check-in and appends them to the
-    session log (idempotent — it records a high-water mark in state/)
-  * recomputes the statistics that actually decide the question (hit rate vs
-    break-even, t-stat trajectory)
-  * restarts the supervisor loop if it died (e.g. container restart)
-  * commits and pushes, so the record survives the container
+Safe to run unattended:
+  * restarts the supervisor if the PID is dead
+  * writes state/kalshi_desk_status.json (the committed heartbeat)
+  * tallies new settled fills into research/kalshi_backtest.md
+  * commits only the durable files (not the growing tape)
 
-Prints a short status block; the agent turn that runs it relays anything
-noteworthy to the user.
+Prints a one-line status block.
 """
 from __future__ import annotations
 
@@ -18,16 +15,27 @@ import csv
 import json
 import math
 import os
-import subprocess
 import shlex
 import statistics as st
+import subprocess
+import sys
 from datetime import datetime, timezone
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TRADES = os.path.join(REPO, "state", "kalshi_paper_trades.csv")
+sys.path.insert(0, REPO)
+
+from quantfirm.kalshi.runtime import (  # noqa: E402
+    TRADES_PATH, ensure_supervisor, write_desk_status,
+)
+
 MARK = os.path.join(REPO, "state", "kalshi_checkin_mark.json")
 LOGDOC = os.path.join(REPO, "research", "kalshi_backtest.md")
-LOOP = os.path.join(REPO, "scripts", "kalshi_paper_loop.sh")
+COMMIT_PATHS = (
+    "state/kalshi_desk_status.json",
+    "state/kalshi_paper_trades.csv",
+    "state/kalshi_checkin_mark.json",
+    "research/kalshi_backtest.md",
+)
 
 
 def sh(cmd, **kw):
@@ -35,46 +43,15 @@ def sh(cmd, **kw):
                           text=True, **kw)
 
 
-PIDFILE = os.path.join(REPO, "state", "kalshi_paper_loop.pid")
-
-
-def supervisor_alive() -> bool:
-    """Check the PID file, not pgrep.
-
-    Regression: `pgrep -f kalshi_paper_loop.sh` also matches the /bin/sh that
-    is running that very pgrep, so it ALWAYS returned True and this check-in
-    reported "supervisor: alive" for a supervisor that had been dead for an
-    hour. Verify a real, live PID instead."""
-    try:
-        with open(PIDFILE) as f:
-            pid = int(f.read().strip())
-    except (OSError, ValueError):
-        return False
-    try:
-        os.kill(pid, 0)          # signal 0 = liveness probe, no effect
-        return True
-    except OSError:
-        return False
-
-
-def ensure_supervisor() -> str:
-    if supervisor_alive():
-        return "supervisor: alive"
-    sh(f"chmod +x {LOOP}")
-    subprocess.Popen(f"setsid nohup {LOOP} >/dev/null 2>&1 &",
-                     shell=True, cwd=REPO, start_new_session=True)
-    return "supervisor: WAS DEAD -> restarted"
-
-
-def load():
-    if not os.path.exists(TRADES):
+def load_trades():
+    if not os.path.exists(TRADES_PATH):
         return []
-    with open(TRADES) as f:
+    with open(TRADES_PATH) as f:
         return list(csv.DictReader(f))
 
 
 def stats(rows, adapter):
-    p = [float(r["pnl"]) for r in rows if r["adapter"] == adapter]
+    p = [float(r["pnl"]) for r in rows if r.get("adapter") == adapter]
     if not p:
         return None
     n = len(p)
@@ -94,7 +71,8 @@ def stats(rows, adapter):
 
 def main():
     status = [ensure_supervisor()]
-    rows = load()
+    rec = write_desk_status(supervisor=status[0])
+    rows = load_trades()
     mark = {"n_settled": 0, "t_history": []}
     if os.path.exists(MARK):
         with open(MARK) as f:
@@ -132,6 +110,7 @@ def main():
         status.append("no new fills")
 
     mark["n_settled"] = len(rows)
+    os.makedirs(os.path.dirname(MARK), exist_ok=True)
     with open(MARK, "w") as f:
         json.dump(mark, f, indent=1)
 
@@ -141,12 +120,13 @@ def main():
             f"(be {mk['breakeven_hit']:.3f}) t={mk['t']:.2f}")
     if sh_:
         status.append(f"taker n={sh_['n']} pnl=${sh_['pnl']:+.2f}")
+    status.append(f"open={rec['n_open']} cash_shadow={rec['cash'].get('shadow')}")
 
-    msg = ("desk: auto check-in — "
-           + (f"maker {mk['pnl']:+.2f} n={mk['n']} t={mk['t']:.2f}" if mk else "no fills")
-           + "\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
-           + "\nClaude-Session: https://claude.ai/code/session_01QEzLS4u6E7dCgjXtCZdfGQ")
-    sh("git add -A state/ research/ 2>/dev/null")
+    existing = [p for p in COMMIT_PATHS if os.path.exists(os.path.join(REPO, p))]
+    if existing:
+        sh("git add " + " ".join(shlex.quote(p) for p in existing))
+    msg = ("kalshi: desk check-in — "
+           + (f"shadow {sh_['pnl']:+.2f} n={sh_['n']}" if sh_ else "no settled fills"))
     c = sh(f"git commit -q -m {shlex.quote(msg)}")
     if c.returncode == 0:
         pushed = sh("git push -q")

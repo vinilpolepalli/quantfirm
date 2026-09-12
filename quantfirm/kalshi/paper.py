@@ -12,8 +12,8 @@ PAPER ONLY: economics are simulated. Two execution adapters run together:
     Demo books are empty/fake, so demo fills prove the order path works,
     not that the strategy earns.
 
-Signals: Swissquote XAU/XAG (measured ~1 bp from the Pyth settlement feed).
-Copper has no keyless realtime feed and stays DISABLED for entries.
+Signals: Kalshi event live_data (settlement-aligned) for every live
+commodity series; Swissquote XAU/XAG is fallback for gold/silver only.
 
 State lives in state/kalshi_paper_state.json + state/kalshi_paper_trades.csv
 (repo convention); every decision tick can be logged for later calibration.
@@ -35,7 +35,7 @@ from decimal import Decimal
 from .client import KalshiClient, parse_market_times
 from .fair import VolEstimator, taker_fee
 from .strategy import Params, decide
-from .universe import BANKROLL, SERIES as _SERIES, YF_SYMBOLS
+from .universe import BANKROLL, PAPER_ASSETS, SERIES as _SERIES, YF_SYMBOLS
 
 SERIES = {v: k for k, v in _SERIES.items()}
 
@@ -108,7 +108,7 @@ class MakerQuote:
 class PaperEngine:
     def __init__(self, params: Params, state_path: str, log_path: str,
                  decisions_path: str | None = None,
-                 metals: tuple[str, ...] = ("gold", "silver", "wti"),
+                 metals: tuple[str, ...] = PAPER_ASSETS,
                  use_demo: bool = True, bankroll0: float = BANKROLL,
                  maker: bool = True, maker_margin: float = 0.04,
                  maker_fade: float = 0.02, decide_fn=None,

@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# Supervisor for the Kalshi 15M metals paper desk.
+# Supervisor for the Kalshi 15-minute commodity paper desk.
 #
-# Runs the paper engine back-to-back indefinitely so the desk keeps trading
-# without a human restarting it. The engine is deliberately single-shot (it
-# persists state per tick and exits); this loop makes it continuous.
+# Runs the LangGraph agent back-to-back so the book keeps trading without
+# a human restarting it. The engine is single-shot (persist + exit); this
+# loop makes it continuous.
 #
 # Failure modes covered:
 #   * session end (~110 min)   -> loop restarts it
 #   * engine CRASH             -> loop restarts it
-#   * engine HANG              -> watchdog below kills it, loop restarts it.
-#     (Learned the hard way: on 2026-09-11 the engine wedged at 17:10Z with
-#     the process still alive and burned ~55 min of trading, because the
-#     supervisor only reacted to process exit.)
-#   * container restart        -> hourly Routine re-launches this script
+#   * engine HANG              -> watchdog kills it, loop restarts it
+#     (2026-09-11: wedged at 17:10Z with the process still alive and burned
+#     ~55 min because the supervisor only reacted to process exit.)
+#   * open-count flake         -> start the session anyway (do NOT sleep 10m
+#     and miss the window). Only sleep when the API says every series is dark.
+#   * container restart        -> hourly check-in / 15-min timer re-launches
 #
 # Writes a PID file so liveness can be checked without pgrep self-matching.
 set -uo pipefail
@@ -26,20 +27,36 @@ LOG="${LOG:-state/kalshi_paper_loop.log}"
 PIDFILE="${PIDFILE:-state/kalshi_paper_loop.pid}"
 DECISIONS="state/kalshi_paper_decisions.jsonl"
 STALE_S="${STALE_S:-300}"   # engine must log a decision at least this often
+DARK_SLEEP_S="${DARK_SLEEP_S:-90}"
 
+mkdir -p state
 echo $$ > "$PIDFILE"
 trap 'rm -f "$PIDFILE"' EXIT
 
 log() { echo "[$(date -u +%FT%TZ)] $*" >> "$LOG"; }
 log "supervisor start (pid $$): ${SESSION_MIN}min sessions, metals=${METALS}"
 
+open_count() {
+  # Single integer on stdout. "fail" if the probe itself died.
+  local n
+  n=$(timeout 45 python3 -m quantfirm.kalshi.cli open-count 2>/dev/null | tail -n 1 | tr -cd '0-9')
+  if [ -z "$n" ]; then
+    echo fail
+  else
+    echo "$n"
+  fi
+}
+
 while true; do
-  open_count=$(timeout 60 python3 -m quantfirm.kalshi.cli status 2>/dev/null \
-      | grep -cE 'KX(GOLD|SILVER|WTI|COPPER|NATGAS)15M-.*book=' || echo 0)
-  if [ "${open_count:-0}" -eq 0 ]; then
-    log "no open metals market; sleeping 10m"
-    sleep 600
+  n=$(open_count)
+  if [ "$n" = "fail" ]; then
+    log "open-count failed; starting session anyway"
+  elif [ "$n" -eq 0 ]; then
+    log "no open commodity window; sleeping ${DARK_SLEEP_S}s"
+    sleep "$DARK_SLEEP_S"
     continue
+  else
+    log "open windows=$n"
   fi
 
   log "starting ${SESSION_MIN}min session"
@@ -50,7 +67,6 @@ while true; do
     >> "$LOG" 2>&1 &
   engine_pid=$!
 
-  # ---- watchdog: kill the engine if it stops making decisions
   while kill -0 "$engine_pid" 2>/dev/null; do
     sleep 30
     [ -f "$DECISIONS" ] || continue
@@ -65,5 +81,6 @@ while true; do
   done
   wait "$engine_pid" 2>/dev/null
   log "session ended (rc=$?)"
+  python3 -m quantfirm.kalshi.cli heartbeat >/dev/null 2>&1 || true
   sleep 20
 done

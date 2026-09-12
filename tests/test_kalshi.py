@@ -1,4 +1,6 @@
 """Unit tests for the Kalshi 15M metals desk (no network)."""
+import inspect
+import json
 import math
 import os
 import sys
@@ -11,7 +13,7 @@ from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
                                    kelly_fraction, norm_cdf, taker_fee)
 from quantfirm.kalshi.strategies import (favorite_blind, late_lock, registry)
 from quantfirm.kalshi.strategy import Params, decide
-from quantfirm.kalshi.universe import BANKROLL, SERIES
+from quantfirm.kalshi.universe import BANKROLL, PAPER_ASSETS, SERIES
 
 
 class TestFair(unittest.TestCase):
@@ -154,10 +156,22 @@ class TestNewStrategies(unittest.TestCase):
     def test_universe_covers_wti(self):
         self.assertIn("KXWTI15M", SERIES)
         self.assertEqual(SERIES["KXWTI15M"], "wti")
+        self.assertIn("KXNATGAS15M", SERIES)
+        self.assertEqual(SERIES["KXNATGAS15M"], "natgas")
 
     def test_favorite_div_is_registered(self):
         names = {s.name for s in registry()}
         self.assertIn("favorite_div", names)
+        spec = next(s for s in registry() if s.name == "favorite_div")
+        self.assertGreaterEqual(spec.params.max_open, len(PAPER_ASSETS))
+        self.assertEqual(spec.params.max_stake_frac, 0.04)
+
+    def test_paper_universe_is_all_live_commodities(self):
+        self.assertEqual(PAPER_ASSETS,
+                         ("gold", "silver", "copper", "wti", "natgas"))
+        from quantfirm.kalshi.paper import PaperEngine
+        sig = inspect.signature(PaperEngine.__init__)
+        self.assertEqual(sig.parameters["metals"].default, PAPER_ASSETS)
 
 
 class TestDiversifyAndHalt(unittest.TestCase):
@@ -172,6 +186,30 @@ class TestDiversifyAndHalt(unittest.TestCase):
         open_.append(SimpleNamespace(metal="wti", side="no"))
         self.assertTrue(blocked_by_corr("natgas", "no", open_))
         self.assertFalse(blocked_by_corr("natgas", "yes", open_))
+
+    def test_heartbeat_from_state_file(self):
+        from quantfirm.kalshi.runtime import write_desk_status
+        with tempfile.TemporaryDirectory() as tmp:
+            state = os.path.join(tmp, "s.json")
+            status = os.path.join(tmp, "h.json")
+            with open(state, "w") as f:
+                json.dump({
+                    "cash": {"shadow": 244.04},
+                    "realized": {"shadow": 0.0},
+                    "n_settled": 0,
+                    "open": [{"metal": "gold", "side": "no", "count": 4,
+                              "ticker": "KXGOLD15M-X", "fill_price": 0.73,
+                              "adapter": "shadow"}],
+                    "updated": "2026-09-12T00:49:18Z",
+                    "started": "2026-09-12T00:46:58Z",
+                }, f)
+            rec = write_desk_status(supervisor="supervisor: alive",
+                                    state_path=state, status_path=status)
+            self.assertEqual(rec["n_open"], 1)
+            self.assertEqual(rec["universe"], list(PAPER_ASSETS))
+            self.assertEqual(rec["open"][0]["metal"], "gold")
+            with open(status) as f:
+                self.assertEqual(json.load(f)["n_open"], 1)
 
     def test_langgraph_desk_compiles(self):
         from quantfirm.kalshi.agent import build_desk

@@ -28,8 +28,9 @@ Two desks:
 | Daily report (push + email) | Claude Routine → `scripts/gen_report.py` | daily 5:15pm ET |
 | Data refresh + revalidation | `.github/workflows/research.yml` | nightly |
 | Crypto execution engine (dormant) | `.github/workflows/trade.yml` → `quantfirm/live/engine.py` | hourly |
-| The books | `state/equity_state.json`, `state/equity_trade_log.csv` | every run |
-| Kill switches | `state/KILL_SWITCH_EQ`, `state/KILL_SWITCH` | honored by every run |
+| Kalshi 15M commodities (paper) | `scripts/kalshi_paper_loop.sh` + `.github/workflows/kalshi.yml` | 24/7 / every 15 min |
+| The books | `state/equity_state.json`, `state/equity_trade_log.csv`, `state/kalshi_desk_status.json` | every run |
+| Kill switches | `state/KILL_SWITCH_EQ`, `state/KILL_SWITCH`, `state/KILL_SWITCH_KALSHI` | honored by every run |
 | Dashboard + reports | `dashboard/` (Vercel, auto-deploys on state commits) | every trading day |
 
 ## Docs

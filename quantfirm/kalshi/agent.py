@@ -76,6 +76,11 @@ def build_desk(engine: PaperEngine, live: bool = False):
 
     def persist(state: DeskState) -> dict[str, Any]:
         engine.state.save()
+        try:
+            from .runtime import write_desk_status
+            write_desk_status()
+        except Exception:
+            pass
         return {}
 
     g = StateGraph(DeskState)
