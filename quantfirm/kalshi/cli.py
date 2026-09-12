@@ -7,6 +7,8 @@
   python -m quantfirm.kalshi.cli status    # venue + feed + credential check
   python -m quantfirm.kalshi.cli open-count
   python -m quantfirm.kalshi.cli heartbeat
+  python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi (read-only)
+  python -m quantfirm.kalshi.cli poly-compare  # live crypto fills vs poly_book paper
 """
 
 from __future__ import annotations
@@ -22,6 +24,30 @@ from .universe import BANKROLL, PAPER_ASSETS, PAPER_STRATEGY, SPLIT_TS
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 STATE_DIR = os.path.join(REPO, "state")
+
+
+def _engine_paths(a) -> dict:
+    prefix = getattr(a, "state_prefix", None) or "kalshi_paper"
+    tape = None
+    if prefix == "kalshi_paper":
+        tape = os.path.join(STATE_DIR, "kalshi_paper_tape.jsonl")
+    return {
+        "state_path": os.path.join(STATE_DIR, f"{prefix}_state.json"),
+        "log_path": os.path.join(STATE_DIR, f"{prefix}_trades.csv"),
+        "decisions_path": (os.path.join(STATE_DIR, f"{prefix}_decisions.jsonl")
+                           if getattr(a, "log_decisions", False) else None),
+        "tape_path": tape,
+    }
+
+
+def _refuse_live_sleeve(a) -> None:
+    """Paper sleeves (poly_book, …) must not inherit --live."""
+    prefix = getattr(a, "state_prefix", None) or "kalshi_paper"
+    if getattr(a, "live", False) and prefix != "kalshi_paper":
+        raise SystemExit(
+            f"refusing --live with --state-prefix {prefix} "
+            "(paper sleeve cannot send Kalshi orders)")
+
 
 
 def _params_from_args(a) -> Params:
@@ -191,6 +217,7 @@ def cmd_diagnostics(a):
 
 
 def cmd_paper(a):
+    _refuse_live_sleeve(a)
     import dataclasses as _dc
     from .paper import PaperEngine
     from .strategies import registry
@@ -216,13 +243,13 @@ def cmd_paper(a):
             print(f"unknown --strategy {a.strategy}; falling back to registered oracle")
     os.makedirs(STATE_DIR, exist_ok=True)
     print("effective params:", _dc.asdict(p))
+    paths = _engine_paths(a)
     eng = PaperEngine(
         params=p,
-        state_path=os.path.join(STATE_DIR, "kalshi_paper_state.json"),
-        log_path=os.path.join(STATE_DIR, "kalshi_paper_trades.csv"),
-        decisions_path=(os.path.join(STATE_DIR, "kalshi_paper_decisions.jsonl")
-                        if a.log_decisions else None),
-        tape_path=os.path.join(STATE_DIR, "kalshi_paper_tape.jsonl"),
+        state_path=paths["state_path"],
+        log_path=paths["log_path"],
+        decisions_path=paths["decisions_path"],
+        tape_path=paths["tape_path"],
         metals=tuple(a.metals.split(",")),
         use_demo=not a.no_demo,
         bankroll0=a.bankroll,
@@ -235,6 +262,7 @@ def cmd_paper(a):
 
 def cmd_agent(a):
     """24/7 LangGraph desk. Same engine as paper, graph-orchestrated."""
+    _refuse_live_sleeve(a)
     from .agent import run_agent
     import dataclasses as _dc
     from dataclasses import replace
@@ -248,13 +276,13 @@ def cmd_agent(a):
         p = replace(p, max_open=n_assets)
     os.makedirs(STATE_DIR, exist_ok=True)
     print("effective params:", _dc.asdict(p))
+    paths = _engine_paths(a)
     eng = PaperEngine(
         params=p,
-        state_path=os.path.join(STATE_DIR, "kalshi_paper_state.json"),
-        log_path=os.path.join(STATE_DIR, "kalshi_paper_trades.csv"),
-        decisions_path=(os.path.join(STATE_DIR, "kalshi_paper_decisions.jsonl")
-                        if a.log_decisions else None),
-        tape_path=os.path.join(STATE_DIR, "kalshi_paper_tape.jsonl"),
+        state_path=paths["state_path"],
+        log_path=paths["log_path"],
+        decisions_path=paths["decisions_path"],
+        tape_path=paths["tape_path"],
         metals=tuple(a.metals.split(",")),
         use_demo=not a.no_demo,
         bankroll0=a.bankroll,
@@ -313,6 +341,57 @@ def cmd_status(a):
                   f" book={q.yes_bid}/{q.yes_ask} live={live}")
         else:
             print(f"{s}: no open market (weekend/maintenance?)")
+
+
+def cmd_poly(_a):
+    """Print Polymarket 15m Up/Down BBO next to Kalshi YES/NO. Read-only."""
+    from .client import KalshiClient
+    from .poly import POLY_ASSETS, PolymarketFeed, poly_favorite
+    from .universe import LIVE_SERIES
+
+    feed = PolymarketFeed()
+    c = KalshiClient("prod")
+    inv = {asset: ticker for ticker, asset in LIVE_SERIES.items()}
+    rows = []
+    for asset in POLY_ASSETS:
+        rec = {"asset": asset}
+        q = feed.quote(asset)
+        if q:
+            rec["poly"] = {
+                "slug": q.slug,
+                "up": [q.up_bid, q.up_ask],
+                "down": [q.down_bid, q.down_ask],
+                "favorite": poly_favorite(q),
+            }
+        series = inv.get(asset)
+        m = c.open_market_for_series(series) if series else None
+        if m:
+            kq = c.get_quote(m["ticker"])
+            yes_bid = float(kq.yes_bid) if kq.yes_bid is not None else None
+            yes_ask = float(kq.yes_ask) if kq.yes_ask is not None else None
+            k_fav = None
+            if yes_ask is not None and yes_ask >= 0.55:
+                k_fav = "yes"
+            no_px = (1.0 - yes_bid) if yes_bid is not None else None
+            if no_px is not None and no_px >= 0.55:
+                if k_fav is None or no_px > (yes_ask or 0):
+                    k_fav = "no"
+            rec["kalshi"] = {
+                "ticker": m["ticker"],
+                "K": m.get("floor_strike"),
+                "yes": [yes_bid, yes_ask],
+                "favorite": k_fav,
+            }
+            rec["agree"] = (
+                rec.get("poly", {}).get("favorite") == rec["kalshi"]["favorite"]
+                if rec.get("poly") and rec["kalshi"]["favorite"] else None)
+        rows.append(rec)
+    print(json.dumps(rows, indent=1))
+
+
+def cmd_poly_compare(_a):
+    from .poly import compare_snapshot
+    print(json.dumps(compare_snapshot(), indent=1))
 
 
 def main():
@@ -397,6 +476,8 @@ def main():
     sp.add_argument("--live", action="store_true",
                     help="send real prod orders (also requires KALSHI_LIVE=1 + prod key)")
     sp.add_argument("--log-decisions", action="store_true")
+    sp.add_argument("--state-prefix", default="kalshi_paper",
+                    help="state/ log file prefix. poly paper uses kalshi_poly_paper")
     add_params(sp)
     sp.set_defaults(fn=cmd_paper)
 
@@ -409,6 +490,7 @@ def main():
     sp.add_argument("--no-maker", action="store_true")
     sp.add_argument("--live", action="store_true")
     sp.add_argument("--log-decisions", action="store_true")
+    sp.add_argument("--state-prefix", default="kalshi_paper")
     add_params(sp)
     sp.set_defaults(fn=cmd_agent)
 
@@ -433,6 +515,12 @@ def main():
 
     sp = sub.add_parser("heartbeat")
     sp.set_defaults(fn=cmd_heartbeat)
+
+    sp = sub.add_parser("poly")
+    sp.set_defaults(fn=cmd_poly)
+
+    sp = sub.add_parser("poly-compare")
+    sp.set_defaults(fn=cmd_poly_compare)
 
     a = ap.parse_args()
     a.fn(a)

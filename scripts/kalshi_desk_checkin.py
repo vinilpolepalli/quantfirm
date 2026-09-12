@@ -25,7 +25,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 
 from quantfirm.kalshi.runtime import (  # noqa: E402
-    TRADES_PATH, ensure_supervisor, write_desk_status,
+    TRADES_PATH, ensure_poly_paper, ensure_supervisor, write_desk_status,
 )
 
 MARK = os.path.join(REPO, "state", "kalshi_checkin_mark.json")
@@ -33,6 +33,7 @@ LOGDOC = os.path.join(REPO, "research", "kalshi_backtest.md")
 COMMIT_PATHS = (
     "state/kalshi_desk_status.json",
     "state/kalshi_paper_trades.csv",
+    "state/kalshi_poly_paper_trades.csv",
     "state/kalshi_checkin_mark.json",
     "research/kalshi_backtest.md",
 )
@@ -70,7 +71,7 @@ def stats(rows, adapter):
 
 
 def main():
-    status = [ensure_supervisor()]
+    status = [ensure_supervisor(), ensure_poly_paper()]
     rec = write_desk_status(supervisor=status[0])
     rows = load_trades()
     mark = {"n_settled": 0, "t_history": []}
@@ -121,6 +122,28 @@ def main():
     if sh_:
         status.append(f"taker n={sh_['n']} pnl=${sh_['pnl']:+.2f}")
     status.append(f"open={rec['n_open']} cash_shadow={rec['cash'].get('shadow')}")
+    pp = rec.get("poly_paper") or {}
+    live_c = pp.get("live_crypto") or {}
+    poly_c = pp.get("poly_paper") or {}
+    status.append(
+        f"poly_loop={rec.get('poly_paper_loop')} "
+        f"live_crypto n={live_c.get('n')} pnl=${live_c.get('pnl')} "
+        f"poly_paper n={poly_c.get('n')} pnl=${poly_c.get('pnl')}"
+        + (" AHEAD" if pp.get("poly_ahead") else "")
+        + (" READY" if pp.get("ready") else "")
+    )
+    try:
+        from quantfirm.kalshi.poly import snapshot
+        snap = snapshot()
+        bits = []
+        for asset, d in snap.items():
+            if not d.get("ok"):
+                continue
+            bits.append(f"{asset} {d.get('favorite')} up={d['up']}")
+        if bits:
+            status.append("poly " + "; ".join(bits))
+    except Exception:
+        pass
 
     existing = [p for p in COMMIT_PATHS if os.path.exists(os.path.join(REPO, p))]
     if existing:
