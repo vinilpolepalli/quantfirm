@@ -148,6 +148,7 @@ class PaperEngine:
         self.state.d["metals"] = list(metals)
         if strategy:
             self.state.d["strategy"] = strategy
+        self.state.d["live"] = self.use_live
         self.state.save()
         self._last_1m: dict[str, tuple[int, float]] = {}
         self._mkt_cache: dict[str, dict] = {}

@@ -29,6 +29,19 @@ DECISIONS="state/kalshi_paper_decisions.jsonl"
 STALE_S="${STALE_S:-300}"   # engine must log a decision at least this often
 DARK_SLEEP_S="${DARK_SLEEP_S:-90}"
 
+# Gitignored local switch (KALSHI_LIVE=1). Secrets stay in the process env.
+if [ -f .env.kalshi ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . ./.env.kalshi
+  set +a
+fi
+KALSHI_LIVE="${KALSHI_LIVE:-0}"
+LIVE_ARGS=()
+if [ "$KALSHI_LIVE" = "1" ] || [ "$KALSHI_LIVE" = "true" ]; then
+  LIVE_ARGS=(--live)
+fi
+
 mkdir -p state
 echo $$ > "$PIDFILE"
 trap 'rm -f "$PIDFILE"' EXIT
@@ -59,11 +72,12 @@ while true; do
     log "open windows=$n"
   fi
 
-  log "starting ${SESSION_MIN}min session strategy=${STRATEGY}"
+  log "starting ${SESSION_MIN}min session strategy=${STRATEGY} live=${KALSHI_LIVE}"
   timeout $(( SESSION_MIN * 60 + 300 )) \
     python3 -m quantfirm.kalshi.cli agent \
       --minutes "$SESSION_MIN" --no-demo --no-maker --log-decisions \
       --metals "$METALS" --strategy "$STRATEGY" --bankroll "$BANKROLL" \
+      "${LIVE_ARGS[@]}" \
     >> "$LOG" 2>&1 &
   engine_pid=$!
 

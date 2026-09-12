@@ -40,6 +40,32 @@ def _dec(v: Any) -> Decimal | None:
     return Decimal(str(v))
 
 
+def normalize_pem(raw: str) -> str:
+    """Cloud secret stores often flatten PEMs to one line.
+
+    Accepts real newlines, literal ``\\n``, or a single line with spaces
+    between the BEGIN/END banners. Does not log the body.
+    """
+    import re
+    s = (raw or "").strip().strip('"').strip("'")
+    if not s:
+        return s
+    s = s.replace("\r\n", "\n").replace("\r", "\n")
+    if "\\n" in s and "\n" not in s:
+        s = s.replace("\\n", "\n")
+    if "BEGIN" in s and "\n" not in s:
+        m = re.match(
+            r"^(-----BEGIN [^-]+-----)\s+(.+?)\s+(-----END [^-]+-----)$",
+            s,
+        )
+        if m:
+            header, body, footer = m.group(1), m.group(2), m.group(3)
+            body = "".join(body.split())
+            wrapped = "\n".join(body[i:i + 64] for i in range(0, len(body), 64))
+            s = f"{header}\n{wrapped}\n{footer}\n"
+    return s
+
+
 @dataclass
 class Quote:
     """Top of book for one binary market, YES-price terms."""
@@ -70,7 +96,7 @@ class KalshiClient:
         self.key_id = key_id or os.environ.get(
             "KALSHI_PROD_KEY_ID" if env == "prod" else "KALSHI_DEMO_KEY_ID")
         pem = private_key_pem or self._pem_from_env()
-        self._signer = _RsaSigner(pem) if pem else None
+        self._signer = _RsaSigner(normalize_pem(pem)) if pem else None
         self.s = requests.Session()
         self.s.headers["User-Agent"] = "quantfirm-kalshi/0.1"
 
@@ -78,11 +104,11 @@ class KalshiClient:
         var = "KALSHI_PROD_PRIVATE_KEY" if self.env == "prod" else "KALSHI_DEMO_PRIVATE_KEY"
         raw = os.environ.get(var)
         if raw:
-            return raw
+            return normalize_pem(raw)
         path = os.environ.get(var + "_PATH")
         if path and os.path.exists(path):
             with open(path) as f:
-                return f.read()
+                return normalize_pem(f.read())
         return None
 
     @property
@@ -229,7 +255,8 @@ class KalshiApiError(RuntimeError):
 class _RsaSigner:
     def __init__(self, pem: str):
         from cryptography.hazmat.primitives import serialization
-        self._key = serialization.load_pem_private_key(pem.encode(), password=None)
+        self._key = serialization.load_pem_private_key(
+            normalize_pem(pem).encode(), password=None)
 
     def sign(self, msg: str) -> str:
         from cryptography.hazmat.primitives import hashes

@@ -572,5 +572,36 @@ class TestMakerFillRealism(unittest.TestCase):
         self.assertTrue(filled)
 
 
+class TestPemNormalize(unittest.TestCase):
+    def test_one_line_rsa_pem_loads(self):
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        from quantfirm.kalshi.client import _RsaSigner, normalize_pem
+        key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        pem = key.private_bytes(
+            serialization.Encoding.PEM,
+            serialization.PrivateFormat.TraditionalOpenSSL,
+            serialization.NoEncryption(),
+        ).decode()
+        flat = " ".join(pem.split())
+        self.assertNotIn("\n", flat)
+        loaded = _RsaSigner(normalize_pem(flat))
+        self.assertIsNotNone(loaded._key)
+
+    def test_literal_backslash_n_pem_loads(self):
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        from quantfirm.kalshi.client import _RsaSigner, normalize_pem
+        key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        pem = key.private_bytes(
+            serialization.Encoding.PEM,
+            serialization.PrivateFormat.TraditionalOpenSSL,
+            serialization.NoEncryption(),
+        ).decode()
+        escaped = pem.replace("\n", "\\n")
+        loaded = _RsaSigner(normalize_pem(escaped))
+        self.assertIsNotNone(loaded._key)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

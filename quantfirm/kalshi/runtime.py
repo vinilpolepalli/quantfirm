@@ -50,7 +50,11 @@ def _tmux(*args: str) -> subprocess.CompletedProcess:
 
 
 def ensure_supervisor() -> str:
-    """Restart the 24/7 loop if the PID is dead. Prefer the existing tmux session."""
+    """Restart the 24/7 loop if the PID is dead.
+
+    Inherit this process environment so Cloud Agent secrets
+    (KALSHI_PROD_*) reach the loop. Do not ``tmux send-keys`` the PEM.
+    """
     if supervisor_alive():
         return "supervisor: alive"
     os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
@@ -60,17 +64,13 @@ def ensure_supervisor() -> str:
     env.setdefault("STRATEGY", PAPER_STRATEGY)
     env.setdefault("BANKROLL", str(int(BANKROLL)))
     env.setdefault("SESSION_MIN", "110")
-    if _tmux("has-session", "-t", f"={TMUX_SESSION}").returncode == 0:
-        _tmux("send-keys", "-t", f"{TMUX_SESSION}:0.0",
-              f"cd {REPO} && ./scripts/kalshi_paper_loop.sh", "C-m")
-        return "supervisor: WAS DEAD -> restarted in existing tmux"
-    if _tmux("new-session", "-d", "-s", TMUX_SESSION, "-c", REPO,
-             "--", "/bin/bash", "-lc", f"cd {REPO} && ./scripts/kalshi_paper_loop.sh").returncode == 0:
-        return "supervisor: WAS DEAD -> started tmux kalshi-desk"
+    log_path = os.path.join(REPO, "state", "kalshi_paper_loop.log")
+    log_f = open(log_path, "a")
     subprocess.Popen(
-        f"setsid nohup {LOOP} >/dev/null 2>&1",
-        shell=True, cwd=REPO, start_new_session=True, env=env)
-    return "supervisor: WAS DEAD -> restarted (nohup)"
+        ["/bin/bash", LOOP],
+        cwd=REPO, start_new_session=True, env=env,
+        stdout=log_f, stderr=subprocess.STDOUT)
+    return "supervisor: WAS DEAD -> restarted (inherited env)"
 
 
 def count_open_markets(client=None) -> int:
@@ -105,7 +105,8 @@ def write_desk_status(supervisor: str | None = None,
         "strategy": state.get("strategy") or os.environ.get("STRATEGY", PAPER_STRATEGY),
         "universe": list(state.get("metals") or PAPER_ASSETS),
         "bankroll": BANKROLL,
-        "live": os.environ.get("KALSHI_LIVE") == "1",
+        "live": bool(state.get("live")) or os.environ.get("KALSHI_LIVE") in (
+            "1", "true", "TRUE", "yes"),
         "kill_switch": kill_switch_tripped(),
         "supervisor": supervisor or ("alive" if supervisor_alive() else "down"),
         "cash": state.get("cash") or {},
