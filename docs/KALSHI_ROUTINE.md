@@ -1,11 +1,11 @@
 # 24/7 Kalshi 15-minute desk — routines
 
 The book is `rich_fav` on **gold, silver, copper, WTI, natgas**.
-Paper bankroll $250. Sit out 50/50 books; take the first 88–94¢ favorite
-(no spot-agree gate) from 11 minutes left **until close**. **8% stake cap**
-(half-Kelly). Skip 93–94¢ when the quadratic fee eats ≥15% of the win
-(that is what keeps 99¢ last ticks out — not a time gate). Maker quotes
-off. BTC/ETH are harvested for research but not in this paper book.
+Paper bankroll $250. Sit out 50/50 books and 99¢ locks; take the first
+**≥60¢** favorite (no spot-agree gate) from window open **until close**.
+**8% stake cap** (half-Kelly). Skip when the quadratic fee eats ≥15% of
+the win (that is what keeps 99¢ last ticks out — not a time gate). Maker
+quotes off. BTC/ETH are harvested for research but not in this paper book.
 `yolo_book` / `nuke_lock` / `longshot` stay registered and off this loop.
 
 Live canary is **on** 24/7 in this environment (`KALSHI_LIVE=1` in gitignored
@@ -29,7 +29,7 @@ python scripts/kalshi_desk_checkin.py
 ## 2. Cursor Cloud timer
 
 Fires at `:13/:28/:43/:58` UTC (supervisor heal). Does not start a
-second agent. The engine itself trades whenever an 88–94¢ favorite is up, including
+second agent. The engine itself trades whenever a ≥60¢ favorite is up, including
 the last seconds of the window. Do not start a second agent.
 
 ## 3. Claude Routine (no VPS)
@@ -51,7 +51,7 @@ Bankroll $250. Strategy: rich_fav at 8% stake. Universe: gold,silver,copper,wti,
    Heal with checkin only. Do NOT start a second agent.
 5. Keep live on if `.env.kalshi` has KALSHI_LIVE=1. Do not unset it.
    Do not switch back to 4% or to yolo_book. Do not re-add a last-3-min
-   sit-out. 88–94¢ can fill until close.
+   sit-out. ≥60¢ can fill from open until close.
 6. Reply with: open windows, fills this window, shadow + live cash, realized,
    strategy name, universe, any halt.
 

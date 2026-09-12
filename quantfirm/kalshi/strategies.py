@@ -108,28 +108,41 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 
     No model. Tests whether Whelan's favorite-longshot bias exists on
     15-minute commodities after the quadratic taker fee.
+
+    Sit out only bad evidence: coin-flip (side < price_min), longshot /
+    99¢ locks (price_max + fee-eat), empty or inverted book. One-sided
+    and wide books still clip — requiring a two-sided 5¢ 88–94¢ band
+    sat out whole windows that had a 60–90¢ favorite (03:45Z WTI ~70¢).
+    If the richer side is fee-eat, fall through to the other favorite.
     """
-    g = _gates(ts, close_ts, yes_bid, yes_ask, open_positions, params, recent_volume)
-    if g is None:
+    tau_s = close_ts - ts
+    if not (params.tau_min_s <= tau_s <= params.tau_max_s):
         return None
-    tau_s, _ = g
+    if open_positions >= params.max_open:
+        return None
+    if params.blackout(ts):
+        return None
+    if recent_volume is not None and recent_volume < params.min_recent_volume:
+        return None
+    if yes_bid is None and yes_ask is None:
+        return None
+    if (yes_bid is not None and yes_ask is not None and yes_ask < yes_bid):
+        return None
     cands = []
-    if params.price_min <= yes_ask <= params.price_max:
-        q = min(0.97, yes_ask + 0.03)  # assumed 3pp FLB, not a forecast
-        edge = q - yes_ask - taker_fee(1, yes_ask)
-        cands.append(("yes", yes_ask, q, edge, yes_ask))
-    no_px = 1.0 - yes_bid
-    if params.price_min <= no_px <= params.price_max:
-        q = min(0.97, no_px + 0.03)
-        edge = q - no_px - taker_fee(1, no_px)
-        cands.append(("no", no_px, q, edge, 1.0 - no_px))
+    if yes_ask is not None and params.price_min <= yes_ask <= params.price_max:
+        if not _fee_eats_payout(yes_ask):
+            q = min(0.97, yes_ask + 0.03)  # assumed 3pp FLB, not a forecast
+            edge = q - yes_ask - taker_fee(1, yes_ask)
+            cands.append(("yes", yes_ask, q, edge, yes_ask))
+    no_px = (1.0 - yes_bid) if yes_bid is not None else None
+    if no_px is not None and params.price_min <= no_px <= params.price_max:
+        if not _fee_eats_payout(no_px):
+            q = min(0.97, no_px + 0.03)
+            edge = q - no_px - taker_fee(1, no_px)
+            cands.append(("no", no_px, q, edge, 1.0 - no_px))
     if not cands:
         return None
     side, cost, q, edge, fair = max(cands, key=lambda c: c[1])  # richer favorite
-    if cost < params.price_min:
-        return None
-    if _fee_eats_payout(cost):
-        return None
     return _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params,
                  "favorite", allow_min=True)
 
@@ -599,11 +612,12 @@ def registry() -> list[Spec]:
              "lag",
              "spot_lock sitting out 12:00-21:00 UTC (London/NY metals hours)"),
         Spec("rich_fav", favorite_blind,
-             _p(tau_min_s=0, tau_max_s=660, price_min=0.88, price_max=0.94,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=6, max_stake_frac=0.08, min_count=4,
-                max_spread=0.05, min_recent_volume=40.0, kelly_mult=0.5),
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
              "lag",
-             "FLB 88–92¢ after fee-eat, half-Kelly, 8% cap, until close"),
+             "FLB ≥60¢ until close; skip coin-flip / fee-eat; 8% half-Kelly"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

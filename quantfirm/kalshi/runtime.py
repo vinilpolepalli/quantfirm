@@ -74,12 +74,17 @@ def ensure_supervisor() -> str:
 
 
 def count_open_markets(client=None) -> int:
-    """How many live 15m commodity series have an open window right now."""
+    """How many paper-book 15m series have an open window right now.
+
+    BTC/ETH stay in LIVE_SERIES for harvest/status, but they must not
+    keep the supervisor spinning 110-minute sessions while gold/WTI
+    are dark (weekend: commodities close Sat 04:00Z, crypto does not).
+    """
     from .client import KalshiClient
-    from .universe import LIVE_SERIES
+    from .universe import SERIES
     c = client or KalshiClient("prod")
     n = 0
-    for series in LIVE_SERIES:
+    for series in SERIES:
         try:
             if c.open_market_for_series(series):
                 n += 1

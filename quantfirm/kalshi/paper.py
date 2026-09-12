@@ -369,27 +369,9 @@ class PaperEngine:
         now = int(time.time())
         allowed = self._entries_allowed()
         for metal in self.metals:
-            feed = self.feeds.get(metal)
-            px = feed.price() if feed is not None else None
-            if px is None:
-                fb = self._fallback.get(metal)
-                px = fb.price() if fb is not None else None
-            if px is None:
+            series = SERIES.get(metal)
+            if not series:
                 continue
-            ts_px, s_now = px
-            if now - ts_px > self.params.signal_max_age_s:
-                continue
-            # update 1-min vol clock from the feed
-            lm = self._last_1m.get(metal)
-            minute = now - now % 60
-            if lm is None:
-                self._last_1m[metal] = (minute, s_now)
-            elif minute > lm[0]:
-                if s_now > 0 and lm[1] > 0:
-                    self.vol[metal].update(minute, math.log(s_now / lm[1]))
-                self._last_1m[metal] = (minute, s_now)
-
-            series = SERIES[metal]
             m = self.current_market(series)
             if not m or m.get("floor_strike") is None:
                 continue
@@ -397,6 +379,34 @@ class PaperEngine:
             if not (open_ts <= now < close_ts):
                 continue
             tkr = m["ticker"]
+            k = float(m["floor_strike"])
+
+            feed = self.feeds.get(metal)
+            px = feed.price() if feed is not None else None
+            if px is None:
+                fb = self._fallback.get(metal)
+                px = fb.price() if fb is not None else None
+            ts_px, s_now = (px if px is not None else (None, None))
+            age_lim = self.params.signal_max_age_s
+            # signal_max_age_s <= 0: FLB does not need S. Do not sit out
+            # a 70¢ favorite because live_data is empty at window open.
+            spot_fresh = (
+                s_now is not None
+                and (age_lim <= 0 or now - ts_px <= age_lim)
+            )
+            if not spot_fresh:
+                if age_lim > 0:
+                    continue
+                s_now = k
+            else:
+                lm = self._last_1m.get(metal)
+                minute = now - now % 60
+                if lm is None:
+                    self._last_1m[metal] = (minute, s_now)
+                elif minute > lm[0]:
+                    if s_now > 0 and lm[1] > 0:
+                        self.vol[metal].update(minute, math.log(s_now / lm[1]))
+                    self._last_1m[metal] = (minute, s_now)
             # per-adapter dedupe: a maker or demo fill must NOT silence the
             # shadow taker record for the rest of the window (review finding).
             shadow_here = any(p.ticker == tkr and p.adapter == "shadow"
@@ -408,7 +418,6 @@ class PaperEngine:
             bid = float(q.yes_bid) if q.yes_bid is not None else None
             ask = float(q.yes_ask) if q.yes_ask is not None else None
             sigma = self.vol[metal].sigma_1m(now)
-            k = float(m["floor_strike"])
             # 3-min regime lookback from the sample history
             from .fair import fair_yes
             fair_now = fair_yes(s_now, k, sigma, (close_ts - now) / 60.0)
