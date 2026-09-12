@@ -59,6 +59,7 @@ BTC and ETH: 4% of the book each (~$9–10) ≥60¢ until close so every real-fa
 5. Keep live on if `.env.kalshi` has KALSHI_LIVE=1. Do not unset it.
    Do not switch commodities back to 4% or to yolo_book.
    Do not last-minute lock crypto. Do not re-add a last-2-min sit-out.
+   Do not switch to poly_confirm. Polymarket is a logged second tape only.
 6. Reply with: open windows, fills this window, shadow + live cash, realized,
    strategy name, universe, any halt.
 
