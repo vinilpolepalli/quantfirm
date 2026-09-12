@@ -118,3 +118,7 @@ settled_at,adapter,ticker,metal,side,count,fill_price,fee,fair_at_entry,result,p
 2026-09-12T18:01:00Z,live,KXBTC15M-26SEP121400-00,btc,no,15,0.75,0.1965,0.25,no,3.5535,crypto_fav,283.81
 2026-09-12T18:01:00Z,shadow,KXETH15M-26SEP121400-00,eth,no,13,0.83,0.13,0.17,no,2.08,crypto_fav,271.63
 2026-09-12T18:01:00Z,live,KXETH15M-26SEP121400-00,eth,no,13,0.83,0.1274,0.17,no,2.0826,crypto_fav,296.81
+2026-09-12T18:16:00Z,shadow,KXETH15M-26SEP121415-15,eth,no,15,0.76,0.2,0.24,no,3.4,crypto_fav,264.34
+2026-09-12T18:16:00Z,live,KXETH15M-26SEP121415-15,eth,no,15,0.76,0.1905,0.24,no,3.4095,crypto_fav,289.53
+2026-09-12T18:16:00Z,shadow,KXBTC15M-26SEP121415-15,btc,no,14,0.75,0.19,0.25,no,3.31,crypto_fav,278.34
+2026-09-12T18:16:00Z,live,KXBTC15M-26SEP121415-15,btc,no,14,0.75,0.1834,0.25,no,3.3166,crypto_fav,303.53
