@@ -20,8 +20,8 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 SESSION_MIN="${SESSION_MIN:-110}"
-METALS="${METALS:-gold,silver,copper,wti,natgas,btc,eth}"
-STRATEGY="${STRATEGY:-one_pct}"
+METALS="${METALS:-gold,silver,copper,wti,natgas}"
+STRATEGY="${STRATEGY:-spot_lock}"
 BANKROLL="${BANKROLL:-250}"
 LOG="${LOG:-state/kalshi_paper_loop.log}"
 PIDFILE="${PIDFILE:-state/kalshi_paper_loop.pid}"

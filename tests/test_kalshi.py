@@ -11,8 +11,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
                                    kelly_fraction, norm_cdf, taker_fee)
-from quantfirm.kalshi.strategies import (favorite_blind, late_lock, one_pct,
-                                         registry)
+from quantfirm.kalshi.strategies import (favorite_blind, late_lock, model_fav,
+                                         one_pct, registry)
 from quantfirm.kalshi.strategy import Params, decide
 from quantfirm.kalshi.universe import BANKROLL, PAPER_ASSETS, SERIES
 
@@ -151,7 +151,8 @@ class TestNewStrategies(unittest.TestCase):
     def test_registry_has_controls_and_candidates(self):
         names = {s.name for s in registry()}
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
-                  "favorite_blind", "open_fade"):
+                  "favorite_blind", "open_fade", "spot_lock", "mid_lock",
+                  "rich_fav", "model_fav"):
             self.assertIn(n, names)
 
     def test_universe_covers_wti(self):
@@ -167,11 +168,49 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(spec.params.max_open, 5)
         self.assertEqual(spec.params.max_stake_frac, 0.04)
 
-    def test_one_pct_is_live_book(self):
+    def test_one_pct_is_last_minute_trial(self):
         spec = next(s for s in registry() if s.name == "one_pct")
         self.assertEqual(spec.params.price_min, 0.90)
         self.assertLessEqual(spec.params.tau_max_s, 90)
         self.assertGreaterEqual(spec.params.max_open, 6)
+
+    def test_spot_lock_is_live_book(self):
+        spec = next(s for s in registry() if s.name == "spot_lock")
+        self.assertEqual(spec.params.price_min, 0.88)
+        self.assertGreaterEqual(spec.params.tau_min_s, 180)
+        self.assertGreaterEqual(spec.params.tau_max_s, 600)
+
+    def test_spot_lock_is_mid_window_not_last_tick(self):
+        spec = next(s for s in registry() if s.name == "spot_lock")
+        self.assertGreaterEqual(spec.params.tau_min_s, 120)
+        self.assertGreaterEqual(spec.params.tau_max_s, 600)
+        self.assertEqual(spec.params.price_min, 0.88)
+        self.assertLessEqual(spec.params.price_max, 0.94)
+        from dataclasses import replace
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 240, s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, yes_bid=0.90, yes_ask=0.91, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        it = one_pct(**kw)
+        self.assertIsNotNone(it)
+        self.assertEqual(it.side, "yes")
+        it_last = one_pct(**{**kw, "ts": close - 30})
+        self.assertIsNone(it_last)
+
+    def test_model_fav_skips_cheap_certain(self):
+        from dataclasses import replace
+        p = next(s for s in registry() if s.name == "model_fav").params
+        p = replace(p, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 180, s=100.5, k=100.0, sigma_1m=0.0003,
+                  close_ts=close, yes_bid=0.88, yes_ask=0.90, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        it = model_fav(**kw)
+        self.assertIsNotNone(it)
+        self.assertEqual(it.side, "yes")
+        cheap = model_fav(**{**kw, "yes_bid": 0.20, "yes_ask": 0.25})
+        self.assertIsNone(cheap)
 
     def test_one_pct_takes_last_minute_lock(self):
         from dataclasses import replace

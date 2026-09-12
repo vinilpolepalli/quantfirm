@@ -220,6 +220,35 @@ def late_lock(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     return None
 
 
+def model_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+              bankroll, open_positions, params, recent_volume=None, **_):
+    """late_lock that refuses cheap books.
+
+    Train autopsy (n=11): the losers were 22–70¢ fills where the GBM was
+    'certain' — same winner's-curse as oracle_lag. Require the *book* to
+    already be an 80–94¢ favorite so we are not lifting a stale longshot.
+    """
+    g = _gates(ts, close_ts, yes_bid, yes_ask, open_positions, params, recent_volume)
+    if g is None:
+        return None
+    tau_s, _ = g
+    fair = fair_yes(s, k, sigma_1m, tau_s / 60.0)
+    fair = min(max(fair, params.prob_clamp), 1.0 - params.prob_clamp)
+    if (fair >= 0.88 and params.price_min <= yes_ask <= params.price_max):
+        edge = fair - yes_ask - taker_fee(1, yes_ask)
+        if edge >= params.theta:
+            return _size(ticker, "yes", yes_ask, fair, edge, fair, tau_s,
+                         bankroll, params, "model_fav", allow_min=True)
+    no_px = 1.0 - yes_bid
+    if (fair <= 0.12 and params.price_min <= no_px <= params.price_max):
+        q = 1.0 - fair
+        edge = q - no_px - taker_fee(1, no_px)
+        if edge >= params.theta:
+            return _size(ticker, "no", no_px, q, edge, fair, tau_s,
+                         bankroll, params, "model_fav", allow_min=True)
+    return None
+
+
 def open_fade(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               bankroll, open_positions, params, recent_volume=None,
               f_now=None, f_open=None, open_ts=None, **_):
@@ -431,6 +460,33 @@ def registry() -> list[Spec]:
                 max_spread=0.04, min_recent_volume=40.0),
              "lag",
              "Last 90s ≥90c lock, ~1% of bankroll on a win; BTC/ETH included"),
+        # Train-only scan (2026-09-12): tau=60 locks are ~99% raced_out.
+        # Positive lag-EV cells were 88–94¢ favorites with 3–10 minutes left.
+        # These three freeze that finding. Do not add more rows from test.
+        Spec("mid_lock", one_pct,
+             _p(tau_min_s=180, tau_max_s=300, price_min=0.88, price_max=0.94,
+                theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
+                max_spread=0.04, min_recent_volume=40.0),
+             "lag",
+             "Spot-agree 88–94¢ lock, 3–5 min left (REST-fillable vs last 90s)"),
+        Spec("spot_lock", one_pct,
+             _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
+                theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
+                max_spread=0.04, min_recent_volume=40.0),
+             "lag",
+             "Spot-agree 88–94¢ lock, first chance from 11 min to 3 min left"),
+        Spec("rich_fav", favorite_blind,
+             _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
+                theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
+                max_spread=0.05, min_recent_volume=40.0),
+             "lag",
+             "FLB 88–94¢, no spot gate, 3–11 min left"),
+        Spec("model_fav", model_fav,
+             _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
+                price_max=0.94, max_spread=0.06, max_open=6,
+                max_stake_frac=0.04, min_count=4, min_recent_volume=40.0),
+             "lag",
+             "GBM ≥88¢ AND book already 80–94¢, last 6 min; skip cheap 'certain'"),
         Spec("favorite_confirmed", favorite_confirmed,
              _p(tau_min_s=180, tau_max_s=720, price_min=0.68, price_max=0.94,
                 theta=0.0),

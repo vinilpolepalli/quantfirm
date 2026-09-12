@@ -56,8 +56,8 @@ def ensure_supervisor() -> str:
     os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
     os.chmod(LOOP, 0o755)
     env = os.environ.copy()
-    env.setdefault("METALS", ",".join(PAPER_ASSETS))
-    env.setdefault("STRATEGY", "one_pct")
+    env.setdefault("METALS", "gold,silver,copper,wti,natgas")
+    env.setdefault("STRATEGY", "spot_lock")
     env.setdefault("BANKROLL", str(int(BANKROLL)))
     env.setdefault("SESSION_MIN", "110")
     if _tmux("has-session", "-t", f"={TMUX_SESSION}").returncode == 0:
@@ -102,7 +102,7 @@ def write_desk_status(supervisor: str | None = None,
     open_pos = state.get("open") or []
     rec = {
         "ts": _now(),
-        "strategy": os.environ.get("STRATEGY", "one_pct"),
+        "strategy": os.environ.get("STRATEGY", "spot_lock"),
         "universe": list(PAPER_ASSETS),
         "bankroll": BANKROLL,
         "live": os.environ.get("KALSHI_LIVE") == "1",

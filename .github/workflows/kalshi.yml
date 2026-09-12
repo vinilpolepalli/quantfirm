@@ -1,16 +1,13 @@
 name: kalshi-15m-desk
 # Backstop tick. GitHub-hosted minutes cannot poll every 2 seconds (that
 # would blow the 2,000 min/month budget). Four times an hour this job
-# wakes, sits through the last 90 seconds of the *current* 15-minute
-# window (when one_pct actually trades), writes the heartbeat, and exits.
+# wakes around minute 5 of each 15-minute window (when spot_lock first
+# fires: 88–94¢, 3–11 min left), writes the heartbeat, and exits.
 #
 # Primary 24/7 loop: scripts/kalshi_paper_loop.sh on a persistent host
-# (this cloud box, a VPS, or a Cursor/Claude 15-minute timer — see
+# (this cloud box, a VPS, or a Cursor 15-minute timer — see
 # docs/KALSHI_ROUTINE.md). Scheduled workflows run only on main, so this
 # job starts after the desk PR merges.
-#
-# Keep the job short: ~90s of trading + pip cache. 96 * ~2 min ≈ the
-# whole free budget — do not lengthen the agent step.
 #
 # Secrets (optional; shadow paper works without them):
 #   KALSHI_PROD_KEY_ID, KALSHI_PROD_PRIVATE_KEY
@@ -18,7 +15,7 @@ name: kalshi-15m-desk
 
 on:
   schedule:
-    - cron: '13,28,43,58 * * * *'
+    - cron: '5,20,35,50 * * * *'
   workflow_dispatch: {}
 
 concurrency:
@@ -51,8 +48,8 @@ jobs:
           python -m quantfirm.kalshi.cli status || true
           python -m quantfirm.kalshi.cli agent \
             --minutes 1.5 --poll 2 --no-demo --no-maker --log-decisions \
-            --strategy one_pct --bankroll 250 \
-            --metals gold,silver,copper,wti,natgas,btc,eth \
+            --strategy spot_lock --bankroll 250 \
+            --metals gold,silver,copper,wti,natgas \
             ${KALSHI_LIVE:+--live}
           python -m quantfirm.kalshi.cli heartbeat || true
       - name: Commit paper heartbeat
