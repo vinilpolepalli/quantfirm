@@ -213,6 +213,35 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         bankroll, open_positions, params, recent_volume=recent_volume, **kw)
 
 
+def poly_confirm(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                  bankroll, open_positions, params, recent_volume=None,
+                  metal=None, poly_yes_bid=None, poly_yes_ask=None,
+                  poly_down_ask=None, **kw):
+    """desk_book, but crypto sits when Polymarket's 15m Up/Down disagrees.
+
+    Missing Poly quote does not sit (feed outage ≠ a signal). Coin-flip
+    on Poly (both sides <55¢) sits. Off the live loop until the logged
+    basis is scored. Commodities have no Poly 15m book — pass through.
+    """
+    from .poly import PolyQuote, poly_favorite
+    it = desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        metal=metal, **kw)
+    if it is None or metal not in CRYPTO_LIVE:
+        return it
+    if poly_yes_bid is None and poly_yes_ask is None:
+        return it
+    q = PolyQuote(asset=str(metal), slug="", up_bid=poly_yes_bid,
+                   up_ask=poly_yes_ask, down_bid=None, down_ask=poly_down_ask,
+                   ts=float(ts))
+    side = poly_favorite(q, price_min=0.55)
+    if side is None or side != it.side:
+        return None
+    it.tag = "poly_confirm"
+    return it
+
+
 def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
                target_frac: float = 0.01) -> Intent | None:
     """Size so a *win* is about ``target_frac`` of bankroll, capped by stake.
@@ -698,6 +727,13 @@ def registry() -> list[Spec]:
                 signal_max_age_s=0),
              "lag",
              "Commodities 8% ≥60¢; BTC and ETH 4% each (~$10) ≥60¢ until close"),
+        Spec("poly_confirm", poly_confirm,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "desk_book + sit crypto when Polymarket 15m favorite disagrees"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

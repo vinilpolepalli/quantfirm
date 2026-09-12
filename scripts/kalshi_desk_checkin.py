@@ -121,6 +121,18 @@ def main():
     if sh_:
         status.append(f"taker n={sh_['n']} pnl=${sh_['pnl']:+.2f}")
     status.append(f"open={rec['n_open']} cash_shadow={rec['cash'].get('shadow')}")
+    try:
+        from quantfirm.kalshi.poly import snapshot
+        snap = snapshot()
+        bits = []
+        for asset, d in snap.items():
+            if not d.get("ok"):
+                continue
+            bits.append(f"{asset} {d.get('favorite')} up={d['up']}")
+        if bits:
+            status.append("poly " + "; ".join(bits))
+    except Exception:
+        pass
 
     existing = [p for p in COMMIT_PATHS if os.path.exists(os.path.join(REPO, p))]
     if existing:
