@@ -994,6 +994,75 @@ class TestPolymarketTape(unittest.TestCase):
             self.assertFalse(rec["ready"])
 
 
+class TestCashoutReplay(unittest.TestCase):
+    """Cash-out is scored off the live loop. Do not import it from paper.py."""
+
+    def test_yes_still_favorite_holds(self):
+        from quantfirm.kalshi.cashout import should_cash_out
+        self.assertFalse(should_cash_out("yes", 0.69, 0.70, metal="btc",
+                                           use_poly=False))
+
+    def test_yes_dead_exits(self):
+        from quantfirm.kalshi.cashout import should_cash_out
+        self.assertTrue(should_cash_out("yes", 0.44, 0.45, metal="btc",
+                                          use_poly=False))
+
+    def test_no_dead_when_yes_bid_fifty(self):
+        from quantfirm.kalshi.cashout import should_cash_out
+        self.assertTrue(should_cash_out("no", 0.50, 0.51, metal="eth",
+                                          use_poly=False))
+
+    def test_poly_disagree_crypto_exits(self):
+        from quantfirm.kalshi.cashout import should_cash_out
+        self.assertTrue(should_cash_out(
+            "yes", 0.69, 0.70, metal="btc", poly_yes_bid=0.28,
+            poly_yes_ask=0.30, poly_down_ask=0.71, use_poly=True))
+
+    def test_missing_poly_does_not_exit(self):
+        from quantfirm.kalshi.cashout import should_cash_out
+        self.assertFalse(should_cash_out("yes", 0.69, 0.70, metal="btc",
+                                           use_poly=True))
+
+    def test_gold_ignores_poly(self):
+        from quantfirm.kalshi.cashout import should_cash_out
+        self.assertFalse(should_cash_out(
+            "yes", 0.69, 0.70, metal="gold", poly_yes_bid=0.28,
+            poly_yes_ask=0.30, poly_down_ask=0.71, use_poly=True))
+
+    def test_min_hold_skips_immediate_flicker(self):
+        from quantfirm.kalshi.cashout import replay_one
+        fill = {"ticker": "T", "side": "yes", "metal": "btc",
+                "fill_ts": 1_000_000, "count": 10, "fill_price": 0.70,
+                "hold_pnl": -7.2, "filled_at": "x"}
+        too_soon = {"ticker": "T", "ts": 1_000_005, "bid": 0.40, "ask": 0.41}
+        later = {"ticker": "T", "ts": 1_000_020, "bid": 0.40, "ask": 0.41}
+        skipped = replay_one(fill, [too_soon], use_poly=False)
+        self.assertFalse(skipped["exited"])
+        hit = replay_one(fill, [too_soon, later], use_poly=False)
+        self.assertTrue(hit["exited"])
+        self.assertEqual(hit["reason"], "kalshi_dead")
+        self.assertEqual(hit["exit_px"], 0.40)
+
+    def test_exit_pnl_sells_at_bid_minus_two_fees(self):
+        from quantfirm.kalshi.cashout import exit_pnl
+        from quantfirm.kalshi.fair import taker_fee
+        pnl = exit_pnl(10, 0.70, 0.40)
+        expected = 10 * 0.40 - taker_fee(10, 0.40) - 10 * 0.70 - taker_fee(10, 0.70)
+        self.assertAlmostEqual(pnl, expected)
+
+    def test_paper_tick_does_not_cash_out(self):
+        from quantfirm.kalshi.paper import PaperEngine
+        src = inspect.getsource(PaperEngine.tick)
+        self.assertNotIn("cash_out", src)
+        self.assertNotIn("cashout", src)
+        self.assertNotIn("should_cash_out", src)
+        paper_path = os.path.join(os.path.dirname(__file__),
+                                   "..", "quantfirm", "kalshi", "paper.py")
+        with open(paper_path) as f:
+            body = f.read()
+        self.assertNotIn("kalshi.cashout", body)
+        self.assertNotIn("should_cash_out", body)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

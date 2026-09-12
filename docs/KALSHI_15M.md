@@ -218,6 +218,15 @@ python -m quantfirm.kalshi.cli poly
 python -m quantfirm.kalshi.cli poly-compare
 ```
 
+## Cash-out (replay only)
+
+Selling when the ≥60¢ favorite dies is scored in
+`python -m quantfirm.kalshi.cli cashout-replay` against today's live
+fills. It is **not** wired into `PaperEngine.tick` and must not ride
+the next 110-min bounce. 2026-09-12 tape (n=30, hold **+$9.64**):
+Kalshi-only 60¢ exits **−$39.80** (14 winners cut, 8 losers saved).
+Poly-on-exit is worse. Numbers: `research/kalshi_cashout.md`.
+
 ## Live signal
 
 `GET /trade-api/v2/live_data/events/{event_ticker}` returns a 1-second
@@ -269,6 +278,7 @@ python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
     --strategy desk_book --bankroll 250 --log-decisions
 python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi, read-only
 python -m quantfirm.kalshi.cli poly-compare # live crypto vs poly_book paper
+python -m quantfirm.kalshi.cli cashout-replay --no-poly  # sell-if-dead vs hold
 ./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH
 ./scripts/kalshi_poly_paper_loop.sh   # paper-only Poly sleeve; never --live
 python scripts/kalshi_desk_checkin.py   # heal live + poly paper, commit heartbeat

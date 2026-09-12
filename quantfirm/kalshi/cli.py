@@ -9,6 +9,7 @@
   python -m quantfirm.kalshi.cli heartbeat
   python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi (read-only)
   python -m quantfirm.kalshi.cli poly-compare  # live crypto fills vs poly_book paper
+  python -m quantfirm.kalshi.cli cashout-replay  # sell-if-signal-dies vs hold (off live)
 """
 
 from __future__ import annotations
@@ -394,6 +395,16 @@ def cmd_poly_compare(_a):
     print(json.dumps(compare_snapshot(), indent=1))
 
 
+def cmd_cashout_replay(a):
+    """Replay sell-if-signal-dies vs hold-to-settle. Does not touch live."""
+    from .cashout import replay_snapshot
+
+    snap = replay_snapshot(
+        a.log, a.decisions, a.trades, use_poly=not a.no_poly,
+        price_min=a.price_min, min_hold_s=a.min_hold_s)
+    print(json.dumps(snap, indent=1))
+
+
 def main():
     ap = argparse.ArgumentParser(prog="quantfirm.kalshi")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -521,6 +532,19 @@ def main():
 
     sp = sub.add_parser("poly-compare")
     sp.set_defaults(fn=cmd_poly_compare)
+
+    sp = sub.add_parser(
+        "cashout-replay",
+        help="replay cash-out vs hold-to-settle (off the live loop)",
+    )
+    sp.add_argument("--log", default="state/kalshi_paper_loop.log")
+    sp.add_argument("--decisions", default="state/kalshi_paper_decisions.jsonl")
+    sp.add_argument("--trades", default="state/kalshi_paper_trades.csv")
+    sp.add_argument("--no-poly", action="store_true",
+                    help="Kalshi ≥60¢ favorite only; ignore Polymarket")
+    sp.add_argument("--price-min", type=float, default=0.60)
+    sp.add_argument("--min-hold-s", type=float, default=15)
+    sp.set_defaults(fn=cmd_cashout_replay)
 
     a = ap.parse_args()
     a.fn(a)
