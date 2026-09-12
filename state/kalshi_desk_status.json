@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T02:55:41Z",
+ "ts": "2026-09-12T03:05:37Z",
  "strategy": "rich_fav",
  "universe": [
   "gold",
@@ -9,7 +9,7 @@
   "natgas"
  ],
  "bankroll": 250.0,
- "live": false,
+ "live": true,
  "kill_switch": false,
  "supervisor": "supervisor: alive",
  "cash": {
@@ -27,6 +27,6 @@
  "n_open": 0,
  "open": [],
  "n_settled": 33,
- "updated": "2026-09-12T02:55:39Z",
+ "updated": "2026-09-12T03:05:36Z",
  "started": "2026-09-12T00:46:58Z"
 }
