@@ -1,25 +1,27 @@
 {
- "ts": "2026-09-12T02:12:14Z",
- "strategy": "rich_fav",
+ "ts": "2026-09-12T02:29:31Z",
+ "strategy": "yolo_book",
  "universe": [
   "gold",
   "silver",
   "copper",
   "wti",
-  "natgas"
+  "natgas",
+  "btc",
+  "eth"
  ],
  "bankroll": 250.0,
  "live": false,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 231.68199999999996,
+  "shadow": 198.36899999999997,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 250.0
  },
  "realized": {
-  "shadow": 10.101999999999997,
+  "shadow": 2.681999999999997,
   "demo": 0.0,
   "maker": 1.6499999999999968,
   "live": 0.0
@@ -28,30 +30,30 @@
  "open": [
   {
    "metal": "wti",
-   "side": "no",
-   "count": 11,
-   "ticker": "KXWTI15M-26SEP112215-15",
-   "fill_price": 0.88,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "silver",
    "side": "yes",
    "count": 11,
-   "ticker": "KXSILVER15M-26SEP112215-15",
-   "fill_price": 0.88,
+   "ticker": "KXWTI15M-26SEP112230-30",
+   "fill_price": 0.901,
    "adapter": "shadow"
   },
   {
    "metal": "gold",
    "side": "no",
-   "count": 10,
-   "ticker": "KXGOLD15M-26SEP112215-15",
+   "count": 11,
+   "ticker": "KXGOLD15M-26SEP112230-30",
    "fill_price": 0.88,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "eth",
+   "side": "yes",
+   "count": 36,
+   "ticker": "KXETH15M-26SEP112230-30",
+   "fill_price": 0.957,
    "adapter": "shadow"
   }
  ],
- "n_settled": 23,
- "updated": "2026-09-12T02:12:14Z",
+ "n_settled": 26,
+ "updated": "2026-09-12T02:29:29Z",
  "started": "2026-09-12T00:46:58Z"
 }
