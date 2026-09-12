@@ -54,6 +54,13 @@ every bar we tried (68 −$34, 75 −$47, 79 −$48).
 75¢ still does not make ETH on a crypto-only tape. Live weekdays mix
 commodities into the same book; that is why mixed-book 75¢ prints both.
 
+## BTC longer waits
+
+Sitting BTC 5–12 min (leave ETH at wait-3 + 75¢) **loses** vs live.
+3 min is the BTC peak; 10–12 min have no green bar. Numbers:
+`research/kalshi_btc_wait.md`. Sweep:
+`python3 scripts/kalshi_btc_wait_sweep.py`.
+
 ## What went live
 
 `desk_book` favorite bar **60¢ → 68¢ → 75¢**. Same 3 min wait, same
