@@ -65,11 +65,12 @@ CRYPTO_LIVE = ("btc", "eth")
 # halt.CORR_GROUPS (precious / energy). Crypto names are their own books.
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
 
-# Live canary on the 24/7 supervisor. Commodities: 8% FLB ≥60¢ from
-# window open until close. Crypto: 4% of the book **each** (~$9–10)
-# / ≥60¢ / until close so every real-favorite interval can clip. Sit out
-# coin-flips, longshots, and fee-eat (that is the 99¢ last-tick skip).
-# Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
+# Live canary on the 24/7 supervisor. Whole book waits the first 3
+# minutes of each 15m window. Commodities: 8% FLB ≥60¢ after that (no
+# Poly 15m book). BTC and ETH: 4% / ≥60¢ after the wait, sit if
+# Polymarket's 15m favorite disagrees. Sit out coin-flips, longshots,
+# and fee-eat (that is the 99¢ last-tick skip). Risky mixes stay
+# registered as yolo_* / nuke_lock and off this loop.
 PAPER_STRATEGY = "desk_book"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
