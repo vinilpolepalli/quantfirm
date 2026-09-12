@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
-"""Score OSS / overlay takers vs desk_book. Bar: BTC AND ETH both green.
+"""Score OSS / overlay takers vs desk_book.
+
+Bar: BTC n>0, ETH n>0, both P&Ls > 0. Names may disagree (BTC YES and
+ETH NO in the same window is allowed). This is not same-side agreement.
 
 Does not change the live loop. Fill model is lag. Bankroll $250.
+After 2026-09-12 the live desk_book bar is 68¢ after the 3 min wait, so
+desk_book and richer_wait match. The @60 rows in research/kalshi_oss.md
+are the prior live book.
 """
 from __future__ import annotations
 

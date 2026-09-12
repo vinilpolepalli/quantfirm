@@ -155,12 +155,12 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  "favorite", allow_min=True, fill_cap=fill_cap)
 
 
-# Open flicker: Kalshi often prints a ≥60¢ favorite in the first 2–3
-# minutes that later dies. 13:15Z 2026-09-12: live ETH NO at T+19s @ 61¢
-# lost −$8.77; live BTC NO at T+2:53 while Poly was Up. Sit the first 3
-# minutes of every 15m window on the live book (commodities + BTC + ETH).
-# Crypto then also requires Poly agreement when a quote is present.
-# No Poly 15m gold/WTI/natgas — commodities wait only.
+# Open flicker: a 60–64¢ favorite in the first 2–3 minutes often dies
+# (13:15Z ETH NO T+19s @ 61¢ −$8.77). Sit the first 3 minutes, then clip
+# ≥68¢ (both BTC and ETH lag-green; 60¢ is red on both names). First-3-min
+# clips even at 80–88¢ are worse than waiting (REST races the open lock).
+# Crypto also sits when Poly's ≥55¢ favorite disagrees. Missing Poly does
+# not sit. No Poly 15m gold/WTI/natgas — commodities wait + 68¢ only.
 OPEN_WAIT_S = 180
 CRYPTO_OPEN_WAIT_S = OPEN_WAIT_S
 BTC_OPEN_WAIT_S = OPEN_WAIT_S
@@ -169,15 +169,15 @@ BTC_OPEN_WAIT_S = OPEN_WAIT_S
 def crypto_params(base: Params) -> Params:
     """Chill crypto overlay: clip every window that has a real favorite.
 
-    Same FLB bar as commodities (≥60¢). Stake is 4% of the book
+    Same FLB bar as commodities (≥68¢). Stake is 4% of the book
     (~$9–10) **per name** — BTC and ETH are independent, not a split
     of one 4% budget. Quarter-Kelly of a 3pp assumed edge was collapsing
-    72¢ clips to 4 lots (~$3). Coin-flips (50–58¢) and weekend
+    72¢ clips to 4 lots (~$3). Coin-flips (50–66¢) and weekend
     longshots still sit. 93¢+ stay out via fee-eat / price_max.
     """
     return replace(
         base,
-        price_min=0.60,
+        price_min=0.68,
         price_max=0.92,
         max_stake_frac=0.04,
         kelly_mult=0.25,
@@ -220,11 +220,11 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               tau_min_ov=None, skip_eth=False, **kw):
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
-    Whole book waits the first 3 minutes. Commodities: 8% / ≥60¢ after
-    that (no Poly 15m book). BTC and ETH: 4% / ≥60¢ after the wait, and
-    sit when Polymarket's 15m favorite disagrees. Missing Poly does not
-    sit (feed outage ≠ a signal). Fee-eat still skips 93¢+ last ticks;
-    coin-flips sit.
+    Whole book waits the first 3 minutes. Commodities: 8% / ≥68¢ after
+    that (no Poly 15m book). BTC and ETH: 4% / ≥68¢ after the wait, and
+    sit when Polymarket's 15m favorite disagrees. Names are independent:
+    BTC YES and ETH NO in the same window is allowed. Missing Poly does
+    not sit. Fee-eat still skips 93¢+ last ticks; 60–66¢ sits.
     """
     if skip_eth and metal == "eth":
         return None
@@ -309,7 +309,7 @@ def late_sit_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 
 def richer_wait(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  bankroll, open_positions, params, recent_volume=None, **kw):
-    """desk_book wait, but the favorite bar is 68¢ (Whelan richer band)."""
+    """Named alias for wait + 68¢. That is now the live desk_book bar."""
     return desk_book(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         bankroll, open_positions, params, recent_volume=recent_volume,
@@ -393,9 +393,9 @@ def _book_favorite(yes_bid, yes_ask, price_min: float = 0.60) -> str | None:
 def same_side_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                     bankroll, open_positions, params, recent_volume=None,
                     metal=None, peer_yes_bid=None, peer_yes_ask=None, **kw):
-    """desk_book, but BTC and ETH only when the other name's ≥60¢ favorite
-    is the same side. Disagreement sits both. Missing peer sits crypto.
-    Commodities pass through.
+    """Rejected reading of "win on both". Live wants each name's P&L,
+    not side agreement — BTC YES and ETH NO in one window is allowed.
+    This overlay sits disagreement and stays off the live loop.
     """
     it = desk_book(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -971,19 +971,19 @@ def registry() -> list[Spec]:
              "lag",
              "FLB ≥60¢ until close; skip coin-flip / fee-eat; 8% half-Kelly"),
         Spec("crypto_fav", crypto_fav,
-             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.92,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.68, price_max=0.92,
                 theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
                 signal_max_age_s=0),
              "lag",
-             "BTC/ETH 15m FLB ≥60¢ until close, 4% each (~$10), not a split"),
+             "BTC/ETH 15m FLB ≥68¢ until close, 4% each (~$10), not a split"),
         Spec("desk_book", desk_book,
-             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.68, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Whole book waits 3 min; commodities 8%; BTC/ETH 4% + Poly confirm"),
+             "Whole book waits 3 min; commodities 8%; BTC/ETH 4% / ≥68¢ + Poly"),
         Spec("wait7_book", wait7_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
@@ -1018,7 +1018,7 @@ def registry() -> list[Spec]:
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "desk_book wait + 68¢ favorite bar"),
+             "alias: wait + 68¢ (now the live desk_book bar)"),
         Spec("no_eth_book", no_eth_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
@@ -1053,7 +1053,7 @@ def registry() -> list[Spec]:
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "desk_book; BTC/ETH only when both names share a ≥60¢ favorite"),
+             "OFF: agreement gate (wrong reading of both-green)"),
         Spec("spot_desk", spot_desk,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
