@@ -1,0 +1,15 @@
+{
+ "threshold": 300.0,
+ "peel_unit": 50.0,
+ "leave": 250.0,
+ "destination": "linked Bank of America ACH",
+ "due": false,
+ "events": [],
+ "seen_ids": [],
+ "kalshi_cash": 285.9584,
+ "due_since": null,
+ "pending_id": null,
+ "create_blocked": false,
+ "note": "hold (Kalshi cash $285.9584; peel $50 at $300)",
+ "updated": "2026-09-12T16:18:17Z"
+}
