@@ -11,3 +11,6 @@ config/account.local.json
 state/kalshi_paper_decisions.jsonl
 state/kalshi_paper_state.json
 state/kalshi_paper_loop.log
+
+# supervisor runtime pid (meaningless across container restarts)
+state/kalshi_paper_loop.pid
