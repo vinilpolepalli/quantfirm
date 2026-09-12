@@ -28,8 +28,8 @@ tournament, and it wires the live paper engine to the settlement feed.
 | `KXNATGAS15M` | Nat gas | Pyth `Commodities.Index.NATGAS/USD` | ~10k | yes |
 | `KXPALLADIUM15M` / `KXPLATINUM15M` | — | Pyth metals | — | listed, dark |
 | `KXINX15M` / `KXNDQ15M` | SPX / NDX | Google Finance | — | listed, dark |
-| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | **live, first look** |
-| `KXETH15M` | ETH | CF Benchmarks 60s average | large | **live, if BTC is flat** |
+| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | **live, 4%** |
+| `KXETH15M` | ETH | CF Benchmarks 60s average | large | **live, 4%** |
 
 Hours: commodity 15M books **close Sat ~04:00Z and reopen Mon ~03:15Z**.
 BTC/ETH stay open. Treat the API as truth. Fees unchanged: quadratic
@@ -39,14 +39,13 @@ Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Live strategy: **`desk_book`**. Commodities are `rich_fav` — first ≥60¢
 favorite (skip coin-flips <60¢ and when the taker fee is ≥15% of the win
 or net payout <7¢), from window open **until close**, **8% stake**.
-Crypto is half that: **4% / ≥72¢ / skip the last 2 minutes** (REST loses
-the last-minute crypto race; `one_pct` touch last week was BTC −$55).
-**One crypto slot:** BTC is first look; ETH only if we are not already
-in BTC. SOL/DOGE/XRP 15m are open on Kalshi but not scored — stay off.
-Maker off. 24/7 supervisor. 8% is ~$20 at risk and ~$2.20 net on an 88¢
-win. Crypto 4% is ~$10 at risk. 15–18% (`yolo_*`) is off this loop.
-Numbers: `research/kalshi_crypto.md`, `research/kalshi_iterate.md`,
-`research/kalshi_yolo.md`.
+Crypto is half that: **4% / ≥72¢ / until close** (REST last-minute 90¢
+locks lost; that is not this trade — 93¢+ still sit out via fee-eat).
+BTC and ETH can both be on. SOL/DOGE/XRP 15m are open on Kalshi but not
+scored — stay off. Maker off. 24/7 supervisor. 8% is ~$20 at risk and
+~$2.20 net on an 88¢ win. Crypto 4% is ~$10 at risk. 15–18% (`yolo_*`)
+is off this loop. Numbers: `research/kalshi_crypto.md`,
+`research/kalshi_iterate.md`, `research/kalshi_yolo.md`.
 
 `spot_lock` and `offhours_lock` stay registered. Off-hours was green
 on train (t=1.18) and died on test. `nuke_lock` / `longshot` stay
@@ -56,8 +55,8 @@ A 99¢ last-tick book cannot deliver 1% of bankroll without putting nearly
 all of it at risk, so we skip those too.
 
 Correlation slots: gold/silver share a side, WTI/natgas share a side,
-copper is its own, BTC/ETH are **one exclusive slot** (ETH only if BTC
-is flat). 24/7 wiring is in `docs/KALSHI_ROUTINE.md`.
+copper / BTC / ETH are their own books. 24/7 wiring is in
+`docs/KALSHI_ROUTINE.md`.
 
 ## Live signal
 
@@ -82,8 +81,8 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `oracle_lag` | Prior-desk stale-quote taker | Should lose (replication) |
 | `oracle_flow` | Fade uninformed book flow | Taking an overreaction, not chasing a stale ask |
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
-| `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC then ETH 4% | Same FLB; one crypto slot; skip last 2 min |
-| `crypto_fav` | BTC/ETH 4% ≥72¢ | Weekend 24/7 sleeve; ETH if BTC is flat |
+| `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC and ETH 4% | Same FLB; crypto until close; fee-eat 93¢+ |
+| `crypto_fav` | BTC/ETH 4% ≥72¢ until close | Weekend 24/7 sleeve |
 | `favorite_confirmed` | FLB + GBM agrees | Same, fewer longshots |
 | `late_lock` | Near-certain favorite, last 6 min | Reversal needed is large |
 | `open_fade` / `open_follow` | 3-min impulse then fade/follow | Path of S, not book lag |

@@ -249,7 +249,8 @@ class TestNewStrategies(unittest.TestCase):
         crypto = next(s for s in registry() if s.name == "crypto_fav")
         self.assertEqual(crypto.params.price_min, 0.72)
         self.assertEqual(crypto.params.max_stake_frac, 0.04)
-        self.assertGreaterEqual(crypto.params.tau_min_s, 120)
+        self.assertEqual(crypto.params.tau_min_s, 0)
+        self.assertGreaterEqual(crypto.params.tau_max_s, 900)
         loop_path = os.path.join(os.path.dirname(__file__),
                                  "..", "scripts", "kalshi_paper_loop.sh")
         with open(loop_path) as f:
@@ -330,12 +331,17 @@ class TestNewStrategies(unittest.TestCase):
                                     metal="btc"))
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.36, "yes_ask": 0.37},
                                     metal="btc"))
-        # Last 30s: commodities still clip, BTC sits out.
+        # Last 30s: both clip. 99¢ last ticks still sit out (fee-eat).
         late_gold = desk_book(**{**kw, "ts": close - 30}, metal="gold")
         late_btc = desk_book(**{**kw, "ts": close - 30}, metal="btc")
         self.assertIsNotNone(late_gold)
-        self.assertIsNone(late_btc)
-        # ETH uses the same cautious overlay (4% / ≥72¢).
+        self.assertIsNotNone(late_btc)
+        junk_late = desk_book(**{**kw, "ts": close - 5,
+                                  "yes_bid": 0.988, "yes_ask": 0.992},
+                              metal="btc")
+        self.assertIsNone(junk_late)
+        # ETH uses the same cautious overlay (4% / ≥72¢) and can clip
+        # even if BTC would also be on.
         eth = desk_book(**kw, metal="eth")
         self.assertIsNotNone(eth)
         self.assertEqual(eth.tag, "crypto_fav")
@@ -345,7 +351,8 @@ class TestNewStrategies(unittest.TestCase):
         hit = crypto_fav(**{**kw, "params": p2})
         self.assertIsNotNone(hit)
         self.assertEqual(hit.tag, "crypto_fav")
-        self.assertIsNone(crypto_fav(**{**kw, "params": p2, "ts": close - 30}))
+        late_cf = crypto_fav(**{**kw, "params": p2, "ts": close - 30})
+        self.assertIsNotNone(late_cf)
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")
@@ -470,8 +477,8 @@ class TestDiversifyAndHalt(unittest.TestCase):
         self.assertFalse(blocked_by_corr("natgas", "yes", open_))
         self.assertFalse(blocked_by_corr("btc", "yes", open_))
         open_.append(SimpleNamespace(metal="btc", side="yes"))
-        self.assertTrue(blocked_by_corr("eth", "yes", open_))
-        self.assertTrue(blocked_by_corr("eth", "no", open_))
+        self.assertFalse(blocked_by_corr("eth", "yes", open_))
+        self.assertFalse(blocked_by_corr("eth", "no", open_))
         self.assertFalse(blocked_by_corr("gold", "yes",
                                           [SimpleNamespace(metal="btc", side="yes")]))
 

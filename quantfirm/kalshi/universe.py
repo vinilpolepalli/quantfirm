@@ -1,8 +1,8 @@
 """15-minute series this desk knows.
 
 Default paper book: five live commodity binaries plus BTC/ETH 15-minute
-(ETH is the fallback when BTC is flat). Indexes and dark metals stay
-listed for harvest, not trading.
+(both can be on at once). Indexes and dark metals stay listed for harvest,
+not trading.
 
 Fees are quadratic, multiplier 1, maker $0 on every series here.
 """
@@ -26,8 +26,8 @@ SERIES_LISTED_DARK = {
     "KXNDQ15M": "ndx",
 }
 
-# 15-minute crypto (live, large books). BTC is first look; ETH clips
-# only when BTC is flat (one crypto slot). Same 4% / ≥72¢ overlay.
+# 15-minute crypto (live, large books). BTC and ETH both clip at 4% /
+# ≥72¢ / until close. SOL/DOGE/XRP 15m exist but are not scored.
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
     "KXETH15M": "eth",
@@ -56,21 +56,18 @@ SWISSQUOTE = {
     "wti": "OIL",
 }
 
-# Harvest both crypto series. Live BTC first, ETH only if BTC is flat
-# (one crypto slot). Same cautious overlay on both.
+# Harvest both. Live both — independent books, same cautious overlay.
 CRYPTO_ASSETS = ("btc", "eth")
 CRYPTO_LIVE = ("btc", "eth")
 
-# Live book: five commodities + BTC + ETH. One crypto slot: BTC is
-# first look; ETH only if we are not already in BTC. Correlation slots
-# are in halt.CORR_GROUPS / EXCLUSIVE_GROUPS.
+# Live book: five commodities + BTC + ETH. Correlation slots are in
+# halt.CORR_GROUPS (precious / energy). Crypto names are their own books.
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
 
 # Live canary on the 24/7 supervisor. Commodities: 8% FLB ≥60¢ from
-# window open until close. Crypto: 4% / ≥72¢ / skip last 2 minutes,
-# one name at a time (BTC before ETH). Sit out coin-flips, longshots,
-# and fee-eat. Risky mixes stay registered as yolo_* / nuke_lock and
-# off this loop.
+# window open until close. Crypto: 4% / ≥72¢ / until close. Sit out
+# coin-flips, longshots, and fee-eat (that is the 99¢ last-tick skip).
+# Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
 PAPER_STRATEGY = "desk_book"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /

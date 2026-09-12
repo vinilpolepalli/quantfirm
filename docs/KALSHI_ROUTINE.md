@@ -4,12 +4,11 @@ The book is `desk_book`: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Paper bankroll $250.
 
 Commodities: first **≥60¢** favorite from window open **until close**,
-**8% stake** (half-Kelly). Crypto: **4% / ≥72¢ / skip the last 2 minutes**.
-**One crypto slot** — BTC is first look; ETH only if we are not already in
-BTC. Sit out 50/50 books, longshots, and when the quadratic fee eats ≥15% of
-the win (that is what keeps 99¢ last ticks out — not a time gate). Maker
-quotes off. `yolo_book` / `nuke_lock` / `longshot` stay registered and off
-this loop.
+**8% stake** (half-Kelly). Crypto: **4% / ≥72¢ / until close**. BTC and
+ETH can both be on. Sit out 50/50 books, longshots, and when the quadratic
+fee eats ≥15% of the win (that is what keeps 99¢ last ticks out — not a
+time gate). Maker quotes off. `yolo_book` / `nuke_lock` / `longshot` stay
+registered and off this loop.
 
 Live canary is **on** 24/7 in this environment (`KALSHI_LIVE=1` in gitignored
 `.env.kalshi`). Real orders go out. Stop with `touch state/KILL_SWITCH_KALSHI`.
@@ -32,8 +31,7 @@ python scripts/kalshi_desk_checkin.py
 ## 2. Cursor Cloud timer
 
 Fires at `:13/:28/:43/:58` UTC (supervisor heal). Does not start a
-second agent. Commodities can fill until close; crypto sits out the last
-two minutes. Do not start a second agent.
+second agent. Commodities and crypto can fill until close. Do not start a second agent.
 
 ## 3. Claude Routine (no VPS)
 
@@ -47,7 +45,7 @@ two minutes. Do not start a second agent.
 You are the Kalshi 15-minute desk for quantfirm.
 Bankroll $250. Strategy: desk_book.
 Commodities (gold,silver,copper,wti,natgas): rich_fav 8% ≥60¢ until close.
-BTC then ETH: 4% ≥72¢, skip last 2 minutes, one crypto slot (ETH only if not in BTC).
+BTC and ETH: 4% ≥72¢ until close. Both can be on. Sit out 99c last ticks via fee-eat.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py
@@ -56,7 +54,7 @@ BTC then ETH: 4% ≥72¢, skip last 2 minutes, one crypto slot (ETH only if not 
    Heal with checkin only. Do NOT start a second agent.
 5. Keep live on if `.env.kalshi` has KALSHI_LIVE=1. Do not unset it.
    Do not switch commodities back to 4% or to yolo_book.
-   Do not last-minute lock crypto. Do not stack BTC and ETH.
+   Do not last-minute lock crypto. Do not re-add a last-2-min sit-out.
 6. Reply with: open windows, fills this window, shadow + live cash, realized,
    strategy name, universe, any halt.
 
