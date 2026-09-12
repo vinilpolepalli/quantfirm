@@ -43,6 +43,13 @@ def _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params, tag,
             count = params.min_count
         else:
             return None
+    # Fees count toward the cap so an 88¢ clip does not silently spend
+    # more than the risk budget once the quadratic taker fee is added.
+    cap = params.max_stake_frac * bankroll
+    while count >= params.min_count and count * cost + taker_fee(count, cost) > cap + 1e-9:
+        count -= 1
+    if count < params.min_count:
+        return None
     return Intent(ticker=ticker, side=side, count=count,
                   limit_price=round(cost, 4), fair=fair, edge=edge,
                   tag=tag, tau_s=tau_s)
@@ -78,6 +85,23 @@ def oracle(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask, bankroll,
                   recent_volume=recent_volume)
 
 
+def _fee_eats_payout(cost: float, max_fee_frac: float = 0.15,
+                    min_net: float = 0.07) -> bool:
+    """True when the quadratic taker fee leaves a junk payday.
+
+    A priori from Kalshi's fee schedule, not a test-set fit. A 94¢
+    fill pays 6¢ and the 1¢ ceil-fee is 17% of that. An 88¢ fill pays
+    12¢; the same 1¢ fee is 8%. Skip the former.
+    """
+    win = 1.0 - cost
+    if win <= 0:
+        return True
+    fee1 = taker_fee(1, cost)
+    if fee1 > max_fee_frac * win:
+        return True
+    return (win - fee1) < min_net
+
+
 def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                    bankroll, open_positions, params, recent_volume=None, **_):
     """Buy the market favorite (side priced ≥ price_min) and hold.
@@ -104,6 +128,8 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     side, cost, q, edge, fair = max(cands, key=lambda c: c[1])  # richer favorite
     if cost < params.price_min:
         return None
+    if _fee_eats_payout(cost):
+        return None
     return _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params,
                  "favorite", allow_min=True)
 
@@ -120,6 +146,8 @@ def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
         return None
     win_per = 1.0 - cost
     if win_per < 0.025:
+        return None
+    if _fee_eats_payout(cost):
         return None
     fee1 = taker_fee(1, cost)
     cap = int(params.max_stake_frac * bankroll / cost)
@@ -572,10 +600,10 @@ def registry() -> list[Spec]:
              "spot_lock sitting out 12:00-21:00 UTC (London/NY metals hours)"),
         Spec("rich_fav", favorite_blind,
              _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
-                theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
-                max_spread=0.05, min_recent_volume=40.0),
+                theta=0.0, max_open=6, max_stake_frac=0.08, min_count=4,
+                max_spread=0.05, min_recent_volume=40.0, kelly_mult=0.5),
              "lag",
-             "FLB 88–94¢, no spot gate, 3–11 min left"),
+             "FLB 88–92¢ after fee-eat, half-Kelly, 8% cap, 3–11 min left"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

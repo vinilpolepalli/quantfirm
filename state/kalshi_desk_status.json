@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T03:06:22Z",
+ "ts": "2026-09-12T03:22:55Z",
  "strategy": "rich_fav",
  "universe": [
   "gold",
@@ -11,22 +11,39 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "alive",
  "cash": {
-  "shadow": 226.97899999999998,
+  "shadow": 220.13899999999998,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 250.0
+  "live": 243.2654
  },
  "realized": {
-  "shadow": -23.021000000000008,
+  "shadow": -20.89100000000001,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 0.0
+  "live": 2.1393999999999993
  },
- "n_open": 0,
- "open": [],
- "n_settled": 33,
- "updated": "2026-09-12T03:06:21Z",
+ "n_open": 2,
+ "open": [
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP112330-30",
+   "fill_price": 0.89,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP112330-30",
+   "fill_price": 0.88,
+   "adapter": "live"
+  }
+ ],
+ "n_settled": 37,
+ "updated": "2026-09-12T03:22:55Z",
  "started": "2026-09-12T00:46:58Z"
 }

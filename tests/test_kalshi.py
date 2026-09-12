@@ -149,6 +149,46 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIsNotNone(it)
         self.assertEqual(it.side, "yes")
 
+    def test_favorite_skips_when_fee_eats_the_win(self):
+        from quantfirm.kalshi.strategies import _fee_eats_payout
+        self.assertTrue(_fee_eats_payout(0.94))
+        self.assertFalse(_fee_eats_payout(0.88))
+        p = Params(macro_blackout_et=(), tau_min_s=180, tau_max_s=720,
+                   price_min=0.88, price_max=0.94, min_count=4,
+                   max_stake_frac=0.04, min_recent_volume=0.0)
+        rich = dict(ticker="T", ts=1000000, s=100.2, k=100.0, sigma_1m=0.0005,
+                    close_ts=1000000 + 400, bankroll=250.0, open_positions=0,
+                    params=p, recent_volume=200)
+        it88 = favorite_blind(**{**rich, "yes_bid": 0.87, "yes_ask": 0.88})
+        self.assertIsNotNone(it88)
+        it94 = favorite_blind(**{**rich, "yes_bid": 0.05, "yes_ask": 0.94})
+        self.assertIsNone(it94)
+
+    def test_rich_fav_deploys_the_stake_cap(self):
+        from dataclasses import replace
+        spec = next(s for s in registry() if s.name == "rich_fav")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        it = favorite_blind(
+            ticker="T", ts=1000000, s=100.2, k=100.0, sigma_1m=0.0005,
+            close_ts=1000000 + 400, yes_bid=0.87, yes_ask=0.88,
+            bankroll=250.0, open_positions=0, params=p, recent_volume=200)
+        self.assertIsNotNone(it)
+        self.assertGreaterEqual(it.count * it.limit_price, 0.07 * 250)
+        self.assertLessEqual(it.count * it.limit_price
+                             + taker_fee(it.count, it.limit_price),
+                             spec.params.max_stake_frac * 250 + 1e-9)
+        win = it.count * (1.0 - it.limit_price)
+        self.assertGreater(win, 0)
+        self.assertLess(taker_fee(it.count, it.limit_price) / win, 0.15)
+        tiny = favorite_blind(
+            ticker="T", ts=1000000, s=100.2, k=100.0, sigma_1m=0.0005,
+            close_ts=1000000 + 400, yes_bid=0.87, yes_ask=0.88,
+            bankroll=250.0, open_positions=0,
+            params=replace(p, max_stake_frac=0.04, kelly_mult=0.25),
+            recent_volume=200)
+        self.assertIsNotNone(tiny)
+        self.assertGreater(it.count, tiny.count)
+
     def test_registry_has_controls_and_candidates(self):
         names = {s.name for s in registry()}
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
@@ -189,12 +229,15 @@ class TestNewStrategies(unittest.TestCase):
         self.assertLessEqual(spec.params.price_max, 0.94)
         self.assertGreaterEqual(spec.params.tau_min_s, 180)
         self.assertGreaterEqual(spec.params.tau_max_s, 600)
-        self.assertEqual(spec.params.max_stake_frac, 0.04)
+        self.assertGreaterEqual(spec.params.max_stake_frac, 0.08)
+        self.assertLess(spec.params.max_stake_frac, 0.12)
+        self.assertGreaterEqual(spec.params.kelly_mult, 0.5)
 
     def test_rich_fav_is_paper_book(self):
         self.assertEqual(PAPER_STRATEGY, "rich_fav")
         spec = next(s for s in registry() if s.name == PAPER_STRATEGY)
-        self.assertEqual(spec.params.max_stake_frac, 0.04)
+        self.assertGreaterEqual(spec.params.max_stake_frac, 0.08)
+        self.assertLess(spec.params.max_stake_frac, 0.12)
         self.assertEqual(spec.params.price_min, 0.88)
         self.assertLessEqual(spec.params.price_max, 0.94)
         self.assertEqual(spec.params.tau_min_s, 180)
@@ -384,6 +427,14 @@ class TestDiversifyAndHalt(unittest.TestCase):
         close_liq = int(datetime(2026, 9, 1, 15, 4, tzinfo=timezone.utc).timestamp())
         it_liq = offhours_lock(**{**kw, "ts": close_liq - 240, "close_ts": close_liq})
         self.assertIsNone(it_liq)
+
+    def test_decision_bankroll_prefers_live_cash(self):
+        from quantfirm.kalshi.paper import decision_bankroll
+        cash = {"shadow": 229.0, "live": 252.0}
+        self.assertEqual(decision_bankroll(cash, live=True), 252.0)
+        self.assertEqual(decision_bankroll(cash, live=False), 229.0)
+        self.assertEqual(decision_bankroll({"shadow": 229.0, "live": 0.0},
+                                            live=True), 229.0)
 
     def test_langgraph_desk_compiles(self):
         from quantfirm.kalshi.agent import build_desk

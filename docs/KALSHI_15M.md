@@ -38,13 +38,15 @@ note that metals go dark Sat 04:00Z is stale — treat the API as truth).
 Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
 Default paper book: **gold, silver, copper, WTI, natgas**.
-Live strategy: **`rich_fav`** — first 88–94¢ favorite, 3–11 minutes left,
-no spot-agree gate, 4% stake. Maker off. BTC/ETH stay in the harvest
-universe. This is the least-bad n>100 lag book (test +$130 / t=1.42,
-train flat, last week +$55). t=1.42 is **not** the tournament gate.
-`yolo_book` (15% mix) printed a −$38 natgas miss in one paper window
-and is off the loop. Numbers: `research/kalshi_iterate.md`,
-`research/kalshi_yolo.md`.
+Live strategy: **`rich_fav`** — first 88–94¢ favorite (skip when the
+taker fee is ≥15% of the win or net payout <7¢, so 93–94¢ is out),
+3–11 minutes left, no spot-agree gate, **8% stake** (half-Kelly). Maker
+off. BTC/ETH stay in the harvest universe. 4% clips paid ~$1 after
+fees; 8% is ~$20 at risk and ~$2.20 net on a win. 15–18% (`yolo_*`)
+is the size that can print a 2× week and also a −$38 miss in one
+window — off this loop. Least-bad n>100 lag book (test +$130 / t=1.42
+at 4%; train flat, last week +$55). t=1.42 is **not** the tournament
+gate. Numbers: `research/kalshi_iterate.md`, `research/kalshi_yolo.md`.
 
 `spot_lock` and `offhours_lock` stay registered. Off-hours was green
 on train (t=1.18) and died on test. `nuke_lock` / `longshot` stay

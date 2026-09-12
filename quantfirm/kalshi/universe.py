@@ -59,8 +59,9 @@ SWISSQUOTE = {
 # for harvest. Correlation slots are in halt.CORR_GROUPS.
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
 
-# Shadow book on the 24/7 supervisor. 4% 88–94¢ FLB (research/kalshi_iterate.md).
-# Not a go-live. Risky mixes stay registered as yolo_* / nuke_lock.
+# Live canary on the 24/7 supervisor. 8% 88–94¢ FLB; skip when the
+# quadratic fee eats ≥15% of the win (research/kalshi_iterate.md).
+# Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
 PAPER_STRATEGY = "rich_fav"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /

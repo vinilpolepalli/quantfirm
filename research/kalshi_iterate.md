@@ -114,11 +114,21 @@ and already lost in train (W33 −$128, 72% DD). `nuke_lock` W36 was
 | ~02:30Z | switch to **`yolo_book`** | 15% mix + crypto; 2×/week experiment | not a go-live |
 | 02:45Z | `yolo_book` | natgas YES 43@88¢ **−$38.16**; BTC/gold/copper won | one miss at 15% size |
 | ~02:53Z | back to **`rich_fav`** | 4% / 5 commodities | owner asked for consistent, not 2× |
+| 03:15Z | **live canary** `rich_fav` 4% | gold NO 10@88¢ **+$1.13**, WTI NO 9@88¢ **+$1.01** | real money; fee ~7¢ on a $1.12 win |
+| ~03:20Z | **`rich_fav` 8%** | half-Kelly, fee-eat skip 93–94¢ | owner: clips were too small |
 
 Shadow cash after the 02:45Z yolo window: **$226.98**. Realized taker
 **−$23.02** (n=28). The natgas 43-lot 88¢ miss is why 15% is not an
-investing size. Paper switched back to `rich_fav`. Kill switch off.
-No `--live`. No prod key in this environment.
+investing size.
+
+Live 03:15Z paid ~$1 per clip after a ~7¢ fee (~6% of the win). That is
+the 4% cap, not the fee. 8% of ~$250 is ~$20 at risk, ~$2.20 net on an
+88¢ win; the same 1¢/contract fee is still ~8% of the payday. 93–94¢
+locks are skipped (`_fee_eats_payout`): a 94¢ fill pays 6¢ and the 1¢
+ceil-fee is 17% of that. 18% (`yolo_lock`) is the size that can print a
+2× week and also a −$38 miss. Stay off it.
+
+Kill switch off. `KALSHI_LIVE=1` in gitignored `.env.kalshi`.
 
 The 7/7 last-minute tape and the 2/2 `spot_lock` tape are **not** a
 strategy. They are hours.

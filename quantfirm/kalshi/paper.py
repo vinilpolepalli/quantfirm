@@ -41,6 +41,20 @@ from .universe import (BANKROLL, PAPER_ASSETS, LIVE_SERIES as _SERIES,
 SERIES = {v: k for k, v in _SERIES.items()}
 
 
+def decision_bankroll(cash: dict, live: bool) -> float:
+    """Size against the book that is actually at risk.
+
+    Live orders used to inherit the shadow yolo hole and put 4% of
+    that depleted paper cash into real clips (~$8). When live, size
+    off the live ledger.
+    """
+    if live:
+        v = float(cash.get("live") or 0.0)
+        if v > 0:
+            return v
+    return float(cash.get("shadow") or 0.0)
+
+
 @dataclass
 class PaperPosition:
     ticker: str
@@ -418,7 +432,7 @@ class PaperEngine:
                 intent = self.decide_fn(
                     ticker=tkr, ts=now, s=s_now, k=k, sigma_1m=sigma,
                     close_ts=close_ts, yes_bid=bid, yes_ask=ask,
-                    bankroll=self.state.d["cash"]["shadow"],
+                    bankroll=decision_bankroll(self.state.d["cash"], self.use_live),
                     open_positions=len(shadow_open), params=self.params,
                     recent_fair_move=fair_move, recent_mkt_move=mkt_move,
                     f_now=s_now, f_open=self._open_px[tkr], open_ts=open_ts,
