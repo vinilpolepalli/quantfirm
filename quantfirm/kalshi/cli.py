@@ -7,6 +7,7 @@
   python -m quantfirm.kalshi.cli status    # venue + feed + credential check
   python -m quantfirm.kalshi.cli open-count
   python -m quantfirm.kalshi.cli heartbeat
+  python -m quantfirm.kalshi.cli poly      # Polymarket 15m vs Kalshi (read-only)
 """
 
 from __future__ import annotations
@@ -315,6 +316,52 @@ def cmd_status(a):
             print(f"{s}: no open market (weekend/maintenance?)")
 
 
+def cmd_poly(_a):
+    """Print Polymarket 15m Up/Down BBO next to Kalshi YES/NO. Read-only."""
+    from .client import KalshiClient
+    from .poly import POLY_ASSETS, PolymarketFeed, poly_favorite
+    from .universe import LIVE_SERIES
+
+    feed = PolymarketFeed()
+    c = KalshiClient("prod")
+    inv = {asset: ticker for ticker, asset in LIVE_SERIES.items()}
+    rows = []
+    for asset in POLY_ASSETS:
+        rec = {"asset": asset}
+        q = feed.quote(asset)
+        if q:
+            rec["poly"] = {
+                "slug": q.slug,
+                "up": [q.up_bid, q.up_ask],
+                "down": [q.down_bid, q.down_ask],
+                "favorite": poly_favorite(q),
+            }
+        series = inv.get(asset)
+        m = c.open_market_for_series(series) if series else None
+        if m:
+            kq = c.get_quote(m["ticker"])
+            yes_bid = float(kq.yes_bid) if kq.yes_bid is not None else None
+            yes_ask = float(kq.yes_ask) if kq.yes_ask is not None else None
+            k_fav = None
+            if yes_ask is not None and yes_ask >= 0.55:
+                k_fav = "yes"
+            no_px = (1.0 - yes_bid) if yes_bid is not None else None
+            if no_px is not None and no_px >= 0.55:
+                if k_fav is None or no_px > (yes_ask or 0):
+                    k_fav = "no"
+            rec["kalshi"] = {
+                "ticker": m["ticker"],
+                "K": m.get("floor_strike"),
+                "yes": [yes_bid, yes_ask],
+                "favorite": k_fav,
+            }
+            rec["agree"] = (
+                rec.get("poly", {}).get("favorite") == rec["kalshi"]["favorite"]
+                if rec.get("poly") and rec["kalshi"]["favorite"] else None)
+        rows.append(rec)
+    print(json.dumps(rows, indent=1))
+
+
 def main():
     ap = argparse.ArgumentParser(prog="quantfirm.kalshi")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -433,6 +480,9 @@ def main():
 
     sp = sub.add_parser("heartbeat")
     sp.set_defaults(fn=cmd_heartbeat)
+
+    sp = sub.add_parser("poly")
+    sp.set_defaults(fn=cmd_poly)
 
     a = ap.parse_args()
     a.fn(a)
