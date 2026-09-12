@@ -86,15 +86,36 @@ def main():
     for r in rows:
         byw[window_of(r["ticker"])].append(float(r["pnl"]))
     multi = [v for v in byw.values() if len(v) > 1]
-    agree = sum(1 for v in multi
-                if all(x > 0 for x in v) or all(x <= 0 for x in v))
+    allw = sum(1 for v in multi if all(x > 0 for x in v))
+    alll = sum(1 for v in multi if all(x <= 0 for x in v))
     print(f"distinct windows {len(byw)}  ({n/len(byw):.2f} fills per window)")
     if multi:
-        print(f"multi-leg windows {len(multi)}, legs agree {agree} "
-              f"({agree/len(multi):.0%} — 50% would mean independent)")
+        print(f"multi-leg windows {len(multi)}: both won {allw}, both LOST "
+              f"{alll}, split {len(multi)-allw-alll} "
+              f"({(allw+alll)/len(multi):.0%} agree; 50% = independent)")
+        print("NB: the unconditional agreement rate understates TAIL risk. In a")
+        print("    trending move gold and silver go the same way together, and")
+        print("    both legs lose at once — see the concentration block below.")
     print(f"t per-fill       {tstat(pnl):.2f}")
     print(f"t per-window     {tstat([sum(v) for v in byw.values()]):.2f}"
           "   <- use this one if it is LOWER")
+
+    # -------------------------------------------------- loss concentration
+    section("LOSS CONCENTRATION (are a few windows carrying the whole result?)")
+    eq = peak = mdd = 0.0
+    for x in pnl:
+        eq += x
+        peak = max(peak, eq)
+        mdd = min(mdd, eq - peak)
+    worst = sorted(losses)[:5]
+    print(f"peak-to-trough drawdown  ${mdd:.2f}")
+    print(f"5 worst fills            {[round(x, 2) for x in worst]}")
+    if Sw > 0:
+        print(f"                         = ${sum(worst):.2f}, "
+              f"{abs(sum(worst))/Sw:.0%} of ALL gross profit")
+    if wins and losses:
+        print(f"avg loss / avg win       {abs(st.mean(losses))/st.mean(wins):.2f}x"
+              "  <- losses this much bigger means the hit rate has no slack")
 
     # ------------------------------------------------- adverse selection
     section("ADVERSE-SELECTION STRESS (the assumption that actually matters)")

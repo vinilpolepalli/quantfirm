@@ -114,18 +114,34 @@ is gone. Deleting a fraction of the *winning* fills (keeping every loss) as an
 adverse-selection proxy:
 
 ```
-break-even haircut   28.0% of winning fills may be phantom before edge = 0
+break-even haircut   13.3% of winning fills may be phantom before edge = 0
   haircut         P&L     hit       t
-      0%     314.21   0.725    1.50
-     25%      13.77   0.663    0.07
-     50%    -296.31   0.571   -1.72
+      0%     151.44   0.698    0.67
+     25%     -99.29   0.635   -0.46
+     50%    -456.40   0.537   -2.46
 ```
 
-**28% is a thin margin** for a model that hands itself free queue priority.
-One thing that is *not* wrong: the sample is close to independent. Gold and
-silver legs in the same window agree only 56% of the time (50% = independent)
-and clustering the t-stat by window *raises* it, 1.50 -> 1.57. The problem is
-the fill model, not the correlation structure.
+**13% is a very thin margin** for a model that hands itself free queue
+priority. (This read 28% at n=120 on 2026-09-11; one bad hour halved it. Re-run
+the audit rather than quoting a number from this file.)
+
+**Correction — correlation does matter, in the tail.** An earlier revision of
+this section argued the sample was "close to independent" because same-window
+gold/silver legs agree only ~58% of the time and clustering by window did not
+lower the t-stat. That unconditional rate is the wrong statistic. On 2026-09-11
+23:16-23:46Z three consecutive windows went against us on **both** metals at
+once: five straight NO fills, all resolving YES, -$176 peak-to-trough in about
+half an hour, taking t from 1.50 to 0.67. Gold and silver decouple in quiet
+tape and move as one in a trend, which is exactly when the book is wrong.
+
+Two structural features make that tail expensive:
+
+* **Average loss is ~2x average win** (~$24 vs ~$12), because the quote rests
+  on the favorite side. The hit rate therefore has almost no slack: at n=126
+  the cushion over break-even was +3.1pp.
+* **The fair value assumes driftless GBM.** In a sustained directional move the
+  "no continuation" prior is systematically wrong, so the desk sells the
+  continuation repeatedly within the same trend rather than once.
 
 **Known blocker.** `state/kalshi_paper_decisions.jsonl` logs quotes only, not
 the trades tape, so `_maker_filled` cannot be replayed offline against a
