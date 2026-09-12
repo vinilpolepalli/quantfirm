@@ -12,7 +12,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
                                    kelly_fraction, norm_cdf, taker_fee)
 from quantfirm.kalshi.strategies import (crypto_fav, desk_book, favorite_blind,
-                                         late_lock, model_fav, one_pct, registry)
+                                         late_lock, model_fav, one_pct,
+                                         poly_book, poly_confirm, registry)
 from quantfirm.kalshi.strategy import Params, decide
 from quantfirm.kalshi.universe import (BANKROLL, LIVE_SERIES, PAPER_ASSETS,
                                          PAPER_STRATEGY, SERIES)
@@ -193,7 +194,9 @@ class TestNewStrategies(unittest.TestCase):
         names = {s.name for s in registry()}
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
                   "favorite_blind", "open_fade", "spot_lock", "mid_lock",
-                  "rich_fav", "crypto_fav", "desk_book", "model_fav",
+                  "rich_fav", "crypto_fav", "desk_book", "poly_confirm",
+                  "poly_book",
+                  "model_fav",
                   "offhours_lock", "yolo_book",
                   "longshot", "sprint", "yolo_lock", "nuke_lock"):
             self.assertIn(n, names)
@@ -794,6 +797,159 @@ class TestPemNormalize(unittest.TestCase):
         escaped = pem.replace("\n", "\\n")
         loaded = _RsaSigner(normalize_pem(escaped))
         self.assertIsNotNone(loaded._key)
+
+
+class TestPolymarketTape(unittest.TestCase):
+    def test_slug_floors_utc_quarter_hour(self):
+        from quantfirm.kalshi.poly import updown_slug, window_start, bbo, poly_favorite
+        from quantfirm.kalshi.poly import PolyQuote
+        self.assertEqual(window_start(1789217100), 1789217100)
+        self.assertEqual(window_start(1789217101), 1789217100)
+        self.assertEqual(updown_slug("BTC", 1789217100),
+                         "btc-updown-15m-1789217100")
+        bids = [{"price": "0.01", "size": "1"}, {"price": "0.29", "size": "6"}]
+        asks = [{"price": "0.99", "size": "1"}, {"price": "0.30", "size": "10"}]
+        self.assertEqual(bbo(bids, "bid")[0], 0.29)
+        self.assertEqual(bbo(asks, "ask")[0], 0.30)
+        q = PolyQuote("btc", "x", 0.29, 0.30, 0.70, 0.71, 0.0)
+        self.assertEqual(poly_favorite(q), "no")
+        q_up = PolyQuote("btc", "x", 0.70, 0.72, 0.28, 0.30, 0.0)
+        self.assertEqual(poly_favorite(q_up), "yes")
+        coin = PolyQuote("btc", "x", 0.49, 0.51, 0.49, 0.51, 0.0)
+        self.assertIsNone(poly_favorite(coin))
+
+    def test_poly_confirm_sits_on_disagreement_not_on_missing(self):
+        spec = next(s for s in registry() if s.name == "poly_confirm")
+        close = 1_000_000 + 600
+        kw = dict(ticker="T", ts=close - 400, s=100.0, k=100.0, sigma_1m=0.001,
+                  close_ts=close, yes_bid=0.36, yes_ask=0.37, bankroll=250.0,
+                  open_positions=0, params=spec.params, recent_volume=200)
+        # Cheap YES → buy NO at 63¢. Missing Poly must not sit.
+        it = poly_confirm(**kw, metal="btc")
+        self.assertIsNotNone(it)
+        self.assertEqual(it.side, "no")
+        # Poly also Down/NO → keep.
+        agree = poly_confirm(**kw, metal="btc", poly_yes_bid=0.28,
+                             poly_yes_ask=0.30, poly_down_ask=0.71)
+        self.assertIsNotNone(agree)
+        self.assertEqual(agree.tag, "poly_confirm")
+        # Poly Up while Kalshi is NO → sit.
+        self.assertIsNone(poly_confirm(**kw, metal="btc", poly_yes_bid=0.70,
+                                        poly_yes_ask=0.72, poly_down_ask=0.29))
+        # Gold has no Poly book; pass through as commodity FLB.
+        gold = poly_confirm(**{**kw, "yes_bid": 0.60, "yes_ask": 0.62},
+                            metal="gold", poly_yes_bid=0.90, poly_yes_ask=0.91)
+        self.assertIsNotNone(gold)
+        self.assertEqual(PAPER_STRATEGY, "desk_book")
+
+    def test_poly_confirm_off_the_live_loop(self):
+        self.assertEqual(PAPER_STRATEGY, "desk_book")
+        src = inspect.getsource(
+            next(s for s in registry() if s.name == "poly_confirm").fn)
+        self.assertIn("poly_favorite", src)
+
+    def test_poly_book_crypto_only_and_sits_without_poly(self):
+        spec = next(s for s in registry() if s.name == "poly_book")
+        close = 1_000_000 + 600
+        yes = dict(ticker="T", ts=close - 400, s=100.0, k=100.0, sigma_1m=0.001,
+                    close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
+                    open_positions=0, params=spec.params, recent_volume=200)
+        self.assertIsNone(poly_book(**yes, metal="gold", poly_yes_bid=0.90,
+                                     poly_yes_ask=0.91, poly_down_ask=0.10))
+        self.assertIsNone(poly_book(**yes, metal="btc"))
+        hit = poly_book(**yes, metal="btc", poly_yes_bid=0.71,
+                         poly_yes_ask=0.72, poly_down_ask=0.28)
+        self.assertIsNotNone(hit)
+        self.assertEqual(hit.side, "yes")
+        self.assertEqual(hit.tag, "poly_book")
+        self.assertGreaterEqual(hit.count * hit.limit_price, 8.0)
+        self.assertLessEqual(hit.count * hit.limit_price, 10.0)
+
+    def test_poly_book_agrees_on_kalshi_no(self):
+        spec = next(s for s in registry() if s.name == "poly_book")
+        close = 1_000_000 + 600
+        kw = dict(ticker="T", ts=close - 400, s=100.0, k=100.0, sigma_1m=0.001,
+                  close_ts=close, yes_bid=0.36, yes_ask=0.37, bankroll=250.0,
+                  open_positions=0, params=spec.params, recent_volume=200)
+        d = poly_book(**kw, metal="btc", poly_yes_bid=0.21,
+                     poly_yes_ask=0.22, poly_down_ask=0.78)
+        self.assertIsNotNone(d)
+        self.assertEqual(d.side, "no")
+        self.assertEqual(d.tag, "poly_book")
+
+    def test_poly_book_sits_on_disagreement_and_coin_flip(self):
+        spec = next(s for s in registry() if s.name == "poly_book")
+        close = 1_000_000 + 600
+        yes = dict(ticker="T", ts=close - 400, s=100.0, k=100.0, sigma_1m=0.001,
+                   close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
+                   open_positions=0, params=spec.params, recent_volume=200)
+        self.assertIsNone(poly_book(**yes, metal="btc", poly_yes_bid=0.28,
+                                    poly_yes_ask=0.30, poly_down_ask=0.71))
+        self.assertIsNone(poly_book(**yes, metal="btc", poly_yes_bid=0.49,
+                                     poly_yes_ask=0.51, poly_down_ask=0.51))
+        cheap = dict(yes, yes_bid=0.36, yes_ask=0.37)
+        self.assertIsNone(poly_book(**cheap, metal="btc", poly_yes_bid=0.70,
+                                     poly_yes_ask=0.72, poly_down_ask=0.29))
+
+    def test_poly_paper_loop_never_live(self):
+        loop_path = os.path.join(os.path.dirname(__file__),
+                                 "..", "scripts", "kalshi_poly_paper_loop.sh")
+        with open(loop_path) as f:
+            loop = f.read()
+        self.assertIn("KALSHI_LIVE=0", loop)
+        self.assertIn("STRATEGY=poly_book", loop)
+        self.assertIn("METALS=btc,eth", loop)
+        self.assertIn("--state-prefix kalshi_poly_paper", loop)
+        self.assertNotIn("--live", loop)
+        self.assertNotIn("LIVE_ARGS", loop)
+        self.assertEqual(PAPER_STRATEGY, "desk_book")
+        from quantfirm.kalshi.runtime import ensure_poly_paper
+        src = inspect.getsource(ensure_poly_paper)
+        self.assertIn('env["KALSHI_LIVE"] = "0"', src)
+        self.assertNotIn("--live", src)
+
+    def test_poly_compare_and_engine_paths(self):
+        from quantfirm.kalshi.cli import _engine_paths, _refuse_live_sleeve
+        from quantfirm.kalshi.poly import compare_snapshot
+
+        class NS:
+            def __init__(self, **kw):
+                self.__dict__.update(kw)
+
+        paths = _engine_paths(NS(log_decisions=True,
+                                  state_prefix="kalshi_poly_paper"))
+        self.assertTrue(paths["state_path"].endswith("kalshi_poly_paper_state.json"))
+        self.assertTrue(paths["log_path"].endswith("kalshi_poly_paper_trades.csv"))
+        self.assertIsNone(paths["tape_path"])
+        live_ok = NS(live=True, state_prefix="kalshi_paper")
+        _refuse_live_sleeve(live_ok)
+        with self.assertRaises(SystemExit):
+            _refuse_live_sleeve(NS(live=True, state_prefix="kalshi_poly_paper"))
+        _refuse_live_sleeve(NS(live=False, state_prefix="kalshi_poly_paper"))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            live = os.path.join(tmp, "live.csv")
+            poly = os.path.join(tmp, "poly.csv")
+            hdr = ("settled_at,adapter,metal,pnl\n")
+            with open(live, "w") as f:
+                f.write(hdr)
+                f.write("2026-09-12T08:20:00Z,live,btc,-9.55\n")
+                f.write("2026-09-12T08:20:00Z,live,eth,6.13\n")
+                f.write("2026-09-12T08:20:00Z,shadow,btc,1.00\n")
+                f.write("2026-09-11T08:20:00Z,live,btc,99.00\n")
+            with open(poly, "w") as f:
+                f.write(hdr)
+                f.write("2026-09-12T08:20:00Z,shadow,btc,5.00\n")
+                f.write("2026-09-12T08:20:00Z,shadow,eth,4.00\n")
+            rec = compare_snapshot(day="2026-09-12", live_path=live,
+                                 poly_path=poly)
+            self.assertEqual(rec["live_crypto"]["n"], 2)
+            self.assertEqual(rec["live_crypto"]["pnl"], -3.42)
+            self.assertEqual(rec["poly_paper"]["n"], 2)
+            self.assertEqual(rec["poly_paper"]["pnl"], 9.0)
+            self.assertTrue(rec["poly_ahead"])
+            self.assertFalse(rec["ready"])
+
 
 
 if __name__ == "__main__":

@@ -213,6 +213,74 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         bankroll, open_positions, params, recent_volume=recent_volume, **kw)
 
 
+def poly_confirm(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                  bankroll, open_positions, params, recent_volume=None,
+                  metal=None, poly_yes_bid=None, poly_yes_ask=None,
+                  poly_down_ask=None, **kw):
+    """desk_book, but crypto sits when Polymarket's 15m Up/Down disagrees.
+
+    Missing Poly quote does not sit (feed outage ≠ a signal). Coin-flip
+    on Poly (both sides <55¢) sits. Off the live loop until the logged
+    basis is scored. Commodities have no Poly 15m book — pass through.
+    """
+    from .poly import PolyQuote, poly_favorite
+    it = desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        metal=metal, **kw)
+    if it is None or metal not in CRYPTO_LIVE:
+        return it
+    if poly_yes_bid is None and poly_yes_ask is None:
+        return it
+    q = PolyQuote(asset=str(metal), slug="", up_bid=poly_yes_bid,
+                   up_ask=poly_yes_ask, down_bid=None, down_ask=poly_down_ask,
+                   ts=float(ts))
+    side = poly_favorite(q, price_min=0.55)
+    if side is None or side != it.side:
+        return None
+    it.tag = "poly_confirm"
+    return it
+
+
+def poly_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+              bankroll, open_positions, params, recent_volume=None,
+              metal=None, poly_yes_bid=None, poly_yes_ask=None,
+              poly_down_ask=None, **kw):
+    """Poly picks the side; Kalshi is the fill. Paper / compare sleeve.
+
+    Not a locked arb (Chainlink TWAP ≠ CF last print). Rule:
+
+      * crypto only (no Poly 15m gold/WTI)
+      * missing Poly quote → sit (this sleeve *is* the Poly signal)
+      * Poly must have a ≥60¢ favorite (Up=YES, Down=NO)
+      * take that side on Kalshi only if Kalshi also has that side ≥60¢
+        and not fee-eat
+      * disagreement (Kalshi first favorite is the other way) → sit
+
+    Same 4% crypto size. Off the live loop; compare to ``desk_book`` live
+    fills by end of day before promoting.
+    """
+    from .poly import PolyQuote, poly_favorite
+    if metal not in CRYPTO_LIVE:
+        return None
+    if poly_yes_bid is None and poly_yes_ask is None:
+        return None
+    q = PolyQuote(asset=str(metal), slug="", up_bid=poly_yes_bid,
+                   up_ask=poly_yes_ask, down_bid=None, down_ask=poly_down_ask,
+                   ts=float(ts))
+    side = poly_favorite(q, price_min=0.60)
+    if side is None:
+        return None
+    it = favorite_blind(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, crypto_params(params),
+        recent_volume=recent_volume, fill_cap=True, **kw)
+    if it is None or it.side != side:
+        return None
+    it.tag = "poly_book"
+    return it
+
+
 def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
                target_frac: float = 0.01) -> Intent | None:
     """Size so a *win* is about ``target_frac`` of bankroll, capped by stake.
@@ -698,6 +766,20 @@ def registry() -> list[Spec]:
                 signal_max_age_s=0),
              "lag",
              "Commodities 8% ≥60¢; BTC and ETH 4% each (~$10) ≥60¢ until close"),
+        Spec("poly_confirm", poly_confirm,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "desk_book + sit crypto when Polymarket 15m favorite disagrees"),
+        Spec("poly_book", poly_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.92,
+                theta=0.0, max_open=2, max_stake_frac=0.04, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
+                signal_max_age_s=0),
+             "lag",
+             "Poly ≥60¢ picks side; Kalshi executes if that side is also ≥60¢"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

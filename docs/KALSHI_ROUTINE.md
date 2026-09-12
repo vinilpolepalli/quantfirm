@@ -32,6 +32,9 @@ watchdog if no decision for 5 minutes. Heal with:
 python scripts/kalshi_desk_checkin.py
 ```
 
+Check-in also heals the **paper** Poly sleeve (`state/kalshi_poly_paper.pid`).
+That is not a second live agent.
+
 ## 2. Cursor Cloud timer
 
 Fires at `:13/:28/:43/:58` UTC (supervisor heal). Does not start a
@@ -59,6 +62,10 @@ BTC and ETH: 4% of the book each (~$9–10) ≥60¢ until close so every real-fa
 5. Keep live on if `.env.kalshi` has KALSHI_LIVE=1. Do not unset it.
    Do not switch commodities back to 4% or to yolo_book.
    Do not last-minute lock crypto. Do not re-add a last-2-min sit-out.
+   Do not switch to poly_confirm or poly_book on the live loop. A separate
+   paper sleeve (`scripts/kalshi_poly_paper_loop.sh`) shadows Poly vs
+   Kalshi; compare at EOD with `poly-compare` before promoting. Do not
+   start a second live agent. Do not re-add a first-3-min sit-out.
 6. Reply with: open windows, fills this window, shadow + live cash, realized,
    strategy name, universe, any halt.
 
