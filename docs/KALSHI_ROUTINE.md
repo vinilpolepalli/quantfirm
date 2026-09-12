@@ -1,14 +1,15 @@
 # 24/7 Kalshi 15-minute desk — routines
 
-The book is `yolo_book` on **gold, silver, copper, WTI, natgas, BTC, ETH**.
-Paper bankroll $250. Mix: last-90s 88–97¢ sprint, else first 88–94¢
-favorite (3–11 min left, no spot gate), else opening-impulse follow.
-15% stake cap, 40% daily stop. Maker quotes off. `nuke_lock` / `longshot`
-stay registered and off this loop.
+The book is `rich_fav` on **gold, silver, copper, WTI, natgas**.
+Paper bankroll $250. Sit out 50/50 books; take the first 88–94¢ favorite
+(no spot-agree gate), 3–11 minutes before close. 4% stake cap. Maker
+quotes off. BTC/ETH are harvested for research but not in this paper
+book. `yolo_book` / `nuke_lock` / `longshot` stay registered and off this
+loop.
 
 Real orders stay off until you set the key **and** `KALSHI_LIVE=1`
-**and** pass `--live`. This mix is a volatility experiment, not a
-2×/week claim (`research/kalshi_yolo.md`).
+**and** pass `--live`. This book is the least-bad n>100 lag taker, not
+a go-live (`research/kalshi_iterate.md`).
 
 ## 1. Persistent supervisor (primary)
 
@@ -40,7 +41,7 @@ in the last 90 seconds.
 
 ```
 You are the Kalshi 15-minute desk for quantfirm.
-Bankroll $250. Strategy: yolo_book. Universe: gold,silver,copper,wti,natgas,btc,eth.
+Bankroll $250. Strategy: rich_fav. Universe: gold,silver,copper,wti,natgas.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py
@@ -50,13 +51,14 @@ Bankroll $250. Strategy: yolo_book. Universe: gold,silver,copper,wti,natgas,btc,
 5. Reply with: open windows, fills this window, shadow cash, realized,
    strategy name, universe, any halt.
 
-Do not paper nuke_lock, offhours_lock, or longshot. Do not buy 99c last ticks.
-Do not change params. Do not enable live. KALSHI_LIVE must stay unset.
+Do not paper yolo_book, nuke_lock, offhours_lock, or longshot.
+Do not buy 99c last ticks. Do not change params.
+Do not enable live. KALSHI_LIVE must stay unset.
 ```
 
 ## 4. GitHub backstop
 
 `.github/workflows/kalshi.yml` at `:05/:20/:35/:50` UTC after merge to
-`main` (minute 5 of each window). Same `yolo_book` command, `--no-maker`.
+`main` (minute 5 of each window). Same `rich_fav` command, `--no-maker`.
 
 Kill switch: `touch state/KILL_SWITCH_KALSHI`

@@ -66,17 +66,17 @@ already trades at 4%. Size it 4–5× and a good copper/natgas week looks
 like a miracle; gold's test drag looks like ruin. Train already saw the
 ruin (W33).
 
-## Paper switch (~2026-09-12 02:20Z)
+## Paper switch (~2026-09-12 02:53Z)
 
-Live shadow book: **`yolo_book`**, universe
-**gold,silver,copper,wti,natgas,btc,eth**, 15% cap, 40% daily stop,
-maker off, no `--live`.
-
-This is a volatility experiment, not a promotion. `nuke_lock` stays
-off the paper engine (train already −80%).
+Owner asked for consistent returns, then to start investing. This
+environment has **no Kalshi prod key**, so real orders cannot be sent.
+The 02:45Z yolo window lost **$38** on one natgas 88¢ clip. Paper
+switched **back to `rich_fav`**, universe gold/silver/copper/WTI/natgas,
+4% cap. `KALSHI_LIVE` stays unset. Do not paper `yolo_book` as an
+investing book.
 
 ```bash
 python3 scripts/kalshi_score_yolo.py
 python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \
-  --strategy yolo_lock --fill-mode lag --split test --bankroll 250
+  --strategy rich_fav --fill-mode lag --split test --bankroll 250
 ```

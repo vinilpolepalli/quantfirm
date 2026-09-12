@@ -25,8 +25,8 @@ SERIES_LISTED_DARK = {
     "KXNDQ15M": "ndx",
 }
 
-# 15-minute crypto (live, large books). In the paper universe so last-minute
-# locks have somewhere to clip ~1% — BTC is ~1.8M contracts/window.
+# 15-minute crypto (live, large books). Harvested for research, not in the
+# conservative paper book — last-week lag locks lost on BTC/ETH.
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
     "KXETH15M": "eth",
@@ -55,13 +55,13 @@ SWISSQUOTE = {
     "wti": "OIL",
 }
 
-# Live 15-minute book: five commodities + BTC/ETH. Last-minute locks need
-# size; crypto supplies it. Correlation slots are in halt.CORR_GROUPS.
-PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas", "btc", "eth")
+# Conservative paper book: five commodities. Crypto stays in LIVE_SERIES
+# for harvest. Correlation slots are in halt.CORR_GROUPS.
+PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
 
-# Shadow book on the 24/7 supervisor. Risky mix (see research/kalshi_yolo.md).
-# Not a go-live. Conservative 4% book remains registered as rich_fav.
-PAPER_STRATEGY = "yolo_book"
+# Shadow book on the 24/7 supervisor. 4% 88–94¢ FLB (research/kalshi_iterate.md).
+# Not a go-live. Risky mixes stay registered as yolo_* / nuke_lock.
+PAPER_STRATEGY = "rich_fav"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
 # energy / copper) so the $250 can sit in metals AND energy at once.

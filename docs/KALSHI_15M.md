@@ -30,25 +30,25 @@ tournament, and it wires the live paper engine to the settlement feed.
 | `KXNATGAS15M` | Nat gas | Pyth `Commodities.Index.NATGAS/USD` | ~10k | yes |
 | `KXPALLADIUM15M` / `KXPLATINUM15M` | — | Pyth metals | — | listed, dark |
 | `KXINX15M` / `KXNDQ15M` | SPX / NDX | Google Finance | — | listed, dark |
-| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | yes (in yolo paper) |
-| `KXETH15M` | ETH | CF Benchmarks 60s average | large | yes (in yolo paper) |
+| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | yes (research only) |
+| `KXETH15M` | ETH | CF Benchmarks 60s average | large | yes (research only) |
 
 Hours: commodity 15M books were **open on Saturday 2026-09-12** (the prior
 note that metals go dark Sat 04:00Z is stale — treat the API as truth).
 Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
-Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
-Live strategy: **`yolo_book`** — last-90s 88–97¢ sprint, else first
-88–94¢ favorite 3–11 minutes left (no spot gate), else opening-impulse
-follow. 15% stake, 40% daily stop, maker off. This is a volatility
-experiment, not a 2×/week claim: a leveraged 88–94¢ favorite *can*
-print a doubling calendar week in sample, and it already lost in
-train with 70%+ drawdowns. Numbers: `research/kalshi_yolo.md`.
+Default paper book: **gold, silver, copper, WTI, natgas**.
+Live strategy: **`rich_fav`** — first 88–94¢ favorite, 3–11 minutes left,
+no spot-agree gate, 4% stake. Maker off. BTC/ETH stay in the harvest
+universe. This is the least-bad n>100 lag book (test +$130 / t=1.42,
+train flat, last week +$55). t=1.42 is **not** the tournament gate.
+`yolo_book` (15% mix) printed a −$38 natgas miss in one paper window
+and is off the loop. Numbers: `research/kalshi_iterate.md`,
+`research/kalshi_yolo.md`.
 
-`rich_fav` (4% FLB, the previous paper book), `spot_lock`, and
-`offhours_lock` stay registered. Off-hours was green on train (t=1.18)
-and died on test. `nuke_lock` / `longshot` stay **off** the paper
-engine. Iteration notes: `research/kalshi_iterate.md`.
+`spot_lock` and `offhours_lock` stay registered. Off-hours was green
+on train (t=1.18) and died on test. `nuke_lock` / `longshot` stay
+**off** the paper engine.
 
 A 99¢ last-tick book cannot deliver 1% of bankroll without putting nearly
 all of it at risk, so we skip those too.
@@ -101,8 +101,8 @@ python -m quantfirm.kalshi.cli tournament --data data/kalshi --bankroll 250
 python -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
     --fill-mode lag --bankroll 250
 python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
-    --strategy yolo_book --bankroll 250 --log-decisions
-./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 7 assets
+    --strategy rich_fav --bankroll 250 --log-decisions
+./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities
 python scripts/kalshi_desk_checkin.py   # heal + commit heartbeat
 ```
 

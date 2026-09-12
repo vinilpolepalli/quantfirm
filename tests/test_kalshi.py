@@ -14,7 +14,7 @@ from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
 from quantfirm.kalshi.strategies import (favorite_blind, late_lock, model_fav,
                                          one_pct, registry)
 from quantfirm.kalshi.strategy import Params, decide
-from quantfirm.kalshi.universe import (BANKROLL, PAPER_ASSETS,
+from quantfirm.kalshi.universe import (BANKROLL, LIVE_SERIES, PAPER_ASSETS,
                                          PAPER_STRATEGY, SERIES)
 
 
@@ -191,21 +191,22 @@ class TestNewStrategies(unittest.TestCase):
         self.assertGreaterEqual(spec.params.tau_max_s, 600)
         self.assertEqual(spec.params.max_stake_frac, 0.04)
 
-    def test_yolo_book_is_paper_book(self):
-        self.assertEqual(PAPER_STRATEGY, "yolo_book")
+    def test_rich_fav_is_paper_book(self):
+        self.assertEqual(PAPER_STRATEGY, "rich_fav")
         spec = next(s for s in registry() if s.name == PAPER_STRATEGY)
-        self.assertEqual(spec.params.kelly_mult, 1.0)
-        self.assertEqual(spec.params.max_stake_frac, 0.15)
-        self.assertEqual(spec.params.daily_stop_frac, 0.40)
-        self.assertEqual(spec.params.tau_min_s, 8)
-        self.assertEqual(spec.params.tau_max_s, 780)
+        self.assertEqual(spec.params.max_stake_frac, 0.04)
+        self.assertEqual(spec.params.price_min, 0.88)
+        self.assertLessEqual(spec.params.price_max, 0.94)
+        self.assertEqual(spec.params.tau_min_s, 180)
+        self.assertEqual(spec.params.tau_max_s, 660)
         loop_path = os.path.join(os.path.dirname(__file__),
                                  "..", "scripts", "kalshi_paper_loop.sh")
         with open(loop_path) as f:
             loop = f.read()
-        self.assertIn('STRATEGY="${STRATEGY:-yolo_book}"', loop)
-        self.assertIn("gold,silver,copper,wti,natgas,btc,eth", loop)
+        self.assertIn('STRATEGY="${STRATEGY:-rich_fav}"', loop)
+        self.assertIn("gold,silver,copper,wti,natgas", loop)
         self.assertNotIn("nuke_lock", loop)
+        self.assertNotIn("yolo_book", loop)
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")
@@ -297,9 +298,11 @@ class TestNewStrategies(unittest.TestCase):
         it3 = one_pct(**{**kw, "yes_bid": 0.988, "yes_ask": 0.992})
         self.assertIsNone(it3)
 
-    def test_paper_universe_includes_crypto(self):
+    def test_paper_universe_is_five_commodities(self):
         self.assertEqual(PAPER_ASSETS,
-                         ("gold", "silver", "copper", "wti", "natgas", "btc", "eth"))
+                         ("gold", "silver", "copper", "wti", "natgas"))
+        self.assertIn("btc", LIVE_SERIES.values())
+        self.assertIn("eth", LIVE_SERIES.values())
         from quantfirm.kalshi.paper import PaperEngine
         sig = inspect.signature(PaperEngine.__init__)
         self.assertEqual(sig.parameters["metals"].default, PAPER_ASSETS)

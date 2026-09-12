@@ -112,10 +112,13 @@ and already lost in train (W33 −$128, 72% DD). `nuke_lock` W36 was
 | 02:00Z | `spot_lock` | copper NO 11@92¢ **+$0.82**, WTI NO 11@88¢ **+$1.23** | first lag-compatible fills |
 | ~02:10Z | switch to **`rich_fav`** | same 88–94¢ window, no spot gate | measurement, not a claim |
 | ~02:30Z | switch to **`yolo_book`** | 15% mix + crypto; 2×/week experiment | not a go-live |
+| 02:45Z | `yolo_book` | natgas YES 43@88¢ **−$38.16**; BTC/gold/copper won | one miss at 15% size |
+| ~02:53Z | back to **`rich_fav`** | 4% / 5 commodities | owner asked for consistent, not 2× |
 
-Shadow cash at 02:06Z: **$250.33**. Realized taker **+$10.10** (n=18
-settled shadow rows including the old books). Maker leftover +$1.65
-(maker is off). Kill switch off. No `--live`.
+Shadow cash after the 02:45Z yolo window: **$226.98**. Realized taker
+**−$23.02** (n=28). The natgas 43-lot 88¢ miss is why 15% is not an
+investing size. Paper switched back to `rich_fav`. Kill switch off.
+No `--live`. No prod key in this environment.
 
 The 7/7 last-minute tape and the 2/2 `spot_lock` tape are **not** a
 strategy. They are hours.
