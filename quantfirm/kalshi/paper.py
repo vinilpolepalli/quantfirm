@@ -55,6 +55,16 @@ def decision_bankroll(cash: dict, live: bool) -> float:
     return float(cash.get("shadow") or 0.0)
 
 
+def taker_entries_allowed(allowed: dict, live: bool) -> bool:
+    """Daily stop for the taker that can send orders.
+
+    Shadow yolo this morning put the paper ledger through −10%. Live
+    is only −$3. Gate live clips on the live book, not the hole.
+    """
+    book = "live" if live else "shadow"
+    return bool(allowed.get(book))
+
+
 @dataclass
 class PaperPosition:
     ticker: str
@@ -369,27 +379,9 @@ class PaperEngine:
         now = int(time.time())
         allowed = self._entries_allowed()
         for metal in self.metals:
-            feed = self.feeds.get(metal)
-            px = feed.price() if feed is not None else None
-            if px is None:
-                fb = self._fallback.get(metal)
-                px = fb.price() if fb is not None else None
-            if px is None:
+            series = SERIES.get(metal)
+            if not series:
                 continue
-            ts_px, s_now = px
-            if now - ts_px > self.params.signal_max_age_s:
-                continue
-            # update 1-min vol clock from the feed
-            lm = self._last_1m.get(metal)
-            minute = now - now % 60
-            if lm is None:
-                self._last_1m[metal] = (minute, s_now)
-            elif minute > lm[0]:
-                if s_now > 0 and lm[1] > 0:
-                    self.vol[metal].update(minute, math.log(s_now / lm[1]))
-                self._last_1m[metal] = (minute, s_now)
-
-            series = SERIES[metal]
             m = self.current_market(series)
             if not m or m.get("floor_strike") is None:
                 continue
@@ -397,6 +389,34 @@ class PaperEngine:
             if not (open_ts <= now < close_ts):
                 continue
             tkr = m["ticker"]
+            k = float(m["floor_strike"])
+
+            feed = self.feeds.get(metal)
+            px = feed.price() if feed is not None else None
+            if px is None:
+                fb = self._fallback.get(metal)
+                px = fb.price() if fb is not None else None
+            ts_px, s_now = (px if px is not None else (None, None))
+            age_lim = self.params.signal_max_age_s
+            # signal_max_age_s <= 0: FLB does not need S. Do not sit out
+            # a 70¢ favorite because live_data is empty at window open.
+            spot_fresh = (
+                s_now is not None
+                and (age_lim <= 0 or now - ts_px <= age_lim)
+            )
+            if not spot_fresh:
+                if age_lim > 0:
+                    continue
+                s_now = k
+            else:
+                lm = self._last_1m.get(metal)
+                minute = now - now % 60
+                if lm is None:
+                    self._last_1m[metal] = (minute, s_now)
+                elif minute > lm[0]:
+                    if s_now > 0 and lm[1] > 0:
+                        self.vol[metal].update(minute, math.log(s_now / lm[1]))
+                    self._last_1m[metal] = (minute, s_now)
             # per-adapter dedupe: a maker or demo fill must NOT silence the
             # shadow taker record for the rest of the window (review finding).
             shadow_here = any(p.ticker == tkr and p.adapter == "shadow"
@@ -408,7 +428,6 @@ class PaperEngine:
             bid = float(q.yes_bid) if q.yes_bid is not None else None
             ask = float(q.yes_ask) if q.yes_ask is not None else None
             sigma = self.vol[metal].sigma_1m(now)
-            k = float(m["floor_strike"])
             # 3-min regime lookback from the sample history
             from .fair import fair_yes
             fair_now = fair_yes(s_now, k, sigma, (close_ts - now) / 60.0)
@@ -428,7 +447,7 @@ class PaperEngine:
             if tkr not in self._open_px:
                 self._open_px[tkr] = s_now
             intent = None
-            if allowed["shadow"] and not shadow_here:
+            if taker_entries_allowed(allowed, self.use_live) and not shadow_here:
                 intent = self.decide_fn(
                     ticker=tkr, ts=now, s=s_now, k=k, sigma_1m=sigma,
                     close_ts=close_ts, yes_bid=bid, yes_ask=ask,

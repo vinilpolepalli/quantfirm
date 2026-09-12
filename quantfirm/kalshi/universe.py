@@ -1,7 +1,8 @@
 """15-minute series this desk knows.
 
-Default paper book: five live commodity binaries plus BTC/ETH 15-minute.
-Indexes (SPX/NDX) and dark metals stay listed for harvest, not trading.
+Default paper book: five live commodity binaries plus BTC/ETH 15-minute
+(both can be on at once). Indexes and dark metals stay listed for harvest,
+not trading.
 
 Fees are quadratic, multiplier 1, maker $0 on every series here.
 """
@@ -25,8 +26,9 @@ SERIES_LISTED_DARK = {
     "KXNDQ15M": "ndx",
 }
 
-# 15-minute crypto (live, large books). Harvested for research, not in the
-# conservative paper book — last-week lag locks lost on BTC/ETH.
+# 15-minute crypto (live, large books). BTC and ETH both clip at 4%
+# of the book each (~$9–10), ≥60¢ / until close. Not a split budget.
+# SOL/DOGE/XRP 15m exist but are not scored.
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
     "KXETH15M": "eth",
@@ -55,14 +57,20 @@ SWISSQUOTE = {
     "wti": "OIL",
 }
 
-# Conservative paper book: five commodities. Crypto stays in LIVE_SERIES
-# for harvest. Correlation slots are in halt.CORR_GROUPS.
-PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
+# Harvest both. Live both — independent books, same cautious overlay.
+CRYPTO_ASSETS = ("btc", "eth")
+CRYPTO_LIVE = ("btc", "eth")
 
-# Live canary on the 24/7 supervisor. 8% 88–94¢ FLB; skip when the
-# quadratic fee eats ≥15% of the win (research/kalshi_iterate.md).
+# Live book: five commodities + BTC + ETH. Correlation slots are in
+# halt.CORR_GROUPS (precious / energy). Crypto names are their own books.
+PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
+
+# Live canary on the 24/7 supervisor. Commodities: 8% FLB ≥60¢ from
+# window open until close. Crypto: 4% of the book **each** (~$9–10)
+# / ≥60¢ / until close so every real-favorite interval can clip. Sit out
+# coin-flips, longshots, and fee-eat (that is the 99¢ last-tick skip).
 # Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
-PAPER_STRATEGY = "rich_fav"
+PAPER_STRATEGY = "desk_book"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
 # energy / copper) so the $250 can sit in metals AND energy at once.

@@ -9,11 +9,11 @@ KILL_SWITCH = os.path.join(REPO, "state", "KILL_SWITCH_KALSHI")
 
 # One slot per cluster. Metals, energy, and crypto can all sit on the
 # $250 in the same window; gold+silver share a side, WTI/natgas share a
-# side, BTC/ETH share a side. Copper is its own book.
+# side. Copper, BTC, and ETH are their own books — we can be in BTC and
+# ETH together.
 CORR_GROUPS = (
     frozenset({"gold", "silver"}),
     frozenset({"wti", "natgas"}),
-    frozenset({"btc", "eth"}),
 )
 
 

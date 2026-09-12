@@ -116,6 +116,12 @@ and already lost in train (W33 −$128, 72% DD). `nuke_lock` W36 was
 | ~02:53Z | back to **`rich_fav`** | 4% / 5 commodities | owner asked for consistent, not 2× |
 | 03:15Z | **live canary** `rich_fav` 4% | gold NO 10@88¢ **+$1.13**, WTI NO 9@88¢ **+$1.01** | real money; fee ~7¢ on a $1.12 win |
 | ~03:20Z | **`rich_fav` 8%** | half-Kelly, fee-eat skip 93–94¢ | owner: clips were too small |
+| 03:31Z | gold NO 10 **−$8.87** live | entered T−11 min; WTI/copper 8% won | early clip can reverse |
+| ~03:47Z | **`rich_fav` until close** | tau_min 180→0 | last-3-min sit-out was ours; 99¢ still fee-capped |
+| 03:45Z | **no fill** | WTI ~70¢ NO most of the window; 88–94 + 5¢ two-sided sat it out | empty UI, not a dark book |
+| 04:00Z | **no fill** | gold mid-fav, natgas ~63¢, copper 70–93¢; same 88–94 band | commodities then **dark** |
+| ~04:08Z | **`rich_fav` every-window** | ≥60¢, no spread gate, one-sided OK, tau 0–900, no S required | skip only coin-flip / fee-eat |
+| 04:00Z Sat → Mon 03:15Z | commodities **closed** | next gold/WTI/natgas/copper/silver window is Mon 2026-09-14 03:15Z | BTC and ETH 15m; **`desk_book` 4%/≥60¢ until close** (every real-favorite interval; sit coin-flips). See `research/kalshi_crypto.md` |
 
 Shadow cash after the 02:45Z yolo window: **$226.98**. Realized taker
 **−$23.02** (n=28). The natgas 43-lot 88¢ miss is why 15% is not an

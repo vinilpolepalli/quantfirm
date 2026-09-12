@@ -11,8 +11,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
                                    kelly_fraction, norm_cdf, taker_fee)
-from quantfirm.kalshi.strategies import (favorite_blind, late_lock, model_fav,
-                                         one_pct, registry)
+from quantfirm.kalshi.strategies import (crypto_fav, desk_book, favorite_blind,
+                                         late_lock, model_fav, one_pct, registry)
 from quantfirm.kalshi.strategy import Params, decide
 from quantfirm.kalshi.universe import (BANKROLL, LIVE_SERIES, PAPER_ASSETS,
                                          PAPER_STRATEGY, SERIES)
@@ -193,7 +193,8 @@ class TestNewStrategies(unittest.TestCase):
         names = {s.name for s in registry()}
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
                   "favorite_blind", "open_fade", "spot_lock", "mid_lock",
-                  "rich_fav", "model_fav", "offhours_lock", "yolo_book",
+                  "rich_fav", "crypto_fav", "desk_book", "model_fav",
+                  "offhours_lock", "yolo_book",
                   "longshot", "sprint", "yolo_lock", "nuke_lock"):
             self.assertIn(n, names)
 
@@ -225,31 +226,157 @@ class TestNewStrategies(unittest.TestCase):
 
     def test_rich_fav_is_registered_conservative(self):
         spec = next(s for s in registry() if s.name == "rich_fav")
-        self.assertEqual(spec.params.price_min, 0.88)
+        self.assertEqual(spec.params.price_min, 0.60)
         self.assertLessEqual(spec.params.price_max, 0.94)
-        self.assertGreaterEqual(spec.params.tau_min_s, 180)
-        self.assertGreaterEqual(spec.params.tau_max_s, 600)
+        self.assertEqual(spec.params.tau_min_s, 0)
+        self.assertGreaterEqual(spec.params.tau_max_s, 900)
         self.assertGreaterEqual(spec.params.max_stake_frac, 0.08)
         self.assertLess(spec.params.max_stake_frac, 0.12)
         self.assertGreaterEqual(spec.params.kelly_mult, 0.5)
+        self.assertGreaterEqual(spec.params.max_spread, 0.50)
+        self.assertEqual(spec.params.signal_max_age_s, 0)
+        self.assertEqual(spec.params.min_recent_volume, 0.0)
 
-    def test_rich_fav_is_paper_book(self):
-        self.assertEqual(PAPER_STRATEGY, "rich_fav")
+    def test_desk_book_is_paper_book(self):
+        self.assertEqual(PAPER_STRATEGY, "desk_book")
         spec = next(s for s in registry() if s.name == PAPER_STRATEGY)
         self.assertGreaterEqual(spec.params.max_stake_frac, 0.08)
         self.assertLess(spec.params.max_stake_frac, 0.12)
-        self.assertEqual(spec.params.price_min, 0.88)
+        self.assertEqual(spec.params.price_min, 0.60)
         self.assertLessEqual(spec.params.price_max, 0.94)
-        self.assertEqual(spec.params.tau_min_s, 180)
-        self.assertEqual(spec.params.tau_max_s, 660)
+        self.assertEqual(spec.params.tau_min_s, 0)
+        self.assertGreaterEqual(spec.params.tau_max_s, 900)
+        crypto = next(s for s in registry() if s.name == "crypto_fav")
+        self.assertEqual(crypto.params.price_min, 0.60)
+        self.assertEqual(crypto.params.max_stake_frac, 0.04)
+        self.assertEqual(crypto.params.tau_min_s, 0)
+        self.assertGreaterEqual(crypto.params.tau_max_s, 900)
         loop_path = os.path.join(os.path.dirname(__file__),
                                  "..", "scripts", "kalshi_paper_loop.sh")
         with open(loop_path) as f:
             loop = f.read()
-        self.assertIn('STRATEGY="${STRATEGY:-rich_fav}"', loop)
-        self.assertIn("gold,silver,copper,wti,natgas", loop)
+        self.assertIn('STRATEGY="${STRATEGY:-desk_book}"', loop)
+        self.assertIn("gold,silver,copper,wti,natgas,btc,eth", loop)
         self.assertNotIn("nuke_lock", loop)
         self.assertNotIn("yolo_book", loop)
+
+    def test_rich_fav_takes_a_mid_favorite_not_a_coin_flip(self):
+        from dataclasses import replace
+        spec = next(s for s in registry() if s.name == "rich_fav")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 240, s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, bankroll=250.0, open_positions=0, params=p,
+                  recent_volume=200)
+        mid = favorite_blind(**{**kw, "yes_bid": 0.63, "yes_ask": 0.65})
+        self.assertIsNotNone(mid)
+        self.assertEqual(mid.side, "yes")
+        coin = favorite_blind(**{**kw, "yes_bid": 0.49, "yes_ask": 0.52})
+        self.assertIsNone(coin)
+        junk = favorite_blind(**{**kw, "yes_bid": 0.03, "yes_ask": 0.97})
+        self.assertIsNone(junk)
+        onesided = favorite_blind(**{**kw, "yes_bid": None, "yes_ask": 0.70})
+        self.assertIsNotNone(onesided)
+        # Wide book: 03:45Z WTI sat at ~70¢ NO with a 2–30¢ hole. Still a
+        # favorite — sit-out is coin-flip / fee-eat, not spread.
+        wide = favorite_blind(**{**kw, "yes_bid": 0.30, "yes_ask": 0.32})
+        self.assertIsNotNone(wide)
+        self.assertEqual(wide.side, "no")
+        self.assertAlmostEqual(wide.limit_price, 0.70, places=2)
+        # Richer side 93¢ is fee-eat; fall through to the other favorite.
+        fall = favorite_blind(**{**kw, "yes_bid": 0.30, "yes_ask": 0.93})
+        self.assertIsNotNone(fall)
+        self.assertEqual(fall.side, "no")
+        onesided_no = favorite_blind(**{**kw, "yes_bid": 0.25, "yes_ask": None})
+        self.assertIsNotNone(onesided_no)
+        self.assertEqual(onesided_no.side, "no")
+        # Open-print (tau=900) is in the window; after close is not.
+        at_open = favorite_blind(**{**kw, "ts": close - 900,
+                                   "yes_bid": 0.63, "yes_ask": 0.65})
+        self.assertIsNotNone(at_open)
+
+    def test_rich_fav_can_enter_with_seconds_left(self):
+        from dataclasses import replace
+        spec = next(s for s in registry() if s.name == "rich_fav")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", s=100.2, k=100.0, sigma_1m=0.0005,
+                  yes_bid=0.87, yes_ask=0.88, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200,
+                  close_ts=close)
+        late = favorite_blind(**{**kw, "ts": close - 30})
+        self.assertIsNotNone(late)
+        self.assertEqual(late.side, "yes")
+        after = favorite_blind(**{**kw, "ts": close + 1})
+        self.assertIsNone(after)
+
+    def test_desk_book_crypto_sizes_each_name_and_sits_junk(self):
+        from dataclasses import replace
+        spec = next(s for s in registry() if s.name == "desk_book")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 300, s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, yes_bid=0.78, yes_ask=0.80, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        gold = desk_book(**kw, metal="gold")
+        btc = desk_book(**kw, metal="btc")
+        self.assertIsNotNone(gold)
+        self.assertIsNotNone(btc)
+        self.assertEqual(gold.side, "yes")
+        self.assertEqual(btc.side, "yes")
+        self.assertEqual(btc.tag, "crypto_fav")
+        # Independent 4% cap (~$10) on BTC and ETH. Commodity Kelly at 80¢
+        # can print fewer lots than that — crypto is not a leftover split.
+        btc_stake = btc.count * btc.limit_price
+        self.assertGreaterEqual(btc_stake, 8.0)
+        self.assertLessEqual(btc_stake, 10.0)
+        # Coin-flip sits. A 56¢ book is still a coin-flip. A 36¢ YES is a
+        # 64¢ NO favorite — clip NO, do not buy the longshot. Both-sides
+        # junk (5¢ / 97¢) sits via price_min + fee-eat.
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.49, "yes_ask": 0.52},
+                                    metal="btc"))
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.54, "yes_ask": 0.56},
+                                    metal="btc"))
+        cheap_yes = desk_book(**{**kw, "yes_bid": 0.36, "yes_ask": 0.37},
+                               metal="btc")
+        self.assertIsNotNone(cheap_yes)
+        self.assertEqual(cheap_yes.side, "no")
+        self.assertAlmostEqual(cheap_yes.limit_price, 0.64, places=2)
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.03, "yes_ask": 0.05},
+                                    metal="btc"))
+        mid = desk_book(**{**kw, "yes_bid": 0.62, "yes_ask": 0.63}, metal="btc")
+        self.assertIsNotNone(mid)
+        self.assertEqual(mid.side, "yes")
+        self.assertEqual(mid.tag, "crypto_fav")
+        self.assertGreaterEqual(mid.count * mid.limit_price, 8.0)
+        self.assertLessEqual(mid.count * mid.limit_price, 10.0)
+        # Last 30s: both clip. 99¢ last ticks still sit out (fee-eat).
+        late_gold = desk_book(**{**kw, "ts": close - 30}, metal="gold")
+        late_btc = desk_book(**{**kw, "ts": close - 30}, metal="btc")
+        self.assertIsNotNone(late_gold)
+        self.assertIsNotNone(late_btc)
+        junk_late = desk_book(**{**kw, "ts": close - 5,
+                                  "yes_bid": 0.988, "yes_ask": 0.992},
+                              metal="btc")
+        self.assertIsNone(junk_late)
+        # ETH uses the same overlay (4% / ≥60¢) and can clip even if
+        # BTC would also be on.
+        eth = desk_book(**kw, metal="eth")
+        self.assertIsNotNone(eth)
+        self.assertEqual(eth.tag, "crypto_fav")
+        self.assertEqual(eth.count, btc.count)
+        at72 = desk_book(**{**kw, "yes_bid": 0.71, "yes_ask": 0.72},
+                         metal="btc")
+        self.assertIsNotNone(at72)
+        self.assertGreaterEqual(at72.count * 0.72, 8.0)
+        self.assertLessEqual(at72.count * 0.72, 10.0)
+        cf = next(s for s in registry() if s.name == "crypto_fav")
+        p2 = replace(cf.params, macro_blackout_et=())
+        hit = crypto_fav(**{**kw, "params": p2})
+        self.assertIsNotNone(hit)
+        self.assertEqual(hit.tag, "crypto_fav")
+        late_cf = crypto_fav(**{**kw, "params": p2, "ts": close - 30})
+        self.assertIsNotNone(late_cf)
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")
@@ -341,14 +468,23 @@ class TestNewStrategies(unittest.TestCase):
         it3 = one_pct(**{**kw, "yes_bid": 0.988, "yes_ask": 0.992})
         self.assertIsNone(it3)
 
-    def test_paper_universe_is_five_commodities(self):
+    def test_paper_universe_includes_btc_and_eth(self):
         self.assertEqual(PAPER_ASSETS,
-                         ("gold", "silver", "copper", "wti", "natgas"))
+                         ("gold", "silver", "copper", "wti", "natgas",
+                          "btc", "eth"))
         self.assertIn("btc", LIVE_SERIES.values())
         self.assertIn("eth", LIVE_SERIES.values())
+        self.assertEqual(PAPER_ASSETS[-2:], ("btc", "eth"))
         from quantfirm.kalshi.paper import PaperEngine
         sig = inspect.signature(PaperEngine.__init__)
         self.assertEqual(sig.parameters["metals"].default, PAPER_ASSETS)
+
+    def test_open_count_follows_paper_assets(self):
+        from quantfirm.kalshi.runtime import count_open_markets
+        src = inspect.getsource(count_open_markets)
+        self.assertIn("PAPER_ASSETS", src)
+        self.assertIn("LIVE_SERIES", src)
+        self.assertNotIn("for series in SERIES:", src)
 
 
 class TestDiversifyAndHalt(unittest.TestCase):
@@ -365,8 +501,10 @@ class TestDiversifyAndHalt(unittest.TestCase):
         self.assertFalse(blocked_by_corr("natgas", "yes", open_))
         self.assertFalse(blocked_by_corr("btc", "yes", open_))
         open_.append(SimpleNamespace(metal="btc", side="yes"))
-        self.assertTrue(blocked_by_corr("eth", "yes", open_))
+        self.assertFalse(blocked_by_corr("eth", "yes", open_))
         self.assertFalse(blocked_by_corr("eth", "no", open_))
+        self.assertFalse(blocked_by_corr("gold", "yes",
+                                          [SimpleNamespace(metal="btc", side="yes")]))
 
     def test_heartbeat_from_state_file(self):
         from quantfirm.kalshi.runtime import write_desk_status
@@ -429,12 +567,16 @@ class TestDiversifyAndHalt(unittest.TestCase):
         self.assertIsNone(it_liq)
 
     def test_decision_bankroll_prefers_live_cash(self):
-        from quantfirm.kalshi.paper import decision_bankroll
+        from quantfirm.kalshi.paper import decision_bankroll, taker_entries_allowed
         cash = {"shadow": 229.0, "live": 252.0}
         self.assertEqual(decision_bankroll(cash, live=True), 252.0)
         self.assertEqual(decision_bankroll(cash, live=False), 229.0)
         self.assertEqual(decision_bankroll({"shadow": 229.0, "live": 0.0},
                                             live=True), 229.0)
+        # Shadow yolo hole must not halt live when live P&L is inside the stop.
+        stopped = {"shadow": False, "live": True, "maker": True}
+        self.assertTrue(taker_entries_allowed(stopped, live=True))
+        self.assertFalse(taker_entries_allowed(stopped, live=False))
 
     def test_langgraph_desk_compiles(self):
         from quantfirm.kalshi.agent import build_desk

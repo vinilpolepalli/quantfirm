@@ -19,21 +19,28 @@ Strategies that ignore those priors (always-yes, coin-flip) are CONTROLS.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from typing import Callable
 
 from .fair import fair_yes, implied_sigma_1m, kelly_fraction, taker_fee
 from .strategy import Intent, Params, decide
+from .universe import CRYPTO_LIVE
 
 
 def _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params, tag,
-          allow_min: bool = False) -> Intent | None:
+          allow_min: bool = False, fill_cap: bool = False) -> Intent | None:
     if cost <= 0 or cost >= 1:
         return None
-    all_in = cost + taker_fee(1, cost)
-    f = params.kelly_mult * kelly_fraction(q, all_in)
-    stake = min(max(f, 0.0), params.max_stake_frac) * bankroll
+    if fill_cap:
+        # Spend the stake cap (crypto: ~$10 each). Quarter-Kelly of a
+        # 3pp assumed edge collapses to 4 lots at 72¢; BTC and ETH are
+        # independent books, not a split budget.
+        stake = params.max_stake_frac * bankroll
+    else:
+        all_in = cost + taker_fee(1, cost)
+        f = params.kelly_mult * kelly_fraction(q, all_in)
+        stake = min(max(f, 0.0), params.max_stake_frac) * bankroll
     count = int(stake / cost)
     if count < params.min_count:
         # Structural signals (FLB / late lock) can have a thin assumed edge
@@ -103,35 +110,107 @@ def _fee_eats_payout(cost: float, max_fee_frac: float = 0.15,
 
 
 def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
-                   bankroll, open_positions, params, recent_volume=None, **_):
+                   bankroll, open_positions, params, recent_volume=None,
+                   fill_cap: bool = False, **_):
     """Buy the market favorite (side priced ≥ price_min) and hold.
 
     No model. Tests whether Whelan's favorite-longshot bias exists on
     15-minute commodities after the quadratic taker fee.
+
+    Sit out only bad evidence: coin-flip (side < price_min), longshot /
+    99¢ locks (price_max + fee-eat), empty or inverted book. One-sided
+    and wide books still clip — requiring a two-sided 5¢ 88–94¢ band
+    sat out whole windows that had a 60–90¢ favorite (03:45Z WTI ~70¢).
+    If the richer side is fee-eat, fall through to the other favorite.
     """
-    g = _gates(ts, close_ts, yes_bid, yes_ask, open_positions, params, recent_volume)
-    if g is None:
+    tau_s = close_ts - ts
+    if not (params.tau_min_s <= tau_s <= params.tau_max_s):
         return None
-    tau_s, _ = g
+    if open_positions >= params.max_open:
+        return None
+    if params.blackout(ts):
+        return None
+    if recent_volume is not None and recent_volume < params.min_recent_volume:
+        return None
+    if yes_bid is None and yes_ask is None:
+        return None
+    if (yes_bid is not None and yes_ask is not None and yes_ask < yes_bid):
+        return None
     cands = []
-    if params.price_min <= yes_ask <= params.price_max:
-        q = min(0.97, yes_ask + 0.03)  # assumed 3pp FLB, not a forecast
-        edge = q - yes_ask - taker_fee(1, yes_ask)
-        cands.append(("yes", yes_ask, q, edge, yes_ask))
-    no_px = 1.0 - yes_bid
-    if params.price_min <= no_px <= params.price_max:
-        q = min(0.97, no_px + 0.03)
-        edge = q - no_px - taker_fee(1, no_px)
-        cands.append(("no", no_px, q, edge, 1.0 - no_px))
+    if yes_ask is not None and params.price_min <= yes_ask <= params.price_max:
+        if not _fee_eats_payout(yes_ask):
+            q = min(0.97, yes_ask + 0.03)  # assumed 3pp FLB, not a forecast
+            edge = q - yes_ask - taker_fee(1, yes_ask)
+            cands.append(("yes", yes_ask, q, edge, yes_ask))
+    no_px = (1.0 - yes_bid) if yes_bid is not None else None
+    if no_px is not None and params.price_min <= no_px <= params.price_max:
+        if not _fee_eats_payout(no_px):
+            q = min(0.97, no_px + 0.03)
+            edge = q - no_px - taker_fee(1, no_px)
+            cands.append(("no", no_px, q, edge, 1.0 - no_px))
     if not cands:
         return None
     side, cost, q, edge, fair = max(cands, key=lambda c: c[1])  # richer favorite
-    if cost < params.price_min:
-        return None
-    if _fee_eats_payout(cost):
-        return None
     return _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params,
-                 "favorite", allow_min=True)
+                 "favorite", allow_min=True, fill_cap=fill_cap)
+
+
+def crypto_params(base: Params) -> Params:
+    """Chill crypto overlay: clip every window that has a real favorite.
+
+    Same FLB bar as commodities (≥60¢). Stake is 4% of the book
+    (~$9–10) **per name** — BTC and ETH are independent, not a split
+    of one 4% budget. Quarter-Kelly of a 3pp assumed edge was collapsing
+    72¢ clips to 4 lots (~$3). Coin-flips (50–58¢) and weekend
+    longshots still sit. 93¢+ stay out via fee-eat / price_max.
+    """
+    return replace(
+        base,
+        price_min=0.60,
+        price_max=0.92,
+        max_stake_frac=0.04,
+        kelly_mult=0.25,
+        tau_min_s=0,
+        tau_max_s=900,
+        min_count=4,
+        max_spread=1.0,
+        min_recent_volume=0.0,
+        signal_max_age_s=0,
+    )
+
+
+def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+               bankroll, open_positions, params, recent_volume=None, **kw):
+    """Standalone BTC/ETH 15m FLB (for backtests). Same overlay as desk_book."""
+    it = favorite_blind(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        fill_cap=True, **kw)
+    if it is not None:
+        it.tag = "crypto_fav"
+    return it
+
+
+def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+              bankroll, open_positions, params, recent_volume=None,
+              metal=None, **kw):
+    """Commodity rich_fav + cautious BTC and ETH, both allowed.
+
+    Commodities keep 8% / ≥60¢ / until close. Crypto uses crypto_params
+    (4% / ≥60¢ / until close, **$9–10 each** so BTC and ETH are not a
+    split budget). Fee-eat still skips 93¢+ last ticks; coin-flips sit.
+    """
+    if metal in CRYPTO_LIVE:
+        it = favorite_blind(
+            ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+            bankroll, open_positions, crypto_params(params),
+            recent_volume=recent_volume, fill_cap=True, **kw)
+        if it is not None:
+            it.tag = "crypto_fav"
+        return it
+    return favorite_blind(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume, **kw)
 
 
 def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
@@ -599,11 +678,26 @@ def registry() -> list[Spec]:
              "lag",
              "spot_lock sitting out 12:00-21:00 UTC (London/NY metals hours)"),
         Spec("rich_fav", favorite_blind,
-             _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=6, max_stake_frac=0.08, min_count=4,
-                max_spread=0.05, min_recent_volume=40.0, kelly_mult=0.5),
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
              "lag",
-             "FLB 88–92¢ after fee-eat, half-Kelly, 8% cap, 3–11 min left"),
+             "FLB ≥60¢ until close; skip coin-flip / fee-eat; 8% half-Kelly"),
+        Spec("crypto_fav", crypto_fav,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.92,
+                theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
+                signal_max_age_s=0),
+             "lag",
+             "BTC/ETH 15m FLB ≥60¢ until close, 4% each (~$10), not a split"),
+        Spec("desk_book", desk_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "Commodities 8% ≥60¢; BTC and ETH 4% each (~$10) ≥60¢ until close"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

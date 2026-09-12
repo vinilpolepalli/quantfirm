@@ -154,6 +154,7 @@ class Backtest:
         self.candles: dict[str, dict[str, dict[int, dict]]] = {}
         self.bars: dict[str, dict[int, float]] = {}
         wanted = series or METALS
+        self.series = {}
         for series_ticker, metal in wanted.items():
             mp = os.path.join(data_dir, f"markets_{series_ticker}.jsonl")
             cp = os.path.join(data_dir, f"candles_{series_ticker}.csv")
@@ -162,6 +163,7 @@ class Backtest:
                 self.markets[series_ticker] = load_markets(mp)
                 self.candles[series_ticker] = load_candles(cp)
                 self.bars[metal] = load_underlying(bp)
+                self.series[series_ticker] = metal
 
     def run(self, params: Params, start_ts: int | None = None,
             end_ts: int | None = None, decide_fn=None) -> dict:
@@ -177,7 +179,7 @@ class Backtest:
                 prev = (ts, bars[ts])
         # decision + settle events per market
         for series, mkts in self.markets.items():
-            metal = METALS[series]
+            metal = self.series.get(series) or METALS[series]
             for m in mkts:
                 if start_ts and m["close_ts"] < start_ts:
                     continue
@@ -230,7 +232,7 @@ class Backtest:
 
             # ---- decide
             _, _, _, series, m = ev
-            metal = METALS[series]
+            metal = self.series.get(series) or METALS[series]
             tkr = m["ticker"]
             if tkr in open_pos:
                 continue
