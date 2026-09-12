@@ -1,12 +1,13 @@
 {
- "ts": "2026-09-12T11:13:41Z",
- "strategy": "rich_fav",
+ "ts": "2026-09-12T11:29:41Z",
+ "strategy": "desk_book",
  "universe": [
   "gold",
   "silver",
   "copper",
   "wti",
-  "natgas"
+  "natgas",
+  "btc"
  ],
  "bankroll": 250.0,
  "live": true,
@@ -27,6 +28,6 @@
  "n_open": 0,
  "open": [],
  "n_settled": 42,
- "updated": "2026-09-12T04:13:44Z",
+ "updated": "2026-09-12T11:29:39Z",
  "started": "2026-09-12T00:46:58Z"
 }
