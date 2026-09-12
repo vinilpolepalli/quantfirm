@@ -89,6 +89,30 @@ hours `status` reports no open market and the supervisor sleeps 10 min.
 
 ---
 
+## 2a. Supervisor gotchas (both cost real uptime)
+
+Two bugs bit within 24h of running unattended; the shape of each generalises.
+
+**`grep -c` fails open.** `grep -c` prints `0` *and* exits 1 when nothing
+matches, so `open_count=$(... | grep -c ... || echo 0)` yields `"0\n0"`, the
+`[ -eq ]` test errors, and the no-open-market guard **fails open**. The
+supervisor launched a full engine into a closed weekend market every ~5 min
+(79 sessions, 69 watchdog kills) before this was caught. Assign on failure
+(`) || open_count=0`) rather than piping a second value in.
+
+**SIGKILL is never forwarded.** The engine runs under `timeout`, and
+`kill -9 <timeout pid>` does not reach the python child — every watchdog kill
+**orphaned a live engine**. 70 accumulated, all polling the API and all writing
+`state/kalshi_paper_{state.json,trades.csv}`. They did no damage only because
+the market was shut; mid-session that is concurrent writers to the files the
+whole experiment is measured from. The watchdog now also `pkill`s the engine by
+name, and the loop sweeps for strays after every session.
+
+Both are pinned by `TestSupervisorScript` in `tests/test_kalshi.py`. If you
+touch the supervisor, keep them passing. There is one known artifact of
+overlapping engines in the data: a double-entry on `KXGOLD15M-26SEP111115-15`
+(2026-09-11 15:16Z, two maker fills at 0.58 and 0.57, $21.25 total).
+
 ## 3. Where it stands
 
 Live shadow, paper money, $0 real:

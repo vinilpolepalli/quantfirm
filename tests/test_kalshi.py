@@ -205,5 +205,37 @@ class TestMakerFillRealism(unittest.TestCase):
         self.assertTrue(filled)
 
 
+class TestSupervisorScript(unittest.TestCase):
+    """Guards against two supervisor bugs that cost a weekend of churn."""
+
+    @property
+    def script(self):
+        """Executable lines only -- the comments explaining these bugs quote
+        the buggy snippets verbatim, which would match the assertions."""
+        path = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "scripts", "kalshi_paper_loop.sh")
+        with open(path) as f:
+            return "\n".join(ln for ln in f
+                             if not ln.lstrip().startswith("#"))
+
+    def test_market_guard_does_not_fail_open(self):
+        """`grep -c` prints 0 AND exits 1, so `|| echo 0` yields "0\n0",
+        the integer test errors, and the no-market guard FAILS OPEN. That
+        spawned an engine into a closed market every ~5 min all weekend."""
+        self.assertNotIn("|| echo 0", self.script,
+                         "`grep -c ... || echo 0` appends a second zero and "
+                         "makes the market guard fail open")
+        self.assertIn("|| open_count=0", self.script)
+
+    def test_watchdog_kills_the_engine_not_just_the_wrapper(self):
+        """SIGKILL is never forwarded, so `kill -9 <timeout pid>` orphans the
+        python child. 70 orphans accumulated on 2026-09-12, all polling the
+        API and writing the same state files."""
+        self.assertIn("pkill -KILL -f 'quantfirm[.]kalshi[.]cli paper'",
+                      self.script,
+                      "watchdog must reap the engine itself, not only the "
+                      "`timeout` wrapper it was launched under")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
