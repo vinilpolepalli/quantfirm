@@ -16,6 +16,7 @@ Two desks:
 |---|---|---|
 | **Equity** | Robinhood equities (cash account, fractional) | **LIVE** — $250, six-name momentum book |
 | Crypto | Robinhood Crypto API | disabled — tournament NO-GO stands (`docs/TOURNAMENT.md`) |
+| **Kalshi 15M commodities** | Kalshi gold/silver/copper/WTI/natgas binaries | **PAPER** — $250 shadow book, see `docs/KALSHI_15M.md` |
 
 ## Map
 
@@ -40,6 +41,7 @@ Two desks:
 - `docs/IDEA_BACKLOG.md` — graded idea pipeline + the graveyard of dead ends
 - `docs/TOURNAMENT.md` / `docs/RESEARCH.md` — crypto desk verdict and findings
 - `docs/RUNBOOK.md` — go-live checklist, kill switch, incident playbook
+- `docs/KALSHI.md` / `docs/KALSHI_15M.md` — 15-minute commodity desk (paper)
 - `docs/PROCESS.md` — build log (how agents built this)
 
 ## Quick start (backtesting only — no credentials needed)
