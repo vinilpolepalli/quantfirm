@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T13:43:25Z",
+ "ts": "2026-09-12T13:58:34Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,71 +13,71 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "alive",
  "cash": {
-  "shadow": 210.97899999999998,
+  "shadow": 221.129,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 235.93474
+  "live": 246.10014000000004
  },
  "realized": {
-  "shadow": -19.43100000000001,
+  "shadow": -8.021000000000011,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 5.69414
+  "live": 17.11274
  },
  "n_open": 4,
  "open": [
   {
    "metal": "eth",
    "side": "no",
-   "count": 16,
-   "ticker": "KXETH15M-26SEP120945-45",
-   "fill_price": 0.62,
+   "count": 17,
+   "ticker": "KXETH15M-26SEP121000-00",
+   "fill_price": 0.61,
    "adapter": "shadow"
   },
   {
    "metal": "eth",
    "side": "no",
-   "count": 16,
-   "ticker": "KXETH15M-26SEP120945-45",
-   "fill_price": 0.62,
+   "count": 17,
+   "ticker": "KXETH15M-26SEP121000-00",
+   "fill_price": 0.61,
    "adapter": "live"
   },
   {
    "metal": "btc",
    "side": "no",
-   "count": 15,
-   "ticker": "KXBTC15M-26SEP120945-45",
-   "fill_price": 0.61,
+   "count": 16,
+   "ticker": "KXBTC15M-26SEP121000-00",
+   "fill_price": 0.62,
    "adapter": "shadow"
   },
   {
    "metal": "btc",
    "side": "no",
-   "count": 15,
-   "ticker": "KXBTC15M-26SEP120945-45",
-   "fill_price": 0.61,
+   "count": 16,
+   "ticker": "KXBTC15M-26SEP121000-00",
+   "fill_price": 0.62,
    "adapter": "live"
   }
  ],
- "n_settled": 72,
- "updated": "2026-09-12T13:43:25Z",
+ "n_settled": 76,
+ "updated": "2026-09-12T13:58:34Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 2,
- "poly_paper_cash": 223.45,
+ "poly_paper_cash": 232.86999999999998,
  "poly_paper": {
   "day": "2026-09-12",
   "live_crypto": {
-   "n": 5,
-   "pnl": 8.16,
-   "hit": 0.8
+   "n": 7,
+   "pnl": 19.58,
+   "hit": 0.857
   },
   "poly_paper": {
-   "n": 2,
-   "pnl": -8.22,
-   "hit": 0.5
+   "n": 4,
+   "pnl": 2.45,
+   "hit": 0.75
   },
   "poly_ahead": false,
   "ready": false
