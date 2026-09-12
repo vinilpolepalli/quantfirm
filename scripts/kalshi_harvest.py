@@ -22,9 +22,11 @@ import requests
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO, "data", "kalshi")
 BASE = "https://api.elections.kalshi.com/trade-api/v2"
-SERIES = ["KXGOLD15M", "KXSILVER15M", "KXCOPPER15M", "KXWTI15M", "KXNATGAS15M"]
+SERIES = ["KXGOLD15M", "KXSILVER15M", "KXCOPPER15M", "KXWTI15M", "KXNATGAS15M",
+          "KXBTC15M", "KXETH15M"]
 YF = {"gold": "GC=F", "silver": "SI=F", "copper": "HG=F",
-      "wti": "CL=F", "natgas": "NG=F"}
+      "wti": "CL=F", "natgas": "NG=F",
+      "btc": "BTC-USD", "eth": "ETH-USD"}
 
 S = requests.Session()
 S.headers["User-Agent"] = "quantfirm-research/0.1"
@@ -52,7 +54,7 @@ def gz_aware(path):
                             and os.path.exists(path + ".gz")) else path
 
 
-def harvest_markets(series):
+def harvest_markets(series, min_close_ts=None):
     rows, cursor = [], None
     while True:
         params = {"series_ticker": series, "status": "settled", "limit": 1000}
@@ -61,17 +63,33 @@ def harvest_markets(series):
         d = get("/markets", params)
         if d is None:
             break
-        rows.extend(d.get("markets", []))
+        batch = d.get("markets", [])
+        rows.extend(batch)
         cursor = d.get("cursor")
         if not cursor:
             break
+        # Settled lists are newest-first. Stop paging once the whole page is
+        # older than --min-close so BTC/ETH last-week pulls stay small.
+        if min_close_ts is not None and batch:
+            oldest = min(_market_close_ts(m) or 0 for m in batch)
+            if oldest < min_close_ts:
+                break
         time.sleep(0.15)
+    if min_close_ts is not None:
+        rows = [m for m in rows if (_market_close_ts(m) or 0) >= min_close_ts]
     fn = os.path.join(OUT, f"markets_{series}.jsonl")
     with open(fn, "w") as f:
         for m in rows:
             f.write(json.dumps(m) + "\n")
     print(f"{series}: {len(rows)} settled markets", flush=True)
     return rows
+
+
+def _market_close_ts(m):
+    raw = m.get("close_time") or m.get("expiration_time")
+    if not raw:
+        return None
+    return int(datetime.fromisoformat(str(raw).replace("Z", "+00:00")).timestamp())
 
 
 CANDLE_FIELDS = ["market_ticker", "end_period_ts",
@@ -183,10 +201,19 @@ if __name__ == "__main__":
     ap.add_argument("--series", nargs="*", default=SERIES)
     ap.add_argument("--gzip", action="store_true")
     ap.add_argument("--skip-yf", action="store_true")
+    ap.add_argument(
+        "--min-close",
+        default=None,
+        help="ISO timestamp; drop settled markets that closed before this",
+    )
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
+    min_close_ts = None
+    if a.min_close:
+        min_close_ts = int(datetime.fromisoformat(
+            a.min_close.replace("Z", "+00:00")).timestamp())
     for s in a.series:
-        harvest_candles(s, harvest_markets(s))
+        harvest_candles(s, harvest_markets(s, min_close_ts=min_close_ts))
     if not a.skip_yf:
         harvest_yf()
     if a.gzip:

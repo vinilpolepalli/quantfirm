@@ -15,6 +15,7 @@ import argparse
 import dataclasses
 import json
 import os
+from datetime import datetime
 
 from .strategy import Params
 from .universe import BANKROLL, PAPER_ASSETS, SPLIT_TS
@@ -42,11 +43,26 @@ def _print_metrics(m: dict, verbose: bool = False):
 
 def cmd_backtest(a):
     from .backtest import Backtest
+    from .strategies import registry
     bt = Backtest(a.data, bankroll=a.bankroll)
-    p = _params_from_args(a)
+    if a.strategy:
+        spec = {s.name: s for s in registry()}[a.strategy]
+        from dataclasses import replace
+        p = spec.params
+        if a.fill_mode:
+            p = replace(p, fill_mode=a.fill_mode)
+        decide_fn = spec.fn
+        print(f"strategy={spec.name} fill={p.fill_mode} — {spec.note}", flush=True)
+    else:
+        p = _params_from_args(a)
+        decide_fn = None
     lo, hi = ((None, SPLIT_TS) if a.split == "train"
-              else (SPLIT_TS, None) if a.split == "test" else (None, None))
-    m = bt.run(p, start_ts=lo, end_ts=hi)
+               else (SPLIT_TS, None) if a.split == "test" else (None, None))
+    if getattr(a, "since", None):
+        since_ts = int(datetime.fromisoformat(
+            a.since.replace("Z", "+00:00")).timestamp())
+        lo = since_ts if lo is None else max(lo, since_ts)
+    m = bt.run(p, start_ts=lo, end_ts=hi, decide_fn=decide_fn)
     _print_metrics(m, a.verbose)
     if a.out:
         with open(a.out, "w") as f:
@@ -318,6 +334,18 @@ def main():
     sp = sub.add_parser("backtest")
     sp.add_argument("--data", required=True)
     sp.add_argument("--split", choices=["train", "test", "all"], default="all")
+    sp.add_argument(
+        "--strategy",
+        default=None,
+        help="registered name from strategies.registry() "
+             "(one_pct, favorite_div, …). Default: oracle params from flags",
+    )
+    sp.add_argument(
+        "--since",
+        default=None,
+        help="ISO timestamp (e.g. 2026-09-05T00:00:00Z); "
+             "skip windows that close before this",
+    )
     sp.add_argument("--out")
     sp.add_argument("--verbose", action="store_true")
     add_params(sp)

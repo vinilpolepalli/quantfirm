@@ -319,6 +319,50 @@ class TestBacktestCausality(unittest.TestCase):
             self.assertEqual(m["n_trades"], 0)
             self.assertGreaterEqual(m["skipped"].get("gapped_away", 0), 1)
 
+    def test_one_pct_last_minute_lock_fills(self):
+        """one_pct only decides at T=close-60; lag fill uses the close candle."""
+        from quantfirm.kalshi.backtest import Backtest
+        from quantfirm.kalshi.strategies import registry
+        from dataclasses import replace
+        spec = next(s for s in registry() if s.name == "one_pct")
+        p = replace(spec.params, macro_blackout_et=(), diurnal=False,
+                    min_recent_volume=0.0)
+        with tempfile.TemporaryDirectory() as tmp:
+            self._mini_data(tmp)
+            # Rewrite quotes so the last decision minute is a 91c YES lock
+            # with spot already above strike, and the fill minute uncontested.
+            import pandas as pd
+            o, c = 1755086400, 1755087300
+            rows = ["market_ticker,end_period_ts,yes_bid_open,yes_bid_high,yes_bid_low,yes_bid_close,"
+                    "yes_ask_open,yes_ask_high,yes_ask_low,yes_ask_close,"
+                    "price_open,price_high,price_low,price_close,volume,open_interest"]
+            for i in range(1, 16):
+                ts = o + 60 * i
+                if i == 14:  # decision candle ending at close-60
+                    bid, ask = 0.90, 0.91
+                elif i == 15:  # fill candle = window close; uncontested
+                    bid, ask = 0.90, 0.91
+                else:
+                    bid, ask = 0.48, 0.52
+                rows.append(
+                    f"KXGOLD15M-X,{ts},{bid},{bid},{bid},{bid},"
+                    f"{ask},{ask},{ask},{ask},0.90,0.91,0.90,0.91,200,100")
+            with open(os.path.join(tmp, "candles_KXGOLD15M.csv"), "w") as f:
+                f.write("\n".join(rows))
+            idx, px = [], []
+            for i in range(-600, 16):
+                ts = o + 60 * i
+                idx.append(pd.Timestamp(ts - 60, unit="s", tz="UTC"))
+                px.append(100.20 if i >= 0 else 100.0)
+            pd.DataFrame({"close": px}, index=idx).to_csv(
+                os.path.join(tmp, "yf_gold_1m.csv"))
+            bt = Backtest(tmp, bankroll=250.0)
+            m = bt.run(p, decide_fn=spec.fn)
+            self.assertEqual(m["n_trades"], 1)
+            t = m["trades"][0]
+            self.assertEqual(t.side, "yes")
+            self.assertGreater(t.pnl, 0)
+
 
 class TestMakerFillRealism(unittest.TestCase):
     """Guards against the fill artifacts that invalidated both backtests."""

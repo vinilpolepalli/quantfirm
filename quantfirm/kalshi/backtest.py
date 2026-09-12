@@ -37,7 +37,7 @@ from datetime import datetime, timezone
 
 from .fair import VolEstimator, taker_fee
 from .strategy import Intent, Params, decide
-from .universe import SERIES as METALS, BANKROLL
+from .universe import LIVE_SERIES as METALS, BANKROLL
 TICK_BODY = 0.01
 SETTLE_LAG_S = 300
 
