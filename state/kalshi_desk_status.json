@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T20:28:58Z",
+ "ts": "2026-09-12T20:43:51Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,56 +13,56 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 276.51900000000006,
+  "shadow": 265.8590000000001,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 301.10924
+  "live": 290.60834
  },
  "realized": {
-  "shadow": 51.28899999999999,
+  "shadow": 39.518999999999984,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 76.04184000000001
+  "live": 64.28724
  },
  "n_open": 4,
  "open": [
   {
    "metal": "btc",
    "side": "no",
-   "count": 17,
-   "ticker": "KXBTC15M-26SEP121630-30",
+   "count": 16,
+   "ticker": "KXBTC15M-26SEP121645-45",
    "fill_price": 0.75,
    "adapter": "shadow"
   },
   {
    "metal": "btc",
    "side": "no",
-   "count": 17,
-   "ticker": "KXBTC15M-26SEP121630-30",
-   "fill_price": 0.75,
+   "count": 16,
+   "ticker": "KXBTC15M-26SEP121645-45",
+   "fill_price": 0.74,
    "adapter": "live"
   },
   {
    "metal": "eth",
-   "side": "yes",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP121630-30",
-   "fill_price": 0.9,
+   "side": "no",
+   "count": 15,
+   "ticker": "KXETH15M-26SEP121645-45",
+   "fill_price": 0.75,
    "adapter": "shadow"
   },
   {
    "metal": "eth",
-   "side": "yes",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP121630-30",
-   "fill_price": 0.9,
+   "side": "no",
+   "count": 15,
+   "ticker": "KXETH15M-26SEP121645-45",
+   "fill_price": 0.75,
    "adapter": "live"
   }
  ],
- "n_settled": 179,
- "updated": "2026-09-12T20:28:57Z",
+ "n_settled": 183,
+ "updated": "2026-09-12T20:43:51Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
@@ -70,9 +70,9 @@
  "poly_paper": {
   "day": "2026-09-12",
   "live_crypto": {
-   "n": 58,
-   "pnl": 78.5,
-   "hit": 0.828
+   "n": 60,
+   "pnl": 66.75,
+   "hit": 0.817
   },
   "poly_paper": {
    "n": 34,
