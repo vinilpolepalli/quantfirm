@@ -1,0 +1,86 @@
+{
+ "n_trades": 4,
+ "final_equity": 249.21,
+ "net_pnl": -0.79,
+ "return_pct": -0.32,
+ "fees": 0.07,
+ "hit_rate": 0.0,
+ "avg_pnl_per_trade": -0.198,
+ "avg_fill": 0.009,
+ "t_stat": -2.28,
+ "daily_sharpe_ann": -9.26,
+ "max_drawdown_pct": 0.32,
+ "trading_days": 10,
+ "by_metal": {
+  "copper": {
+   "n": 1,
+   "pnl": -0.22,
+   "hit": 0.0
+  },
+  "wti": {
+   "n": 2,
+   "pnl": -0.46,
+   "hit": 0.0
+  },
+  "silver": {
+   "n": 1,
+   "pnl": -0.11,
+   "hit": 0.0
+  }
+ },
+ "by_side": {
+  "yes": {
+   "n": 2,
+   "pnl": -0.33,
+   "hit": 0.0
+  },
+  "no": {
+   "n": 2,
+   "pnl": -0.46,
+   "hit": 0.0
+  }
+ },
+ "by_tag": {
+  "one_pct": {
+   "n": 4,
+   "pnl": -0.79,
+   "hit": 0.0
+  }
+ },
+ "by_fill": {
+  "uncontested": {
+   "n": 4,
+   "pnl": -0.79,
+   "hit": 0.0
+  }
+ },
+ "by_week": {
+  "2026-W36": {
+   "n": 2,
+   "pnl": -0.65,
+   "hit": 0.0
+  },
+  "2026-W37": {
+   "n": 2,
+   "pnl": -0.14,
+   "hit": 0.0
+  }
+ },
+ "skipped": {
+  "no_underlying": 1692,
+  "raced_out": 465,
+  "no_quote": 6
+ },
+ "strategy": "one_pct",
+ "fill_mode": "lag",
+ "window": "2w",
+ "since": "2026-08-29T00:00:00+00:00",
+ "loaded_series": [
+  "KXCOPPER15M",
+  "KXGOLD15M",
+  "KXNATGAS15M",
+  "KXSILVER15M",
+  "KXWTI15M"
+ ],
+ "universe": "commodities"
+}

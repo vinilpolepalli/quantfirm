@@ -1,0 +1,49 @@
+{
+ "ts": "2026-09-12T03:25:01Z",
+ "strategy": "rich_fav",
+ "universe": [
+  "gold",
+  "silver",
+  "copper",
+  "wti",
+  "natgas"
+ ],
+ "bankroll": 250.0,
+ "live": true,
+ "kill_switch": false,
+ "supervisor": "supervisor: alive",
+ "cash": {
+  "shadow": 220.13899999999998,
+  "demo": 250.0,
+  "maker": 251.64999999999998,
+  "live": 243.2654
+ },
+ "realized": {
+  "shadow": -20.89100000000001,
+  "demo": 0.0,
+  "maker": 1.6499999999999968,
+  "live": 2.1393999999999993
+ },
+ "n_open": 2,
+ "open": [
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP112330-30",
+   "fill_price": 0.89,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP112330-30",
+   "fill_price": 0.88,
+   "adapter": "live"
+  }
+ ],
+ "n_settled": 37,
+ "updated": "2026-09-12T03:24:59Z",
+ "started": "2026-09-12T00:46:58Z"
+}

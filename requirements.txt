@@ -5,3 +5,7 @@ pandas==3.0.5
 numpy==2.4.6
 requests==2.33.1
 pynacl==1.6.2
+cryptography==41.0.7
+yfinance==1.7.0
+langgraph==1.2.11
+langchain-core==1.6.3

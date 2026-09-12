@@ -54,6 +54,8 @@ def main() -> None:
     eq_cfg = load("config/equity_live.json", {})
     kill_eq = os.path.exists(os.path.join(ROOT, state_dir, "KILL_SWITCH_EQ"))
     kill_cr = os.path.exists(os.path.join(ROOT, state_dir, "KILL_SWITCH"))
+    kill_ka = os.path.exists(os.path.join(ROOT, state_dir, "KILL_SWITCH_KALSHI"))
+    ka = load(os.path.join(state_dir, "kalshi_desk_status.json"), {})
 
     money, pct, dircls = theme.money, theme.pct, theme.dircls
 
@@ -113,6 +115,11 @@ def main() -> None:
         for t in trades) or '<tr><td colspan="5" class="empty">no trades yet</td></tr>'
 
     eq_live = bool(eq_cfg.get("enabled")) and not kill_eq
+    ka_open = int(ka.get("n_open") or 0)
+    ka_label = ("halted" if kill_ka or ka.get("kill_switch")
+                else "paper" if ka else "paper")
+    if ka and not kill_ka:
+        ka_label = f"paper, {ka_open} open" if ka_open else "paper"
     meter_col = ("var(--loss)" if dd_used > 0.6 else
                  "var(--warn)" if dd_used > 0.3 else "var(--accent)")
     # stamp the mark the figures describe, not wall-clock: a page regenerated
@@ -184,6 +191,8 @@ def main() -> None:
         equity&nbsp;<b>{'live' if eq_live else 'halted' if kill_eq else 'disabled'}</b></span>
       <span class="chip"><span class="dot-i {'halt' if kill_cr else 'idle'}"></span>
         crypto&nbsp;<b>{'halted' if kill_cr else 'no-go'}</b></span>
+      <span class="chip"><span class="dot-i {'halt' if kill_ka else 'live' if ka else 'idle'}"></span>
+        kalshi 15m&nbsp;<b>{ka_label}</b></span>
       <span class="chip"><span class="dot-i idle"></span>research&nbsp;<b>weekly, Mon</b></span>
       <span class="chip"><span class="dot-i idle"></span>risk&nbsp;<b>daily, 14:00 UTC</b></span>
     </div>

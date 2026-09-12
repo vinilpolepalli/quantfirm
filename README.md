@@ -16,6 +16,7 @@ Two desks:
 |---|---|---|
 | **Equity** | Robinhood equities (cash account, fractional) | **LIVE** — $250, six-name momentum book |
 | Crypto | Robinhood Crypto API | disabled — tournament NO-GO stands (`docs/TOURNAMENT.md`) |
+| **Kalshi 15M** | Kalshi gold/silver/copper/WTI/natgas binaries | **LIVE canary** — $250 `rich_fav` 88–94¢ / 8% / 3–11 min; see `docs/KALSHI_15M.md` |
 
 ## Map
 
@@ -27,8 +28,9 @@ Two desks:
 | Daily report (push + email) | Claude Routine → `scripts/gen_report.py` | daily 5:15pm ET |
 | Data refresh + revalidation | `.github/workflows/research.yml` | nightly |
 | Crypto execution engine (dormant) | `.github/workflows/trade.yml` → `quantfirm/live/engine.py` | hourly |
-| The books | `state/equity_state.json`, `state/equity_trade_log.csv` | every run |
-| Kill switches | `state/KILL_SWITCH_EQ`, `state/KILL_SWITCH` | honored by every run |
+| Kalshi 15M paper desk | `scripts/kalshi_paper_loop.sh` + `.github/workflows/kalshi.yml` | 24/7 (minute 5 of each window + 2s poll) |
+| The books | `state/equity_state.json`, `state/equity_trade_log.csv`, `state/kalshi_desk_status.json` | every run |
+| Kill switches | `state/KILL_SWITCH_EQ`, `state/KILL_SWITCH`, `state/KILL_SWITCH_KALSHI` | honored by every run |
 | Dashboard + reports | `dashboard/` (Vercel, auto-deploys on state commits) | every trading day |
 
 ## Docs
@@ -40,6 +42,7 @@ Two desks:
 - `docs/IDEA_BACKLOG.md` — graded idea pipeline + the graveyard of dead ends
 - `docs/TOURNAMENT.md` / `docs/RESEARCH.md` — crypto desk verdict and findings
 - `docs/RUNBOOK.md` — go-live checklist, kill switch, incident playbook
+- `docs/KALSHI.md` / `docs/KALSHI_15M.md` — 15-minute commodity desk (paper)
 - `docs/PROCESS.md` — build log (how agents built this)
 
 ## Quick start (backtesting only — no credentials needed)

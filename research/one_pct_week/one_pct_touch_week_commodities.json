@@ -1,0 +1,97 @@
+{
+ "n_trades": 154,
+ "final_equity": 302.97,
+ "net_pnl": 52.97,
+ "return_pct": 21.19,
+ "fees": 12.1,
+ "hit_rate": 0.968,
+ "avg_pnl_per_trade": 0.344,
+ "avg_fill": 0.946,
+ "t_stat": 1.12,
+ "daily_sharpe_ann": 7.86,
+ "max_drawdown_pct": 15.19,
+ "trading_days": 4,
+ "by_metal": {
+  "natgas": {
+   "n": 46,
+   "pnl": 45.6,
+   "hit": 1.0
+  },
+  "wti": {
+   "n": 43,
+   "pnl": 26.29,
+   "hit": 0.977
+  },
+  "silver": {
+   "n": 7,
+   "pnl": -14.32,
+   "hit": 0.857
+  },
+  "gold": {
+   "n": 32,
+   "pnl": 14.63,
+   "hit": 0.969
+  },
+  "copper": {
+   "n": 26,
+   "pnl": -19.23,
+   "hit": 0.923
+  }
+ },
+ "by_side": {
+  "yes": {
+   "n": 77,
+   "pnl": -4.45,
+   "hit": 0.948
+  },
+  "no": {
+   "n": 77,
+   "pnl": 57.42,
+   "hit": 0.987
+  }
+ },
+ "by_tag": {
+  "one_pct": {
+   "n": 154,
+   "pnl": 52.97,
+   "hit": 0.968
+  }
+ },
+ "by_fill": {
+  "contested": {
+   "n": 152,
+   "pnl": 94.3,
+   "hit": 0.98
+  },
+  "uncontested": {
+   "n": 2,
+   "pnl": -41.33,
+   "hit": 0.0
+  }
+ },
+ "by_week": {
+  "2026-W37": {
+   "n": 154,
+   "pnl": 52.97,
+   "hit": 0.968
+  }
+ },
+ "skipped": {
+  "no_underlying": 1230,
+  "corr_cap": 10,
+  "gapped_away": 11,
+  "daily_stop": 220
+ },
+ "strategy": "one_pct",
+ "fill_mode": "touch",
+ "window": "week",
+ "since": "2026-09-05T00:00:00+00:00",
+ "loaded_series": [
+  "KXCOPPER15M",
+  "KXGOLD15M",
+  "KXNATGAS15M",
+  "KXSILVER15M",
+  "KXWTI15M"
+ ],
+ "universe": "commodities"
+}

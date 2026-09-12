@@ -1,0 +1,4610 @@
+[
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 238,
+  "pnl": -150.61,
+  "ret": -30.12,
+  "hit": 0.403,
+  "sharpe": -1.77,
+  "mdd": 70.0,
+  "fees": 219.72,
+  "by_week": {
+   "2026-W33": 390.11,
+   "2026-W34": -364.3,
+   "2026-W35": -176.42
+  },
+  "by_metal": {
+   "gold": -251.7,
+   "silver": 101.09
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 250,
+  "pnl": -278.86,
+  "ret": -55.77,
+  "hit": 0.412,
+  "sharpe": -7.08,
+  "mdd": 67.56,
+  "fees": 143.25,
+  "by_week": {
+   "2026-W33": 46.48,
+   "2026-W34": -222.36,
+   "2026-W35": -102.98
+  },
+  "by_metal": {
+   "gold": -114.93,
+   "silver": -163.93
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 331,
+  "pnl": 70.6,
+  "ret": 14.12,
+  "hit": 0.562,
+  "sharpe": 0.72,
+  "mdd": 51.43,
+  "fees": 276.66,
+  "by_week": {
+   "2026-W33": 398.11,
+   "2026-W34": -191.65,
+   "2026-W35": -135.86
+  },
+  "by_metal": {
+   "silver": 212.67,
+   "gold": -142.07
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 325,
+  "pnl": -226.43,
+  "ret": -45.29,
+  "hit": 0.443,
+  "sharpe": -5.05,
+  "mdd": 60.84,
+  "fees": 183.68,
+  "by_week": {
+   "2026-W33": 97.21,
+   "2026-W34": -209.88,
+   "2026-W35": -113.76
+  },
+  "by_metal": {
+   "gold": -84.45,
+   "silver": -141.98
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 317,
+  "pnl": -114.15,
+  "ret": -22.83,
+  "hit": 0.432,
+  "sharpe": -1.45,
+  "mdd": 64.52,
+  "fees": 254.24,
+  "by_week": {
+   "2026-W33": 385.37,
+   "2026-W34": -317.84,
+   "2026-W35": -181.68
+  },
+  "by_metal": {
+   "gold": -132.66,
+   "silver": 18.51
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 351,
+  "pnl": -71.65,
+  "ret": -14.33,
+  "hit": 0.524,
+  "sharpe": -1.1,
+  "mdd": 60.57,
+  "fees": 243.11,
+  "by_week": {
+   "2026-W33": 245.54,
+   "2026-W34": -257.78,
+   "2026-W35": -59.41
+  },
+  "by_metal": {
+   "silver": -74.42,
+   "gold": 2.77
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 307,
+  "pnl": -177.34,
+  "ret": -35.47,
+  "hit": 0.531,
+  "sharpe": -3.53,
+  "mdd": 59.74,
+  "fees": 150.9,
+  "by_week": {
+   "2026-W33": 106.48,
+   "2026-W34": -259.76,
+   "2026-W35": -24.06
+  },
+  "by_metal": {
+   "silver": -112.81,
+   "gold": -64.53
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 280,
+  "pnl": -113.69,
+  "ret": -22.74,
+  "hit": 0.532,
+  "sharpe": -1.76,
+  "mdd": 62.88,
+  "fees": 140.88,
+  "by_week": {
+   "2026-W33": 166.77,
+   "2026-W34": -323.82,
+   "2026-W35": 43.36
+  },
+  "by_metal": {
+   "silver": -132.82,
+   "gold": 19.13
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 320,
+  "pnl": -107.17,
+  "ret": -21.43,
+  "hit": 0.447,
+  "sharpe": -1.75,
+  "mdd": 58.23,
+  "fees": 185.92,
+  "by_week": {
+   "2026-W33": 159.38,
+   "2026-W34": -246.96,
+   "2026-W35": -19.59
+  },
+  "by_metal": {
+   "gold": 27.62,
+   "silver": -134.79
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 266,
+  "pnl": 0.01,
+  "ret": 0.0,
+  "hit": 0.579,
+  "sharpe": 0.0,
+  "mdd": 53.92,
+  "fees": 154.8,
+  "by_week": {
+   "2026-W33": 207.37,
+   "2026-W34": -265.05,
+   "2026-W35": 57.69
+  },
+  "by_metal": {
+   "silver": 23.26,
+   "gold": -23.25
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 208,
+  "pnl": 23.06,
+  "ret": 4.61,
+  "hit": 0.428,
+  "sharpe": 0.19,
+  "mdd": 56.51,
+  "fees": 216.55,
+  "by_week": {
+   "2026-W33": 634.5,
+   "2026-W34": -388.79,
+   "2026-W35": -222.65
+  },
+  "by_metal": {
+   "gold": -29.34,
+   "silver": 52.4
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 168,
+  "pnl": -146.95,
+  "ret": -29.39,
+  "hit": 0.435,
+  "sharpe": -2.04,
+  "mdd": 53.37,
+  "fees": 114.88,
+  "by_week": {
+   "2026-W33": 235.1,
+   "2026-W34": -240.42,
+   "2026-W35": -141.63
+  },
+  "by_metal": {
+   "gold": 11.23,
+   "silver": -158.18
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 272,
+  "pnl": 50.72,
+  "ret": 10.14,
+  "hit": 0.54,
+  "sharpe": 0.6,
+  "mdd": 61.74,
+  "fees": 175.41,
+  "by_week": {
+   "2026-W33": 291.4,
+   "2026-W34": -359.54,
+   "2026-W35": 118.86
+  },
+  "by_metal": {
+   "silver": 3.83,
+   "gold": 46.89
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 315,
+  "pnl": 42.69,
+  "ret": 8.54,
+  "hit": 0.438,
+  "sharpe": 0.37,
+  "mdd": 62.54,
+  "fees": 288.73,
+  "by_week": {
+   "2026-W33": 596.99,
+   "2026-W34": -452.23,
+   "2026-W35": -102.07
+  },
+  "by_metal": {
+   "gold": 107.94,
+   "silver": -65.25
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 245,
+  "pnl": 88.17,
+  "ret": 17.63,
+  "hit": 0.592,
+  "sharpe": 1.08,
+  "mdd": 50.26,
+  "fees": 155.06,
+  "by_week": {
+   "2026-W33": 215.96,
+   "2026-W34": -192.89,
+   "2026-W35": 65.1
+  },
+  "by_metal": {
+   "silver": 47.9,
+   "gold": 40.27
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 363,
+  "pnl": 14.34,
+  "ret": 2.87,
+  "hit": 0.59,
+  "sharpe": 0.21,
+  "mdd": 50.57,
+  "fees": 252.16,
+  "by_week": {
+   "2026-W33": 273.76,
+   "2026-W34": -190.91,
+   "2026-W35": -68.51
+  },
+  "by_metal": {
+   "silver": 168.87,
+   "gold": -154.53
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 287,
+  "pnl": -311.36,
+  "ret": -62.27,
+  "hit": 0.418,
+  "sharpe": -6.63,
+  "mdd": 75.01,
+  "fees": 158.24,
+  "by_week": {
+   "2026-W33": 79.58,
+   "2026-W34": -294.28,
+   "2026-W35": -96.66
+  },
+  "by_metal": {
+   "gold": -109.28,
+   "silver": -202.08
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 280,
+  "pnl": -296.51,
+  "ret": -59.3,
+  "hit": 0.421,
+  "sharpe": -6.77,
+  "mdd": 70.66,
+  "fees": 151.13,
+  "by_week": {
+   "2026-W33": 78.88,
+   "2026-W34": -280.17,
+   "2026-W35": -95.22
+  },
+  "by_metal": {
+   "gold": -108.5,
+   "silver": -188.01
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 336,
+  "pnl": -71.13,
+  "ret": -14.23,
+  "hit": 0.533,
+  "sharpe": -1.01,
+  "mdd": 55.8,
+  "fees": 223.23,
+  "by_week": {
+   "2026-W33": 294.66,
+   "2026-W34": -291.51,
+   "2026-W35": -74.28
+  },
+  "by_metal": {
+   "silver": -179.96,
+   "gold": 108.83
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 289,
+  "pnl": -233.1,
+  "ret": -46.62,
+  "hit": 0.422,
+  "sharpe": -4.41,
+  "mdd": 61.99,
+  "fees": 172.54,
+  "by_week": {
+   "2026-W33": 127.96,
+   "2026-W34": -222.55,
+   "2026-W35": -138.51
+  },
+  "by_metal": {
+   "gold": -88.03,
+   "silver": -145.06
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 360,
+  "pnl": -36.32,
+  "ret": -7.26,
+  "hit": 0.514,
+  "sharpe": -0.47,
+  "mdd": 57.18,
+  "fees": 262.23,
+  "by_week": {
+   "2026-W33": 294.86,
+   "2026-W34": -266.25,
+   "2026-W35": -64.93
+  },
+  "by_metal": {
+   "gold": 78.74,
+   "silver": -115.06
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 241,
+  "pnl": -240.79,
+  "ret": -48.16,
+  "hit": 0.423,
+  "sharpe": -4.81,
+  "mdd": 60.86,
+  "fees": 149.38,
+  "by_week": {
+   "2026-W33": 125.76,
+   "2026-W34": -255.47,
+   "2026-W35": -111.08
+  },
+  "by_metal": {
+   "gold": -109.52,
+   "silver": -131.27
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 293,
+  "pnl": -51.01,
+  "ret": -10.2,
+  "hit": 0.444,
+  "sharpe": -0.65,
+  "mdd": 58.09,
+  "fees": 182.95,
+  "by_week": {
+   "2026-W33": 242.69,
+   "2026-W34": -291.93,
+   "2026-W35": -1.77
+  },
+  "by_metal": {
+   "gold": 92.89,
+   "silver": -143.9
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 371,
+  "pnl": 356.14,
+  "ret": 71.23,
+  "hit": 0.563,
+  "sharpe": 2.81,
+  "mdd": 44.69,
+  "fees": 372.49,
+  "by_week": {
+   "2026-W33": 501.73,
+   "2026-W34": -19.17,
+   "2026-W35": -126.42
+  },
+  "by_metal": {
+   "silver": 233.64,
+   "gold": 122.5
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 306,
+  "pnl": 121.65,
+  "ret": 24.33,
+  "hit": 0.585,
+  "sharpe": 1.31,
+  "mdd": 46.4,
+  "fees": 244.15,
+  "by_week": {
+   "2026-W33": 373.6,
+   "2026-W34": -160.76,
+   "2026-W35": -91.19
+  },
+  "by_metal": {
+   "silver": 112.85,
+   "gold": 8.8
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 287,
+  "pnl": 20.95,
+  "ret": 4.19,
+  "hit": 0.533,
+  "sharpe": 0.26,
+  "mdd": 57.03,
+  "fees": 186.71,
+  "by_week": {
+   "2026-W33": 331.06,
+   "2026-W34": -355.64,
+   "2026-W35": 45.53
+  },
+  "by_metal": {
+   "silver": -113.44,
+   "gold": 134.39
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 359,
+  "pnl": 23.77,
+  "ret": 4.75,
+  "hit": 0.44,
+  "sharpe": 0.18,
+  "mdd": 63.98,
+  "fees": 326.9,
+  "by_week": {
+   "2026-W33": 682.54,
+   "2026-W34": -518.64,
+   "2026-W35": -140.13
+  },
+  "by_metal": {
+   "gold": 147.66,
+   "silver": -123.89
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 345,
+  "pnl": 143.36,
+  "ret": 28.67,
+  "hit": 0.443,
+  "sharpe": 0.98,
+  "mdd": 61.08,
+  "fees": 339.39,
+  "by_week": {
+   "2026-W33": 766.66,
+   "2026-W34": -518.18,
+   "2026-W35": -105.12
+  },
+  "by_metal": {
+   "gold": 258.34,
+   "silver": -114.98
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 276,
+  "pnl": 154.42,
+  "ret": 30.88,
+  "hit": 0.543,
+  "sharpe": 1.65,
+  "mdd": 55.22,
+  "fees": 195.84,
+  "by_week": {
+   "2026-W33": 328.06,
+   "2026-W34": -314.11,
+   "2026-W35": 140.47
+  },
+  "by_metal": {
+   "silver": 49.36,
+   "gold": 105.06
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 246,
+  "pnl": 316.22,
+  "ret": 63.24,
+  "hit": 0.606,
+  "sharpe": 2.84,
+  "mdd": 46.02,
+  "fees": 181.1,
+  "by_week": {
+   "2026-W33": 280.69,
+   "2026-W34": -134.91,
+   "2026-W35": 170.44
+  },
+  "by_metal": {
+   "silver": 243.11,
+   "gold": 73.11
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 291,
+  "pnl": 17.38,
+  "ret": 3.48,
+  "hit": 0.443,
+  "sharpe": 0.19,
+  "mdd": 56.82,
+  "fees": 195.7,
+  "by_week": {
+   "2026-W33": 307.25,
+   "2026-W34": -313.68,
+   "2026-W35": 23.81
+  },
+  "by_metal": {
+   "gold": 240.44,
+   "silver": -223.06
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 265,
+  "pnl": 90.89,
+  "ret": 18.18,
+  "hit": 0.581,
+  "sharpe": 1.01,
+  "mdd": 50.95,
+  "fees": 177.04,
+  "by_week": {
+   "2026-W33": 315.18,
+   "2026-W34": -269.16,
+   "2026-W35": 44.87
+  },
+  "by_metal": {
+   "silver": 51.81,
+   "gold": 39.08
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 312,
+  "pnl": -327.88,
+  "ret": -65.58,
+  "hit": 0.42,
+  "sharpe": -9.56,
+  "mdd": 75.13,
+  "fees": 165.89,
+  "by_week": {
+   "2026-W33": 28.67,
+   "2026-W34": -260.22,
+   "2026-W35": -96.33
+  },
+  "by_metal": {
+   "gold": -167.97,
+   "silver": -159.91
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 319,
+  "pnl": -302.36,
+  "ret": -60.47,
+  "hit": 0.439,
+  "sharpe": -6.6,
+  "mdd": 72.88,
+  "fees": 172.55,
+  "by_week": {
+   "2026-W33": 87.67,
+   "2026-W34": -284.3,
+   "2026-W35": -105.73
+  },
+  "by_metal": {
+   "gold": -61.17,
+   "silver": -241.19
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 367,
+  "pnl": 441.92,
+  "ret": 88.38,
+  "hit": 0.561,
+  "sharpe": 3.26,
+  "mdd": 50.24,
+  "fees": 379.21,
+  "by_week": {
+   "2026-W33": 609.66,
+   "2026-W34": -201.55,
+   "2026-W35": 33.81
+  },
+  "by_metal": {
+   "silver": 239.56,
+   "gold": 202.36
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 357,
+  "pnl": 66.32,
+  "ret": 13.26,
+  "hit": 0.521,
+  "sharpe": 0.67,
+  "mdd": 58.96,
+  "fees": 306.99,
+  "by_week": {
+   "2026-W33": 444.56,
+   "2026-W34": -350.91,
+   "2026-W35": -27.33
+  },
+  "by_metal": {
+   "gold": 118.82,
+   "silver": -52.5
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 326,
+  "pnl": 59.98,
+  "ret": 12.0,
+  "hit": 0.534,
+  "sharpe": 0.87,
+  "mdd": 52.1,
+  "fees": 244.49,
+  "by_week": {
+   "2026-W33": 313.82,
+   "2026-W34": -235.7,
+   "2026-W35": -18.14
+  },
+  "by_metal": {
+   "silver": -197.73,
+   "gold": 257.71
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 322,
+  "pnl": -219.95,
+  "ret": -43.99,
+  "hit": 0.432,
+  "sharpe": -6.66,
+  "mdd": 62.1,
+  "fees": 151.95,
+  "by_week": {
+   "2026-W33": 1.68,
+   "2026-W34": -198.91,
+   "2026-W35": -22.72
+  },
+  "by_metal": {
+   "gold": -42.51,
+   "silver": -177.44
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 356,
+  "pnl": -2.73,
+  "ret": -0.55,
+  "hit": 0.441,
+  "sharpe": -0.03,
+  "mdd": 64.71,
+  "fees": 282.14,
+  "by_week": {
+   "2026-W33": 497.46,
+   "2026-W34": -457.1,
+   "2026-W35": -43.1
+  },
+  "by_metal": {
+   "gold": 86.9,
+   "silver": -89.64
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 385,
+  "pnl": -277.82,
+  "ret": -55.56,
+  "hit": 0.429,
+  "sharpe": -8.96,
+  "mdd": 67.88,
+  "fees": 167.08,
+  "by_week": {
+   "2026-W33": -7.03,
+   "2026-W34": -212.02,
+   "2026-W35": -58.78
+  },
+  "by_metal": {
+   "gold": -89.16,
+   "silver": -188.67
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 297,
+  "pnl": 207.04,
+  "ret": 41.41,
+  "hit": 0.586,
+  "sharpe": 2.12,
+  "mdd": 48.23,
+  "fees": 249.89,
+  "by_week": {
+   "2026-W33": 410.85,
+   "2026-W34": -211.14,
+   "2026-W35": 7.33
+  },
+  "by_metal": {
+   "silver": 188.63,
+   "gold": 18.41
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 289,
+  "pnl": 120.63,
+  "ret": 24.13,
+  "hit": 0.54,
+  "sharpe": 1.53,
+  "mdd": 52.17,
+  "fees": 197.15,
+  "by_week": {
+   "2026-W33": 279.37,
+   "2026-W34": -265.71,
+   "2026-W35": 106.97
+  },
+  "by_metal": {
+   "silver": -70.2,
+   "gold": 190.83
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 315,
+  "pnl": 144.61,
+  "ret": 28.92,
+  "hit": 0.451,
+  "sharpe": 1.3,
+  "mdd": 60.4,
+  "fees": 280.63,
+  "by_week": {
+   "2026-W33": 544.8,
+   "2026-W34": -451.78,
+   "2026-W35": 51.59
+  },
+  "by_metal": {
+   "gold": 113.98,
+   "silver": 30.63
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 316,
+  "pnl": -97.5,
+  "ret": -19.5,
+  "hit": 0.437,
+  "sharpe": -1.4,
+  "mdd": 58.56,
+  "fees": 185.6,
+  "by_week": {
+   "2026-W33": 212.63,
+   "2026-W34": -286.24,
+   "2026-W35": -23.89
+  },
+  "by_metal": {
+   "gold": 92.43,
+   "silver": -189.93
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 277,
+  "pnl": 189.39,
+  "ret": 37.88,
+  "hit": 0.538,
+  "sharpe": 1.85,
+  "mdd": 58.49,
+  "fees": 209.06,
+  "by_week": {
+   "2026-W33": 375.46,
+   "2026-W34": -343.99,
+   "2026-W35": 157.92
+  },
+  "by_metal": {
+   "silver": 47.54,
+   "gold": 141.85
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 286,
+  "pnl": -15.64,
+  "ret": -3.13,
+  "hit": 0.441,
+  "sharpe": -0.2,
+  "mdd": 58.07,
+  "fees": 182.63,
+  "by_week": {
+   "2026-W33": 247.16,
+   "2026-W34": -301.75,
+   "2026-W35": 38.95
+  },
+  "by_metal": {
+   "gold": 142.79,
+   "silver": -158.43
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 244,
+  "pnl": 354.95,
+  "ret": 70.99,
+  "hit": 0.607,
+  "sharpe": 2.92,
+  "mdd": 48.24,
+  "fees": 193.07,
+  "by_week": {
+   "2026-W33": 347.69,
+   "2026-W34": -171.27,
+   "2026-W35": 178.53
+  },
+  "by_metal": {
+   "silver": 293.41,
+   "gold": 61.54
+  }
+ },
+ {
+  "theta": 0.03,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 265,
+  "pnl": 227.16,
+  "ret": 45.43,
+  "hit": 0.592,
+  "sharpe": 2.12,
+  "mdd": 48.28,
+  "fees": 189.15,
+  "by_week": {
+   "2026-W33": 350.8,
+   "2026-W34": -264.82,
+   "2026-W35": 141.18
+  },
+  "by_metal": {
+   "silver": 157.82,
+   "gold": 69.34
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 196,
+  "pnl": -159.32,
+  "ret": -31.86,
+  "hit": 0.439,
+  "sharpe": -1.59,
+  "mdd": 64.2,
+  "fees": 171.87,
+  "by_week": {
+   "2026-W33": 321.15,
+   "2026-W34": -333.68,
+   "2026-W35": -146.79
+  },
+  "by_metal": {
+   "gold": -66.5,
+   "silver": -92.82
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 262,
+  "pnl": 22.74,
+  "ret": 4.55,
+  "hit": 0.538,
+  "sharpe": 0.18,
+  "mdd": 65.74,
+  "fees": 237.84,
+  "by_week": {
+   "2026-W33": 499.74,
+   "2026-W34": -436.02,
+   "2026-W35": -40.98
+  },
+  "by_metal": {
+   "silver": -11.11,
+   "gold": 33.85
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 264,
+  "pnl": 49.38,
+  "ret": 9.88,
+  "hit": 0.439,
+  "sharpe": 0.32,
+  "mdd": 65.06,
+  "fees": 356.7,
+  "by_week": {
+   "2026-W33": 800.35,
+   "2026-W34": -486.67,
+   "2026-W35": -264.29
+  },
+  "by_metal": {
+   "gold": -365.83,
+   "silver": 415.22
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 236,
+  "pnl": -108.13,
+  "ret": -21.63,
+  "hit": 0.419,
+  "sharpe": -0.92,
+  "mdd": 70.17,
+  "fees": 257.5,
+  "by_week": {
+   "2026-W33": 504.91,
+   "2026-W34": -422.94,
+   "2026-W35": -190.1
+  },
+  "by_metal": {
+   "gold": -149.47,
+   "silver": 41.34
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 248,
+  "pnl": -106.86,
+  "ret": -21.37,
+  "hit": 0.448,
+  "sharpe": -0.99,
+  "mdd": 59.99,
+  "fees": 231.37,
+  "by_week": {
+   "2026-W33": 375.37,
+   "2026-W34": -301.37,
+   "2026-W35": -180.86
+  },
+  "by_metal": {
+   "gold": -212.16,
+   "silver": 105.3
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 281,
+  "pnl": -16.31,
+  "ret": -3.26,
+  "hit": 0.555,
+  "sharpe": -0.13,
+  "mdd": 60.55,
+  "fees": 305.27,
+  "by_week": {
+   "2026-W33": 640.39,
+   "2026-W34": -371.38,
+   "2026-W35": -285.32
+  },
+  "by_metal": {
+   "silver": 280.68,
+   "gold": -296.99
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 296,
+  "pnl": 82.91,
+  "ret": 16.58,
+  "hit": 0.557,
+  "sharpe": 0.81,
+  "mdd": 56.3,
+  "fees": 252.46,
+  "by_week": {
+   "2026-W33": 426.03,
+   "2026-W34": -306.45,
+   "2026-W35": -36.67
+  },
+  "by_metal": {
+   "silver": 27.54,
+   "gold": 55.37
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 258,
+  "pnl": 116.09,
+  "ret": 23.22,
+  "hit": 0.558,
+  "sharpe": 1.12,
+  "mdd": 57.56,
+  "fees": 208.03,
+  "by_week": {
+   "2026-W33": 442.46,
+   "2026-W34": -365.85,
+   "2026-W35": 39.48
+  },
+  "by_metal": {
+   "silver": -31.15,
+   "gold": 147.24
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 207,
+  "pnl": 163.51,
+  "ret": 32.7,
+  "hit": 0.444,
+  "sharpe": 0.75,
+  "mdd": 61.21,
+  "fees": 311.68,
+  "by_week": {
+   "2026-W33": 1118.33,
+   "2026-W34": -636.24,
+   "2026-W35": -318.58
+  },
+  "by_metal": {
+   "gold": -37.31,
+   "silver": 200.82
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 212,
+  "pnl": -21.41,
+  "ret": -4.28,
+  "hit": 0.585,
+  "sharpe": -0.21,
+  "mdd": 54.14,
+  "fees": 200.0,
+  "by_week": {
+   "2026-W33": 425.06,
+   "2026-W34": -202.87,
+   "2026-W35": -243.6
+  },
+  "by_metal": {
+   "silver": 261.43,
+   "gold": -282.84
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 221,
+  "pnl": -60.98,
+  "ret": -12.2,
+  "hit": 0.462,
+  "sharpe": -0.48,
+  "mdd": 56.95,
+  "fees": 210.37,
+  "by_week": {
+   "2026-W33": 458.07,
+   "2026-W34": -316.09,
+   "2026-W35": -202.96
+  },
+  "by_metal": {
+   "gold": -41.13,
+   "silver": -19.85
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 197,
+  "pnl": 204.88,
+  "ret": 40.98,
+  "hit": 0.442,
+  "sharpe": 0.98,
+  "mdd": 57.47,
+  "fees": 296.49,
+  "by_week": {
+   "2026-W33": 1090.26,
+   "2026-W34": -529.55,
+   "2026-W35": -355.83
+  },
+  "by_metal": {
+   "gold": -72.76,
+   "silver": 277.64
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 176,
+  "pnl": -72.7,
+  "ret": -14.54,
+  "hit": 0.574,
+  "sharpe": -0.95,
+  "mdd": 48.77,
+  "fees": 136.06,
+  "by_week": {
+   "2026-W33": 267.1,
+   "2026-W34": -153.69,
+   "2026-W35": -186.11
+  },
+  "by_metal": {
+   "silver": 52.34,
+   "gold": -125.04
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 240,
+  "pnl": 146.77,
+  "ret": 29.35,
+  "hit": 0.558,
+  "sharpe": 1.44,
+  "mdd": 58.77,
+  "fees": 186.86,
+  "by_week": {
+   "2026-W33": 386.62,
+   "2026-W34": -365.84,
+   "2026-W35": 125.99
+  },
+  "by_metal": {
+   "silver": 113.29,
+   "gold": 33.48
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 229,
+  "pnl": 252.5,
+  "ret": 50.5,
+  "hit": 0.611,
+  "sharpe": 2.56,
+  "mdd": 46.74,
+  "fees": 182.74,
+  "by_week": {
+   "2026-W33": 340.21,
+   "2026-W34": -167.36,
+   "2026-W35": 79.65
+  },
+  "by_metal": {
+   "silver": 186.83,
+   "gold": 65.67
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 214,
+  "pnl": -49.06,
+  "ret": -9.81,
+  "hit": 0.458,
+  "sharpe": -0.37,
+  "mdd": 55.76,
+  "fees": 208.2,
+  "by_week": {
+   "2026-W33": 500.81,
+   "2026-W34": -353.65,
+   "2026-W35": -196.22
+  },
+  "by_metal": {
+   "gold": -58.49,
+   "silver": 9.43
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 245,
+  "pnl": -201.42,
+  "ret": -40.28,
+  "hit": 0.429,
+  "sharpe": -2.94,
+  "mdd": 60.23,
+  "fees": 181.08,
+  "by_week": {
+   "2026-W33": 193.12,
+   "2026-W34": -253.23,
+   "2026-W35": -141.31
+  },
+  "by_metal": {
+   "gold": -130.21,
+   "silver": -71.21
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 286,
+  "pnl": -172.12,
+  "ret": -34.42,
+  "hit": 0.507,
+  "sharpe": -2.82,
+  "mdd": 62.17,
+  "fees": 180.4,
+  "by_week": {
+   "2026-W33": 172.72,
+   "2026-W34": -280.53,
+   "2026-W35": -64.31
+  },
+  "by_metal": {
+   "gold": -48.1,
+   "silver": -124.02
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 251,
+  "pnl": -218.13,
+  "ret": -43.63,
+  "hit": 0.438,
+  "sharpe": -2.75,
+  "mdd": 64.81,
+  "fees": 180.78,
+  "by_week": {
+   "2026-W33": 227.6,
+   "2026-W34": -305.46,
+   "2026-W35": -140.27
+  },
+  "by_metal": {
+   "gold": 23.16,
+   "silver": -241.29
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 332,
+  "pnl": 295.62,
+  "ret": 59.12,
+  "hit": 0.566,
+  "sharpe": 2.2,
+  "mdd": 49.13,
+  "fees": 391.15,
+  "by_week": {
+   "2026-W33": 733.38,
+   "2026-W34": -275.08,
+   "2026-W35": -162.68
+  },
+  "by_metal": {
+   "silver": 133.18,
+   "gold": 162.44
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 273,
+  "pnl": -288.11,
+  "ret": -57.62,
+  "hit": 0.418,
+  "sharpe": -5.6,
+  "mdd": 70.83,
+  "fees": 165.74,
+  "by_week": {
+   "2026-W33": 99.86,
+   "2026-W34": -270.37,
+   "2026-W35": -117.6
+  },
+  "by_metal": {
+   "gold": -45.27,
+   "silver": -242.84
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 242,
+  "pnl": -245.47,
+  "ret": -49.09,
+  "hit": 0.413,
+  "sharpe": -4.85,
+  "mdd": 61.37,
+  "fees": 162.41,
+  "by_week": {
+   "2026-W33": 108.54,
+   "2026-W34": -214.75,
+   "2026-W35": -139.27
+  },
+  "by_metal": {
+   "gold": -157.63,
+   "silver": -87.85
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 223,
+  "pnl": -153.94,
+  "ret": -30.79,
+  "hit": 0.435,
+  "sharpe": -1.52,
+  "mdd": 60.7,
+  "fees": 179.69,
+  "by_week": {
+   "2026-W33": 330.35,
+   "2026-W34": -319.65,
+   "2026-W35": -164.64
+  },
+  "by_metal": {
+   "gold": 15.8,
+   "silver": -169.74
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 208,
+  "pnl": -54.94,
+  "ret": -10.99,
+  "hit": 0.562,
+  "sharpe": -0.59,
+  "mdd": 57.44,
+  "fees": 201.12,
+  "by_week": {
+   "2026-W33": 447.51,
+   "2026-W34": -285.47,
+   "2026-W35": -216.98
+  },
+  "by_metal": {
+   "silver": 218.4,
+   "gold": -273.34
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 270,
+  "pnl": -104.05,
+  "ret": -20.81,
+  "hit": 0.53,
+  "sharpe": -1.25,
+  "mdd": 60.55,
+  "fees": 229.27,
+  "by_week": {
+   "2026-W33": 405.04,
+   "2026-W34": -325.98,
+   "2026-W35": -183.11
+  },
+  "by_metal": {
+   "silver": -77.29,
+   "gold": -26.76
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 233,
+  "pnl": 66.07,
+  "ret": 13.21,
+  "hit": 0.438,
+  "sharpe": 0.4,
+  "mdd": 59.61,
+  "fees": 297.09,
+  "by_week": {
+   "2026-W33": 855.8,
+   "2026-W34": -478.99,
+   "2026-W35": -310.74
+  },
+  "by_metal": {
+   "gold": -9.73,
+   "silver": 75.8
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 217,
+  "pnl": 88.36,
+  "ret": 17.67,
+  "hit": 0.433,
+  "sharpe": 0.55,
+  "mdd": 57.07,
+  "fees": 276.91,
+  "by_week": {
+   "2026-W33": 829.55,
+   "2026-W34": -446.09,
+   "2026-W35": -295.1
+  },
+  "by_metal": {
+   "gold": 10.58,
+   "silver": 77.78
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 202,
+  "pnl": 189.32,
+  "ret": 37.86,
+  "hit": 0.594,
+  "sharpe": 1.98,
+  "mdd": 51.21,
+  "fees": 156.02,
+  "by_week": {
+   "2026-W33": 319.99,
+   "2026-W34": -262.12,
+   "2026-W35": 131.45
+  },
+  "by_metal": {
+   "silver": 150.88,
+   "gold": 38.45
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 249,
+  "pnl": 150.79,
+  "ret": 30.16,
+  "hit": 0.546,
+  "sharpe": 1.46,
+  "mdd": 57.29,
+  "fees": 207.13,
+  "by_week": {
+   "2026-W33": 461.51,
+   "2026-W34": -384.47,
+   "2026-W35": 73.75
+  },
+  "by_metal": {
+   "silver": -33.38,
+   "gold": 184.17
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 234,
+  "pnl": 177.85,
+  "ret": 35.57,
+  "hit": 0.543,
+  "sharpe": 1.65,
+  "mdd": 60.38,
+  "fees": 192.48,
+  "by_week": {
+   "2026-W33": 428.8,
+   "2026-W34": -416.39,
+   "2026-W35": 165.44
+  },
+  "by_metal": {
+   "silver": 81.26,
+   "gold": 96.59
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 205,
+  "pnl": -99.45,
+  "ret": -19.89,
+  "hit": 0.439,
+  "sharpe": -0.95,
+  "mdd": 55.39,
+  "fees": 175.75,
+  "by_week": {
+   "2026-W33": 376.77,
+   "2026-W34": -299.08,
+   "2026-W35": -177.14
+  },
+  "by_metal": {
+   "gold": 11.0,
+   "silver": -110.45
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 224,
+  "pnl": 145.6,
+  "ret": 29.12,
+  "hit": 0.594,
+  "sharpe": 1.52,
+  "mdd": 52.16,
+  "fees": 176.45,
+  "by_week": {
+   "2026-W33": 375.43,
+   "2026-W34": -284.61,
+   "2026-W35": 54.78
+  },
+  "by_metal": {
+   "silver": 76.42,
+   "gold": 69.18
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 219,
+  "pnl": -253.52,
+  "ret": -50.7,
+  "hit": 0.411,
+  "sharpe": -2.93,
+  "mdd": 71.03,
+  "fees": 153.87,
+  "by_week": {
+   "2026-W33": 269.41,
+   "2026-W34": -384.52,
+   "2026-W35": -138.41
+  },
+  "by_metal": {
+   "gold": -129.93,
+   "silver": -123.59
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 271,
+  "pnl": -270.08,
+  "ret": -54.02,
+  "hit": 0.432,
+  "sharpe": -5.45,
+  "mdd": 65.45,
+  "fees": 173.84,
+  "by_week": {
+   "2026-W33": 112.5,
+   "2026-W34": -271.82,
+   "2026-W35": -110.76
+  },
+  "by_metal": {
+   "gold": -304.67,
+   "silver": 34.6
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 229,
+  "pnl": -299.36,
+  "ret": -59.87,
+  "hit": 0.402,
+  "sharpe": -5.69,
+  "mdd": 71.43,
+  "fees": 136.66,
+  "by_week": {
+   "2026-W33": 117.19,
+   "2026-W34": -314.57,
+   "2026-W35": -101.98
+  },
+  "by_metal": {
+   "gold": -170.37,
+   "silver": -128.99
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 332,
+  "pnl": 388.55,
+  "ret": 77.71,
+  "hit": 0.569,
+  "sharpe": 2.42,
+  "mdd": 51.38,
+  "fees": 438.48,
+  "by_week": {
+   "2026-W33": 865.45,
+   "2026-W34": -344.59,
+   "2026-W35": -132.31
+  },
+  "by_metal": {
+   "silver": 195.14,
+   "gold": 193.41
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 208,
+  "pnl": 97.65,
+  "ret": 19.53,
+  "hit": 0.582,
+  "sharpe": 0.72,
+  "mdd": 57.23,
+  "fees": 241.29,
+  "by_week": {
+   "2026-W33": 639.07,
+   "2026-W34": -268.5,
+   "2026-W35": -272.92
+  },
+  "by_metal": {
+   "silver": 314.08,
+   "gold": -216.43
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 246,
+  "pnl": -222.5,
+  "ret": -44.5,
+  "hit": 0.427,
+  "sharpe": -3.02,
+  "mdd": 66.09,
+  "fees": 191.6,
+  "by_week": {
+   "2026-W33": 221.26,
+   "2026-W34": -325.19,
+   "2026-W35": -118.57
+  },
+  "by_metal": {
+   "gold": -245.68,
+   "silver": 23.18
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 272,
+  "pnl": -10.87,
+  "ret": -2.17,
+  "hit": 0.533,
+  "sharpe": -0.1,
+  "mdd": 61.11,
+  "fees": 269.81,
+  "by_week": {
+   "2026-W33": 569.3,
+   "2026-W34": -354.87,
+   "2026-W35": -225.3
+  },
+  "by_metal": {
+   "silver": -33.44,
+   "gold": 22.57
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 289,
+  "pnl": -139.77,
+  "ret": -27.95,
+  "hit": 0.505,
+  "sharpe": -1.77,
+  "mdd": 62.73,
+  "fees": 201.14,
+  "by_week": {
+   "2026-W33": 252.26,
+   "2026-W34": -317.87,
+   "2026-W35": -74.16
+  },
+  "by_metal": {
+   "gold": -17.15,
+   "silver": -122.62
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 339,
+  "pnl": 216.12,
+  "ret": 43.22,
+  "hit": 0.46,
+  "sharpe": 1.05,
+  "mdd": 64.47,
+  "fees": 428.24,
+  "by_week": {
+   "2026-W33": 1040.32,
+   "2026-W34": -712.89,
+   "2026-W35": -111.31
+  },
+  "by_metal": {
+   "gold": -59.57,
+   "silver": 275.69
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 308,
+  "pnl": 514.8,
+  "ret": 102.96,
+  "hit": 0.468,
+  "sharpe": 2.13,
+  "mdd": 63.39,
+  "fees": 469.64,
+  "by_week": {
+   "2026-W33": 1196.36,
+   "2026-W34": -737.53,
+   "2026-W35": 55.97
+  },
+  "by_metal": {
+   "gold": 393.77,
+   "silver": 121.03
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 248,
+  "pnl": 362.38,
+  "ret": 72.48,
+  "hit": 0.56,
+  "sharpe": 2.58,
+  "mdd": 56.23,
+  "fees": 242.98,
+  "by_week": {
+   "2026-W33": 601.22,
+   "2026-W34": -386.27,
+   "2026-W35": 147.43
+  },
+  "by_metal": {
+   "silver": 78.65,
+   "gold": 283.73
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 235,
+  "pnl": -164.15,
+  "ret": -32.83,
+  "hit": 0.443,
+  "sharpe": -1.59,
+  "mdd": 62.66,
+  "fees": 193.63,
+  "by_week": {
+   "2026-W33": 371.06,
+   "2026-W34": -386.8,
+   "2026-W35": -148.41
+  },
+  "by_metal": {
+   "gold": -316.98,
+   "silver": 152.83
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 235,
+  "pnl": 275.09,
+  "ret": 55.02,
+  "hit": 0.549,
+  "sharpe": 2.17,
+  "mdd": 59.29,
+  "fees": 213.91,
+  "by_week": {
+   "2026-W33": 513.77,
+   "2026-W34": -400.52,
+   "2026-W35": 161.84
+  },
+  "by_metal": {
+   "silver": 91.94,
+   "gold": 183.15
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 216,
+  "pnl": -125.66,
+  "ret": -25.13,
+  "hit": 0.444,
+  "sharpe": -0.99,
+  "mdd": 63.34,
+  "fees": 208.39,
+  "by_week": {
+   "2026-W33": 494.53,
+   "2026-W34": -450.45,
+   "2026-W35": -169.74
+  },
+  "by_metal": {
+   "gold": -146.57,
+   "silver": 20.91
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 207,
+  "pnl": 350.31,
+  "ret": 70.06,
+  "hit": 0.609,
+  "sharpe": 2.64,
+  "mdd": 52.1,
+  "fees": 195.29,
+  "by_week": {
+   "2026-W33": 505.7,
+   "2026-W34": -275.52,
+   "2026-W35": 120.13
+  },
+  "by_metal": {
+   "silver": 277.83,
+   "gold": 72.48
+  }
+ },
+ {
+  "theta": 0.04,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 226,
+  "pnl": 449.23,
+  "ret": 89.85,
+  "hit": 0.615,
+  "sharpe": 2.88,
+  "mdd": 51.2,
+  "fees": 235.08,
+  "by_week": {
+   "2026-W33": 629.05,
+   "2026-W34": -289.59,
+   "2026-W35": 109.77
+  },
+  "by_metal": {
+   "silver": 322.63,
+   "gold": 126.6
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 198,
+  "pnl": -271.46,
+  "ret": -54.29,
+  "hit": 0.419,
+  "sharpe": -4.84,
+  "mdd": 68.26,
+  "fees": 130.16,
+  "by_week": {
+   "2026-W33": 87.9,
+   "2026-W34": -249.34,
+   "2026-W35": -110.02
+  },
+  "by_metal": {
+   "silver": -258.07,
+   "gold": -13.39
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 228,
+  "pnl": -87.54,
+  "ret": -17.51,
+  "hit": 0.421,
+  "sharpe": -0.7,
+  "mdd": 70.16,
+  "fees": 266.16,
+  "by_week": {
+   "2026-W33": 586.41,
+   "2026-W34": -471.07,
+   "2026-W35": -202.88
+  },
+  "by_metal": {
+   "silver": -4.67,
+   "gold": -82.87
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 202,
+  "pnl": -15.93,
+  "ret": -3.19,
+  "hit": 0.515,
+  "sharpe": -0.13,
+  "mdd": 67.91,
+  "fees": 193.07,
+  "by_week": {
+   "2026-W33": 480.99,
+   "2026-W34": -433.53,
+   "2026-W35": -63.39
+  },
+  "by_metal": {
+   "silver": 49.87,
+   "gold": -65.8
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 146,
+  "pnl": -242.99,
+  "ret": -48.6,
+  "hit": 0.411,
+  "sharpe": -5.33,
+  "mdd": 61.29,
+  "fees": 106.31,
+  "by_week": {
+   "2026-W33": 61.0,
+   "2026-W34": -191.66,
+   "2026-W35": -112.33
+  },
+  "by_metal": {
+   "silver": -143.92,
+   "gold": -99.07
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 198,
+  "pnl": 50.5,
+  "ret": 10.1,
+  "hit": 0.551,
+  "sharpe": 0.36,
+  "mdd": 66.03,
+  "fees": 200.76,
+  "by_week": {
+   "2026-W33": 671.3,
+   "2026-W34": -570.81,
+   "2026-W35": -49.99
+  },
+  "by_metal": {
+   "silver": 148.03,
+   "gold": -97.53
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 178,
+  "pnl": -9.02,
+  "ret": -1.8,
+  "hit": 0.41,
+  "sharpe": -0.06,
+  "mdd": 60.91,
+  "fees": 231.69,
+  "by_week": {
+   "2026-W33": 721.58,
+   "2026-W34": -502.52,
+   "2026-W35": -228.08
+  },
+  "by_metal": {
+   "silver": 355.11,
+   "gold": -364.13
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 186,
+  "pnl": -88.41,
+  "ret": -17.68,
+  "hit": 0.559,
+  "sharpe": -1.03,
+  "mdd": 56.35,
+  "fees": 169.02,
+  "by_week": {
+   "2026-W33": 388.86,
+   "2026-W34": -285.09,
+   "2026-W35": -192.18
+  },
+  "by_metal": {
+   "silver": 81.86,
+   "gold": -170.27
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 174,
+  "pnl": -179.52,
+  "ret": -35.9,
+  "hit": 0.511,
+  "sharpe": -1.95,
+  "mdd": 63.95,
+  "fees": 139.87,
+  "by_week": {
+   "2026-W33": 389.06,
+   "2026-W34": -406.29,
+   "2026-W35": -162.29
+  },
+  "by_metal": {
+   "silver": -72.68,
+   "gold": -106.84
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 131,
+  "pnl": -150.03,
+  "ret": -30.01,
+  "hit": 0.435,
+  "sharpe": -1.76,
+  "mdd": 56.48,
+  "fees": 112.47,
+  "by_week": {
+   "2026-W33": 265.07,
+   "2026-W34": -262.33,
+   "2026-W35": -152.77
+  },
+  "by_metal": {
+   "silver": -78.33,
+   "gold": -71.7
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 244,
+  "pnl": -61.08,
+  "ret": -12.22,
+  "hit": 0.533,
+  "sharpe": -0.82,
+  "mdd": 59.77,
+  "fees": 198.76,
+  "by_week": {
+   "2026-W33": 349.52,
+   "2026-W34": -342.16,
+   "2026-W35": -68.44
+  },
+  "by_metal": {
+   "silver": 70.44,
+   "gold": -131.52
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 158,
+  "pnl": 169.5,
+  "ret": 33.9,
+  "hit": 0.43,
+  "sharpe": 0.78,
+  "mdd": 59.3,
+  "fees": 248.18,
+  "by_week": {
+   "2026-W33": 1099.47,
+   "2026-W34": -618.32,
+   "2026-W35": -311.65
+  },
+  "by_metal": {
+   "silver": 447.96,
+   "gold": -278.46
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 155,
+  "pnl": 134.14,
+  "ret": 26.83,
+  "hit": 0.419,
+  "sharpe": 0.72,
+  "mdd": 55.51,
+  "fees": 208.04,
+  "by_week": {
+   "2026-W33": 891.88,
+   "2026-W34": -458.92,
+   "2026-W35": -298.82
+  },
+  "by_metal": {
+   "silver": 313.11,
+   "gold": -178.97
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 207,
+  "pnl": 165.34,
+  "ret": 33.07,
+  "hit": 0.609,
+  "sharpe": 1.73,
+  "mdd": 51.37,
+  "fees": 157.97,
+  "by_week": {
+   "2026-W33": 312.74,
+   "2026-W34": -243.47,
+   "2026-W35": 96.06
+  },
+  "by_metal": {
+   "silver": 116.36,
+   "gold": 48.98
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 191,
+  "pnl": 69.05,
+  "ret": 13.81,
+  "hit": 0.545,
+  "sharpe": 0.64,
+  "mdd": 65.27,
+  "fees": 151.06,
+  "by_week": {
+   "2026-W33": 399.1,
+   "2026-W34": -432.38,
+   "2026-W35": 102.33
+  },
+  "by_metal": {
+   "silver": 170.83,
+   "gold": -101.78
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 130,
+  "pnl": -108.32,
+  "ret": -21.66,
+  "hit": 0.438,
+  "sharpe": -0.95,
+  "mdd": 58.06,
+  "fees": 121.87,
+  "by_week": {
+   "2026-W33": 406.05,
+   "2026-W34": -314.83,
+   "2026-W35": -199.54
+  },
+  "by_metal": {
+   "silver": -49.01,
+   "gold": -59.31
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 194,
+  "pnl": 187.5,
+  "ret": 37.5,
+  "hit": 0.613,
+  "sharpe": 1.84,
+  "mdd": 52.61,
+  "fees": 149.11,
+  "by_week": {
+   "2026-W33": 291.84,
+   "2026-W34": -225.49,
+   "2026-W35": 121.16
+  },
+  "by_metal": {
+   "silver": 192.0,
+   "gold": -4.5
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 201,
+  "pnl": -200.78,
+  "ret": -40.16,
+  "hit": 0.413,
+  "sharpe": -2.56,
+  "mdd": 64.56,
+  "fees": 172.75,
+  "by_week": {
+   "2026-W33": 229.83,
+   "2026-W34": -290.87,
+   "2026-W35": -139.74
+  },
+  "by_metal": {
+   "gold": -61.69,
+   "silver": -139.09
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 215,
+  "pnl": -247.9,
+  "ret": -49.58,
+  "hit": 0.391,
+  "sharpe": -3.59,
+  "mdd": 72.12,
+  "fees": 177.82,
+  "by_week": {
+   "2026-W33": 187.69,
+   "2026-W34": -306.87,
+   "2026-W35": -128.72
+  },
+  "by_metal": {
+   "gold": -90.55,
+   "silver": -157.35
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 250,
+  "pnl": 65.18,
+  "ret": 13.04,
+  "hit": 0.516,
+  "sharpe": 0.59,
+  "mdd": 59.57,
+  "fees": 252.66,
+  "by_week": {
+   "2026-W33": 479.13,
+   "2026-W34": -337.36,
+   "2026-W35": -76.59
+  },
+  "by_metal": {
+   "silver": 56.84,
+   "gold": 8.34
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 239,
+  "pnl": 9.02,
+  "ret": 1.8,
+  "hit": 0.531,
+  "sharpe": 0.1,
+  "mdd": 60.62,
+  "fees": 229.5,
+  "by_week": {
+   "2026-W33": 464.76,
+   "2026-W34": -362.58,
+   "2026-W35": -93.16
+  },
+  "by_metal": {
+   "silver": 98.96,
+   "gold": -89.94
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 274,
+  "pnl": 288.68,
+  "ret": 57.74,
+  "hit": 0.555,
+  "sharpe": 1.99,
+  "mdd": 48.78,
+  "fees": 359.22,
+  "by_week": {
+   "2026-W33": 772.77,
+   "2026-W34": -308.95,
+   "2026-W35": -175.14
+  },
+  "by_metal": {
+   "silver": 224.85,
+   "gold": 63.83
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 199,
+  "pnl": 144.67,
+  "ret": 28.93,
+  "hit": 0.432,
+  "sharpe": 0.69,
+  "mdd": 61.79,
+  "fees": 337.08,
+  "by_week": {
+   "2026-W33": 1082.4,
+   "2026-W34": -651.43,
+   "2026-W35": -286.3
+  },
+  "by_metal": {
+   "gold": -153.53,
+   "silver": 298.2
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 163,
+  "pnl": -137.14,
+  "ret": -27.43,
+  "hit": 0.509,
+  "sharpe": -1.64,
+  "mdd": 60.62,
+  "fees": 145.36,
+  "by_week": {
+   "2026-W33": 385.7,
+   "2026-W34": -361.35,
+   "2026-W35": -161.49
+  },
+  "by_metal": {
+   "silver": -39.36,
+   "gold": -97.78
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 206,
+  "pnl": -221.64,
+  "ret": -44.33,
+  "hit": 0.403,
+  "sharpe": -3.69,
+  "mdd": 68.23,
+  "fees": 174.76,
+  "by_week": {
+   "2026-W33": 162.93,
+   "2026-W34": -261.77,
+   "2026-W35": -122.8
+  },
+  "by_metal": {
+   "gold": -242.29,
+   "silver": 20.65
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 228,
+  "pnl": 164.13,
+  "ret": 32.83,
+  "hit": 0.592,
+  "sharpe": 1.62,
+  "mdd": 39.69,
+  "fees": 259.8,
+  "by_week": {
+   "2026-W33": 465.33,
+   "2026-W34": -4.38,
+   "2026-W35": -296.83
+  },
+  "by_metal": {
+   "silver": 300.34,
+   "gold": -136.21
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 183,
+  "pnl": -80.0,
+  "ret": -16.0,
+  "hit": 0.437,
+  "sharpe": -0.7,
+  "mdd": 56.39,
+  "fees": 187.21,
+  "by_week": {
+   "2026-W33": 393.47,
+   "2026-W34": -293.59,
+   "2026-W35": -179.88
+  },
+  "by_metal": {
+   "gold": -180.85,
+   "silver": 100.85
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 206,
+  "pnl": -172.73,
+  "ret": -34.55,
+  "hit": 0.422,
+  "sharpe": -2.19,
+  "mdd": 61.1,
+  "fees": 185.49,
+  "by_week": {
+   "2026-W33": 241.21,
+   "2026-W34": -274.36,
+   "2026-W35": -139.58
+  },
+  "by_metal": {
+   "gold": -313.14,
+   "silver": 140.41
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 170,
+  "pnl": -85.71,
+  "ret": -17.14,
+  "hit": 0.576,
+  "sharpe": -1.05,
+  "mdd": 49.51,
+  "fees": 139.48,
+  "by_week": {
+   "2026-W33": 319.85,
+   "2026-W34": -218.9,
+   "2026-W35": -186.66
+  },
+  "by_metal": {
+   "silver": -29.1,
+   "gold": -56.61
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 195,
+  "pnl": 68.75,
+  "ret": 13.75,
+  "hit": 0.421,
+  "sharpe": 0.45,
+  "mdd": 57.5,
+  "fees": 274.25,
+  "by_week": {
+   "2026-W33": 798.45,
+   "2026-W34": -481.09,
+   "2026-W35": -248.61
+  },
+  "by_metal": {
+   "gold": -50.93,
+   "silver": 119.68
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 155,
+  "pnl": -169.85,
+  "ret": -33.97,
+  "hit": 0.497,
+  "sharpe": -2.2,
+  "mdd": 62.0,
+  "fees": 133.13,
+  "by_week": {
+   "2026-W33": 354.1,
+   "2026-W34": -379.45,
+   "2026-W35": -144.5
+  },
+  "by_metal": {
+   "silver": -31.04,
+   "gold": -138.81
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 160,
+  "pnl": -100.09,
+  "ret": -20.02,
+  "hit": 0.569,
+  "sharpe": -1.43,
+  "mdd": 50.08,
+  "fees": 129.86,
+  "by_week": {
+   "2026-W33": 264.99,
+   "2026-W34": -184.8,
+   "2026-W35": -180.28
+  },
+  "by_metal": {
+   "silver": -8.91,
+   "gold": -91.17
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 179,
+  "pnl": -105.43,
+  "ret": -21.09,
+  "hit": 0.43,
+  "sharpe": -1.05,
+  "mdd": 56.7,
+  "fees": 170.42,
+  "by_week": {
+   "2026-W33": 357.49,
+   "2026-W34": -295.87,
+   "2026-W35": -167.05
+  },
+  "by_metal": {
+   "gold": -186.56,
+   "silver": 81.13
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 199,
+  "pnl": -217.74,
+  "ret": -43.55,
+  "hit": 0.397,
+  "sharpe": -3.16,
+  "mdd": 64.72,
+  "fees": 159.89,
+  "by_week": {
+   "2026-W33": 177.64,
+   "2026-W34": -269.75,
+   "2026-W35": -125.63
+  },
+  "by_metal": {
+   "gold": -60.32,
+   "silver": -157.42
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 215,
+  "pnl": -241.97,
+  "ret": -48.39,
+  "hit": 0.377,
+  "sharpe": -3.51,
+  "mdd": 69.04,
+  "fees": 173.76,
+  "by_week": {
+   "2026-W33": 174.48,
+   "2026-W34": -290.99,
+   "2026-W35": -125.46
+  },
+  "by_metal": {
+   "gold": 16.39,
+   "silver": -258.36
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 241,
+  "pnl": -157.3,
+  "ret": -31.46,
+  "hit": 0.498,
+  "sharpe": -3.51,
+  "mdd": 60.56,
+  "fees": 154.18,
+  "by_week": {
+   "2026-W33": 57.03,
+   "2026-W34": -199.91,
+   "2026-W35": -14.42
+  },
+  "by_metal": {
+   "gold": -15.59,
+   "silver": -141.71
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 217,
+  "pnl": -191.77,
+  "ret": -38.35,
+  "hit": 0.401,
+  "sharpe": -2.72,
+  "mdd": 61.61,
+  "fees": 183.45,
+  "by_week": {
+   "2026-W33": 196.9,
+   "2026-W34": -251.94,
+   "2026-W35": -136.73
+  },
+  "by_metal": {
+   "gold": -224.31,
+   "silver": 32.54
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 274,
+  "pnl": 246.6,
+  "ret": 49.32,
+  "hit": 0.555,
+  "sharpe": 2.39,
+  "mdd": 46.02,
+  "fees": 313.49,
+  "by_week": {
+   "2026-W33": 496.16,
+   "2026-W34": -143.86,
+   "2026-W35": -105.7
+  },
+  "by_metal": {
+   "silver": 181.41,
+   "gold": 65.19
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 209,
+  "pnl": -227.47,
+  "ret": -45.49,
+  "hit": 0.507,
+  "sharpe": -4.54,
+  "mdd": 59.67,
+  "fees": 134.34,
+  "by_week": {
+   "2026-W33": 101.19,
+   "2026-W34": -211.48,
+   "2026-W35": -117.18
+  },
+  "by_metal": {
+   "silver": -123.47,
+   "gold": -104.0
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 239,
+  "pnl": -218.98,
+  "ret": -43.8,
+  "hit": 0.372,
+  "sharpe": -3.57,
+  "mdd": 65.17,
+  "fees": 198.61,
+  "by_week": {
+   "2026-W33": 153.44,
+   "2026-W34": -233.31,
+   "2026-W35": -139.11
+  },
+  "by_metal": {
+   "gold": -223.26,
+   "silver": 4.28
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 170,
+  "pnl": -25.8,
+  "ret": -5.16,
+  "hit": 0.553,
+  "sharpe": -0.31,
+  "mdd": 51.42,
+  "fees": 166.49,
+  "by_week": {
+   "2026-W33": 303.99,
+   "2026-W34": -133.85,
+   "2026-W35": -195.94
+  },
+  "by_metal": {
+   "silver": 173.55,
+   "gold": -199.35
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 179,
+  "pnl": 6.12,
+  "ret": 1.22,
+  "hit": 0.57,
+  "sharpe": 0.09,
+  "mdd": 55.53,
+  "fees": 124.38,
+  "by_week": {
+   "2026-W33": 213.33,
+   "2026-W34": -263.46,
+   "2026-W35": 56.25
+  },
+  "by_metal": {
+   "silver": 45.45,
+   "gold": -39.33
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 260,
+  "pnl": 255.15,
+  "ret": 51.03,
+  "hit": 0.431,
+  "sharpe": 1.64,
+  "mdd": 59.92,
+  "fees": 328.99,
+  "by_week": {
+   "2026-W33": 765.15,
+   "2026-W34": -457.34,
+   "2026-W35": -52.66
+  },
+  "by_metal": {
+   "gold": 261.53,
+   "silver": -6.38
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 198,
+  "pnl": 0.18,
+  "ret": 0.04,
+  "hit": 0.525,
+  "sharpe": 0.0,
+  "mdd": 62.0,
+  "fees": 146.54,
+  "by_week": {
+   "2026-W33": 279.62,
+   "2026-W34": -344.5,
+   "2026-W35": 65.06
+  },
+  "by_metal": {
+   "silver": -25.48,
+   "gold": 25.66
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 181,
+  "pnl": -125.39,
+  "ret": -25.08,
+  "hit": 0.403,
+  "sharpe": -1.18,
+  "mdd": 60.57,
+  "fees": 180.65,
+  "by_week": {
+   "2026-W33": 390.61,
+   "2026-W34": -353.46,
+   "2026-W35": -162.54
+  },
+  "by_metal": {
+   "gold": -174.0,
+   "silver": 48.61
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 177,
+  "pnl": -205.22,
+  "ret": -41.04,
+  "hit": 0.384,
+  "sharpe": -2.92,
+  "mdd": 60.01,
+  "fees": 141.54,
+  "by_week": {
+   "2026-W33": 207.38,
+   "2026-W34": -258.89,
+   "2026-W35": -153.71
+  },
+  "by_metal": {
+   "gold": -157.74,
+   "silver": -47.48
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 136,
+  "pnl": -140.63,
+  "ret": -28.13,
+  "hit": 0.529,
+  "sharpe": -2.51,
+  "mdd": 51.81,
+  "fees": 106.23,
+  "by_week": {
+   "2026-W33": 191.99,
+   "2026-W34": -185.89,
+   "2026-W35": -146.73
+  },
+  "by_metal": {
+   "silver": -83.05,
+   "gold": -57.58
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 254,
+  "pnl": 682.22,
+  "ret": 136.44,
+  "hit": 0.453,
+  "sharpe": 3.01,
+  "mdd": 57.62,
+  "fees": 411.75,
+  "by_week": {
+   "2026-W33": 1067.38,
+   "2026-W34": -530.86,
+   "2026-W35": 145.7
+  },
+  "by_metal": {
+   "gold": 352.91,
+   "silver": 329.31
+  }
+ },
+ {
+  "theta": 0.05,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 183,
+  "pnl": 75.98,
+  "ret": 15.2,
+  "hit": 0.525,
+  "sharpe": 1.03,
+  "mdd": 58.29,
+  "fees": 145.66,
+  "by_week": {
+   "2026-W33": 255.16,
+   "2026-W34": -272.37,
+   "2026-W35": 93.19
+  },
+  "by_metal": {
+   "silver": 19.46,
+   "gold": 56.52
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 170,
+  "pnl": -95.78,
+  "ret": -19.16,
+  "hit": 0.529,
+  "sharpe": -1.13,
+  "mdd": 61.93,
+  "fees": 180.69,
+  "by_week": {
+   "2026-W33": 385.29,
+   "2026-W34": -299.26,
+   "2026-W35": -181.81
+  },
+  "by_metal": {
+   "silver": 131.18,
+   "gold": -226.96
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 142,
+  "pnl": -202.9,
+  "ret": -40.58,
+  "hit": 0.43,
+  "sharpe": -2.22,
+  "mdd": 67.9,
+  "fees": 134.73,
+  "by_week": {
+   "2026-W33": 240.82,
+   "2026-W34": -274.4,
+   "2026-W35": -169.32
+  },
+  "by_metal": {
+   "silver": -122.51,
+   "gold": -80.39
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 257,
+  "pnl": 231.58,
+  "ret": 46.32,
+  "hit": 0.58,
+  "sharpe": 2.98,
+  "mdd": 40.89,
+  "fees": 282.25,
+  "by_week": {
+   "2026-W33": 362.08,
+   "2026-W34": -100.53,
+   "2026-W35": -29.97
+  },
+  "by_metal": {
+   "silver": 561.69,
+   "gold": -330.11
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 142,
+  "pnl": -170.64,
+  "ret": -34.13,
+  "hit": 0.43,
+  "sharpe": -2.2,
+  "mdd": 61.85,
+  "fees": 140.1,
+  "by_week": {
+   "2026-W33": 207.84,
+   "2026-W34": -205.52,
+   "2026-W35": -172.96
+  },
+  "by_metal": {
+   "silver": -55.98,
+   "gold": -114.66
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 151,
+  "pnl": -167.12,
+  "ret": -33.42,
+  "hit": 0.417,
+  "sharpe": -1.44,
+  "mdd": 68.31,
+  "fees": 164.48,
+  "by_week": {
+   "2026-W33": 339.68,
+   "2026-W34": -303.72,
+   "2026-W35": -203.08
+  },
+  "by_metal": {
+   "silver": -57.96,
+   "gold": -109.16
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 201,
+  "pnl": 57.91,
+  "ret": 11.58,
+  "hit": 0.567,
+  "sharpe": 0.74,
+  "mdd": 44.4,
+  "fees": 214.21,
+  "by_week": {
+   "2026-W33": 388.07,
+   "2026-W34": -172.46,
+   "2026-W35": -157.7
+  },
+  "by_metal": {
+   "silver": 431.13,
+   "gold": -373.22
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 133,
+  "pnl": -214.24,
+  "ret": -42.85,
+  "hit": 0.444,
+  "sharpe": -3.7,
+  "mdd": 61.01,
+  "fees": 112.7,
+  "by_week": {
+   "2026-W33": 117.98,
+   "2026-W34": -192.66,
+   "2026-W35": -139.56
+  },
+  "by_metal": {
+   "silver": -151.08,
+   "gold": -63.16
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 133,
+  "pnl": 1.22,
+  "ret": 0.24,
+  "hit": 0.421,
+  "sharpe": 0.01,
+  "mdd": 56.82,
+  "fees": 176.12,
+  "by_week": {
+   "2026-W33": 590.64,
+   "2026-W34": -333.63,
+   "2026-W35": -255.79
+  },
+  "by_metal": {
+   "silver": 202.39,
+   "gold": -201.17
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 161,
+  "pnl": 187.21,
+  "ret": 37.44,
+  "hit": 0.584,
+  "sharpe": 1.99,
+  "mdd": 55.52,
+  "fees": 149.17,
+  "by_week": {
+   "2026-W33": 398.17,
+   "2026-W34": -394.46,
+   "2026-W35": 183.5
+  },
+  "by_metal": {
+   "gold": -108.9,
+   "silver": 296.11
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 122,
+  "pnl": 78.28,
+  "ret": 15.66,
+  "hit": 0.451,
+  "sharpe": 0.53,
+  "mdd": 56.08,
+  "fees": 181.76,
+  "by_week": {
+   "2026-W33": 734.91,
+   "2026-W34": -404.66,
+   "2026-W35": -251.97
+  },
+  "by_metal": {
+   "silver": 42.01,
+   "gold": 36.27
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 119,
+  "pnl": 23.22,
+  "ret": 4.64,
+  "hit": 0.471,
+  "sharpe": 0.19,
+  "mdd": 53.38,
+  "fees": 153.91,
+  "by_week": {
+   "2026-W33": 588.83,
+   "2026-W34": -344.36,
+   "2026-W35": -221.25
+  },
+  "by_metal": {
+   "silver": 32.41,
+   "gold": -9.19
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 160,
+  "pnl": 236.2,
+  "ret": 47.24,
+  "hit": 0.619,
+  "sharpe": 2.91,
+  "mdd": 40.49,
+  "fees": 132.85,
+  "by_week": {
+   "2026-W33": 218.36,
+   "2026-W34": -188.19,
+   "2026-W35": 206.03
+  },
+  "by_metal": {
+   "gold": -149.82,
+   "silver": 386.02
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 197,
+  "pnl": 184.69,
+  "ret": 36.94,
+  "hit": 0.609,
+  "sharpe": 2.22,
+  "mdd": 33.02,
+  "fees": 207.12,
+  "by_week": {
+   "2026-W33": 316.61,
+   "2026-W34": -50.8,
+   "2026-W35": -81.12
+  },
+  "by_metal": {
+   "silver": 648.72,
+   "gold": -464.03
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 117,
+  "pnl": -36.44,
+  "ret": -7.29,
+  "hit": 0.427,
+  "sharpe": -0.37,
+  "mdd": 52.41,
+  "fees": 136.0,
+  "by_week": {
+   "2026-W33": 444.46,
+   "2026-W34": -270.72,
+   "2026-W35": -210.18
+  },
+  "by_metal": {
+   "silver": 110.35,
+   "gold": -146.79
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 156,
+  "pnl": 389.59,
+  "ret": 77.92,
+  "hit": 0.647,
+  "sharpe": 4.15,
+  "mdd": 39.07,
+  "fees": 142.13,
+  "by_week": {
+   "2026-W33": 256.6,
+   "2026-W34": -145.77,
+   "2026-W35": 278.76
+  },
+  "by_metal": {
+   "gold": -150.98,
+   "silver": 540.57
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 165,
+  "pnl": -254.58,
+  "ret": -50.92,
+  "hit": 0.412,
+  "sharpe": -4.41,
+  "mdd": 71.46,
+  "fees": 148.94,
+  "by_week": {
+   "2026-W33": 141.64,
+   "2026-W34": -275.21,
+   "2026-W35": -121.01
+  },
+  "by_metal": {
+   "silver": -263.84,
+   "gold": 9.26
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 157,
+  "pnl": -239.01,
+  "ret": -47.8,
+  "hit": 0.433,
+  "sharpe": -3.55,
+  "mdd": 68.67,
+  "fees": 139.8,
+  "by_week": {
+   "2026-W33": 179.36,
+   "2026-W34": -285.52,
+   "2026-W35": -132.85
+  },
+  "by_metal": {
+   "silver": -138.21,
+   "gold": -100.8
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 15.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 169,
+  "pnl": 453.8,
+  "ret": 90.76,
+  "hit": 0.609,
+  "sharpe": 3.53,
+  "mdd": 50.47,
+  "fees": 184.11,
+  "by_week": {
+   "2026-W33": 480.41,
+   "2026-W34": -386.98,
+   "2026-W35": 360.37
+  },
+  "by_metal": {
+   "gold": -52.73,
+   "silver": 506.53
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 190,
+  "pnl": -261.84,
+  "ret": -52.37,
+  "hit": 0.395,
+  "sharpe": -4.55,
+  "mdd": 71.95,
+  "fees": 172.06,
+  "by_week": {
+   "2026-W33": 150.13,
+   "2026-W34": -301.46,
+   "2026-W35": -110.51
+  },
+  "by_metal": {
+   "silver": -12.24,
+   "gold": -249.6
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 165,
+  "pnl": -272.9,
+  "ret": -54.58,
+  "hit": 0.424,
+  "sharpe": -6.28,
+  "mdd": 68.25,
+  "fees": 132.57,
+  "by_week": {
+   "2026-W33": 76.45,
+   "2026-W34": -234.7,
+   "2026-W35": -114.65
+  },
+  "by_metal": {
+   "silver": -106.96,
+   "gold": -165.94
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 213,
+  "pnl": 604.37,
+  "ret": 120.87,
+  "hit": 0.61,
+  "sharpe": 5.65,
+  "mdd": 36.77,
+  "fees": 265.39,
+  "by_week": {
+   "2026-W33": 282.84,
+   "2026-W34": 45.82,
+   "2026-W35": 275.71
+  },
+  "by_metal": {
+   "silver": 990.78,
+   "gold": -386.41
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 197,
+  "pnl": -35.78,
+  "ret": -7.16,
+  "hit": 0.553,
+  "sharpe": -0.62,
+  "mdd": 34.19,
+  "fees": 160.73,
+  "by_week": {
+   "2026-W33": 91.82,
+   "2026-W34": -49.8,
+   "2026-W35": -77.8
+  },
+  "by_metal": {
+   "silver": 224.41,
+   "gold": -260.19
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 149,
+  "pnl": -271.71,
+  "ret": -54.34,
+  "hit": 0.49,
+  "sharpe": -7.04,
+  "mdd": 62.58,
+  "fees": 105.53,
+  "by_week": {
+   "2026-W33": 11.46,
+   "2026-W34": -176.94,
+   "2026-W35": -106.23
+  },
+  "by_metal": {
+   "silver": -137.64,
+   "gold": -134.07
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 195,
+  "pnl": 181.21,
+  "ret": 36.24,
+  "hit": 0.441,
+  "sharpe": 1.03,
+  "mdd": 61.86,
+  "fees": 310.98,
+  "by_week": {
+   "2026-W33": 928.78,
+   "2026-W34": -629.31,
+   "2026-W35": -118.26
+  },
+  "by_metal": {
+   "silver": 325.69,
+   "gold": -144.48
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 234,
+  "pnl": 9.16,
+  "ret": 1.83,
+  "hit": 0.56,
+  "sharpe": 0.15,
+  "mdd": 47.78,
+  "fees": 186.19,
+  "by_week": {
+   "2026-W33": 66.22,
+   "2026-W34": -85.73,
+   "2026-W35": 28.67
+  },
+  "by_metal": {
+   "silver": 259.17,
+   "gold": -250.01
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 173,
+  "pnl": 584.51,
+  "ret": 116.9,
+  "hit": 0.607,
+  "sharpe": 4.75,
+  "mdd": 43.47,
+  "fees": 212.85,
+  "by_week": {
+   "2026-W33": 453.81,
+   "2026-W34": -232.54,
+   "2026-W35": 363.24
+  },
+  "by_metal": {
+   "silver": 540.16,
+   "gold": 44.35
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 182,
+  "pnl": 416.38,
+  "ret": 83.28,
+  "hit": 0.484,
+  "sharpe": 2.24,
+  "mdd": 57.66,
+  "fees": 295.49,
+  "by_week": {
+   "2026-W33": 898.35,
+   "2026-W34": -551.57,
+   "2026-W35": 69.6
+  },
+  "by_metal": {
+   "silver": 316.97,
+   "gold": 99.41
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 151,
+  "pnl": -4.64,
+  "ret": -0.93,
+  "hit": 0.457,
+  "sharpe": -0.04,
+  "mdd": 57.41,
+  "fees": 203.23,
+  "by_week": {
+   "2026-W33": 627.29,
+   "2026-W34": -426.16,
+   "2026-W35": -205.77
+  },
+  "by_metal": {
+   "silver": 89.17,
+   "gold": -93.81
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 137,
+  "pnl": 388.13,
+  "ret": 77.63,
+  "hit": 0.635,
+  "sharpe": 4.05,
+  "mdd": 39.13,
+  "fees": 136.27,
+  "by_week": {
+   "2026-W33": 245.65,
+   "2026-W34": -100.09,
+   "2026-W35": 242.57
+  },
+  "by_metal": {
+   "silver": 561.4,
+   "gold": -173.27
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 166,
+  "pnl": -65.79,
+  "ret": -13.16,
+  "hit": 0.41,
+  "sharpe": -0.57,
+  "mdd": 61.84,
+  "fees": 217.81,
+  "by_week": {
+   "2026-W33": 604.16,
+   "2026-W34": -448.16,
+   "2026-W35": -221.79
+  },
+  "by_metal": {
+   "silver": 287.83,
+   "gold": -353.62
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 167,
+  "pnl": 588.87,
+  "ret": 117.77,
+  "hit": 0.635,
+  "sharpe": 5.23,
+  "mdd": 36.56,
+  "fees": 177.57,
+  "by_week": {
+   "2026-W33": 269.25,
+   "2026-W34": -109.27,
+   "2026-W35": 428.89
+  },
+  "by_metal": {
+   "silver": 682.52,
+   "gold": -93.65
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 30.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 155,
+  "pnl": 685.81,
+  "ret": 137.16,
+  "hit": 0.613,
+  "sharpe": 5.0,
+  "mdd": 43.65,
+  "fees": 194.19,
+  "by_week": {
+   "2026-W33": 456.01,
+   "2026-W34": -230.45,
+   "2026-W35": 460.25
+  },
+  "by_metal": {
+   "silver": 744.01,
+   "gold": -58.2
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 170,
+  "pnl": -334.41,
+  "ret": -66.88,
+  "hit": 0.382,
+  "sharpe": -8.96,
+  "mdd": 77.28,
+  "fees": 134.09,
+  "by_week": {
+   "2026-W33": 53.29,
+   "2026-W34": -290.57,
+   "2026-W35": -97.13
+  },
+  "by_metal": {
+   "gold": -89.53,
+   "silver": -244.88
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 201,
+  "pnl": -321.85,
+  "ret": -64.37,
+  "hit": 0.373,
+  "sharpe": -8.99,
+  "mdd": 75.22,
+  "fees": 159.83,
+  "by_week": {
+   "2026-W33": 51.3,
+   "2026-W34": -296.08,
+   "2026-W35": -77.07
+  },
+  "by_metal": {
+   "gold": -345.68,
+   "silver": 23.83
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 144,
+  "pnl": -218.59,
+  "ret": -43.72,
+  "hit": 0.493,
+  "sharpe": -3.75,
+  "mdd": 60.9,
+  "fees": 122.89,
+  "by_week": {
+   "2026-W33": 95.46,
+   "2026-W34": -173.65,
+   "2026-W35": -140.4
+  },
+  "by_metal": {
+   "silver": -194.92,
+   "gold": -23.67
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 192,
+  "pnl": 136.33,
+  "ret": 27.27,
+  "hit": 0.552,
+  "sharpe": 1.44,
+  "mdd": 37.3,
+  "fees": 233.22,
+  "by_week": {
+   "2026-W33": 429.98,
+   "2026-W34": -167.91,
+   "2026-W35": -125.74
+  },
+  "by_metal": {
+   "silver": 310.35,
+   "gold": -174.02
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 156,
+  "pnl": -247.78,
+  "ret": -49.56,
+  "hit": 0.41,
+  "sharpe": -3.35,
+  "mdd": 70.2,
+  "fees": 143.55,
+  "by_week": {
+   "2026-W33": 210.03,
+   "2026-W34": -314.68,
+   "2026-W35": -143.13
+  },
+  "by_metal": {
+   "gold": -90.92,
+   "silver": -156.86
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 196,
+  "pnl": 133.88,
+  "ret": 26.78,
+  "hit": 0.423,
+  "sharpe": 0.68,
+  "mdd": 67.27,
+  "fees": 336.69,
+  "by_week": {
+   "2026-W33": 1094.24,
+   "2026-W34": -860.44,
+   "2026-W35": -99.91
+  },
+  "by_metal": {
+   "silver": 438.85,
+   "gold": -304.97
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 168,
+  "pnl": -258.68,
+  "ret": -51.74,
+  "hit": 0.411,
+  "sharpe": -5.37,
+  "mdd": 67.39,
+  "fees": 136.65,
+  "by_week": {
+   "2026-W33": 101.38,
+   "2026-W34": -254.52,
+   "2026-W35": -105.54
+  },
+  "by_metal": {
+   "gold": -224.55,
+   "silver": -34.13
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 204,
+  "pnl": 400.08,
+  "ret": 80.02,
+  "hit": 0.471,
+  "sharpe": 2.1,
+  "mdd": 58.86,
+  "fees": 333.11,
+  "by_week": {
+   "2026-W33": 960.21,
+   "2026-W34": -619.83,
+   "2026-W35": 59.7
+  },
+  "by_metal": {
+   "silver": 428.06,
+   "gold": -27.98
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 202,
+  "pnl": 636.72,
+  "ret": 127.34,
+  "hit": 0.604,
+  "sharpe": 5.79,
+  "mdd": 35.87,
+  "fees": 259.77,
+  "by_week": {
+   "2026-W33": 361.34,
+   "2026-W34": -35.23,
+   "2026-W35": 310.61
+  },
+  "by_metal": {
+   "silver": 929.76,
+   "gold": -293.04
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 120,
+  "tau_max_s": 780,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 221,
+  "pnl": 26.96,
+  "ret": 5.39,
+  "hit": 0.552,
+  "sharpe": 0.36,
+  "mdd": 51.93,
+  "fees": 188.62,
+  "by_week": {
+   "2026-W33": 158.06,
+   "2026-W34": -153.03,
+   "2026-W35": 21.93
+  },
+  "by_metal": {
+   "silver": 281.24,
+   "gold": -254.28
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 174,
+  "pnl": 501.79,
+  "ret": 100.36,
+  "hit": 0.592,
+  "sharpe": 4.31,
+  "mdd": 44.06,
+  "fees": 201.02,
+  "by_week": {
+   "2026-W33": 460.39,
+   "2026-W34": -289.66,
+   "2026-W35": 331.06
+  },
+  "by_metal": {
+   "silver": 468.22,
+   "gold": 33.57
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.15,
+  "price_max": 0.85,
+  "n": 177,
+  "pnl": 24.63,
+  "ret": 4.93,
+  "hit": 0.441,
+  "sharpe": 0.16,
+  "mdd": 60.74,
+  "fees": 254.89,
+  "by_week": {
+   "2026-W33": 801.56,
+   "2026-W34": -549.22,
+   "2026-W35": -227.71
+  },
+  "by_metal": {
+   "silver": 212.16,
+   "gold": -187.53
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 600,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 161,
+  "pnl": 506.96,
+  "ret": 101.39,
+  "hit": 0.627,
+  "sharpe": 4.96,
+  "mdd": 34.95,
+  "fees": 161.82,
+  "by_week": {
+   "2026-W33": 276.77,
+   "2026-W34": -182.98,
+   "2026-W35": 413.17
+  },
+  "by_metal": {
+   "silver": 565.45,
+   "gold": -58.49
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.3,
+  "price_max": 0.9,
+  "n": 150,
+  "pnl": 615.22,
+  "ret": 123.04,
+  "hit": 0.6,
+  "sharpe": 4.36,
+  "mdd": 46.92,
+  "fees": 187.01,
+  "by_week": {
+   "2026-W33": 547.19,
+   "2026-W34": -382.14,
+   "2026-W35": 450.17
+  },
+  "by_metal": {
+   "silver": 595.0,
+   "gold": 20.22
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.08,
+  "price_max": 0.92,
+  "n": 163,
+  "pnl": -48.17,
+  "ret": -9.63,
+  "hit": 0.411,
+  "sharpe": -0.29,
+  "mdd": 69.14,
+  "fees": 256.14,
+  "by_week": {
+   "2026-W33": 917.51,
+   "2026-W34": -754.96,
+   "2026-W35": -210.72
+  },
+  "by_metal": {
+   "silver": 489.87,
+   "gold": -538.05
+  }
+ },
+ {
+  "theta": 0.07,
+  "vol_halflife_min": 60.0,
+  "tau_min_s": 300,
+  "tau_max_s": 540,
+  "price_min": 0.35,
+  "price_max": 0.92,
+  "n": 129,
+  "pnl": 366.14,
+  "ret": 73.23,
+  "hit": 0.628,
+  "sharpe": 3.88,
+  "mdd": 36.87,
+  "fees": 130.64,
+  "by_week": {
+   "2026-W33": 319.22,
+   "2026-W34": -203.09,
+   "2026-W35": 250.01
+  },
+  "by_metal": {
+   "silver": 476.71,
+   "gold": -110.57
+  }
+ }
+]
