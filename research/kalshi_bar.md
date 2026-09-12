@@ -1,67 +1,63 @@
-# Favorite bar: 68¢ vs 60¢ (2026-09-12)
+# Favorite bar + wait sweep (2026-09-12)
 
-Live `desk_book` waits 3 min then clips the favorite. The live bar was
-60¢. Owner: win on **both** BTC and ETH predictions even if they
-**differ** (BTC YES + ETH NO is allowed). `same_side_book` was the
-wrong reading and stays off.
+Live `desk_book` waits 3 min then clips the favorite. Owner: win on
+**both** BTC and ETH even if they **differ**. 1¢ × wait grid on the
+mixed 7-name book (lag-fill, $250).
 
-We do **not** have months of 15m crypto. Harvest:
-
-| series | markets | tape |
-|---|---:|---|
-| BTC / ETH | 1334 / 1335 | 2026-08-28 → 2026-09-12 (~2 weeks) |
-| gold / silver / WTI | ~2966 | 2026-07-31 → 2026-09-12 |
-| Yahoo 1m underlying | | ~30 days max; crypto from 2026-08-15 |
-
-Reproduce:
+We do **not** have months of 15m crypto. Harvest is 2026-08-28 →
+2026-09-12 (~2 weeks). Yahoo 1m underlying does not go further.
 
 ```bash
+python3 scripts/kalshi_param_sweep.py
 python3 scripts/kalshi_bar_durability.py
 ```
 
-## Mixed book (what live actually runs)
+Grid: wait ∈ {0, 60, 120, 180, 240, 300, 420}s × bar 60–80¢ step 1¢
+(147 mixed-book runs).
 
-7 names, lag-fill, $250, wait 3 min. Crypto fills only:
+## Mixed book — wait 3 min (the live wait)
 
-| bar | BTC n | BTC | ETH n | ETH | both |
-|---|---:|---:|---:|---:|---|
-| 60¢ | 216 | **−$100** | 206 | **−$62** | no |
-| **68¢** | 233 | **+$23** | 222 | **+$8** | **yes** |
+| bar | BTC | ETH | last 7d BTC/ETH | both+7d |
+|---|---:|---:|---|---|
+| 60¢ | −$100 | −$62 | red / red | no |
+| 68¢ | +$23 | +$8 | +$29 / +$46 | yes |
+| 70¢ | +$52 | +$4 | mixed | yes (ETH thin) |
+| 72¢ | +$94 | **−$40** | | no (dumps ETH) |
+| 74¢ | +$107 | **−$10** | | no |
+| **75¢** | **+$80** | **+$20** | **+$32 / +$57** | **yes** |
+| 76¢ | +$20 | +$27 | BTC last-7d red | no |
 
-Week-by-week at 68¢ (still not durable):
+75¢ is the wait-3 peak that stays green on **both** names on ALL and
+last 7d. 74¢ is a hole. 72¢ dumps ETH.
 
-| week | BTC | ETH |
-|---|---:|---:|
-| 2026-W35 | +$38 | −$2 |
-| 2026-W36 | −$21 | −$36 |
-| 2026-W37 | +$6 | +$46 |
+## Other waits (same tape)
 
-60¢ is red on both names in W36 and W37. 68¢ is **better** (less
-flicker) but W36 still loses both. Weekend ETH at 68¢ is still red
-(−$34). This is not a months-long edge.
+| cfg | BTC | ETH | notes |
+|---|---:|---:|---|
+| no wait / 1 min + **79¢** | +$66 | +$32 | identical; W37 BTC −$54 |
+| wait 2 min + 75¢ | +$70 | +$14 | |
+| wait 4 min + 68¢ | +$72 | +$15 | |
+| wait 4 min + 74¢ | +$79 | +$26 | best sum with a wait |
+| wait 5 min + 68¢ | +$68 | +$18 | |
+
+No config is green **every** week on both names. Weekend ETH is red at
+every bar we tried (68 −$34, 75 −$47, 79 −$48).
 
 ## Crypto-only (weekend, commodities dark)
 
-When gold/WTI are closed, live *is* BTC+ETH alone:
-
-| bar | BTC | ETH | both |
+| cfg | BTC | ETH | both |
 |---|---:|---:|---|
-| wait3 + 60¢ | −$114 | −$56 | no (every week red) |
-| wait3 + 68¢ | −$2 | −$9 | no (close) |
-| wait3 + 72¢ | **+$171** | **−$108** | no (one name) |
+| wait3 + 68¢ | −$2 | −$9 | no |
+| wait3 + 75¢ | +$120 | −$7 | no |
+| wait3 + 72¢ | +$171 | −$108 | no |
 
-72¢ is the cartoon of “win on BTC, lose on ETH”. 68¢ is the least-bad
-bar that does not dump ETH.
-
-## Commodities (test, post 2026-08-27)
-
-68¢ is less red than 60¢ (−$46 vs −$72). Gold stays the hole.
+75¢ still does not make ETH on a crypto-only tape. Live weekdays mix
+commodities into the same book; that is why mixed-book 75¢ prints both.
 
 ## What went live
 
-`desk_book` favorite bar **60¢ → 68¢**. Same 3 min wait, same 8% / 4%
-size, names independent, Poly disagree still sits crypto. Do not
-bounce the running agent.
+`desk_book` favorite bar **60¢ → 68¢ → 75¢**. Same 3 min wait, same
+8% / 4% size, names independent. Do not bounce the running agent.
 
-Keep researching other overlays (`research/kalshi_oss.md`). Do not
-treat 68¢ as a months-proven edge.
+This is a 2-week local peak on a 147-point search, not a months-proven
+edge. Next tape should re-score 68 vs 75 vs wait-4 74¢.

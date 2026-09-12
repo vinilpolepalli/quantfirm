@@ -157,10 +157,10 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 
 # Open flicker: a 60–64¢ favorite in the first 2–3 minutes often dies
 # (13:15Z ETH NO T+19s @ 61¢ −$8.77). Sit the first 3 minutes, then clip
-# ≥68¢ (both BTC and ETH lag-green; 60¢ is red on both names). First-3-min
-# clips even at 80–88¢ are worse than waiting (REST races the open lock).
-# Crypto also sits when Poly's ≥55¢ favorite disagrees. Missing Poly does
-# not sit. No Poly 15m gold/WTI/natgas — commodities wait + 68¢ only.
+# ≥75¢ (1¢ mixed-book sweep: 60 red both names, 68 both-green, 75 the
+# wait-3 peak; 72/74 dump ETH). No-wait 79¢ looks strong on ALL but
+# weekend ETH still red and W37 BTC dies — keep the wait. Crypto also
+# sits when Poly's ≥55¢ favorite disagrees. Missing Poly does not sit.
 OPEN_WAIT_S = 180
 CRYPTO_OPEN_WAIT_S = OPEN_WAIT_S
 BTC_OPEN_WAIT_S = OPEN_WAIT_S
@@ -169,15 +169,15 @@ BTC_OPEN_WAIT_S = OPEN_WAIT_S
 def crypto_params(base: Params) -> Params:
     """Chill crypto overlay: clip every window that has a real favorite.
 
-    Same FLB bar as commodities (≥68¢). Stake is 4% of the book
+    Same FLB bar as commodities (≥75¢). Stake is 4% of the book
     (~$9–10) **per name** — BTC and ETH are independent, not a split
     of one 4% budget. Quarter-Kelly of a 3pp assumed edge was collapsing
-    72¢ clips to 4 lots (~$3). Coin-flips (50–66¢) and weekend
-    longshots still sit. 93¢+ stay out via fee-eat / price_max.
+    72¢ clips to 4 lots (~$3). Coin-flips and 60–74¢ still sit.
+    93¢+ stay out via fee-eat / price_max.
     """
     return replace(
         base,
-        price_min=0.68,
+        price_min=0.75,
         price_max=0.92,
         max_stake_frac=0.04,
         kelly_mult=0.25,
@@ -220,11 +220,11 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               tau_min_ov=None, skip_eth=False, **kw):
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
-    Whole book waits the first 3 minutes. Commodities: 8% / ≥68¢ after
-    that (no Poly 15m book). BTC and ETH: 4% / ≥68¢ after the wait, and
+    Whole book waits the first 3 minutes. Commodities: 8% / ≥75¢ after
+    that (no Poly 15m book). BTC and ETH: 4% / ≥75¢ after the wait, and
     sit when Polymarket's 15m favorite disagrees. Names are independent:
     BTC YES and ETH NO in the same window is allowed. Missing Poly does
-    not sit. Fee-eat still skips 93¢+ last ticks; 60–66¢ sits.
+    not sit. Fee-eat still skips 93¢+ last ticks; 60–74¢ sits.
     """
     if skip_eth and metal == "eth":
         return None
@@ -489,9 +489,10 @@ def poly_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     side = poly_favorite(q, price_min=0.60)
     if side is None:
         return None
+    p = replace(crypto_params(params), price_min=params.price_min)
     it = favorite_blind(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
-        bankroll, open_positions, crypto_params(params),
+        bankroll, open_positions, p,
         recent_volume=recent_volume, fill_cap=True, **kw)
     if it is None or it.side != side:
         return None
@@ -971,19 +972,19 @@ def registry() -> list[Spec]:
              "lag",
              "FLB ≥60¢ until close; skip coin-flip / fee-eat; 8% half-Kelly"),
         Spec("crypto_fav", crypto_fav,
-             _p(tau_min_s=0, tau_max_s=900, price_min=0.68, price_max=0.92,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.75, price_max=0.92,
                 theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
                 signal_max_age_s=0),
              "lag",
-             "BTC/ETH 15m FLB ≥68¢ until close, 4% each (~$10), not a split"),
+             "BTC/ETH 15m FLB ≥75¢ until close, 4% each (~$10), not a split"),
         Spec("desk_book", desk_book,
-             _p(tau_min_s=0, tau_max_s=900, price_min=0.68, price_max=0.94,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.75, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Whole book waits 3 min; commodities 8%; BTC/ETH 4% / ≥68¢ + Poly"),
+             "Whole book waits 3 min; commodities 8%; BTC/ETH 4% / ≥75¢ + Poly"),
         Spec("wait7_book", wait7_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,

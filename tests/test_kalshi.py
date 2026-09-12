@@ -245,12 +245,12 @@ class TestNewStrategies(unittest.TestCase):
         spec = next(s for s in registry() if s.name == PAPER_STRATEGY)
         self.assertGreaterEqual(spec.params.max_stake_frac, 0.08)
         self.assertLess(spec.params.max_stake_frac, 0.12)
-        self.assertEqual(spec.params.price_min, 0.68)
+        self.assertEqual(spec.params.price_min, 0.75)
         self.assertLessEqual(spec.params.price_max, 0.94)
         self.assertEqual(spec.params.tau_min_s, 0)
         self.assertGreaterEqual(spec.params.tau_max_s, 900)
         crypto = next(s for s in registry() if s.name == "crypto_fav")
-        self.assertEqual(crypto.params.price_min, 0.68)
+        self.assertEqual(crypto.params.price_min, 0.75)
         self.assertEqual(crypto.params.max_stake_frac, 0.04)
         self.assertEqual(crypto.params.tau_min_s, 0)
         self.assertGreaterEqual(crypto.params.tau_max_s, 900)
@@ -340,20 +340,20 @@ class TestNewStrategies(unittest.TestCase):
                                     metal="btc"))
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.54, "yes_ask": 0.56},
                                     metal="btc"))
-        # 64¢ NO (36¢ YES) sits — 68¢ bar. 70¢ NO clips.
+        # 64¢ NO (36¢ YES) sits — 75¢ bar. 81¢ NO clips.
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.36, "yes_ask": 0.37},
                                     metal="btc"))
-        cheap_yes = desk_book(**{**kw, "yes_bid": 0.29, "yes_ask": 0.31},
+        cheap_yes = desk_book(**{**kw, "yes_bid": 0.18, "yes_ask": 0.20},
                                metal="btc")
         self.assertIsNotNone(cheap_yes)
         self.assertEqual(cheap_yes.side, "no")
-        self.assertAlmostEqual(cheap_yes.limit_price, 0.71, places=2)
+        self.assertAlmostEqual(cheap_yes.limit_price, 0.82, places=2)
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.03, "yes_ask": 0.05},
                                     metal="btc"))
-        # 63¢ YES sits. 70¢ YES clips.
-        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.62, "yes_ask": 0.63},
+        # 70¢ YES sits. 76¢ YES clips.
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.69, "yes_ask": 0.70},
                                     metal="btc"))
-        mid = desk_book(**{**kw, "yes_bid": 0.69, "yes_ask": 0.70}, metal="btc")
+        mid = desk_book(**{**kw, "yes_bid": 0.75, "yes_ask": 0.76}, metal="btc")
         self.assertIsNotNone(mid)
         self.assertEqual(mid.side, "yes")
         self.assertEqual(mid.tag, "crypto_fav")
@@ -376,9 +376,12 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(eth.count, btc.count)
         at72 = desk_book(**{**kw, "yes_bid": 0.71, "yes_ask": 0.72},
                          metal="btc")
-        self.assertIsNotNone(at72)
-        self.assertGreaterEqual(at72.count * 0.72, 8.0)
-        self.assertLessEqual(at72.count * 0.72, 10.0)
+        self.assertIsNone(at72)
+        at76 = desk_book(**{**kw, "yes_bid": 0.75, "yes_ask": 0.76},
+                         metal="btc")
+        self.assertIsNotNone(at76)
+        self.assertGreaterEqual(at76.count * 0.76, 8.0)
+        self.assertLessEqual(at76.count * 0.76, 10.0)
         cf = next(s for s in registry() if s.name == "crypto_fav")
         p2 = replace(cf.params, macro_blackout_et=())
         hit = crypto_fav(**{**kw, "params": p2})
@@ -394,7 +397,7 @@ class TestNewStrategies(unittest.TestCase):
         p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
         close = 1_000_000
         yes = dict(ticker="T", s=100.2, k=100.0, sigma_1m=0.0005,
-                   close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
+                   close_ts=close, yes_bid=0.78, yes_ask=0.80, bankroll=250.0,
                    open_positions=0, params=p, recent_volume=200)
         open_ts = close - 900
         self.assertIsNone(desk_book(**{**yes, "ts": open_ts}, metal="eth"))
@@ -414,7 +417,7 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="gold",
                                        poly_yes_bid=0.20, poly_yes_ask=0.21,
                                        poly_down_ask=0.80))
-        cheap = dict(yes, ts=close - 300, yes_bid=0.29, yes_ask=0.31)
+        cheap = dict(yes, ts=close - 300, yes_bid=0.18, yes_ask=0.20)
         self.assertIsNone(desk_book(**cheap, metal="eth", poly_yes_bid=0.70,
                                        poly_yes_ask=0.72, poly_down_ask=0.29))
         self.assertIsNone(desk_book(**cheap, metal="btc", poly_yes_bid=0.70,
@@ -437,11 +440,11 @@ class TestNewStrategies(unittest.TestCase):
         p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
         close = 1_000_000
         kw = dict(ticker="T", ts=close - 300, s=100.2, k=100.0, sigma_1m=0.0005,
-                  close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
+                  close_ts=close, yes_bid=0.78, yes_ask=0.80, bankroll=250.0,
                   open_positions=0, params=p, recent_volume=200, metal="btc")
         self.assertIsNone(same_side_book(**kw))
         self.assertIsNone(same_side_book(**kw, peer_yes_bid=0.36, peer_yes_ask=0.37))
-        hit = same_side_book(**kw, peer_yes_bid=0.69, peer_yes_ask=0.70)
+        hit = same_side_book(**kw, peer_yes_bid=0.75, peer_yes_ask=0.76)
         self.assertIsNotNone(hit)
         self.assertEqual(hit.side, "yes")
         gold = same_side_book(**{**kw, "metal": "gold"})
@@ -455,16 +458,16 @@ class TestNewStrategies(unittest.TestCase):
         base = dict(ticker="T", ts=close - 300, s=100.2, k=100.0,
                     sigma_1m=0.0005, close_ts=close, bankroll=250.0,
                     open_positions=0, params=p, recent_volume=200)
-        btc = desk_book(**base, yes_bid=0.69, yes_ask=0.70, metal="btc")
-        eth = desk_book(**base, yes_bid=0.29, yes_ask=0.31, metal="eth")
+        btc = desk_book(**base, yes_bid=0.78, yes_ask=0.80, metal="btc")
+        eth = desk_book(**base, yes_bid=0.18, yes_ask=0.20, metal="eth")
         self.assertIsNotNone(btc)
         self.assertEqual(btc.side, "yes")
         self.assertIsNotNone(eth)
         self.assertEqual(eth.side, "no")
         from quantfirm.kalshi.strategies import same_side_book
         self.assertIsNone(same_side_book(
-            **base, yes_bid=0.69, yes_ask=0.70, metal="btc",
-            peer_yes_bid=0.29, peer_yes_ask=0.31))
+            **base, yes_bid=0.78, yes_ask=0.80, metal="btc",
+            peer_yes_bid=0.18, peer_yes_ask=0.20))
         # First 3 min sits even at 88¢ — REST races the open lock.
         open_ts = close - 900
         self.assertIsNone(desk_book(
@@ -479,7 +482,7 @@ class TestNewStrategies(unittest.TestCase):
         close = 1_000_000
         open_ts = close - 900
         kw = dict(ticker="T", s=100.2, k=100.0, sigma_1m=0.0005,
-                  close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
+                  close_ts=close, yes_bid=0.78, yes_ask=0.80, bankroll=250.0,
                   open_positions=0, params=p, recent_volume=200, metal="btc")
         self.assertIsNone(wait7_book(**{**kw, "ts": open_ts + 180}))
         self.assertIsNotNone(wait7_book(**{**kw, "ts": open_ts + 420}))
@@ -942,9 +945,9 @@ class TestPolymarketTape(unittest.TestCase):
         spec = next(s for s in registry() if s.name == "poly_confirm")
         close = 1_000_000 + 600
         kw = dict(ticker="T", ts=close - 400, s=100.0, k=100.0, sigma_1m=0.001,
-                  close_ts=close, yes_bid=0.29, yes_ask=0.31, bankroll=250.0,
+                  close_ts=close, yes_bid=0.18, yes_ask=0.20, bankroll=250.0,
                   open_positions=0, params=spec.params, recent_volume=200)
-        # Cheap YES → buy NO at 70¢. Missing Poly must not sit.
+        # Cheap YES → buy NO at 82¢. Missing Poly must not sit.
         it = poly_confirm(**kw, metal="btc")
         self.assertIsNotNone(it)
         self.assertEqual(it.side, "no")
@@ -957,7 +960,7 @@ class TestPolymarketTape(unittest.TestCase):
         self.assertIsNone(poly_confirm(**kw, metal="btc", poly_yes_bid=0.70,
                                         poly_yes_ask=0.72, poly_down_ask=0.29))
         # Gold has no Poly book; pass through as commodity FLB.
-        gold = poly_confirm(**{**kw, "yes_bid": 0.69, "yes_ask": 0.70},
+        gold = poly_confirm(**{**kw, "yes_bid": 0.78, "yes_ask": 0.80},
                             metal="gold", poly_yes_bid=0.90, poly_yes_ask=0.91)
         self.assertIsNotNone(gold)
         self.assertEqual(PAPER_STRATEGY, "desk_book")

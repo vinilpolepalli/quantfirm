@@ -27,7 +27,7 @@ SERIES_LISTED_DARK = {
 }
 
 # 15-minute crypto (live, large books). BTC and ETH both clip at 4%
-# of the book each (~$9–10), ≥68¢ after the 3 min wait. Not a split
+# of the book each (~$9–10), ≥75¢ after the 3 min wait. Not a split
 # budget. Names may disagree. SOL/DOGE/XRP 15m exist but are not scored.
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
@@ -66,10 +66,10 @@ CRYPTO_LIVE = ("btc", "eth")
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
 
 # Live canary on the 24/7 supervisor. Whole book waits the first 3
-# minutes of each 15m window. Commodities: 8% FLB ≥68¢ after that (no
-# Poly 15m book). BTC and ETH: 4% / ≥68¢ after the wait, sit if
+# minutes of each 15m window. Commodities: 8% FLB ≥75¢ after that (no
+# Poly 15m book). BTC and ETH: 4% / ≥75¢ after the wait, sit if
 # Polymarket's 15m favorite disagrees. Names are independent (BTC YES
-# and ETH NO in the same window is allowed). Sit out 60–66¢, longshots,
+# and ETH NO in the same window is allowed). Sit out 60–74¢, longshots,
 # and fee-eat (that is the 99¢ last-tick skip). Risky mixes stay
 # registered as yolo_* / nuke_lock and off this loop.
 PAPER_STRATEGY = "desk_book"

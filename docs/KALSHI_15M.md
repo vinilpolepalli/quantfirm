@@ -68,8 +68,8 @@ Or the 24/7 supervisor, still paper if `KALSHI_LIVE` is unset:
 ```
 
 Default book: gold, silver, copper, WTI, natgas, BTC, ETH. Strategy:
-`desk_book` (whole book waits 3 min; commodities 8% / ≥68¢ after that;
-BTC and ETH 4% / ≥68¢ and sit if Poly disagrees). Maker off.
+`desk_book` (whole book waits 3 min; commodities 8% / ≥75¢ after that;
+BTC and ETH 4% / ≥75¢ and sit if Poly disagrees). Maker off.
 Kill switch: `touch state/KILL_SWITCH_KALSHI`.
 
 Heartbeat / heal (does not start a second agent if the supervisor is up):
@@ -161,13 +161,13 @@ BTC/ETH stay open. Treat the API as truth. Fees unchanged: quadratic
 taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
 Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
-Live strategy: **`desk_book`**. Commodities are `rich_fav` — first ≥68¢
-favorite (skip 60–66¢ and when the taker fee is ≥15% of the win
+Live strategy: **`desk_book`**. Commodities are `rich_fav` — first ≥75¢
+favorite (skip 60–74¢ and when the taker fee is ≥15% of the win
 or net payout <7¢), from T+3 **until close**, **8% stake**.
 Crypto is half the commodity *rate* but **per name**: **4% of the book
-each (~$9–10) / ≥68¢ / after T+3** so every real-favorite interval can
+each (~$9–10) / ≥75¢ / after T+3** so every real-favorite interval can
 clip. BTC and ETH are independent books — they do **not** have to
-agree. Coin-flips and 60–66¢ still sit.
+agree. Coin-flips and 60–74¢ still sit.
 BTC and ETH can both be on. SOL/DOGE/XRP 15m are open on Kalshi but not
 scored — stay off. Maker off. 24/7 supervisor. 8% is ~$20 at risk and
 ~$2.20 net on an 88¢ win. Crypto 4% is ~$10 at risk. 15–18% (`yolo_*`)
@@ -195,8 +195,8 @@ a Chainlink 60s TWAP over the whole window vs the start. Gold/WTI/natgas
 have no matching Poly 15m book.
 
 The live loop stays `desk_book` on Kalshi. The whole book waits the first
-3 minutes. Commodities then clip 8% / ≥68¢ (no Poly 15m book). BTC and
-ETH clip 4% / ≥68¢ after the wait, and sit when Poly's 15m favorite
+3 minutes. Commodities then clip 8% / ≥75¢ (no Poly 15m book). BTC and
+ETH clip 4% / ≥75¢ after the wait, and sit when Poly's 15m favorite
 disagrees (missing Poly does not sit). BTC YES and ETH NO in the same
 window is allowed — the bar is each name's P&L, not agreement.
 
@@ -231,21 +231,19 @@ Poly-on-exit is worse. Numbers: `research/kalshi_cashout.md`.
 BTC and ETH do **not** have to agree. The bar is each name's lag P&L,
 not a same-side gate. `same_side_book` stays off live.
 
-Live `desk_book` is wait 3 min + **≥68¢** (was 60¢). On the mixed book
-(the live 7-name tape, 2026-08-29 → 2026-09-12):
+Live `desk_book` is wait 3 min + **≥75¢** (was 60¢, then 68¢). 1¢ sweep
+on the mixed book (the live 7-name tape, 2026-08-29 → 2026-09-12):
 
 | bar | BTC | ETH | both |
 |---|---:|---:|---|
 | wait3 + 60¢ | −$100 | −$62 | no |
-| **wait3 + 68¢** | **+$23** | **+$8** | **yes** |
+| wait3 + 68¢ | +$23 | +$8 | yes |
+| **wait3 + 75¢** | **+$80** | **+$20** | **yes** |
 
-That is **two weeks** of 15m crypto, not months (Yahoo 1m underlying
-does not go further). W36 is still red at 68¢. Weekend ETH is still
-red. Keep researching; do not bounce the running agent — the next
-110-min restart picks 68¢ up from this tree. Numbers:
-`research/kalshi_bar.md`. Other overlays: `research/kalshi_oss.md`.
-`python3 scripts/kalshi_bar_durability.py`
-`python3 scripts/kalshi_oss_iterate.py`.
+That is **two weeks** of 15m crypto, not months. 74¢ dumps ETH; 75¢ is
+the wait-3 peak on a 147-point grid. Weekend ETH is still red at every
+bar. Do not bounce — the next 110-min restart loads 75¢. Numbers:
+`research/kalshi_bar.md`. Sweep: `python3 scripts/kalshi_param_sweep.py`.
 
 ## Live signal
 
@@ -270,10 +268,10 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `oracle_lag` | Prior-desk stale-quote taker | Should lose (replication) |
 | `oracle_flow` | Fade uninformed book flow | Taking an overreaction, not chasing a stale ask |
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
-| `rich_fav` / `desk_book` | Whole book waits 3 min; 8% / 4% / ≥68¢ + Poly on crypto | Open flicker; 60¢ was red on both names |
+| `rich_fav` / `desk_book` | Whole book waits 3 min; 8% / 4% / ≥75¢ + Poly on crypto | Open flicker; 1¢ sweep peak at wait-3 |
 | `poly_confirm` | desk_book + sit crypto when Poly 15m disagrees | Off the live loop; second tape |
 | `poly_book` | Poly ≥60¢ picks side; Kalshi executes if that side is also ≥60¢ | Paper sleeve; EOD compare vs live |
-| `crypto_fav` | BTC/ETH 4% each (~$10) ≥68¢ until close | Weekend 24/7 sleeve |
+| `crypto_fav` | BTC/ETH 4% each (~$10) ≥75¢ until close | Weekend 24/7 sleeve |
 | `favorite_confirmed` | FLB + GBM agrees | Same, fewer longshots |
 | `late_lock` | Near-certain favorite, last 6 min | Reversal needed is large |
 | `open_fade` / `open_follow` | 3-min impulse then fade/follow | Path of S, not book lag |
@@ -300,6 +298,7 @@ python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi, read-on
 python -m quantfirm.kalshi.cli poly-compare # live crypto vs poly_book paper
 python -m quantfirm.kalshi.cli cashout-replay --no-poly  # sell-if-dead vs hold
 python3 scripts/kalshi_oss_iterate.py                    # BTC+ETH both-green bar
+python3 scripts/kalshi_param_sweep.py                    # wait × 1¢ bar grid
 ./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH
 ./scripts/kalshi_poly_paper_loop.sh   # paper-only Poly sleeve; never --live
 python scripts/kalshi_desk_checkin.py   # heal live + poly paper, commit heartbeat

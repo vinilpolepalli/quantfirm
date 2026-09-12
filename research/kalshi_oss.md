@@ -1,6 +1,6 @@
 # OSS / overlay iteration — win on **both** BTC and ETH (2026-09-12)
 
-Live is `desk_book` (wait 3 min, **≥68¢** as of this pass). This page
+Live is `desk_book` (wait 3 min, **≥75¢** as of this pass). This page
 is lag-fill research. Bankroll $250.
 
 **Both** = each name's P&L > 0, even if the sides **differ**. BTC YES
@@ -20,10 +20,10 @@ Live 15m crypto often prints one winner and one loser in the same
 window. We still want **each** prediction to make money over the tape,
 not a net that hides ETH behind BTC (or the reverse).
 
-Prior live (wait 3 + **60¢**) is red on both names. Raising the bar to
-**68¢** is the less-bad mixed-book print (BTC +$23, ETH +$8 on the
-2-week tape). That is two weeks, not months, and W36 is still red.
-Details: `research/kalshi_bar.md`.
+Prior live (wait 3 + **60¢**) is red on both names. A 1¢ × wait sweep
+picked **wait 3 + 75¢** as the wait-3 peak (BTC +$80, ETH +$20 on the
+2-week mixed book). 68¢ is also both-green but smaller. 74¢ dumps ETH.
+Weekend ETH is still red at every bar. Details: `research/kalshi_bar.md`.
 
 | spec | split | n | pnl | BTC | ETH | cmdty | both names |
 |---|---|---:|---:|---:|---:|---:|---|
@@ -81,7 +81,7 @@ then clipping 68¢ (REST races the open lock). Keep the wait.
 
 ## What changed on the live book
 
-`PAPER_STRATEGY` stays `desk_book`. The favorite bar is **68¢** not 60¢.
+`PAPER_STRATEGY` stays `desk_book`. The favorite bar is **75¢** not 60¢.
 Same wait, same size, names independent. Do not bounce the 24/7 agent;
 the next 110-min restart loads it. Do not turn on Hamad-style cash-out
 (already red vs hold on today’s fills). Do not promote `longshot_no`.

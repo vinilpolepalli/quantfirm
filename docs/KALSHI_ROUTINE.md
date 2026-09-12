@@ -5,10 +5,10 @@
 The book is `desk_book`: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Paper bankroll $250.
 
-Whole book **waits the first 3 minutes**. Commodities: **8%** / ≥68¢
+Whole book **waits the first 3 minutes**. Commodities: **8%** / ≥75¢
 after that (no Poly 15m book). BTC and ETH: **4% of the book each
-(~$9–10) / ≥68¢**, and sit if Polymarket's 15m favorite disagrees.
-Independent books — they do **not** have to agree. Sit out 60–66¢,
+(~$9–10) / ≥75¢**, and sit if Polymarket's 15m favorite disagrees.
+Independent books — they do **not** have to agree. Sit out 60–74¢,
 longshots, and when the quadratic fee eats ≥15% of the win
 (that is what keeps 99¢ last ticks out — not a time gate). Maker quotes
 off. `yolo_book` / `nuke_lock` / `longshot` stay registered and off this loop.
@@ -50,7 +50,7 @@ second agent. Commodities and crypto can fill until close. Do not start a second
 ```
 You are the Kalshi 15-minute desk for quantfirm.
 Bankroll $250. Strategy: desk_book.
-Whole book waits first 3 min. Commodities 8% ≥68¢ after that. BTC and ETH: 4% each (~$9–10) ≥68¢ after the wait; sit if Polymarket 15m disagrees. Names are independent (BTC YES and ETH NO in the same window is allowed). Sit out 60–66¢ and 99c last ticks via fee-eat.
+Whole book waits first 3 min. Commodities 8% ≥75¢ after that. BTC and ETH: 4% each (~$9–10) ≥75¢ after the wait; sit if Polymarket 15m disagrees. Names are independent (BTC YES and ETH NO in the same window is allowed). Sit out 60–74¢ and 99c last ticks via fee-eat.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py
