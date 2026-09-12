@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T20:31:16Z",
+ "ts": "2026-09-12T22:32:38Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,7 +15,7 @@
  "kill_switch": false,
  "supervisor": "down",
  "cash": {
-  "shadow": 255.86,
+  "shadow": 246.01000000000002,
   "demo": 250.0,
   "maker": 250.0,
   "live": 250.0
@@ -26,9 +26,18 @@
   "maker": 0.0,
   "live": 0.0
  },
- "n_open": 0,
- "open": [],
+ "n_open": 1,
+ "open": [
+  {
+   "metal": "btc",
+   "side": "yes",
+   "count": 15,
+   "ticker": "KXBTC15M-26SEP121845-45",
+   "fill_price": 0.64,
+   "adapter": "shadow"
+  }
+ ],
  "n_settled": 4,
- "updated": "2026-09-12T20:31:16Z",
+ "updated": "2026-09-12T22:32:38Z",
  "started": "2026-09-12T08:07:00Z"
 }

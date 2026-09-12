@@ -1,12 +1,27 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 255.86,
+  "shadow": 246.01000000000002,
   "demo": 250.0,
   "maker": 250.0,
   "live": 250.0
  },
- "open": [],
+ "open": [
+  {
+   "ticker": "KXBTC15M-26SEP121845-45",
+   "metal": "btc",
+   "side": "yes",
+   "count": 15,
+   "fill_price": 0.64,
+   "fee": 0.25,
+   "fair": 0.64,
+   "entry_ts": 1789252268,
+   "close_ts": 1789253100,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  }
+ ],
  "n_settled": 4,
  "realized": {
   "shadow": 5.859999999999999,
@@ -32,7 +47,7 @@
  ],
  "strategy": "desk_book",
  "live": false,
- "updated": "2026-09-12T20:31:16Z",
+ "updated": "2026-09-12T22:32:38Z",
  "day_stop": {
   "date": "2026-09-12",
   "start": {
