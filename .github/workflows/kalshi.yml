@@ -1,8 +1,9 @@
 name: kalshi-15m-desk
 # Backstop tick. GitHub-hosted minutes cannot poll every 2 seconds (that
 # would blow the 2,000 min/month budget). Four times an hour this job
-# wakes around minute 5 of each 15-minute window (when rich_fav first
-# fires: 88–94¢ favorite, 3–11 min left), writes the heartbeat, and exits.
+# wakes around minute 5 of each 15-minute window (when yolo_book's
+# 88–94¢ favorite leg is live; sprint is last 90s on the 2s poll loop),
+# writes the heartbeat, and exits.
 #
 # Primary 24/7 loop: scripts/kalshi_paper_loop.sh on a persistent host
 # (this cloud box, a VPS, or a Cursor 15-minute timer — see
@@ -48,8 +49,8 @@ jobs:
           python -m quantfirm.kalshi.cli status || true
           python -m quantfirm.kalshi.cli agent \
             --minutes 1.5 --poll 2 --no-demo --no-maker --log-decisions \
-            --strategy rich_fav --bankroll 250 \
-            --metals gold,silver,copper,wti,natgas \
+            --strategy yolo_book --bankroll 250 \
+            --metals gold,silver,copper,wti,natgas,btc,eth \
             ${KALSHI_LIVE:+--live}
           python -m quantfirm.kalshi.cli heartbeat || true
       - name: Commit paper heartbeat

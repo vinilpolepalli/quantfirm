@@ -90,7 +90,18 @@ t=1.06 / +$55, test t=1.42 / +$130, train flat (not disastrous). t=1.42 is
 week −$23). Copper + natgas carry it. Dropping gold would be a test-set
 edit — gold was *green* in train — so it stays in the paper universe.
 
-Crypto 15m lag locks lost last week. They stay out of the paper book.
+Crypto 15m lag locks lost last week on the 4% book. They are back in
+the **yolo** paper universe because the owner asked for risky/diverse,
+not because last-week crypto locks were green.
+
+## 2×/week (12 Sep evening)
+
+Owner asked whether a risky mix could double $250 every week.
+Lag-fill scoreboard: `research/kalshi_yolo.md`. Headline: leveraged
+`yolo_lock` printed two calendar weeks ≥+$250 (W35 +$505, W37 slice)
+and already lost in train (W33 −$128, 72% DD). `nuke_lock` W36 was
+−$962. Last-minute sprint and longshots do not 2×. Paper switched to
+`yolo_book` (sprint + fav + follow, 15% cap, seven assets). Stay paper.
 
 ## Paper (12 Sep)
 
@@ -100,6 +111,7 @@ Crypto 15m lag locks lost last week. They stay out of the paper book.
 | 01:15–01:45Z | `one_pct` | **7/7, +~$7.3** | 2s poll; lag backtest empty |
 | 02:00Z | `spot_lock` | copper NO 11@92¢ **+$0.82**, WTI NO 11@88¢ **+$1.23** | first lag-compatible fills |
 | ~02:10Z | switch to **`rich_fav`** | same 88–94¢ window, no spot gate | measurement, not a claim |
+| ~02:30Z | switch to **`yolo_book`** | 15% mix + crypto; 2×/week experiment | not a go-live |
 
 Shadow cash at 02:06Z: **$250.33**. Realized taker **+$10.10** (n=18
 settled shadow rows including the old books). Maker leftover +$1.65
@@ -116,5 +128,6 @@ python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \
 python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \
   --strategy rich_fav --fill-mode lag --since 2026-09-05T00:00:00Z
 python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \
-  --strategy offhours_lock --fill-mode lag --split test --bankroll 250
+  --strategy yolo_book --fill-mode lag --split test --bankroll 250
+python3 scripts/kalshi_score_yolo.py
 ```

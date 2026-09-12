@@ -18,7 +18,7 @@ import os
 from datetime import datetime
 
 from .strategy import Params
-from .universe import BANKROLL, PAPER_ASSETS, SPLIT_TS
+from .universe import BANKROLL, PAPER_ASSETS, PAPER_STRATEGY, SPLIT_TS
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 STATE_DIR = os.path.join(REPO, "state")
@@ -241,7 +241,7 @@ def cmd_agent(a):
     from .paper import PaperEngine
     from .strategies import registry
     specs = {s.name: s for s in registry()}
-    spec = specs.get(a.strategy) or specs["rich_fav"]
+    spec = specs.get(a.strategy) or specs[PAPER_STRATEGY]
     p = spec.params
     n_assets = len(a.metals.split(","))
     if n_assets > p.max_open:
@@ -271,7 +271,7 @@ def cmd_agent(a):
 
 
 def cmd_open_count(_a):
-    """Print how many of the five commodity series have an open window.
+    """Print how many of the live 15m series have an open window.
 
     Supervisor uses this instead of grepping `status` (a flake there used
     to sleep 10 minutes and miss the next window).
@@ -389,8 +389,8 @@ def main():
     sp = sub.add_parser("paper")
     sp.add_argument("--minutes", type=float, default=60.0)
     sp.add_argument("--poll", type=float, default=2.0)
-    sp.add_argument("--metals", default="gold,silver,copper,wti,natgas")
-    sp.add_argument("--strategy", default="rich_fav",
+    sp.add_argument("--metals", default=",".join(PAPER_ASSETS))
+    sp.add_argument("--strategy", default=PAPER_STRATEGY,
                     help="taker strategy name from strategies.registry()")
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
@@ -403,8 +403,8 @@ def main():
     sp = sub.add_parser("agent")
     sp.add_argument("--minutes", type=float, default=60.0)
     sp.add_argument("--poll", type=float, default=2.0)
-    sp.add_argument("--metals", default="gold,silver,copper,wti,natgas")
-    sp.add_argument("--strategy", default="rich_fav")
+    sp.add_argument("--metals", default=",".join(PAPER_ASSETS))
+    sp.add_argument("--strategy", default=PAPER_STRATEGY)
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
     sp.add_argument("--live", action="store_true")

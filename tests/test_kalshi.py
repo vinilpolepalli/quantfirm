@@ -14,7 +14,8 @@ from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
 from quantfirm.kalshi.strategies import (favorite_blind, late_lock, model_fav,
                                          one_pct, registry)
 from quantfirm.kalshi.strategy import Params, decide
-from quantfirm.kalshi.universe import BANKROLL, PAPER_ASSETS, SERIES
+from quantfirm.kalshi.universe import (BANKROLL, PAPER_ASSETS,
+                                         PAPER_STRATEGY, SERIES)
 
 
 class TestFair(unittest.TestCase):
@@ -152,7 +153,8 @@ class TestNewStrategies(unittest.TestCase):
         names = {s.name for s in registry()}
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
                   "favorite_blind", "open_fade", "spot_lock", "mid_lock",
-                  "rich_fav", "model_fav", "offhours_lock"):
+                  "rich_fav", "model_fav", "offhours_lock", "yolo_book",
+                  "longshot", "sprint", "yolo_lock", "nuke_lock"):
             self.assertIn(n, names)
 
     def test_universe_covers_wti(self):
@@ -174,12 +176,36 @@ class TestNewStrategies(unittest.TestCase):
         self.assertLessEqual(spec.params.tau_max_s, 90)
         self.assertGreaterEqual(spec.params.max_open, 6)
 
-    def test_rich_fav_is_live_book(self):
+    def test_yolo_lock_actually_overbets(self):
+        spec = next(s for s in registry() if s.name == "yolo_lock")
+        self.assertGreaterEqual(spec.params.kelly_mult, 1.0)
+        self.assertGreaterEqual(spec.params.max_stake_frac, 0.15)
+        nuke = next(s for s in registry() if s.name == "nuke_lock")
+        self.assertGreaterEqual(nuke.params.max_stake_frac, 0.30)
+
+    def test_rich_fav_is_registered_conservative(self):
         spec = next(s for s in registry() if s.name == "rich_fav")
         self.assertEqual(spec.params.price_min, 0.88)
         self.assertLessEqual(spec.params.price_max, 0.94)
         self.assertGreaterEqual(spec.params.tau_min_s, 180)
         self.assertGreaterEqual(spec.params.tau_max_s, 600)
+        self.assertEqual(spec.params.max_stake_frac, 0.04)
+
+    def test_yolo_book_is_paper_book(self):
+        self.assertEqual(PAPER_STRATEGY, "yolo_book")
+        spec = next(s for s in registry() if s.name == PAPER_STRATEGY)
+        self.assertEqual(spec.params.kelly_mult, 1.0)
+        self.assertEqual(spec.params.max_stake_frac, 0.15)
+        self.assertEqual(spec.params.daily_stop_frac, 0.40)
+        self.assertEqual(spec.params.tau_min_s, 8)
+        self.assertEqual(spec.params.tau_max_s, 780)
+        loop_path = os.path.join(os.path.dirname(__file__),
+                                 "..", "scripts", "kalshi_paper_loop.sh")
+        with open(loop_path) as f:
+            loop = f.read()
+        self.assertIn('STRATEGY="${STRATEGY:-yolo_book}"', loop)
+        self.assertIn("gold,silver,copper,wti,natgas,btc,eth", loop)
+        self.assertNotIn("nuke_lock", loop)
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")
@@ -218,6 +244,41 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(it.side, "yes")
         cheap = model_fav(**{**kw, "yes_bid": 0.20, "yes_ask": 0.25})
         self.assertIsNone(cheap)
+
+    def test_longshot_takes_cheap_side(self):
+        from dataclasses import replace
+        from quantfirm.kalshi.strategies import longshot
+        p = next(s for s in registry() if s.name == "longshot").params
+        p = replace(p, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 300, s=100.0, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, yes_bid=0.12, yes_ask=0.14, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        it = longshot(**kw)
+        self.assertIsNotNone(it)
+        self.assertEqual(it.side, "yes")
+        self.assertLessEqual(it.limit_price, 0.22)
+        rich = longshot(**{**kw, "yes_bid": 0.48, "yes_ask": 0.52})
+        self.assertIsNone(rich)
+
+    def test_yolo_book_has_sprint_and_mid_legs(self):
+        from dataclasses import replace
+        from quantfirm.kalshi.strategies import yolo_book
+        p = next(s for s in registry() if s.name == "yolo_book").params
+        p = replace(p, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", s=100.2, k=100.0, sigma_1m=0.0005,
+                  yes_bid=0.90, yes_ask=0.91, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        sprint = yolo_book(**{**kw, "ts": close - 30, "close_ts": close})
+        self.assertIsNotNone(sprint)
+        self.assertEqual(sprint.tag, "sprint")
+        mid = yolo_book(**{**kw, "ts": close - 240, "close_ts": close})
+        self.assertIsNotNone(mid)
+        self.assertEqual(mid.tag, "favorite")
+        spec = next(s for s in registry() if s.name == "yolo_book")
+        self.assertGreaterEqual(spec.params.max_stake_frac, 0.12)
+        self.assertGreaterEqual(spec.params.daily_stop_frac, 0.30)
 
     def test_one_pct_takes_last_minute_lock(self):
         from dataclasses import replace

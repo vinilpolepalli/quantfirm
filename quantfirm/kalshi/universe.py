@@ -59,6 +59,10 @@ SWISSQUOTE = {
 # size; crypto supplies it. Correlation slots are in halt.CORR_GROUPS.
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas", "btc", "eth")
 
+# Shadow book on the 24/7 supervisor. Risky mix (see research/kalshi_yolo.md).
+# Not a go-live. Conservative 4% book remains registered as rich_fav.
+PAPER_STRATEGY = "yolo_book"
+
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
 # energy / copper) so the $250 can sit in metals AND energy at once.
 CORR_GROUP = frozenset({"gold", "silver"})

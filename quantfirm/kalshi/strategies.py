@@ -163,7 +163,7 @@ def offhours_lock(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 
 def one_pct(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
             bankroll, open_positions, params, recent_volume=None, tag="one_pct",
-            **_):
+            target_frac: float = 0.01, **_):
     """Last-minute ≥90¢ lock, sized for ~1% of bankroll on a win.
 
     Sit out 50/50 books. Wait until the last ~90 seconds when one side is
@@ -188,7 +188,8 @@ def one_pct(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     if not cands:
         return None
     side, cost, fair = max(cands, key=lambda c: c[1])
-    return _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag)
+    return _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
+                      target_frac=target_frac)
 
 
 def favorite_confirmed(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -406,6 +407,69 @@ def always_no(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  bankroll, params, "ctrl_no", allow_min=True)
 
 
+def longshot(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+             bankroll, open_positions, params, recent_volume=None, **_):
+    """Buy the 8–25¢ underdog and hold. Lottery ticket, not FLB.
+
+    A 10¢ fill that hits pays +$0.90/contract. A few hits in a week at
+    10% of the book is the only convex path toward a 2× week. Whelan
+    says this loses; it is registered as the risky alternative, not a prior.
+    """
+    g = _gates(ts, close_ts, yes_bid, yes_ask, open_positions, params,
+               recent_volume)
+    if g is None:
+        return None
+    tau_s, _ = g
+    cands = []
+    if params.price_min <= yes_ask <= params.price_max:
+        cands.append(("yes", yes_ask, yes_ask))
+    no_px = (1.0 - yes_bid) if yes_bid is not None else None
+    if no_px is not None and params.price_min <= no_px <= params.price_max:
+        cands.append(("no", no_px, 1.0 - no_px))
+    if not cands:
+        return None
+    side, cost, fair = min(cands, key=lambda c: c[1])
+    q = min(0.40, cost + 0.08)
+    edge = q - cost - taker_fee(1, cost)
+    return _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params,
+                 "longshot", allow_min=True)
+
+
+def yolo_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+              bankroll, open_positions, params, recent_volume=None, **kw):
+    """Risky mix aimed at a 2× week: sprint lock, mid favorite, then
+    opening-impulse follow.
+
+    Last-minute 88–97¢ is the compounding leg (paper 2s poll, not 1-min
+    lag). Mid 88–94¢ is the REST-fillable favorite. Follow is the momentum
+    sleeve. Longshots are registered separately — they zeroed the mix.
+    Not a claim of edge.
+    """
+    from dataclasses import replace
+    tau_s = close_ts - ts
+    if 8 <= tau_s <= 90:
+        p = replace(params, tau_min_s=8, tau_max_s=90, price_min=0.88,
+                     price_max=0.97, max_spread=0.06)
+        it = one_pct(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                     bankroll, open_positions, p, recent_volume=recent_volume,
+                     tag="sprint", target_frac=0.04, **kw)
+        if it is not None:
+            return it
+    if 180 <= tau_s <= 660:
+        p = replace(params, tau_min_s=180, tau_max_s=660, price_min=0.88,
+                     price_max=0.94, max_spread=0.06)
+        it = favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid,
+                            yes_ask, bankroll, open_positions, p,
+                            recent_volume=recent_volume, **kw)
+        if it is not None:
+            return it
+    p = replace(params, tau_min_s=120, tau_max_s=660, price_min=0.20,
+                 price_max=0.85, max_spread=0.08)
+    return open_follow(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                       bankroll, open_positions, p, recent_volume=recent_volume,
+                       **kw)
+
+
 def coin_flip(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               bankroll, open_positions, params, recent_volume=None, **_):
     """Control: take the 45–55¢ YES ask. Should lose the fee + spread."""
@@ -542,4 +606,49 @@ def registry() -> list[Spec]:
              _p(tau_min_s=180, tau_max_s=600, price_min=0.60, price_max=0.94,
                 theta=0.0),
              "lag", "Buy favorite when book IV >> realized vol"),
+        # Risky / diverse book. Owner asked whether a 2× week is possible.
+        # High stake, loose daily stop, crypto on, last-minute + longshot.
+        # Not selected from test. Paper measurement only.
+        Spec("sprint", one_pct,
+             _p(tau_min_s=8, tau_max_s=90, price_min=0.88, price_max=0.97,
+                theta=0.0, max_open=7, max_stake_frac=0.15, min_count=4,
+                max_spread=0.06, min_recent_volume=20.0,
+                daily_stop_frac=0.40),
+             "lag",
+             "YOLO last 90s 88–97¢ lock, 15% stake, 4% of book on a win"),
+        Spec("yolo_lock", favorite_blind,
+             _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.18, min_count=4,
+                max_spread=0.06, min_recent_volume=20.0,
+                daily_stop_frac=0.40, kelly_mult=1.0),
+             "lag",
+             "YOLO 88–94¢ FLB at 18% stake (size-up of rich_fav)"),
+        Spec("nuke_lock", favorite_blind,
+             _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.35, min_count=4,
+                max_spread=0.06, min_recent_volume=20.0,
+                daily_stop_frac=0.60, kelly_mult=3.0),
+             "lag",
+             "35% stake 88–94¢ — the 'can a week 2×' overbet"),
+        Spec("longshot", longshot,
+             _p(tau_min_s=120, tau_max_s=720, price_min=0.08, price_max=0.22,
+                theta=0.0, max_open=7, max_stake_frac=0.10, min_count=4,
+                max_spread=0.08, min_recent_volume=20.0,
+                daily_stop_frac=0.40),
+             "lag",
+             "Buy 8–22¢ underdogs, 10% stake — convex lottery"),
+        Spec("yolo_follow", open_follow,
+             _p(tau_min_s=120, tau_max_s=660, price_min=0.20, price_max=0.85,
+                theta=0.0, max_open=7, max_stake_frac=0.15, min_count=4,
+                max_spread=0.08, min_recent_volume=20.0,
+                daily_stop_frac=0.40),
+             "lag",
+             "YOLO follow ≥15bp first-3-minute impulse, 15% stake"),
+        Spec("yolo_book", yolo_book,
+             _p(tau_min_s=8, tau_max_s=780, price_min=0.05, price_max=0.97,
+                theta=0.0, max_open=7, max_stake_frac=0.15, min_count=4,
+                max_spread=0.08, min_recent_volume=20.0,
+                daily_stop_frac=0.40, kelly_mult=1.0),
+             "lag",
+             "Risky mix: last-90s lock + 88–94¢ fav + impulse follow"),
     ]

@@ -12,7 +12,7 @@ import subprocess
 from datetime import datetime, timezone
 
 from .halt import kill_switch_tripped
-from .universe import BANKROLL, PAPER_ASSETS
+from .universe import BANKROLL, PAPER_ASSETS, PAPER_STRATEGY
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PIDFILE = os.path.join(REPO, "state", "kalshi_paper_loop.pid")
@@ -56,8 +56,8 @@ def ensure_supervisor() -> str:
     os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
     os.chmod(LOOP, 0o755)
     env = os.environ.copy()
-    env.setdefault("METALS", "gold,silver,copper,wti,natgas")
-    env.setdefault("STRATEGY", "rich_fav")
+    env.setdefault("METALS", ",".join(PAPER_ASSETS))
+    env.setdefault("STRATEGY", PAPER_STRATEGY)
     env.setdefault("BANKROLL", str(int(BANKROLL)))
     env.setdefault("SESSION_MIN", "110")
     if _tmux("has-session", "-t", f"={TMUX_SESSION}").returncode == 0:
@@ -102,7 +102,7 @@ def write_desk_status(supervisor: str | None = None,
     open_pos = state.get("open") or []
     rec = {
         "ts": _now(),
-        "strategy": state.get("strategy") or os.environ.get("STRATEGY", "rich_fav"),
+        "strategy": state.get("strategy") or os.environ.get("STRATEGY", PAPER_STRATEGY),
         "universe": list(state.get("metals") or PAPER_ASSETS),
         "bankroll": BANKROLL,
         "live": os.environ.get("KALSHI_LIVE") == "1",
