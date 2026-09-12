@@ -11,7 +11,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
                                    kelly_fraction, norm_cdf, taker_fee)
-from quantfirm.kalshi.strategies import (favorite_blind, late_lock, registry)
+from quantfirm.kalshi.strategies import (favorite_blind, late_lock, one_pct,
+                                         registry)
 from quantfirm.kalshi.strategy import Params, decide
 from quantfirm.kalshi.universe import BANKROLL, PAPER_ASSETS, SERIES
 
@@ -163,12 +164,35 @@ class TestNewStrategies(unittest.TestCase):
         names = {s.name for s in registry()}
         self.assertIn("favorite_div", names)
         spec = next(s for s in registry() if s.name == "favorite_div")
-        self.assertGreaterEqual(spec.params.max_open, len(PAPER_ASSETS))
+        self.assertEqual(spec.params.max_open, 5)
         self.assertEqual(spec.params.max_stake_frac, 0.04)
 
-    def test_paper_universe_is_all_live_commodities(self):
+    def test_one_pct_is_live_book(self):
+        spec = next(s for s in registry() if s.name == "one_pct")
+        self.assertEqual(spec.params.price_min, 0.90)
+        self.assertLessEqual(spec.params.tau_max_s, 90)
+        self.assertGreaterEqual(spec.params.max_open, 6)
+
+    def test_one_pct_takes_last_minute_lock(self):
+        from dataclasses import replace
+        p = next(s for s in registry() if s.name == "one_pct").params
+        p = replace(p, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 30, s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, yes_bid=0.90, yes_ask=0.91, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        it = one_pct(**kw)
+        self.assertIsNotNone(it)
+        self.assertEqual(it.side, "yes")
+        self.assertGreaterEqual(it.count, 4)
+        it2 = one_pct(**{**kw, "ts": close - 400, "yes_bid": 0.26, "yes_ask": 0.28})
+        self.assertIsNone(it2)
+        it3 = one_pct(**{**kw, "yes_bid": 0.988, "yes_ask": 0.992})
+        self.assertIsNone(it3)
+
+    def test_paper_universe_includes_crypto(self):
         self.assertEqual(PAPER_ASSETS,
-                         ("gold", "silver", "copper", "wti", "natgas"))
+                         ("gold", "silver", "copper", "wti", "natgas", "btc", "eth"))
         from quantfirm.kalshi.paper import PaperEngine
         sig = inspect.signature(PaperEngine.__init__)
         self.assertEqual(sig.parameters["metals"].default, PAPER_ASSETS)
@@ -186,6 +210,10 @@ class TestDiversifyAndHalt(unittest.TestCase):
         open_.append(SimpleNamespace(metal="wti", side="no"))
         self.assertTrue(blocked_by_corr("natgas", "no", open_))
         self.assertFalse(blocked_by_corr("natgas", "yes", open_))
+        self.assertFalse(blocked_by_corr("btc", "yes", open_))
+        open_.append(SimpleNamespace(metal="btc", side="yes"))
+        self.assertTrue(blocked_by_corr("eth", "yes", open_))
+        self.assertFalse(blocked_by_corr("eth", "no", open_))
 
     def test_heartbeat_from_state_file(self):
         from quantfirm.kalshi.runtime import write_desk_status

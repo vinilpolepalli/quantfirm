@@ -224,7 +224,7 @@ def cmd_agent(a):
     from .paper import PaperEngine
     from .strategies import registry
     specs = {s.name: s for s in registry()}
-    spec = specs.get(a.strategy) or specs["favorite_div"]
+    spec = specs.get(a.strategy) or specs["one_pct"]
     p = spec.params
     n_assets = len(a.metals.split(","))
     if n_assets > p.max_open:
@@ -284,8 +284,9 @@ def cmd_status(a):
     for sym in ("XAU", "XAG"):
         print(f"swissquote {sym}:", SwissquoteFeed(sym).price())
     c = KalshiClient("prod")
+    from .universe import LIVE_SERIES
     from .feeds import KalshiLiveFeed
-    for s in ("KXGOLD15M", "KXSILVER15M", "KXCOPPER15M", "KXWTI15M", "KXNATGAS15M"):
+    for s in LIVE_SERIES:
         m = c.open_market_for_series(s)
         if m:
             q = c.get_quote(m["ticker"])
@@ -359,7 +360,7 @@ def main():
     sp.add_argument("--minutes", type=float, default=60.0)
     sp.add_argument("--poll", type=float, default=2.0)
     sp.add_argument("--metals", default=",".join(PAPER_ASSETS))
-    sp.add_argument("--strategy", default="favorite_div",
+    sp.add_argument("--strategy", default="one_pct",
                     help="taker strategy name from strategies.registry()")
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
@@ -373,7 +374,7 @@ def main():
     sp.add_argument("--minutes", type=float, default=60.0)
     sp.add_argument("--poll", type=float, default=2.0)
     sp.add_argument("--metals", default=",".join(PAPER_ASSETS))
-    sp.add_argument("--strategy", default="favorite_div")
+    sp.add_argument("--strategy", default="one_pct")
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
     sp.add_argument("--live", action="store_true")

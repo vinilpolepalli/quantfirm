@@ -108,6 +108,64 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  "favorite", allow_min=True)
 
 
+def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
+               target_frac: float = 0.01) -> Intent | None:
+    """Size so a *win* is about ``target_frac`` of bankroll, capped by stake.
+
+    At 90¢, 8% of $250 ≈ 22 contracts → about +$2.20 (0.9%) if it pays,
+    −$20 if it doesn't. 99¢ locks are skipped by the caller: you cannot
+    make 1% of the book without putting almost all of it at risk.
+    """
+    if cost <= 0 or cost >= 1:
+        return None
+    win_per = 1.0 - cost
+    if win_per < 0.025:
+        return None
+    fee1 = taker_fee(1, cost)
+    cap = int(params.max_stake_frac * bankroll / cost)
+    want = int(target_frac * bankroll / win_per)
+    count = min(cap, max(params.min_count, want))
+    if count < params.min_count:
+        return None
+    while count >= params.min_count and count * cost + taker_fee(count, cost) > params.max_stake_frac * bankroll + 1e-9:
+        count -= 1
+    if count < params.min_count:
+        return None
+    edge = win_per - fee1
+    return Intent(ticker=ticker, side=side, count=count,
+                  limit_price=round(cost, 4), fair=fair, edge=edge,
+                  tag=tag, tau_s=tau_s)
+
+
+def one_pct(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+            bankroll, open_positions, params, recent_volume=None, **_):
+    """Last-minute ≥90¢ lock, sized for ~1% of bankroll on a win.
+
+    Sit out 50/50 books. Wait until the last ~90 seconds when one side is
+    already 90–97¢ *and* spot agrees with that side. REST cannot honestly
+    trade the last literal second; 8–90s is the fillable window.
+
+    1.01^96 ≈ 2.6×/day only if almost every window fills. Most will not lock;
+    those we skip. One miss at this size is ~8% — the daily stop is 10%.
+    """
+    g = _gates(ts, close_ts, yes_bid, yes_ask, open_positions, params, recent_volume)
+    if g is None:
+        return None
+    tau_s, _ = g
+    cands = []
+    if params.price_min <= yes_ask <= params.price_max:
+        if s is None or k is None or s >= k:
+            cands.append(("yes", yes_ask, yes_ask))
+    no_px = (1.0 - yes_bid) if yes_bid is not None else None
+    if no_px is not None and params.price_min <= no_px <= params.price_max:
+        if s is None or k is None or s < k:
+            cands.append(("no", no_px, 1.0 - no_px))
+    if not cands:
+        return None
+    side, cost, fair = max(cands, key=lambda c: c[1])
+    return _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, "one_pct")
+
+
 def favorite_confirmed(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                        bankroll, open_positions, params, recent_volume=None, **_):
     """Favorite taker only when the driftless GBM agrees on the side."""
@@ -366,8 +424,13 @@ def registry() -> list[Spec]:
              _p(tau_min_s=180, tau_max_s=720, price_min=0.72, price_max=0.94,
                 theta=0.0, max_open=5, max_stake_frac=0.04, min_count=4),
              "lag",
-             "Live book: same FLB signal, 4% cap, 5 concurrent slots "
-             "(gold/silver/copper/WTI/natgas)"),
+             "Prior live book: 72c FLB, 4% cap, 5 commodity slots"),
+        Spec("one_pct", one_pct,
+             _p(tau_min_s=8, tau_max_s=90, price_min=0.90, price_max=0.97,
+                theta=0.0, max_open=6, max_stake_frac=0.08, min_count=4,
+                max_spread=0.04, min_recent_volume=40.0),
+             "lag",
+             "Last 90s ≥90c lock, ~1% of bankroll on a win; BTC/ETH included"),
         Spec("favorite_confirmed", favorite_confirmed,
              _p(tau_min_s=180, tau_max_s=720, price_min=0.68, price_max=0.94,
                 theta=0.0),

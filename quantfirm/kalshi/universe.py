@@ -1,11 +1,9 @@
-"""15-minute commodity (and research-only) series this desk knows.
+"""15-minute series this desk knows.
 
-Primary trading universe is Kalshi's 15-minute commodity binaries. Indexes
-and crypto are listed so a researcher can harvest them for comparison, but
-they are not in the default paper book.
+Default paper book: five live commodity binaries plus BTC/ETH 15-minute.
+Indexes (SPX/NDX) and dark metals stay listed for harvest, not trading.
 
-Every live commodity series here settles on a named Pyth index (or CF
-Benchmarks for BTC). Fees are quadratic, multiplier 1, maker $0.
+Fees are quadratic, multiplier 1, maker $0 on every series here.
 """
 
 from __future__ import annotations
@@ -27,11 +25,14 @@ SERIES_LISTED_DARK = {
     "KXNDQ15M": "ndx",
 }
 
-# Comparison-only 15-minute series (not commodities). Harvest optional.
+# 15-minute crypto (live, large books). In the paper universe so last-minute
+# locks have somewhere to clip ~1% — BTC is ~1.8M contracts/window.
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
     "KXETH15M": "eth",
 }
+
+LIVE_SERIES = {**SERIES, **SERIES_COMPARE}
 
 YF_SYMBOLS = {
     "gold": "GC=F",
@@ -54,9 +55,9 @@ SWISSQUOTE = {
     "wti": "OIL",
 }
 
-# All five live 15-minute commodity books. Each has open windows and a
-# settlement-aligned Kalshi live_data feed (verified 2026-09-12).
-PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
+# Live 15-minute book: five commodities + BTC/ETH. Last-minute locks need
+# size; crypto supplies it. Correlation slots are in halt.CORR_GROUPS.
+PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas", "btc", "eth")
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
 # energy / copper) so the $250 can sit in metals AND energy at once.

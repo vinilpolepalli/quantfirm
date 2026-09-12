@@ -35,7 +35,8 @@ from decimal import Decimal
 from .client import KalshiClient, parse_market_times
 from .fair import VolEstimator, taker_fee
 from .strategy import Params, decide
-from .universe import BANKROLL, PAPER_ASSETS, SERIES as _SERIES, YF_SYMBOLS
+from .universe import (BANKROLL, PAPER_ASSETS, LIVE_SERIES as _SERIES,
+                       YF_SYMBOLS)
 
 SERIES = {v: k for k, v in _SERIES.items()}
 

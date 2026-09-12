@@ -20,9 +20,14 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 SESSION_MIN="${SESSION_MIN:-110}"
-METALS="${METALS:-gold,silver,copper,wti,natgas}"
-STRATEGY="${STRATEGY:-favorite_div}"
+METALS="${METALS:-gold,silver,copper,wti,natgas,btc,eth}"
+STRATEGY="${STRATEGY:-one_pct}"
 BANKROLL="${BANKROLL:-250}"
+LOG="${LOG:-state/kalshi_paper_loop.log}"
+PIDFILE="${PIDFILE:-state/kalshi_paper_loop.pid}"
+DECISIONS="state/kalshi_paper_decisions.jsonl"
+STALE_S="${STALE_S:-300}"   # engine must log a decision at least this often
+DARK_SLEEP_S="${DARK_SLEEP_S:-90}"
 LOG="${LOG:-state/kalshi_paper_loop.log}"
 PIDFILE="${PIDFILE:-state/kalshi_paper_loop.pid}"
 DECISIONS="state/kalshi_paper_decisions.jsonl"
@@ -59,10 +64,10 @@ while true; do
     log "open windows=$n"
   fi
 
-  log "starting ${SESSION_MIN}min session"
+  log "starting ${SESSION_MIN}min session strategy=${STRATEGY}"
   timeout $(( SESSION_MIN * 60 + 300 )) \
     python3 -m quantfirm.kalshi.cli agent \
-      --minutes "$SESSION_MIN" --no-demo --log-decisions \
+      --minutes "$SESSION_MIN" --no-demo --no-maker --log-decisions \
       --metals "$METALS" --strategy "$STRATEGY" --bankroll "$BANKROLL" \
     >> "$LOG" 2>&1 &
   engine_pid=$!

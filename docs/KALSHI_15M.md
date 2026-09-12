@@ -36,10 +36,18 @@ Hours: commodity 15M books were **open on Saturday 2026-09-12** (the prior
 note that metals go dark Sat 04:00Z is stale — treat the API as truth).
 Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
-Default paper book: **all five live commodities** (gold, silver, copper,
-WTI, natgas). Correlation slots: gold/silver share a side, WTI/natgas
-share a side, copper is its own. Per-trade cap 4% so five names do not
-stack the $250. 24/7 wiring is in `docs/KALSHI_ROUTINE.md`.
+Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
+Live strategy: **`one_pct`** — wait until the last ~90 seconds, buy a
+90–97¢ favorite whose spot already agrees, size so a win is ~1% of the
+$250. Sit out 50/50 books. Maker quotes are off.
+
+1.01^96 ≈ 2.6×/day **only if** almost every window fills. Most windows never
+lock; those we skip. A 99¢ last-tick book cannot deliver 1% of bankroll
+without putting nearly all of it at risk, so we skip those too.
+
+Correlation slots: gold/silver share a side, WTI/natgas share a side,
+BTC/ETH share a side, copper is its own. 24/7 wiring is in
+`docs/KALSHI_ROUTINE.md`.
 
 ## Live signal
 
@@ -82,9 +90,9 @@ python -m quantfirm.kalshi.cli diagnostics --data data/kalshi --split train
 python -m quantfirm.kalshi.cli tournament --data data/kalshi --bankroll 250
 python -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
     --fill-mode lag --bankroll 250
-python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo \
-    --strategy favorite_div --bankroll 250 --log-decisions
-./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, all five series
+python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
+    --strategy one_pct --bankroll 250 --log-decisions
+./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, commodities + BTC/ETH
 python scripts/kalshi_desk_checkin.py   # heal + commit heartbeat
 ```
 

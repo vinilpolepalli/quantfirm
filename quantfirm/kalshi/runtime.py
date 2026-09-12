@@ -57,7 +57,7 @@ def ensure_supervisor() -> str:
     os.chmod(LOOP, 0o755)
     env = os.environ.copy()
     env.setdefault("METALS", ",".join(PAPER_ASSETS))
-    env.setdefault("STRATEGY", "favorite_div")
+    env.setdefault("STRATEGY", "one_pct")
     env.setdefault("BANKROLL", str(int(BANKROLL)))
     env.setdefault("SESSION_MIN", "110")
     if _tmux("has-session", "-t", f"={TMUX_SESSION}").returncode == 0:
@@ -76,10 +76,10 @@ def ensure_supervisor() -> str:
 def count_open_markets(client=None) -> int:
     """How many live 15m commodity series have an open window right now."""
     from .client import KalshiClient
-    from .universe import SERIES
+    from .universe import LIVE_SERIES
     c = client or KalshiClient("prod")
     n = 0
-    for series in SERIES:
+    for series in LIVE_SERIES:
         try:
             if c.open_market_for_series(series):
                 n += 1
@@ -102,7 +102,7 @@ def write_desk_status(supervisor: str | None = None,
     open_pos = state.get("open") or []
     rec = {
         "ts": _now(),
-        "strategy": "favorite_div",
+        "strategy": os.environ.get("STRATEGY", "one_pct"),
         "universe": list(PAPER_ASSETS),
         "bankroll": BANKROLL,
         "live": os.environ.get("KALSHI_LIVE") == "1",

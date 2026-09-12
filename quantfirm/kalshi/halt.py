@@ -7,11 +7,13 @@ import os
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 KILL_SWITCH = os.path.join(REPO, "state", "KILL_SWITCH_KALSHI")
 
-# One slot per cluster: gold/silver trend together; WTI/natgas do too.
-# Copper is its own book. Lets the $250 sit in metals AND energy at once.
+# One slot per cluster. Metals, energy, and crypto can all sit on the
+# $250 in the same window; gold+silver share a side, WTI/natgas share a
+# side, BTC/ETH share a side. Copper is its own book.
 CORR_GROUPS = (
     frozenset({"gold", "silver"}),
     frozenset({"wti", "natgas"}),
+    frozenset({"btc", "eth"}),
 )
 
 
