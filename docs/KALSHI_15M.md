@@ -305,6 +305,7 @@ python -m quantfirm.kalshi.cli poly-compare # live crypto vs poly_book paper
 python -m quantfirm.kalshi.cli cashout-replay --no-poly  # sell-if-dead vs hold
 python3 scripts/kalshi_oss_iterate.py                    # BTC+ETH both-green bar
 python3 scripts/kalshi_param_sweep.py                    # wait × 1¢ bar grid
+python3 scripts/kalshi_btc_wait_sweep.py                  # BTC longer waits (off live)
 ./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH
 ./scripts/kalshi_poly_paper_loop.sh   # paper-only Poly sleeve; never --live
 python scripts/kalshi_desk_checkin.py   # heal live + poly paper, commit heartbeat
