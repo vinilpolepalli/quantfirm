@@ -195,7 +195,7 @@ class TestNewStrategies(unittest.TestCase):
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
                   "favorite_blind", "open_fade", "spot_lock", "mid_lock",
                   "rich_fav", "crypto_fav", "desk_book", "poly_confirm",
-                  "poly_book",
+                  "poly_book", "wait7_book", "same_side_book", "spot_desk",
                   "model_fav",
                   "offhours_lock", "yolo_book",
                   "longshot", "sprint", "yolo_lock", "nuke_lock"):
@@ -423,6 +423,53 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(btc_no.side, "no")
         self.assertIsNotNone(desk_book(**cheap, metal="eth"))
         self.assertIsNotNone(desk_book(**cheap, metal="btc"))
+
+    def test_same_side_book_requires_peer_agree(self):
+        from dataclasses import replace
+        from quantfirm.kalshi.strategies import same_side_book
+        spec = next(s for s in registry() if s.name == "same_side_book")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 300, s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200, metal="btc")
+        self.assertIsNone(same_side_book(**kw))
+        self.assertIsNone(same_side_book(**kw, peer_yes_bid=0.36, peer_yes_ask=0.37))
+        hit = same_side_book(**kw, peer_yes_bid=0.69, peer_yes_ask=0.70)
+        self.assertIsNotNone(hit)
+        self.assertEqual(hit.side, "yes")
+        gold = same_side_book(**{**kw, "metal": "gold"})
+        self.assertIsNotNone(gold)
+
+    def test_wait7_sits_past_desk_book_open(self):
+        from dataclasses import replace
+        from quantfirm.kalshi.strategies import wait7_book
+        spec = next(s for s in registry() if s.name == "wait7_book")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        open_ts = close - 900
+        kw = dict(ticker="T", s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200, metal="btc")
+        self.assertIsNone(wait7_book(**{**kw, "ts": open_ts + 180}))
+        self.assertIsNotNone(wait7_book(**{**kw, "ts": open_ts + 420}))
+
+    def test_longshot_no_buys_no_on_cheap_yes(self):
+        from dataclasses import replace
+        from quantfirm.kalshi.strategies import longshot_no
+        spec = next(s for s in registry() if s.name == "longshot_no")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        hit = longshot_no(ticker="T", ts=close - 400, s=99.0, k=100.0,
+                             sigma_1m=0.0005, close_ts=close, yes_bid=0.09,
+                             yes_ask=0.10, bankroll=250.0, open_positions=0,
+                             params=p, recent_volume=200)
+        self.assertIsNotNone(hit)
+        self.assertEqual(hit.side, "no")
+        self.assertIsNone(longshot_no(
+            ticker="T", ts=close - 400, s=99.0, k=100.0, sigma_1m=0.0005,
+            close_ts=close, yes_bid=0.50, yes_ask=0.52, bankroll=250.0,
+            open_positions=0, params=p, recent_volume=200))
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")

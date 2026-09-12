@@ -264,6 +264,18 @@ class Backtest:
                 skipped["empty_book"] += 1
                 continue
 
+            peer_bid = peer_ask = None
+            if metal in ("btc", "eth"):
+                other = "KXETH15M" if metal == "btc" else "KXBTC15M"
+                for om in self.markets.get(other, ()):
+                    if om["open_ts"] <= ts < om["close_ts"]:
+                        oc = (self.candles.get(other, {})
+                              .get(om["ticker"], {}).get(ts))
+                        if oc:
+                            peer_bid = oc.get("bid_close")
+                            peer_ask = oc.get("ask_close")
+                        break
+
             recent_vol = sum((cnds.get(ts - 60 * j, {}) or {}).get("volume") or 0.0
                              for j in range(3))
             # 3-min lookback: how much did the contract move vs the model fair?
@@ -290,7 +302,8 @@ class Backtest:
                 recent_volume=recent_vol,
                 recent_fair_move=fair_move, recent_mkt_move=mkt_move,
                 f_now=f_now, f_open=f_open, open_ts=m["open_ts"],
-                metal=metal)
+                metal=metal,
+                peer_yes_bid=peer_bid, peer_yes_ask=peer_ask)
             if intent is None:
                 continue
             from .halt import blocked_by_corr

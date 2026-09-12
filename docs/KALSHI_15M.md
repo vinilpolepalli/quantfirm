@@ -227,6 +227,14 @@ the next 110-min bounce. 2026-09-12 tape (n=30, hold **+$9.64**):
 Kalshi-only 60¢ exits **−$39.80** (14 winners cut, 8 losers saved).
 Poly-on-exit is worse. Numbers: `research/kalshi_cashout.md`.
 
+## Both names (off the live loop)
+
+`desk_book` lag-fill is red on **BTC and ETH** together. Frozen OSS
+overlays that are green on **both** names on test *and* last 7d:
+`longshot_no` (YES 2–19¢ → take NO) and `richer_wait` (same 3 min wait,
+68¢ bar). Neither is live. Scoreboard: `research/kalshi_oss.md`.
+`python3 scripts/kalshi_oss_iterate.py`.
+
 ## Live signal
 
 `GET /trade-api/v2/live_data/events/{event_ticker}` returns a 1-second
@@ -279,6 +287,7 @@ python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
 python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi, read-only
 python -m quantfirm.kalshi.cli poly-compare # live crypto vs poly_book paper
 python -m quantfirm.kalshi.cli cashout-replay --no-poly  # sell-if-dead vs hold
+python3 scripts/kalshi_oss_iterate.py                    # BTC+ETH both-green bar
 ./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH
 ./scripts/kalshi_poly_paper_loop.sh   # paper-only Poly sleeve; never --live
 python scripts/kalshi_desk_checkin.py   # heal live + poly paper, commit heartbeat

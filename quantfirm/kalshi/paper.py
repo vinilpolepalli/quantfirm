@@ -189,6 +189,7 @@ class PaperEngine:
         from .poly import POLY_ASSETS, PolymarketFeed
         self.poly = PolymarketFeed()
         self._poly_assets = POLY_ASSETS
+        self._last_bbo: dict[str, tuple] = {}
 
     # ------------------------------------------------------------ vol warmup
     def warm_vol_from_bars(self, metal: str, sym: str, minutes: int = 400):
@@ -430,6 +431,11 @@ class PaperEngine:
                 continue
             bid = float(q.yes_bid) if q.yes_bid is not None else None
             ask = float(q.yes_ask) if q.yes_ask is not None else None
+            self._last_bbo[metal] = (bid, ask)
+            peer_bid = peer_ask = None
+            if metal in ("btc", "eth"):
+                other = "eth" if metal == "btc" else "btc"
+                peer_bid, peer_ask = self._last_bbo.get(other, (None, None))
             sigma = self.vol[metal].sigma_1m(now)
             # 3-min regime lookback from the sample history
             from .fair import fair_yes
@@ -467,7 +473,8 @@ class PaperEngine:
                     metal=metal,
                     poly_yes_bid=(poly_q.yes_bid if poly_q else None),
                     poly_yes_ask=(poly_q.yes_ask if poly_q else None),
-                    poly_down_ask=(poly_q.down_ask if poly_q else None))
+                    poly_down_ask=(poly_q.down_ask if poly_q else None),
+                    peer_yes_bid=peer_bid, peer_yes_ask=peer_ask)
             if self.decisions_path:
                 self._log_decision(now, metal, tkr, s_now, k, sigma, bid, ask,
                                    close_ts, intent, poly_q)
