@@ -154,7 +154,7 @@ def crypto_params(base: Params) -> Params:
     Last-minute 15m crypto locks lost (BTC touch −$55 last week). Weekend
     books often sit at 18–37¢ — those are longshots, not favorites. Half the
     commodity stake, richer favorite, sit out the last two minutes where
-    REST loses the race. ETH is not in CRYPTO_LIVE.
+    REST loses the race. ETH uses this overlay too, and only if BTC is flat.
     """
     return replace(
         base,
@@ -185,13 +185,12 @@ def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               bankroll, open_positions, params, recent_volume=None,
               metal=None, **kw):
-    """Commodity rich_fav + cautious BTC. ETH harvest-only.
+    """Commodity rich_fav + cautious crypto (BTC first, ETH if BTC is flat).
 
-    Commodities keep 8% / ≥60¢ / until close. BTC uses crypto_params.
-    Passing metal=eth never clips — last-week ETH FLB was the hole.
+    Commodities keep 8% / ≥60¢ / until close. BTC/ETH use crypto_params.
+    The engine ticks BTC before ETH; halt.EXCLUSIVE_GROUPS blocks ETH
+    once a BTC clip is on, any side.
     """
-    if metal == "eth":
-        return None
     if metal in CRYPTO_LIVE:
         it = favorite_blind(
             ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -682,14 +681,14 @@ def registry() -> list[Spec]:
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
                 signal_max_age_s=0),
              "lag",
-             "BTC 15m FLB ≥72¢, 4% stake, skip last 2 min / fee-eat / longshot"),
+             "BTC/ETH 15m FLB ≥72¢, 4% stake, skip last 2 min / fee-eat / longshot"),
         Spec("desk_book", desk_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
-                theta=0.0, max_open=6, max_stake_frac=0.08, min_count=4,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Commodities rich_fav 8% ≥60¢; BTC 4% ≥72¢ skip last 2 min; ETH off"),
+             "Commodities rich_fav 8% ≥60¢; BTC then ETH 4% ≥72¢, one crypto slot"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

@@ -78,9 +78,8 @@ def ensure_supervisor() -> str:
 def count_open_markets(client=None) -> int:
     """How many paper-book 15m series have an open window right now.
 
-    Counts PAPER_ASSETS (commodities + BTC). ETH stays harvest-only so
-    it does not keep the loop spinning on its own. Weekend: gold/WTI
-    close Sat 04:00Z; BTC stays open and is enough to start a session.
+    Counts PAPER_ASSETS (commodities + BTC + ETH). Weekend: gold/WTI
+    close Sat 04:00Z; crypto stays open and is enough to start a session.
     """
     from .client import KalshiClient
     from .universe import LIVE_SERIES, PAPER_ASSETS

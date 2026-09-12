@@ -255,8 +255,7 @@ class TestNewStrategies(unittest.TestCase):
         with open(loop_path) as f:
             loop = f.read()
         self.assertIn('STRATEGY="${STRATEGY:-desk_book}"', loop)
-        self.assertIn("gold,silver,copper,wti,natgas,btc", loop)
-        self.assertNotIn("natgas,btc,eth", loop)
+        self.assertIn("gold,silver,copper,wti,natgas,btc,eth", loop)
         self.assertNotIn("nuke_lock", loop)
         self.assertNotIn("yolo_book", loop)
 
@@ -336,8 +335,11 @@ class TestNewStrategies(unittest.TestCase):
         late_btc = desk_book(**{**kw, "ts": close - 30}, metal="btc")
         self.assertIsNotNone(late_gold)
         self.assertIsNone(late_btc)
-        # ETH is harvest-only even at a rich favorite.
-        self.assertIsNone(desk_book(**kw, metal="eth"))
+        # ETH uses the same cautious overlay (4% / ≥72¢).
+        eth = desk_book(**kw, metal="eth")
+        self.assertIsNotNone(eth)
+        self.assertEqual(eth.tag, "crypto_fav")
+        self.assertEqual(eth.count, btc.count)
         cf = next(s for s in registry() if s.name == "crypto_fav")
         p2 = replace(cf.params, macro_blackout_et=())
         hit = crypto_fav(**{**kw, "params": p2})
@@ -435,12 +437,13 @@ class TestNewStrategies(unittest.TestCase):
         it3 = one_pct(**{**kw, "yes_bid": 0.988, "yes_ask": 0.992})
         self.assertIsNone(it3)
 
-    def test_paper_universe_includes_btc_not_eth(self):
+    def test_paper_universe_includes_btc_and_eth(self):
         self.assertEqual(PAPER_ASSETS,
-                         ("gold", "silver", "copper", "wti", "natgas", "btc"))
+                         ("gold", "silver", "copper", "wti", "natgas",
+                          "btc", "eth"))
         self.assertIn("btc", LIVE_SERIES.values())
         self.assertIn("eth", LIVE_SERIES.values())
-        self.assertNotIn("eth", PAPER_ASSETS)
+        self.assertEqual(PAPER_ASSETS[-2:], ("btc", "eth"))
         from quantfirm.kalshi.paper import PaperEngine
         sig = inspect.signature(PaperEngine.__init__)
         self.assertEqual(sig.parameters["metals"].default, PAPER_ASSETS)
@@ -468,7 +471,9 @@ class TestDiversifyAndHalt(unittest.TestCase):
         self.assertFalse(blocked_by_corr("btc", "yes", open_))
         open_.append(SimpleNamespace(metal="btc", side="yes"))
         self.assertTrue(blocked_by_corr("eth", "yes", open_))
-        self.assertFalse(blocked_by_corr("eth", "no", open_))
+        self.assertTrue(blocked_by_corr("eth", "no", open_))
+        self.assertFalse(blocked_by_corr("gold", "yes",
+                                          [SimpleNamespace(metal="btc", side="yes")]))
 
     def test_heartbeat_from_state_file(self):
         from quantfirm.kalshi.runtime import write_desk_status

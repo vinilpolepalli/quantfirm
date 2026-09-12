@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Supervisor for the Kalshi 15-minute paper desk (commodities + BTC).
+# Supervisor for the Kalshi 15-minute paper desk (commodities + BTC/ETH).
 #
 # Runs the LangGraph agent back-to-back so the book keeps trading without
 # a human restarting it. The engine is single-shot (persist + exit); this
@@ -20,7 +20,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 SESSION_MIN="${SESSION_MIN:-110}"
-METALS="${METALS:-gold,silver,copper,wti,natgas,btc}"
+METALS="${METALS:-gold,silver,copper,wti,natgas,btc,eth}"
 STRATEGY="${STRATEGY:-desk_book}"
 BANKROLL="${BANKROLL:-250}"
 LOG="${LOG:-state/kalshi_paper_loop.log}"

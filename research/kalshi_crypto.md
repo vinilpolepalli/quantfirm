@@ -53,15 +53,19 @@ the tournament gate. W37 already gave back $22. Size stays 4%.
 | 4% ≥80¢ skip last 2 min | −$22 | +$20 (one week) |
 | weekend 72¢ | −$9 | |
 
-ETH FLB is red across weeks. Harvest it. Do not live it.
+ETH FLB is red across weeks as a *standalone* book. It is still a
+useful **fallback** when BTC is a coin-flip: same 4% / ≥72¢ overlay,
+and **one crypto slot** so we never sit in both.
+
+SOL/DOGE/XRP 15m were open on 2026-09-12. No harvested tape. Stay off.
 
 ## What went live
 
-`desk_book` on **gold, silver, copper, WTI, natgas, btc**:
+`desk_book` on **gold, silver, copper, WTI, natgas, btc, eth**:
 
 - commodities: existing `rich_fav` (8%, ≥60¢, until close, fee-eat)
-- **BTC: 4%, ≥72¢, skip last 2 minutes, fee-eat, no longshots**
-- **ETH: off** (LIVE_SERIES harvest only)
+- **BTC then ETH: 4%, ≥72¢, skip last 2 minutes, fee-eat, no longshots**
+- **one crypto slot** — tick order is BTC first; `EXCLUSIVE_GROUPS` blocks ETH if BTC is on, any side
 - no `one_pct` / last-90s locks, no yolo 15–18%
 
 A 36¢ weekend BTC book sits out. That is the caution, not a clock.

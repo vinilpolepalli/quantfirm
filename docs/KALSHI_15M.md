@@ -28,24 +28,25 @@ tournament, and it wires the live paper engine to the settlement feed.
 | `KXNATGAS15M` | Nat gas | Pyth `Commodities.Index.NATGAS/USD` | ~10k | yes |
 | `KXPALLADIUM15M` / `KXPLATINUM15M` | — | Pyth metals | — | listed, dark |
 | `KXINX15M` / `KXNDQ15M` | SPX / NDX | Google Finance | — | listed, dark |
-| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | **live, cautious** |
-| `KXETH15M` | ETH | CF Benchmarks 60s average | large | harvest only |
+| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | **live, first look** |
+| `KXETH15M` | ETH | CF Benchmarks 60s average | large | **live, if BTC is flat** |
 
 Hours: commodity 15M books **close Sat ~04:00Z and reopen Mon ~03:15Z**.
 BTC/ETH stay open. Treat the API as truth. Fees unchanged: quadratic
 taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
-Default paper book: **gold, silver, copper, WTI, natgas, BTC**.
+Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Live strategy: **`desk_book`**. Commodities are `rich_fav` — first ≥60¢
 favorite (skip coin-flips <60¢ and when the taker fee is ≥15% of the win
 or net payout <7¢), from window open **until close**, **8% stake**.
-BTC is half that: **4% / ≥72¢ / skip the last 2 minutes** (REST loses
+Crypto is half that: **4% / ≥72¢ / skip the last 2 minutes** (REST loses
 the last-minute crypto race; `one_pct` touch last week was BTC −$55).
-ETH FLB was red on this tape — harvest only, not live. Maker off. 24/7
-supervisor. 4% commodity clips paid ~$1 after fees; 8% is ~$20 at risk
-and ~$2.20 net on an 88¢ win. BTC 4% is ~$10 at risk. 15–18% (`yolo_*`)
-is off this loop. Numbers: `research/kalshi_crypto.md`,
-`research/kalshi_iterate.md`, `research/kalshi_yolo.md`.
+**One crypto slot:** BTC is first look; ETH only if we are not already
+in BTC. SOL/DOGE/XRP 15m are open on Kalshi but not scored — stay off.
+Maker off. 24/7 supervisor. 8% is ~$20 at risk and ~$2.20 net on an 88¢
+win. Crypto 4% is ~$10 at risk. 15–18% (`yolo_*`) is off this loop.
+Numbers: `research/kalshi_crypto.md`, `research/kalshi_iterate.md`,
+`research/kalshi_yolo.md`.
 
 `spot_lock` and `offhours_lock` stay registered. Off-hours was green
 on train (t=1.18) and died on test. `nuke_lock` / `longshot` stay
@@ -55,8 +56,8 @@ A 99¢ last-tick book cannot deliver 1% of bankroll without putting nearly
 all of it at risk, so we skip those too.
 
 Correlation slots: gold/silver share a side, WTI/natgas share a side,
-BTC/ETH share a side, copper is its own. 24/7 wiring is in
-`docs/KALSHI_ROUTINE.md`.
+copper is its own, BTC/ETH are **one exclusive slot** (ETH only if BTC
+is flat). 24/7 wiring is in `docs/KALSHI_ROUTINE.md`.
 
 ## Live signal
 
@@ -81,8 +82,8 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `oracle_lag` | Prior-desk stale-quote taker | Should lose (replication) |
 | `oracle_flow` | Fade uninformed book flow | Taking an overreaction, not chasing a stale ask |
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
-| `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC 4% ≥72¢ | Same FLB; crypto sits out last 2 min |
-| `crypto_fav` | BTC-only 4% ≥72¢ | Weekend 24/7 sleeve; ETH off |
+| `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC then ETH 4% | Same FLB; one crypto slot; skip last 2 min |
+| `crypto_fav` | BTC/ETH 4% ≥72¢ | Weekend 24/7 sleeve; ETH if BTC is flat |
 | `favorite_confirmed` | FLB + GBM agrees | Same, fewer longshots |
 | `late_lock` | Near-certain favorite, last 6 min | Reversal needed is large |
 | `open_fade` / `open_follow` | 3-min impulse then fade/follow | Path of S, not book lag |
@@ -105,7 +106,7 @@ python -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
     --fill-mode lag --bankroll 250
 python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
     --strategy desk_book --bankroll 250 --log-decisions
-./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC
+./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH
 python scripts/kalshi_desk_checkin.py   # heal + commit heartbeat
 ```
 
