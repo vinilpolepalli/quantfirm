@@ -94,6 +94,15 @@ SOL/DOGE/XRP 15m were open on 2026-09-12. No harvested tape. Stay off.
 A 36¢ or 55¢ weekend BTC book still sits the longshot/coin-flip side.
 That is the caution, not a clock.
 
+## Live overlay moved 60¢ → 68¢ (2026-09-12 evening)
+
+Owner: win on both names even if they differ; if 68¢ is better than 60¢,
+use it. Mixed-book lag-fill (the live 7-name tape, ~2 weeks of 15m
+crypto, not months): wait3+60 BTC −$100 / ETH −$62; wait3+**68¢**
+BTC **+$23** / ETH **+$8**. W36 is still red. Weekend ETH still red.
+72¢ still dumps ETH. Keep the 3 min wait. Names independent.
+Numbers: `research/kalshi_bar.md`.
+
 ```bash
 python3 scripts/kalshi_score_crypto.py
 python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \

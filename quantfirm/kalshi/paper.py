@@ -186,6 +186,10 @@ class PaperEngine:
         self._quotes: dict[str, MakerQuote] = {}
         self._day: dict = {}
         self._open_px: dict[str, float] = {}
+        from .poly import POLY_ASSETS, PolymarketFeed
+        self.poly = PolymarketFeed()
+        self._poly_assets = POLY_ASSETS
+        self._last_bbo: dict[str, tuple] = {}
 
     # ------------------------------------------------------------ vol warmup
     def warm_vol_from_bars(self, metal: str, sym: str, minutes: int = 400):
@@ -427,6 +431,11 @@ class PaperEngine:
                 continue
             bid = float(q.yes_bid) if q.yes_bid is not None else None
             ask = float(q.yes_ask) if q.yes_ask is not None else None
+            self._last_bbo[metal] = (bid, ask)
+            peer_bid = peer_ask = None
+            if metal in ("btc", "eth"):
+                other = "eth" if metal == "btc" else "btc"
+                peer_bid, peer_ask = self._last_bbo.get(other, (None, None))
             sigma = self.vol[metal].sigma_1m(now)
             # 3-min regime lookback from the sample history
             from .fair import fair_yes
@@ -446,6 +455,12 @@ class PaperEngine:
             shadow_open = [p for p in self.state.open if p.adapter == "shadow"]
             if tkr not in self._open_px:
                 self._open_px[tkr] = s_now
+            poly_q = None
+            if metal in self._poly_assets:
+                try:
+                    poly_q = self.poly.quote(metal, now=now)
+                except Exception:
+                    poly_q = None
             intent = None
             if taker_entries_allowed(allowed, self.use_live) and not shadow_here:
                 intent = self.decide_fn(
@@ -455,10 +470,14 @@ class PaperEngine:
                     open_positions=len(shadow_open), params=self.params,
                     recent_fair_move=fair_move, recent_mkt_move=mkt_move,
                     f_now=s_now, f_open=self._open_px[tkr], open_ts=open_ts,
-                    metal=metal)
+                    metal=metal,
+                    poly_yes_bid=(poly_q.yes_bid if poly_q else None),
+                    poly_yes_ask=(poly_q.yes_ask if poly_q else None),
+                    poly_down_ask=(poly_q.down_ask if poly_q else None),
+                    peer_yes_bid=peer_bid, peer_yes_ask=peer_ask)
             if self.decisions_path:
                 self._log_decision(now, metal, tkr, s_now, k, sigma, bid, ask,
-                                   close_ts, intent)
+                                   close_ts, intent, poly_q)
             if self.maker:
                 notes.extend(self._maker_tick(metal, tkr, now, fair_now, bid,
                                               ask, close_ts, allowed["maker"]))
@@ -634,13 +653,18 @@ class PaperEngine:
             for row in new_rows:
                 f.write(json.dumps(row) + "\n")
 
-    def _log_decision(self, ts, metal, tkr, s, k, sigma, bid, ask, close_ts, intent):
+    def _log_decision(self, ts, metal, tkr, s, k, sigma, bid, ask, close_ts, intent,
+                      poly_q=None):
         from .fair import fair_yes
         rec = {"ts": ts, "metal": metal, "ticker": tkr, "s": s, "k": k,
                "sigma_1m": sigma, "bid": bid, "ask": ask,
                "tau_s": close_ts - ts,
                "fair": fair_yes(s, k, sigma, (close_ts - ts) / 60.0),
                "intent": (intent.side if intent else None)}
+        if poly_q is not None:
+            rec["poly_slug"] = poly_q.slug
+            rec["poly_up"] = [poly_q.up_bid, poly_q.up_ask]
+            rec["poly_down"] = [poly_q.down_bid, poly_q.down_ask]
         with open(self.decisions_path, "a") as f:
             f.write(json.dumps(rec) + "\n")
 

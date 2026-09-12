@@ -155,18 +155,29 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  "favorite", allow_min=True, fill_cap=fill_cap)
 
 
+# Open flicker: a 60–64¢ favorite in the first 2–3 minutes often dies
+# (13:15Z ETH NO T+19s @ 61¢ −$8.77). Sit the first 3 minutes, then clip
+# ≥68¢ (both BTC and ETH lag-green; 60¢ is red on both names). First-3-min
+# clips even at 80–88¢ are worse than waiting (REST races the open lock).
+# Crypto also sits when Poly's ≥55¢ favorite disagrees. Missing Poly does
+# not sit. No Poly 15m gold/WTI/natgas — commodities wait + 68¢ only.
+OPEN_WAIT_S = 180
+CRYPTO_OPEN_WAIT_S = OPEN_WAIT_S
+BTC_OPEN_WAIT_S = OPEN_WAIT_S
+
+
 def crypto_params(base: Params) -> Params:
     """Chill crypto overlay: clip every window that has a real favorite.
 
-    Same FLB bar as commodities (≥60¢). Stake is 4% of the book
+    Same FLB bar as commodities (≥68¢). Stake is 4% of the book
     (~$9–10) **per name** — BTC and ETH are independent, not a split
     of one 4% budget. Quarter-Kelly of a 3pp assumed edge was collapsing
-    72¢ clips to 4 lots (~$3). Coin-flips (50–58¢) and weekend
+    72¢ clips to 4 lots (~$3). Coin-flips (50–66¢) and weekend
     longshots still sit. 93¢+ stay out via fee-eat / price_max.
     """
     return replace(
         base,
-        price_min=0.60,
+        price_min=0.68,
         price_max=0.92,
         max_stake_frac=0.04,
         kelly_mult=0.25,
@@ -177,6 +188,16 @@ def crypto_params(base: Params) -> Params:
         min_recent_volume=0.0,
         signal_max_age_s=0,
     )
+
+
+def crypto_wait_params(base: Params, wait_s: int = OPEN_WAIT_S) -> Params:
+    """4% crypto overlay plus a first-N-minute sit (default 3)."""
+    return replace(crypto_params(base), tau_max_s=900 - wait_s)
+
+
+def commodity_wait_params(base: Params, wait_s: int = OPEN_WAIT_S) -> Params:
+    """8% commodity overlay plus the same first-N-minute sit."""
+    return replace(base, tau_max_s=900 - wait_s)
 
 
 def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -193,24 +214,289 @@ def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 
 def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               bankroll, open_positions, params, recent_volume=None,
-              metal=None, **kw):
+              metal=None, poly_yes_bid=None, poly_yes_ask=None,
+              poly_down_ask=None, wait_s=None, max_spread=None,
+              mkt_move_max=None, price_min_ov=None, price_max_ov=None,
+              tau_min_ov=None, skip_eth=False, **kw):
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
-    Commodities keep 8% / ≥60¢ / until close. Crypto uses crypto_params
-    (4% / ≥60¢ / until close, **$9–10 each** so BTC and ETH are not a
-    split budget). Fee-eat still skips 93¢+ last ticks; coin-flips sit.
+    Whole book waits the first 3 minutes. Commodities: 8% / ≥68¢ after
+    that (no Poly 15m book). BTC and ETH: 4% / ≥68¢ after the wait, and
+    sit when Polymarket's 15m favorite disagrees. Names are independent:
+    BTC YES and ETH NO in the same window is allowed. Missing Poly does
+    not sit. Fee-eat still skips 93¢+ last ticks; 60–66¢ sits.
     """
+    if skip_eth and metal == "eth":
+        return None
+    if max_spread is not None and yes_bid is not None and yes_ask is not None:
+        if yes_ask - yes_bid > max_spread:
+            return None
+    if mkt_move_max is not None and abs(kw.get("recent_mkt_move") or 0) > mkt_move_max:
+        return None
+    wait = OPEN_WAIT_S if wait_s is None else wait_s
     if metal in CRYPTO_LIVE:
+        p = crypto_wait_params(params, wait)
+        if price_min_ov is not None:
+            p = replace(p, price_min=price_min_ov)
+        if price_max_ov is not None:
+            p = replace(p, price_max=price_max_ov)
+        if tau_min_ov is not None:
+            p = replace(p, tau_min_s=tau_min_ov)
         it = favorite_blind(
             ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
-            bankroll, open_positions, crypto_params(params),
+            bankroll, open_positions, p,
             recent_volume=recent_volume, fill_cap=True, **kw)
-        if it is not None:
-            it.tag = "crypto_fav"
+        if it is None:
+            return None
+        if poly_yes_bid is not None or poly_yes_ask is not None:
+            from .poly import PolyQuote, poly_favorite
+            q = PolyQuote(asset=str(metal), slug="", up_bid=poly_yes_bid,
+                           up_ask=poly_yes_ask, down_bid=None,
+                           down_ask=poly_down_ask, ts=float(ts))
+            side = poly_favorite(q, price_min=0.55)
+            if side is None or side != it.side:
+                return None
+        it.tag = "crypto_fav"
         return it
+    p = commodity_wait_params(params, wait)
+    if price_min_ov is not None:
+        p = replace(p, price_min=price_min_ov)
+    if price_max_ov is not None:
+        p = replace(p, price_max=price_max_ov)
+    if tau_min_ov is not None:
+        p = replace(p, tau_min_s=tau_min_ov)
     return favorite_blind(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, p,
+        recent_volume=recent_volume, **kw)
+
+
+def wait7_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+               bankroll, open_positions, params, recent_volume=None, **kw):
+    """OSS hamad-khawaja observation phase: sit first 7 minutes, then desk_book."""
+    return desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        wait_s=420, **kw)
+
+
+def persist_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                  bankroll, open_positions, params, recent_volume=None, **kw):
+    """OSS edge-persistence: sit a book that just ripped >8¢ in 3 min."""
+    return desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        mkt_move_max=0.08, **kw)
+
+
+def tight_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                bankroll, open_positions, params, recent_volume=None, **kw):
+    """OSS spread filter: desk_book only when the book is ≤3¢ wide."""
+    return desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        max_spread=0.03, **kw)
+
+
+def late_sit_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                   bankroll, open_positions, params, recent_volume=None, **kw):
+    """OSS hamad final phase: desk_book but no new entries in last 2 minutes."""
+    return desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        tau_min_ov=120, **kw)
+
+
+def richer_wait(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                 bankroll, open_positions, params, recent_volume=None, **kw):
+    """Named alias for wait + 68¢. That is now the live desk_book bar."""
+    return desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        price_min_ov=0.68, **kw)
+
+
+def no_eth_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                 bankroll, open_positions, params, recent_volume=None, **kw):
+    """desk_book with ETH off. ETH is the documented 15m hole."""
+    return desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        skip_eth=True, **kw)
+
+
+def settle_ride(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                 bankroll, open_positions, params, recent_volume=None,
+                 metal=None, **kw):
+    """OSS hamad settlement ride: last 5 min, ≥70¢ favorite, sit last 60s."""
+    tau_s = close_ts - ts
+    if not (60 <= tau_s <= 300):
+        return None
+    if metal in CRYPTO_LIVE:
+        p = replace(crypto_params(params), tau_min_s=60, tau_max_s=300,
+                     price_min=0.70)
+        it = favorite_blind(
+            ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+            bankroll, open_positions, p, recent_volume=recent_volume,
+            fill_cap=True, **kw)
+        if it is not None:
+            it.tag = "settle_ride"
+        return it
+    p = replace(params, tau_min_s=60, tau_max_s=300, price_min=0.70)
+    it = favorite_blind(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, p, recent_volume=recent_volume, **kw)
+    if it is not None:
+        it.tag = "settle_ride"
+    return it
+
+
+def longshot_no(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                 bankroll, open_positions, params, recent_volume=None, **kw):
+    """OSS DanMcInerney longshot.yaml as a taker: YES 2–19¢ → buy NO (81–98¢)."""
+    tau_s = close_ts - ts
+    if not (params.tau_min_s <= tau_s <= params.tau_max_s):
+        return None
+    if yes_ask is None or yes_ask < 0.02 or yes_ask > 0.19:
+        return None
+    no_px = (1.0 - yes_bid) if yes_bid is not None else None
+    if no_px is None or no_px < 0.81:
+        return None
+    if _fee_eats_payout(no_px):
+        return None
+    q = min(0.97, no_px + 0.03)
+    edge = q - no_px - taker_fee(1, no_px)
+    return _size(ticker, "no", no_px, q, edge, 1.0 - no_px, tau_s, bankroll,
+                 params, "longshot_no", allow_min=True, fill_cap=True)
+
+
+def dir_zone(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+               bankroll, open_positions, params, recent_volume=None, **kw):
+    """OSS hamad directional zone: 7 min wait, trade 25–58¢ (NOT the favorite)."""
+    return desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        wait_s=420, price_min_ov=0.25, price_max_ov=0.58, **kw)
+
+
+def _book_favorite(yes_bid, yes_ask, price_min: float = 0.60) -> str | None:
+    cands = []
+    if yes_ask is not None and yes_ask >= price_min:
+        cands.append(("yes", yes_ask))
+    if yes_bid is not None and (1.0 - yes_bid) >= price_min:
+        cands.append(("no", 1.0 - yes_bid))
+    if not cands:
+        return None
+    return max(cands, key=lambda c: c[1])[0]
+
+
+def same_side_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                    bankroll, open_positions, params, recent_volume=None,
+                    metal=None, peer_yes_bid=None, peer_yes_ask=None, **kw):
+    """Rejected reading of "win on both". Live wants each name's P&L,
+    not side agreement — BTC YES and ETH NO in one window is allowed.
+    This overlay sits disagreement and stays off the live loop.
+    """
+    it = desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        metal=metal, **kw)
+    if it is None or metal not in CRYPTO_LIVE:
+        return it
+    if peer_yes_bid is None and peer_yes_ask is None:
+        return None
+    peer = _book_favorite(peer_yes_bid, peer_yes_ask, 0.60)
+    if peer is None or peer != it.side:
+        return None
+    it.tag = "same_side"
+    return it
+
+
+def spot_desk(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                bankroll, open_positions, params, recent_volume=None, **kw):
+    """desk_book only when spot agrees with the favorite (S vs K)."""
+    it = desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         bankroll, open_positions, params, recent_volume=recent_volume, **kw)
+    if it is None:
+        return it
+    if s is None or k is None:
+        return None
+    if it.side == "yes" and s < k:
+        return None
+    if it.side == "no" and s >= k:
+        return None
+    it.tag = "spot_desk"
+    return it
+
+
+def poly_confirm(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                  bankroll, open_positions, params, recent_volume=None,
+                  metal=None, poly_yes_bid=None, poly_yes_ask=None,
+                  poly_down_ask=None, **kw):
+    """desk_book, but crypto sits when Polymarket's 15m Up/Down disagrees.
+
+    Missing Poly quote does not sit (feed outage ≠ a signal). Coin-flip
+    on Poly (both sides <55¢) sits. Off the live loop until the logged
+    basis is scored. Commodities have no Poly 15m book — pass through.
+    """
+    from .poly import PolyQuote, poly_favorite
+    it = desk_book(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        metal=metal, poly_yes_bid=poly_yes_bid, poly_yes_ask=poly_yes_ask,
+        poly_down_ask=poly_down_ask, **kw)
+    if it is None or metal not in CRYPTO_LIVE:
+        return it
+    if poly_yes_bid is None and poly_yes_ask is None:
+        return it
+    q = PolyQuote(asset=str(metal), slug="", up_bid=poly_yes_bid,
+                   up_ask=poly_yes_ask, down_bid=None, down_ask=poly_down_ask,
+                   ts=float(ts))
+    side = poly_favorite(q, price_min=0.55)
+    if side is None or side != it.side:
+        return None
+    it.tag = "poly_confirm"
+    return it
+
+
+def poly_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+              bankroll, open_positions, params, recent_volume=None,
+              metal=None, poly_yes_bid=None, poly_yes_ask=None,
+              poly_down_ask=None, **kw):
+    """Poly picks the side; Kalshi is the fill. Paper / compare sleeve.
+
+    Not a locked arb (Chainlink TWAP ≠ CF last print). Rule:
+
+      * crypto only (no Poly 15m gold/WTI)
+      * missing Poly quote → sit (this sleeve *is* the Poly signal)
+      * Poly must have a ≥60¢ favorite (Up=YES, Down=NO)
+      * take that side on Kalshi only if Kalshi also has that side ≥60¢
+        and not fee-eat
+      * disagreement (Kalshi first favorite is the other way) → sit
+
+    Same 4% crypto size. Off the live loop; compare to ``desk_book`` live
+    fills by end of day before promoting.
+    """
+    from .poly import PolyQuote, poly_favorite
+    if metal not in CRYPTO_LIVE:
+        return None
+    if poly_yes_bid is None and poly_yes_ask is None:
+        return None
+    q = PolyQuote(asset=str(metal), slug="", up_bid=poly_yes_bid,
+                   up_ask=poly_yes_ask, down_bid=None, down_ask=poly_down_ask,
+                   ts=float(ts))
+    side = poly_favorite(q, price_min=0.60)
+    if side is None:
+        return None
+    it = favorite_blind(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, crypto_params(params),
+        recent_volume=recent_volume, fill_cap=True, **kw)
+    if it is None or it.side != side:
+        return None
+    it.tag = "poly_book"
+    return it
 
 
 def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
@@ -685,19 +971,110 @@ def registry() -> list[Spec]:
              "lag",
              "FLB ≥60¢ until close; skip coin-flip / fee-eat; 8% half-Kelly"),
         Spec("crypto_fav", crypto_fav,
-             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.92,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.68, price_max=0.92,
                 theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
                 signal_max_age_s=0),
              "lag",
-             "BTC/ETH 15m FLB ≥60¢ until close, 4% each (~$10), not a split"),
+             "BTC/ETH 15m FLB ≥68¢ until close, 4% each (~$10), not a split"),
         Spec("desk_book", desk_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.68, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "Whole book waits 3 min; commodities 8%; BTC/ETH 4% / ≥68¢ + Poly"),
+        Spec("wait7_book", wait7_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Commodities 8% ≥60¢; BTC and ETH 4% each (~$10) ≥60¢ until close"),
+             "OSS: sit first 7 min then desk_book (hamad observation phase)"),
+        Spec("persist_book", persist_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "OSS: desk_book, sit if the book ripped >8¢ in 3 min"),
+        Spec("tight_book", tight_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "OSS: desk_book only on ≤3¢ books"),
+        Spec("late_sit_book", late_sit_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "OSS: desk_book, no new entries last 2 min"),
+        Spec("richer_wait", richer_wait,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.68, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "alias: wait + 68¢ (now the live desk_book bar)"),
+        Spec("no_eth_book", no_eth_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "desk_book with ETH off (ETH is the 15m hole)"),
+        Spec("settle_ride", settle_ride,
+             _p(tau_min_s=60, tau_max_s=300, price_min=0.70, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "OSS hamad settlement ride: last 5 min, ≥70¢, sit last 60s"),
+        Spec("longshot_no", longshot_no,
+             _p(tau_min_s=180, tau_max_s=720, price_min=0.81, price_max=0.98,
+                theta=0.0, max_open=7, max_stake_frac=0.04, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
+                signal_max_age_s=0),
+             "lag",
+             "OSS DanMcInerney: YES 2–19¢, take NO as taker (81–98¢ fav)"),
+        Spec("dir_zone", dir_zone,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.25, price_max=0.58,
+                theta=0.0, max_open=7, max_stake_frac=0.04, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
+                signal_max_age_s=0),
+             "lag",
+             "OSS hamad directional zone: 7 min wait, 25–58¢ (control)"),
+        Spec("same_side_book", same_side_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "OFF: agreement gate (wrong reading of both-green)"),
+        Spec("spot_desk", spot_desk,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "desk_book only when spot S vs K agrees with the favorite"),
+        Spec("poly_confirm", poly_confirm,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "desk_book + sit crypto when Polymarket 15m favorite disagrees"),
+        Spec("poly_book", poly_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.92,
+                theta=0.0, max_open=2, max_stake_frac=0.04, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
+                signal_max_age_s=0),
+             "lag",
+             "Poly ≥60¢ picks side; Kalshi executes if that side is also ≥60¢"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,
