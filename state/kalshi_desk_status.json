@@ -1,59 +1,32 @@
 {
- "ts": "2026-09-12T02:43:25Z",
- "strategy": "yolo_book",
+ "ts": "2026-09-12T02:55:41Z",
+ "strategy": "rich_fav",
  "universe": [
   "gold",
   "silver",
   "copper",
   "wti",
-  "natgas",
-  "btc",
-  "eth"
+  "natgas"
  ],
  "bankroll": 250.0,
  "live": false,
  "kill_switch": false,
  "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 157.85899999999998,
+  "shadow": 226.97899999999998,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 250.0
  },
  "realized": {
-  "shadow": 6.368999999999999,
+  "shadow": -23.021000000000008,
   "demo": 0.0,
   "maker": 1.6499999999999968,
   "live": 0.0
  },
- "n_open": 3,
- "open": [
-  {
-   "metal": "natgas",
-   "side": "yes",
-   "count": 43,
-   "ticker": "KXNATGAS15M-26SEP112245-45",
-   "fill_price": 0.88,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "btc",
-   "side": "no",
-   "count": 37,
-   "ticker": "KXBTC15M-26SEP112245-45",
-   "fill_price": 0.88,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "gold",
-   "side": "no",
-   "count": 31,
-   "ticker": "KXGOLD15M-26SEP112245-45",
-   "fill_price": 0.88,
-   "adapter": "shadow"
-  }
- ],
- "n_settled": 29,
- "updated": "2026-09-12T02:43:24Z",
+ "n_open": 0,
+ "open": [],
+ "n_settled": 33,
+ "updated": "2026-09-12T02:55:39Z",
  "started": "2026-09-12T00:46:58Z"
 }
