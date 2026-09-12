@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T12:15:24Z",
+ "ts": "2026-09-12T15:39:54Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,7 +15,7 @@
  "kill_switch": false,
  "supervisor": "down",
  "cash": {
-  "shadow": 250.0,
+  "shadow": 231.72000000000003,
   "demo": 250.0,
   "maker": 250.0,
   "live": 250.0
@@ -26,9 +26,26 @@
   "maker": 0.0,
   "live": 0.0
  },
- "n_open": 0,
- "open": [],
+ "n_open": 2,
+ "open": [
+  {
+   "metal": "eth",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXETH15M-26SEP121145-45",
+   "fill_price": 0.908,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "btc",
+   "side": "no",
+   "count": 11,
+   "ticker": "KXBTC15M-26SEP121145-45",
+   "fill_price": 0.82,
+   "adapter": "shadow"
+  }
+ ],
  "n_settled": 0,
- "updated": "2026-09-12T12:15:24Z",
+ "updated": "2026-09-12T15:39:54Z",
  "started": "2026-09-12T08:07:00Z"
 }
