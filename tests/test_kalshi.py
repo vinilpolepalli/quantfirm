@@ -237,5 +237,63 @@ class TestSupervisorScript(unittest.TestCase):
                       "`timeout` wrapper it was launched under")
 
 
+class TestTapePersistence(unittest.TestCase):
+    """The tape is the prerequisite for any defensible maker fill model."""
+
+    def _engine(self, tmp, client, poll=15):
+        from quantfirm.kalshi.paper import PaperEngine
+        eng = PaperEngine.__new__(PaperEngine)   # __init__ opens network feeds
+        eng.tape_path = os.path.join(tmp, "tape")
+        eng.tape_poll_s = poll
+        eng._tape_last, eng._tape_seen, eng.prod = {}, {}, client
+        return eng
+
+    class _Client:
+        """Returns overlapping windows, newest first, like the real API."""
+        def __init__(self): self.calls = 0
+        def get_trades(self, ticker, limit=100):
+            self.calls += 1
+            return [{"trade_id": f"t{i}", "yes_price_dollars": "0.55",
+                     "count_fp": "10", "taker_side": "yes",
+                     "created_time": "2026-09-12T11:00:00Z"}
+                    for i in range(5 - self.calls, 10 - self.calls)]
+
+    def test_dedupes_overlapping_polls(self):
+        import json
+        import glob
+        with tempfile.TemporaryDirectory() as tmp:
+            c = self._Client()
+            eng = self._engine(tmp, c)
+            eng._persist_tape("T", 1000)
+            eng._persist_tape("T", 1020)
+            rows = [json.loads(l)
+                    for f in glob.glob(os.path.join(tmp, "*")) for l in open(f)]
+            ids = [r["trade_id"] for r in rows]
+            self.assertEqual(len(ids), len(set(ids)),
+                             "overlapping polls must not duplicate prints")
+
+    def test_throttles_polling(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            c = self._Client()
+            eng = self._engine(tmp, c, poll=15)
+            eng._persist_tape("T", 1000)
+            eng._persist_tape("T", 1005)   # inside the throttle window
+            self.assertEqual(c.calls, 1, "tape poll must respect tape_poll_s")
+
+    def test_disabled_when_no_path(self):
+        c = self._Client()
+        eng = self._engine("/nonexistent", c)
+        eng.tape_path = None
+        eng._persist_tape("T", 1000)
+        self.assertEqual(c.calls, 0, "no tape_path must mean no API call")
+
+    def test_survives_api_failure(self):
+        class Boom:
+            def get_trades(self, *a, **k): raise RuntimeError("503")
+        with tempfile.TemporaryDirectory() as tmp:
+            eng = self._engine(tmp, Boom())
+            eng._persist_tape("T", 1000)   # must not raise into the tick loop
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

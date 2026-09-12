@@ -136,12 +136,23 @@ green week.
 
 ## 4. Open problems, ranked
 
-1. **Persist the trades tape.** `state/kalshi_paper_decisions.jsonl` logs
-   quotes only, so `PaperEngine._maker_filled` cannot be replayed offline.
-   Until `GET /markets/trades` output is stored per tick, *no* better fill
-   model can be validated. This blocks everything below it. Start here.
-2. **Replace the `3 * q.count` guess.** With a persisted tape, model queue
-   position properly (volume-ahead decay) instead of a magic multiplier.
+1. ~~**Persist the trades tape.**~~ **DONE** (2026-09-12). The paper engine
+   now records `GET /markets/trades` for every open market to
+   `state/kalshi_tape_<UTC date>.jsonl` — deduped by `trade_id`, polled every
+   `--tape-poll` seconds (default 15), rotated daily, gitignored (~340 bytes
+   per print). Recorded for every open market on a timer, **not** only while a
+   quote is resting: a tape captured only when we have an order in the book is
+   exactly the biased sample that cannot answer the question. Note the rows
+   carry `taker_book_side` and `is_block_trade`, both of which a serious queue
+   model wants — a block print is not ordinary queue-clearing flow.
+   **The desk must run through a full session before there is data to use.**
+2. **Replace the `3 * q.count` guess — now unblocked, and the top priority.**
+   Replay `_maker_filled` offline against the recorded tape and model queue
+   position properly (volume ahead of us, decay, partial fills) instead of a
+   magic multiplier. Then re-run `scripts/kalshi_fill_audit.py`: the honest
+   haircut should stop being a guess. Cross-check against
+   `cli maker-control` — if a null model still earns comparably, the new fill
+   model is wrong too.
 3. **Fix the daily-stop baseline.** `_entries_allowed` resets at 00:00 UTC,
    mid-session for metals, so a drawdown spanning midnight re-arms the stop at
    full size halfway through (this happened on 2026-09-11/12 and cost roughly

@@ -171,6 +171,9 @@ def cmd_paper(a):
         log_path=os.path.join(STATE_DIR, "kalshi_paper_trades.csv"),
         decisions_path=(os.path.join(STATE_DIR, "kalshi_paper_decisions.jsonl")
                         if a.log_decisions else None),
+        tape_path=(None if a.no_tape else
+                   os.path.join(STATE_DIR, "kalshi_tape")),   # + _YYYY-MM-DD.jsonl
+        tape_poll_s=a.tape_poll,
         metals=tuple(a.metals.split(",")),
         use_demo=not a.no_demo,
         bankroll0=a.bankroll,
@@ -271,6 +274,10 @@ def main():
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
     sp.add_argument("--log-decisions", action="store_true")
+    sp.add_argument("--no-tape", action="store_true",
+                    help="do not record the public trade tape")
+    sp.add_argument("--tape-poll", dest="tape_poll", type=int, default=15,
+                    help="seconds between tape polls per market (default 15)")
     add_params(sp)
     sp.set_defaults(fn=cmd_paper)
 

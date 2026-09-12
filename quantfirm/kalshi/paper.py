@@ -110,7 +110,8 @@ class PaperEngine:
                  metals: tuple[str, ...] = ("gold", "silver"),
                  use_demo: bool = True, bankroll0: float = 500.0,
                  maker: bool = True, maker_margin: float = 0.04,
-                 maker_fade: float = 0.02):
+                 maker_fade: float = 0.02,
+                 tape_path: str | None = None, tape_poll_s: int = 15):
         from .feeds import SwissquoteFeed
         self.params = params
         self.metals = metals
@@ -120,6 +121,11 @@ class PaperEngine:
         self.state = PaperState(state_path, bankroll0)
         self.log_path = log_path
         self.decisions_path = decisions_path
+        # public trade tape -- see _persist_tape for why this exists
+        self.tape_path = tape_path
+        self.tape_poll_s = tape_poll_s
+        self._tape_last: dict[str, int] = {}
+        self._tape_seen: dict[str, dict] = {}
         self.feeds = {}
         if "gold" in metals:
             self.feeds["gold"] = SwissquoteFeed("XAU")
@@ -326,6 +332,50 @@ class PaperEngine:
                     at += c
         return thru >= q.count or at >= 3 * q.count
 
+    def _persist_tape(self, tkr: str, now: int) -> None:
+        """Append new public trade prints for `tkr` to the tape file.
+
+        No better maker fill model can be built without this. `_maker_filled`
+        decides a fill from the tape live and then throws it away, so nothing
+        offline can replay that decision under a stricter queue assumption --
+        which is the single thing standing between the shadow P&L and a
+        defensible number (docs/KALSHI.md 3b, docs/HANDOFF.md open problem 1).
+
+        Recorded for EVERY open market on a timer, not only while we happen to
+        have a quote resting: a tape captured only when we have an order in
+        the book is exactly the biased sample that cannot answer the question.
+
+        Deduped by trade_id, since consecutive polls overlap heavily, and
+        rotated per UTC day -- a busy session writes megabytes, and one
+        unbounded file is painful to work with later.
+        """
+        if not self.tape_path:
+            return
+        if now - self._tape_last.get(tkr, 0) < self.tape_poll_s:
+            return
+        self._tape_last[tkr] = now
+        try:
+            trades = self.prod.get_trades(tkr, limit=100)
+        except Exception:
+            return
+        seen = self._tape_seen.setdefault(tkr, {})
+        fresh = []
+        for t in trades:
+            tid = t.get("trade_id")
+            if tid is None or tid in seen:
+                continue
+            seen[tid] = None          # dict preserves insertion order
+            fresh.append({**t, "ticker": tkr, "fetched_ts": now})
+        if len(seen) > 5000:          # bound memory over a long session
+            for k in list(seen)[:len(seen) - 2500]:
+                del seen[k]
+        if fresh:
+            day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            path = f"{self.tape_path}_{day}.jsonl"
+            with open(path, "a") as f:
+                for r in reversed(fresh):     # oldest first on disk
+                    f.write(json.dumps(r) + "\n")
+
     # ------------------------------------------------------------------ tick
     def tick(self) -> list[str]:
         notes = []
@@ -363,6 +413,7 @@ class PaperEngine:
             # shadow taker record for the rest of the window (review finding).
             shadow_here = any(p.ticker == tkr and p.adapter == "shadow"
                               for p in self.state.open)
+            self._persist_tape(tkr, now)
             try:
                 q = self.prod.get_quote(tkr)
             except Exception:

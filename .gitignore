@@ -14,3 +14,6 @@ state/kalshi_paper_loop.log
 
 # supervisor runtime pid (meaningless across container restarts)
 state/kalshi_paper_loop.pid
+
+# public trade tape (rotated daily, megabytes -- regenerate by running the desk)
+state/kalshi_tape_*.jsonl

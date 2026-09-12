@@ -162,10 +162,13 @@ fills are n=96 for **-$4.09** (hit 0.646); the YES fills are n=39 for +$57.10
 (hit 0.744). NO is 71% of all fills. Whatever the headline P&L has been at any
 moment, it has not come from the side the desk trades most.
 
-**Known blocker.** `state/kalshi_paper_decisions.jsonl` logs quotes only, not
-the trades tape, so `_maker_filled` cannot be replayed offline against a
-stricter queue model. Persisting the tape (`GET /markets/trades`) is a
-prerequisite to any better fill model. See `docs/HANDOFF.md`.
+**Blocker cleared (2026-09-12).** The engine now persists the public trade
+tape to `state/kalshi_tape_<UTC date>.jsonl` (deduped by `trade_id`, polled
+every 15s per market, recorded for every open market rather than only while a
+quote rests, so the sample is not conditioned on our own participation).
+`_maker_filled` can therefore be replayed offline against a real queue model —
+that work is now the top open problem, not a blocked one. See
+`docs/HANDOFF.md`. No tape exists until the desk runs a full session.
 
 
 ## 4. Backtest protocol & honesty constraints
