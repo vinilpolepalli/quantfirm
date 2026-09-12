@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T16:54:59Z",
+ "ts": "2026-09-12T17:09:21Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,55 +13,71 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 243.05899999999997,
+  "shadow": 239.11899999999997,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 268.18734000000006
+  "live": 264.2653400000001
  },
  "realized": {
-  "shadow": 3.7489999999999926,
+  "shadow": 10.368999999999993,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 29.048740000000002
+  "live": 35.681940000000004
  },
- "n_open": 2,
+ "n_open": 4,
  "open": [
   {
-   "metal": "btc",
-   "side": "no",
+   "metal": "eth",
+   "side": "yes",
    "count": 14,
-   "ticker": "KXBTC15M-26SEP121300-00",
-   "fill_price": 0.75,
+   "ticker": "KXETH15M-26SEP121315-15",
+   "fill_price": 0.76,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "eth",
+   "side": "yes",
+   "count": 14,
+   "ticker": "KXETH15M-26SEP121315-15",
+   "fill_price": 0.76,
+   "adapter": "live"
+  },
+  {
+   "metal": "btc",
+   "side": "yes",
+   "count": 13,
+   "ticker": "KXBTC15M-26SEP121315-15",
+   "fill_price": 0.79,
    "adapter": "shadow"
   },
   {
    "metal": "btc",
-   "side": "no",
-   "count": 14,
-   "ticker": "KXBTC15M-26SEP121300-00",
-   "fill_price": 0.75,
+   "side": "yes",
+   "count": 13,
+   "ticker": "KXBTC15M-26SEP121315-15",
+   "fill_price": 0.79,
    "adapter": "live"
   }
  ],
- "n_settled": 124,
- "updated": "2026-09-12T16:54:57Z",
+ "n_settled": 128,
+ "updated": "2026-09-12T17:09:20Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 2,
- "poly_paper_cash": 217.4199999999999,
+ "poly_paper_cash": 212.6099999999999,
  "poly_paper": {
   "day": "2026-09-12",
   "live_crypto": {
-   "n": 31,
-   "pnl": 31.51,
-   "hit": 0.774
+   "n": 33,
+   "pnl": 38.14,
+   "hit": 0.788
   },
   "poly_paper": {
-   "n": 28,
-   "pnl": -15.07,
-   "hit": 0.643
+   "n": 30,
+   "pnl": -20.58,
+   "hit": 0.633
   },
   "poly_ahead": false,
   "ready": true
