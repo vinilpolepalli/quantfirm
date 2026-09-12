@@ -2,7 +2,7 @@ name: kalshi-15m-desk
 # Backstop tick. GitHub-hosted minutes cannot poll every 2 seconds (that
 # would blow the 2,000 min/month budget). Four times an hour this job
 # wakes around minute 5 of each 15-minute window (desk_book: commodities
-# ≥60¢ until close, BTC/ETH 4% each (~$10) ≥60¢ until close), writes the heartbeat, and exits.
+# ≥60¢ until close, ETH 4% from open, BTC 4% after 3 min + Poly confirm), writes the heartbeat, and exits.
 #
 # Primary 24/7 loop: scripts/kalshi_paper_loop.sh on a persistent host
 # (this cloud box, a VPS, or a Cursor 15-minute timer — see

@@ -155,6 +155,14 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  "favorite", allow_min=True, fill_cap=fill_cap)
 
 
+# BTC open flicker: Kalshi often prints a ≥60¢ NO/YES in the first
+# 2–3 minutes that Poly already faded (13:15Z 2026-09-12: live BTC NO
+# at T+2:53 @ 61¢ while Poly was Up 62¢; Kalshi then walked to 55¢).
+# Sit the first 3 minutes of the 15m window (tau_s > 720). ETH stays
+# from window open — that leg is fine.
+BTC_OPEN_WAIT_S = 180
+
+
 def crypto_params(base: Params) -> Params:
     """Chill crypto overlay: clip every window that has a real favorite.
 
@@ -179,6 +187,11 @@ def crypto_params(base: Params) -> Params:
     )
 
 
+def btc_params(base: Params) -> Params:
+    """ETH overlay plus a first-3-minute sit (tau_max = 12 min to close)."""
+    return replace(crypto_params(base), tau_max_s=900 - BTC_OPEN_WAIT_S)
+
+
 def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                bankroll, open_positions, params, recent_volume=None, **kw):
     """Standalone BTC/ETH 15m FLB (for backtests). Same overlay as desk_book."""
@@ -193,13 +206,33 @@ def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
 
 def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               bankroll, open_positions, params, recent_volume=None,
-              metal=None, **kw):
+              metal=None, poly_yes_bid=None, poly_yes_ask=None,
+              poly_down_ask=None, **kw):
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
-    Commodities keep 8% / ≥60¢ / until close. Crypto uses crypto_params
-    (4% / ≥60¢ / until close, **$9–10 each** so BTC and ETH are not a
-    split budget). Fee-eat still skips 93¢+ last ticks; coin-flips sit.
+    Commodities keep 8% / ≥60¢ / until close. ETH: 4% / ≥60¢ / from
+    window open (the leg that is working). BTC: same 4% / ≥60¢ after
+    the first 3 minutes, and sit when Polymarket's 15m favorite
+    disagrees. Missing Poly does not sit (feed outage ≠ a signal).
+    Fee-eat still skips 93¢+ last ticks; coin-flips sit.
     """
+    if metal == "btc":
+        it = favorite_blind(
+            ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+            bankroll, open_positions, btc_params(params),
+            recent_volume=recent_volume, fill_cap=True, **kw)
+        if it is None:
+            return None
+        if poly_yes_bid is not None or poly_yes_ask is not None:
+            from .poly import PolyQuote, poly_favorite
+            q = PolyQuote(asset="btc", slug="", up_bid=poly_yes_bid,
+                           up_ask=poly_yes_ask, down_bid=None,
+                           down_ask=poly_down_ask, ts=float(ts))
+            side = poly_favorite(q, price_min=0.55)
+            if side is None or side != it.side:
+                return None
+        it.tag = "crypto_fav"
+        return it
     if metal in CRYPTO_LIVE:
         it = favorite_blind(
             ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -227,7 +260,8 @@ def poly_confirm(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     it = desk_book(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         bankroll, open_positions, params, recent_volume=recent_volume,
-        metal=metal, **kw)
+        metal=metal, poly_yes_bid=poly_yes_bid, poly_yes_ask=poly_yes_ask,
+        poly_down_ask=poly_down_ask, **kw)
     if it is None or metal not in CRYPTO_LIVE:
         return it
     if poly_yes_bid is None and poly_yes_ask is None:
@@ -765,7 +799,7 @@ def registry() -> list[Spec]:
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Commodities 8% ≥60¢; BTC and ETH 4% each (~$10) ≥60¢ until close"),
+             "Commodities 8% ≥60¢; ETH 4% from open; BTC 4% after 3 min + Poly confirm"),
         Spec("poly_confirm", poly_confirm,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,

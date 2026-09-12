@@ -68,8 +68,9 @@ Or the 24/7 supervisor, still paper if `KALSHI_LIVE` is unset:
 ```
 
 Default book: gold, silver, copper, WTI, natgas, BTC, ETH. Strategy:
-`desk_book` (commodities 8% ≥60¢ until close; BTC and ETH 4% of the book
-**each**, ~$9–10). Maker off. Kill switch: `touch state/KILL_SWITCH_KALSHI`.
+`desk_book` (commodities 8% ≥60¢ until close; ETH 4% from open; BTC waits
+the first 3 minutes then 4% / ≥60¢ and sits if Poly disagrees). Maker off.
+Kill switch: `touch state/KILL_SWITCH_KALSHI`.
 
 Heartbeat / heal (does not start a second agent if the supervisor is up):
 
@@ -194,16 +195,20 @@ on the CF Benchmarks 60s print at the close vs strike; Poly resolves on
 a Chainlink 60s TWAP over the whole window vs the start. Gold/WTI/natgas
 have no matching Poly 15m book.
 
-The live loop stays `desk_book` on Kalshi. The engine logs Poly CLOB BBOs
-on crypto ticks. Two registered (off-loop) uses of that tape:
+The live loop stays `desk_book` on Kalshi. ETH still clips from window
+open. BTC waits the first 3 minutes, then the same 4% / ≥60¢ clip, and
+sits when Poly's 15m favorite disagrees (missing Poly does not sit).
+The engine logs Poly CLOB BBOs on crypto ticks.
 
-* `poly_confirm` — `desk_book`, but sit crypto when Poly's favorite disagrees.
-  Missing Poly does **not** sit.
+Two registered (off-loop) uses of that tape:
+
+* `poly_confirm` — `desk_book`, but sit **both** BTC and ETH when Poly's
+  favorite disagrees. Missing Poly does **not** sit.
 * `poly_book` — Poly ≥60¢ picks the side; take it on Kalshi only if Kalshi
   also has that side ≥60¢. Missing Poly **sits**. Paper sleeve only
-  (`scripts/kalshi_poly_paper_loop.sh`, never `--live`). Compare to live
+  (`scripts/kalshi_poly_paper_loop.sh`, never live). Compare to live
   crypto fills at EOD (`python -m quantfirm.kalshi.cli poly-compare`)
-  before promoting. Do not auto-switch on 1–2 windows.
+  before promoting the whole book. Do not auto-switch on 1–2 windows.
 
 No Polymarket orders. SOL/XRP/DOGE stay off.
 
@@ -235,7 +240,7 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `oracle_lag` | Prior-desk stale-quote taker | Should lose (replication) |
 | `oracle_flow` | Fade uninformed book flow | Taking an overreaction, not chasing a stale ask |
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
-| `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC and ETH 4% | Same FLB; crypto until close; fee-eat 93¢+ |
+| `rich_fav` / `desk_book` | ≥60¢ commodities until close; ETH 4% from open; BTC waits 3 min + Poly | ETH unchanged; BTC flicker filter |
 | `poly_confirm` | desk_book + sit crypto when Poly 15m disagrees | Off the live loop; second tape |
 | `poly_book` | Poly ≥60¢ picks side; Kalshi executes if that side is also ≥60¢ | Paper sleeve; EOD compare vs live |
 | `crypto_fav` | BTC/ETH 4% each (~$10) ≥60¢ until close | Weekend 24/7 sleeve |

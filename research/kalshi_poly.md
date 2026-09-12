@@ -57,7 +57,11 @@ log, not to arb blindly: different settlement.
   Separate state (`--state-prefix kalshi_poly_paper`), **never `--live`**.
 * `python -m quantfirm.kalshi.cli poly-compare` — today's live crypto
   fills vs that paper sleeve.
-* SOL/XRP/DOGE stay off.
+* Live `desk_book` BTC overlay (2026-09-12 13:15Z window): wait first
+  3 minutes, then sit if Poly's favorite disagrees. ETH stays from open.
+  13:15 live bought Kalshi BTC NO at T+2:53 @ 61¢ while Poly was already
+  Up 62¢; Kalshi then walked to 55¢. Poly paper sat that BTC clip.
+
 
 ## Paper sleeve (not arb)
 
@@ -73,8 +77,7 @@ without starting a second live agent. Scoreboard is UTC day in
 
 ## What would change the live book
 
-End of Saturday ET (2026-09-13T04:00Z) or UTC midnight, run
-`python -m quantfirm.kalshi.cli poly-compare`. Promote `PAPER_STRATEGY`
-to `poly_book` only if poly paper is ahead **and** both books have
-enough settled fills (`ready` needs n≥8 each). Do not switch on 1–2
-windows. Do not switch to a first-3-min sit-out.
+BTC wait + Poly confirm is now **in** `desk_book` (ETH unchanged). Do not
+promote the whole book to `poly_book` until EOD `poly-compare` is ahead
+with enough n (`ready` needs ≥8 each). Do not sit out ETH or commodities
+for the first 3 minutes.
