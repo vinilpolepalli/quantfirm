@@ -16,7 +16,7 @@ Two desks:
 |---|---|---|
 | **Equity** | Robinhood equities (cash account, fractional) | **LIVE** — $250, six-name momentum book |
 | Crypto | Robinhood Crypto API | disabled — tournament NO-GO stands (`docs/TOURNAMENT.md`) |
-| **Kalshi 15M** | Kalshi gold/silver/copper/WTI/natgas binaries | **LIVE canary** — $250 `rich_fav` 88–94¢ / 8% / 3–11 min; see `docs/KALSHI_15M.md` |
+| **Kalshi 15M** | Kalshi gold/silver/copper/WTI/natgas binaries | **LIVE canary 24/7** — $250 `rich_fav` 88–94¢ / 8% / until close; see `docs/KALSHI_15M.md` |
 
 ## Map
 

@@ -59,8 +59,8 @@ SWISSQUOTE = {
 # for harvest. Correlation slots are in halt.CORR_GROUPS.
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
 
-# Live canary on the 24/7 supervisor. 8% 88–94¢ FLB; skip when the
-# quadratic fee eats ≥15% of the win (research/kalshi_iterate.md).
+# Live canary on the 24/7 supervisor. 8% 88–94¢ FLB until close; skip
+# when the quadratic fee eats ≥15% of the win (research/kalshi_iterate.md).
 # Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
 PAPER_STRATEGY = "rich_fav"
 

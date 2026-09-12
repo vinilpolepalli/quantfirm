@@ -2,7 +2,7 @@ name: kalshi-15m-desk
 # Backstop tick. GitHub-hosted minutes cannot poll every 2 seconds (that
 # would blow the 2,000 min/month budget). Four times an hour this job
 # wakes around minute 5 of each 15-minute window (when rich_fav first
-# fires: 88–94¢ favorite, 3–11 min left), writes the heartbeat, and exits.
+# fires: 88–94¢ favorite, from ~11 min left through close), writes the heartbeat, and exits.
 #
 # Primary 24/7 loop: scripts/kalshi_paper_loop.sh on a persistent host
 # (this cloud box, a VPS, or a Cursor 15-minute timer — see

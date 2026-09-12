@@ -39,14 +39,15 @@ Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
 Default paper book: **gold, silver, copper, WTI, natgas**.
 Live strategy: **`rich_fav`** — first 88–94¢ favorite (skip when the
-taker fee is ≥15% of the win or net payout <7¢, so 93–94¢ is out),
-3–11 minutes left, no spot-agree gate, **8% stake** (half-Kelly). Maker
-off. BTC/ETH stay in the harvest universe. 4% clips paid ~$1 after
-fees; 8% is ~$20 at risk and ~$2.20 net on a win. 15–18% (`yolo_*`)
-is the size that can print a 2× week and also a −$38 miss in one
-window — off this loop. Least-bad n>100 lag book (test +$130 / t=1.42
-at 4%; train flat, last week +$55). t=1.42 is **not** the tournament
-gate. Numbers: `research/kalshi_iterate.md`, `research/kalshi_yolo.md`.
+taker fee is ≥15% of the win or net payout <7¢, so 93–94¢ / 99¢
+last ticks are out), from 11 minutes left **until close**, no spot-agree
+gate, **8% stake** (half-Kelly). Maker off. 24/7 supervisor. BTC/ETH
+stay in the harvest universe. 4% clips paid ~$1 after fees; 8% is
+~$20 at risk and ~$2.20 net on a win. 15–18% (`yolo_*`) is the size
+that can print a 2× week and also a −$38 miss in one window — off this
+loop. Least-bad n>100 lag book (test +$130 / t=1.42 at 4%; train
+flat, last week +$55). t=1.42 is **not** the tournament gate. Numbers:
+`research/kalshi_iterate.md`, `research/kalshi_yolo.md`.
 
 `spot_lock` and `offhours_lock` stay registered. Off-hours was green
 on train (t=1.18) and died on test. `nuke_lock` / `longshot` stay

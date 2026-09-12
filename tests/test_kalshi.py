@@ -227,7 +227,7 @@ class TestNewStrategies(unittest.TestCase):
         spec = next(s for s in registry() if s.name == "rich_fav")
         self.assertEqual(spec.params.price_min, 0.88)
         self.assertLessEqual(spec.params.price_max, 0.94)
-        self.assertGreaterEqual(spec.params.tau_min_s, 180)
+        self.assertEqual(spec.params.tau_min_s, 0)
         self.assertGreaterEqual(spec.params.tau_max_s, 600)
         self.assertGreaterEqual(spec.params.max_stake_frac, 0.08)
         self.assertLess(spec.params.max_stake_frac, 0.12)
@@ -240,7 +240,7 @@ class TestNewStrategies(unittest.TestCase):
         self.assertLess(spec.params.max_stake_frac, 0.12)
         self.assertEqual(spec.params.price_min, 0.88)
         self.assertLessEqual(spec.params.price_max, 0.94)
-        self.assertEqual(spec.params.tau_min_s, 180)
+        self.assertEqual(spec.params.tau_min_s, 0)
         self.assertEqual(spec.params.tau_max_s, 660)
         loop_path = os.path.join(os.path.dirname(__file__),
                                  "..", "scripts", "kalshi_paper_loop.sh")
@@ -250,6 +250,21 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIn("gold,silver,copper,wti,natgas", loop)
         self.assertNotIn("nuke_lock", loop)
         self.assertNotIn("yolo_book", loop)
+
+    def test_rich_fav_can_enter_with_seconds_left(self):
+        from dataclasses import replace
+        spec = next(s for s in registry() if s.name == "rich_fav")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", s=100.2, k=100.0, sigma_1m=0.0005,
+                  yes_bid=0.87, yes_ask=0.88, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200,
+                  close_ts=close)
+        late = favorite_blind(**{**kw, "ts": close - 30})
+        self.assertIsNotNone(late)
+        self.assertEqual(late.side, "yes")
+        after = favorite_blind(**{**kw, "ts": close + 1})
+        self.assertIsNone(after)
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")

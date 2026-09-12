@@ -116,6 +116,8 @@ and already lost in train (W33 −$128, 72% DD). `nuke_lock` W36 was
 | ~02:53Z | back to **`rich_fav`** | 4% / 5 commodities | owner asked for consistent, not 2× |
 | 03:15Z | **live canary** `rich_fav` 4% | gold NO 10@88¢ **+$1.13**, WTI NO 9@88¢ **+$1.01** | real money; fee ~7¢ on a $1.12 win |
 | ~03:20Z | **`rich_fav` 8%** | half-Kelly, fee-eat skip 93–94¢ | owner: clips were too small |
+| 03:31Z | gold NO 10 **−$8.87** live | entered T−11 min; WTI/copper 8% won | early clip can reverse |
+| ~03:47Z | **`rich_fav` until close** | tau_min 180→0 | owner: sit-out last 3 min was leaving money; 99¢ still fee-capped |
 
 Shadow cash after the 02:45Z yolo window: **$226.98**. Realized taker
 **−$23.02** (n=28). The natgas 43-lot 88¢ miss is why 15% is not an
