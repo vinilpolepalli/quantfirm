@@ -143,6 +143,25 @@ Two structural features make that tail expensive:
   "no continuation" prior is systematically wrong, so the desk sells the
   continuation repeatedly within the same trend rather than once.
 
+**The trend regime repeated, and the daily stop straddles it.** The same thing
+happened again on 2026-09-12 01:31-02:01Z: three consecutive windows, seven
+losing fills across both books, all NO, all resolving YES — one of them gold NO
+at 0.80, i.e. the model was *confident* and wrong. Cumulatively since 2026-09-11
+23:00Z the maker book is -$224.50 at hit 0.353, against +$277.51 at hit 0.720
+before it. Peak-to-trough is -$261.20.
+
+The per-book daily loss stop (`_entries_allowed`, 10%) worked — maker entries
+were blocked at 02:01Z — but its baseline resets at **00:00 UTC, which is
+mid-session for metals**. The 23:16-23:46Z and 01:31-02:01Z drawdowns are one
+regime event; the stop saw two separate days and re-armed at full size in the
+middle of it. A session- or rolling-window baseline would have halted after the
+first leg. This is a risk-control gap, not a strategy parameter to tune.
+
+**The NO side has never made money.** Across the whole sample the desk's NO
+fills are n=96 for **-$4.09** (hit 0.646); the YES fills are n=39 for +$57.10
+(hit 0.744). NO is 71% of all fills. Whatever the headline P&L has been at any
+moment, it has not come from the side the desk trades most.
+
 **Known blocker.** `state/kalshi_paper_decisions.jsonl` logs quotes only, not
 the trades tape, so `_maker_filled` cannot be replayed offline against a
 stricter queue model. Persisting the tape (`GET /markets/trades`) is a

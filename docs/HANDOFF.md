@@ -118,15 +118,25 @@ green week.
    model can be validated. This blocks everything below it. Start here.
 2. **Replace the `3 * q.count` guess.** With a persisted tape, model queue
    position properly (volume-ahead decay) instead of a magic multiplier.
-3. **Measure the cancel race.** The engine cancels on a 2c adverse move and
+3. **Fix the daily-stop baseline.** `_entries_allowed` resets at 00:00 UTC,
+   mid-session for metals, so a drawdown spanning midnight re-arms the stop at
+   full size halfway through (this happened on 2026-09-11/12 and cost roughly
+   a second full stop-loss). Use a rolling window or a session baseline. Risk
+   control, not a tunable.
+4. **Investigate the NO side.** n=96 for -$4.09 lifetime vs YES n=39 for
+   +$57.10, and NO is 71% of fills. Either the fair value is biased on that
+   side or the desk is systematically selling trend continuation. Diagnose
+   before changing anything — do NOT just disable NO, that is curve-fitting to
+   one regime.
+5. **Measure the cancel race.** The engine cancels on a 2c adverse move and
    always wins in shadow. Log intended-cancel vs next-print timestamps to
    estimate how many of those cancels a real venue would have refused.
-4. **Get the demo key** (one manual web signup, `docs/KALSHI.md` §7) and run
+6. **Get the demo key** (one manual web signup, `docs/KALSHI.md` §7) and run
    real resting orders. This is the only thing that actually settles the
    queue-priority question, and it still risks no real money.
-5. **Copper.** `KXCOPPER15M` is plumbed but not traded (`--metals gold,silver`).
+7. **Copper.** `KXCOPPER15M` is plumbed but not traded (`--metals gold,silver`).
    Thinner book; check it is not just wider spreads.
-6. Taker leg is dead unless a genuinely faster signal appears. Do not tune
+8. Taker leg is dead unless a genuinely faster signal appears. Do not tune
    `theta` to revive it — that is how PBO 0.40 happened.
 
 ---
