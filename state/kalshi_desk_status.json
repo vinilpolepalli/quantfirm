@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T01:42:07Z",
+ "ts": "2026-09-12T01:44:22Z",
  "strategy": "one_pct",
  "universe": [
   "gold",
@@ -15,7 +15,7 @@
  "kill_switch": false,
  "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 253.85400000000004,
+  "shadow": 215.83200000000005,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 250.0
@@ -26,9 +26,26 @@
   "maker": 1.6499999999999968,
   "live": 0.0
  },
- "n_open": 0,
- "open": [],
+ "n_open": 2,
+ "open": [
+  {
+   "metal": "eth",
+   "side": "no",
+   "count": 22,
+   "ticker": "KXETH15M-26SEP112145-45",
+   "fill_price": 0.9,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "wti",
+   "side": "no",
+   "count": 19,
+   "ticker": "KXWTI15M-26SEP112145-45",
+   "fill_price": 0.948,
+   "adapter": "shadow"
+  }
+ ],
  "n_settled": 17,
- "updated": "2026-09-12T01:42:07Z",
+ "updated": "2026-09-12T01:44:21Z",
  "started": "2026-09-12T00:46:58Z"
 }
