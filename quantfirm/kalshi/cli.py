@@ -7,7 +7,6 @@
   python -m quantfirm.kalshi.cli status    # venue + feed + credential check
   python -m quantfirm.kalshi.cli open-count
   python -m quantfirm.kalshi.cli heartbeat
-  python -m quantfirm.kalshi.cli bank-sweep --no-create  # $50 peel at $300
   python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi (read-only)
   python -m quantfirm.kalshi.cli poly-compare  # live crypto fills vs poly_book paper
   python -m quantfirm.kalshi.cli cashout-replay  # sell-if-signal-dies vs hold (off live)
@@ -317,7 +316,8 @@ def cmd_heartbeat(_a):
 
 def cmd_bank_sweep(a):
     from .sweep import run_sweep
-    print(json.dumps(run_sweep(try_create=not a.no_create), indent=1, default=str))
+    # Owner handles ACH. Never POST from this CLI unless --create.
+    print(json.dumps(run_sweep(try_create=bool(a.create)), indent=1, default=str))
 
 
 def cmd_status(a):
@@ -535,10 +535,10 @@ def main():
 
     sp = sub.add_parser(
         "bank-sweep",
-        help="peel $50 to BofA when Kalshi cash hits $300 (heal also runs this)",
+        help="report-only cash check; owner handles BofA withdrawals",
     )
-    sp.add_argument("--no-create", action="store_true",
-                    help="arm/report only; do not POST a withdrawal")
+    sp.add_argument("--create", action="store_true",
+                    help="do not use; live desk does not auto-withdraw")
     sp.set_defaults(fn=cmd_bank_sweep)
 
     sp = sub.add_parser("poly")

@@ -127,26 +127,11 @@ Leave `KALSHI_LIVE` unset on Actions if a persistent host already runs the
 24/7 heal prompts: `docs/KALSHI_ROUTINE.md`. Venue charter / fees:
 `docs/KALSHI.md`.
 
-### 6. Bank sweep (peel $50 at $300)
+### 6. Bank transfers (owner)
 
-Working bankroll stays **$250**. Do not wait until $500. **Every time**
-Kalshi cash hits **$300**, **$50** is withdrawn to the linked Bank of
-America ACH (the profit is sold off the desk; $250 stays). If cash
-skips to $350, peel $100. Below $300 is a hold.
-
-The live engine checks after each live settlement (and at most every
-60s). Heal also checks. `POST /portfolio/withdrawals` has returned
-**404** on the Trade API; if that is still true, the log prints
-`BANK SWEEP DUE` and you withdraw that amount in the Kalshi app
-(Transfers → Withdraw → Bank Transfer). The desk keeps running. GET
-`/portfolio/withdrawals` is watched so a completed ACH can debit the
-paper live ledger once.
-
-Report-only (no POST):
-
-```bash
-python -m quantfirm.kalshi.cli bank-sweep --no-create
-```
+The desk does **not** auto-withdraw. You move Kalshi cash to Bank of
+America yourself. Heal / the live engine never POST
+`/portfolio/withdrawals`. Trading stays on `desk_book`.
 
 ## What changed
 
@@ -318,7 +303,6 @@ python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
 python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi, read-only
 python -m quantfirm.kalshi.cli poly-compare # live crypto vs poly_book paper
 python -m quantfirm.kalshi.cli cashout-replay --no-poly  # sell-if-dead vs hold
-python -m quantfirm.kalshi.cli bank-sweep --no-create    # peel $50 at $300; no POST
 python3 scripts/kalshi_oss_iterate.py                    # BTC+ETH both-green bar
 python3 scripts/kalshi_param_sweep.py                    # wait × 1¢ bar grid
 ./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH

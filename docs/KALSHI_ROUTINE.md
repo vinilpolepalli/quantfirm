@@ -65,11 +65,8 @@ Whole book waits first 3 min. Commodities 8% ≥75¢ after that. BTC and ETH: 4%
    shadows Poly vs Kalshi; compare at EOD with `poly-compare`. Do not
    start a second live agent.
 6. Reply with: open windows, fills this window, shadow + live cash, realized,
-   strategy name, universe, any halt, bank sweep (hold until $300; then
-   peel $50 or $50-multiples to linked BofA, leave ~$250). If the check-in
-   prints BANK SWEEP DUE and the Trade API 404s, withdraw that amount in
-   the Kalshi app; the desk keeps running. Do not wait for $500. Every
-   time cash hits $300, $50 is sold off the desk (leave ~$250).
+   strategy name, universe, any halt. Owner handles Kalshi → BofA
+   withdrawals; do not POST /portfolio/withdrawals.
 
 Do not paper yolo_book, nuke_lock, offhours_lock, or longshot.
 Do not buy 99c last ticks (fee-eat / price_max, not a time gate).

@@ -1144,31 +1144,18 @@ class TestCashoutReplay(unittest.TestCase):
         self.assertNotIn("kalshi.cashout", body)
         self.assertNotIn("should_cash_out", body)
 
-    def test_maybe_bank_sweep_live_only(self):
+    def test_paper_tick_does_not_withdraw(self):
         from quantfirm.kalshi.paper import PaperEngine
         src = inspect.getsource(PaperEngine.tick)
-        self.assertIn("maybe_bank_sweep", src)
-        self.assertNotIn("should_cash_out", src)
-        eng = PaperEngine.__new__(PaperEngine)
-        eng.use_live = False
-        self.assertEqual(eng.maybe_bank_sweep(force=True), [])
-        eng.use_live = True
-        eng.prod = object()
-        calls = []
-
-        def fake_run(client=None, **kw):
-            calls.append(client)
-            return {"due": True, "note": "SWEEP DUE"}
-
-        import quantfirm.kalshi.sweep as sweep_mod
-        orig = sweep_mod.run_sweep
-        sweep_mod.run_sweep = fake_run
-        try:
-            notes = eng.maybe_bank_sweep(force=True)
-        finally:
-            sweep_mod.run_sweep = orig
-        self.assertEqual(calls, [eng.prod])
-        self.assertTrue(notes and "SWEEP DUE" in notes[0])
+        self.assertNotIn("maybe_bank_sweep", src)
+        self.assertNotIn("run_sweep", src)
+        self.assertNotIn("create_withdrawal", src)
+        paper_path = os.path.join(os.path.dirname(__file__),
+                                   "..", "quantfirm", "kalshi", "paper.py")
+        with open(paper_path) as f:
+            body = f.read()
+        self.assertNotIn("maybe_bank_sweep", body)
+        self.assertNotIn("run_sweep", body)
 
 
 class TestBankSweep(unittest.TestCase):
@@ -1206,6 +1193,39 @@ class TestBankSweep(unittest.TestCase):
         pending = plan("350", pending=True)
         self.assertEqual(pending["action"], "wait_pending")
         self.assertEqual(pending["amount"], Decimal("0"))
+
+    def test_run_sweep_default_does_not_post(self):
+        from quantfirm.kalshi.sweep import run_sweep
+        old = os.environ.get("KALSHI_LIVE")
+        os.environ["KALSHI_LIVE"] = "1"
+
+        class Fake:
+            can_trade = True
+            calls = []
+
+            def balance(self):
+                return Decimal("300")
+
+            def withdrawals(self, limit=50):
+                return {"withdrawals": []}
+
+            def create_withdrawal(self, amount_cents):
+                self.calls.append(amount_cents)
+                raise AssertionError("must not POST; owner handles ACH")
+
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                path = os.path.join(tmp, "sweep.json")
+                fake = Fake()
+                view = run_sweep(fake, path=path, now=1_000_000,
+                                 paper_state_path=os.path.join(tmp, "paper.json"))
+                self.assertEqual(fake.calls, [])
+                self.assertTrue(view["due"])
+        finally:
+            if old is None:
+                os.environ.pop("KALSHI_LIVE", None)
+            else:
+                os.environ["KALSHI_LIVE"] = old
 
     def test_create_withdrawal_tries_once(self):
         from quantfirm.kalshi.client import KalshiClient

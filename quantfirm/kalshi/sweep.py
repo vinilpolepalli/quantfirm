@@ -1,15 +1,8 @@
-"""Bank profit sweep: peel $50 whenever Kalshi cash hits $300.
+"""Bank profit sweep — unused on the live desk.
 
-Standing owner rule (2026-09-12): working bankroll stays ~$250. Every
-$50 of profit (cash >= $300) goes to the linked Bank of America ACH.
-If a heal is skipped and cash is $350, peel $100 (two units) so the
-desk is back near $250.
-
-Kalshi's public Trade API lists deposits/withdrawals but may not expose
-create-withdrawal (POST /portfolio/withdrawals → 404 as of 2026-09-12).
-Heals arm the sweep, the live engine checks after every live
-settlement (and at most every 60s), attempt create once per check while
-due, and watch GET /portfolio/withdrawals so the live ledger can debit.
+Owner handles Kalshi → Bank of America ACH. Heal, the supervisor, and
+PaperEngine.tick must not call run_sweep. This module stays for a
+manual CLI report if someone asks; try_create defaults to False.
 """
 from __future__ import annotations
 
@@ -178,19 +171,16 @@ def apply_ledger_debits_file(state_path: str = PAPER_STATE_PATH,
 def run_sweep(client=None, *, path: str = SWEEP_PATH,
               paper_state_path: str = PAPER_STATE_PATH,
               try_create: bool | None = None, now: int | None = None) -> dict:
-    """Arm / attempt / confirm the $50 peel. Safe to call from heal.
+    """Optional report. Owner handles ACH; the live desk does not call this.
 
-    ``try_create`` defaults to True only when KALSHI_LIVE is on. POST is
-    never retried (``create_withdrawal`` uses tries=1). A 404 means the
-    Trade API still cannot ACH — heal reports SWEEP DUE and waits for a
-    $50 (or $50-multiple) withdrawal on GET /portfolio/withdrawals.
+    ``try_create`` defaults to False. POST is never retried
+    (``create_withdrawal`` uses tries=1).
     """
     from .client import KalshiApiError, KalshiClient
 
     now = now if now is not None else _now_unix()
-    live = os.environ.get("KALSHI_LIVE", "0") in ("1", "true", "TRUE", "yes")
     if try_create is None:
-        try_create = live
+        try_create = False
 
     st = load_state(path)
     st["threshold"] = float(THRESHOLD)

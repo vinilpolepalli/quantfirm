@@ -189,11 +189,6 @@ def write_desk_status(supervisor: str | None = None,
         rec["poly_paper"] = compare_snapshot()
     except Exception:
         pass
-    try:
-        from .sweep import public_view
-        rec["bank_sweep"] = public_view()
-    except Exception:
-        pass
     os.makedirs(os.path.dirname(status_path) or ".", exist_ok=True)
     tmp = status_path + ".tmp"
     with open(tmp, "w") as f:
