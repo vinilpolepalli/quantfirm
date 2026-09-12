@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T01:18:19Z",
+ "ts": "2026-09-12T01:42:07Z",
  "strategy": "one_pct",
  "universe": [
   "gold",
@@ -15,20 +15,20 @@
  "kill_switch": false,
  "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 250.76000000000005,
+  "shadow": 253.85400000000004,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 250.0
  },
  "realized": {
-  "shadow": 0.7599999999999996,
+  "shadow": 3.853999999999999,
   "demo": 0.0,
   "maker": 1.6499999999999968,
   "live": 0.0
  },
  "n_open": 0,
  "open": [],
- "n_settled": 14,
- "updated": "2026-09-12T01:18:19Z",
+ "n_settled": 17,
+ "updated": "2026-09-12T01:42:07Z",
  "started": "2026-09-12T00:46:58Z"
 }
