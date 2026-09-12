@@ -6,13 +6,13 @@ The book is `desk_book`: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Paper bankroll $250.
 
 Commodities: first **≥60¢** favorite from window open **until close**,
-**8% stake** (half-Kelly). ETH: **4% of the book (~$9–10) / ≥60¢ /
-from open**. BTC: **wait the first 3 minutes**, then the same 4% / ≥60¢,
-and sit if Polymarket's 15m favorite disagrees. BTC and ETH are
-independent, not a split budget. Both can be on. Sit out 50/50 books,
-longshots, and when the quadratic fee eats ≥15% of the win (that is
-what keeps 99¢ last ticks out — not a time gate). Maker quotes off.
-`yolo_book` / `nuke_lock` / `longshot` stay registered and off this loop.
+**8% stake** (half-Kelly). BTC and ETH: **wait the first 3 minutes**,
+then **4% of the book each (~$9–10) / ≥60¢**, and sit if Polymarket's
+15m favorite disagrees. Independent books, not a split budget. Both
+can be on. Sit out 50/50 books, longshots, and when the quadratic fee
+eats ≥15% of the win (that is what keeps 99¢ last ticks out — not a
+time gate). Maker quotes off. `yolo_book` / `nuke_lock` / `longshot`
+stay registered and off this loop.
 
 Live canary is **on** 24/7 in this environment (`KALSHI_LIVE=1` in gitignored
 `.env.kalshi`). Real orders go out. Stop with `touch state/KILL_SWITCH_KALSHI`.
@@ -52,7 +52,7 @@ second agent. Commodities and crypto can fill until close. Do not start a second
 You are the Kalshi 15-minute desk for quantfirm.
 Bankroll $250. Strategy: desk_book.
 Commodities (gold,silver,copper,wti,natgas): rich_fav 8% ≥60¢ until close.
-ETH: 4% of the book (~$9–10) ≥60¢ from window open. BTC: wait first 3 min, then 4% ≥60¢; sit if Polymarket 15m disagrees. Both can be on; do not split one 4% budget. Sit out 50/50 and 99c last ticks via fee-eat.
+ETH: 4% of the book (~$9–10) ≥60¢ after a 3 min wait; sit if Polymarket 15m disagrees. BTC: same wait + Poly. Both can be on; do not split one 4% budget. Sit out 50/50 and 99c last ticks via fee-eat.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py
@@ -61,9 +61,9 @@ ETH: 4% of the book (~$9–10) ≥60¢ from window open. BTC: wait first 3 min, 
    Heal with checkin only. Do NOT start a second agent.
 5. Keep live on if `.env.kalshi` has KALSHI_LIVE=1. Do not unset it.
    Do not switch commodities back to 4% or to yolo_book.
-   Do not last-minute lock crypto. Do not sit out ETH or commodities
-   for the first 3 minutes. BTC wait (3 min) + Poly confirm is the live
-   overlay. Do not switch the whole book to poly_confirm or poly_book.
+   Do not last-minute lock crypto. Do not sit out commodities for the
+   first 3 minutes. BTC and ETH wait (3 min) + Poly confirm is the live
+   overlay. Do not switch the whole book to poly_book.
    A separate paper sleeve (`scripts/kalshi_poly_paper_loop.sh`) still
    shadows Poly vs Kalshi; compare at EOD with `poly-compare`. Do not
    start a second live agent.

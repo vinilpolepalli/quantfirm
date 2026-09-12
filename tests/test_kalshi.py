@@ -362,8 +362,8 @@ class TestNewStrategies(unittest.TestCase):
                                   "yes_bid": 0.988, "yes_ask": 0.992},
                               metal="btc")
         self.assertIsNone(junk_late)
-        # ETH uses the same 4% overlay from window open. BTC waits 3 min
-        # (this call is tau=300, after the wait).
+        # ETH uses the same 4% overlay after the 3 min wait (this call
+        # is tau=300).
         eth = desk_book(**kw, metal="eth")
         self.assertIsNotNone(eth)
         self.assertEqual(eth.tag, "crypto_fav")
@@ -381,41 +381,42 @@ class TestNewStrategies(unittest.TestCase):
         late_cf = crypto_fav(**{**kw, "params": p2, "ts": close - 30})
         self.assertIsNotNone(late_cf)
 
-    def test_desk_book_btc_waits_eth_does_not(self):
+    def test_desk_book_crypto_waits_then_poly_confirms(self):
         from dataclasses import replace
-        from quantfirm.kalshi.strategies import BTC_OPEN_WAIT_S
+        from quantfirm.kalshi.strategies import CRYPTO_OPEN_WAIT_S
         spec = next(s for s in registry() if s.name == "desk_book")
         p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
         close = 1_000_000
         yes = dict(ticker="T", s=100.2, k=100.0, sigma_1m=0.0005,
                    close_ts=close, yes_bid=0.70, yes_ask=0.72, bankroll=250.0,
                    open_positions=0, params=p, recent_volume=200)
-        # Window open: ETH clips, BTC sits, gold still clips.
         open_ts = close - 900
-        self.assertIsNotNone(desk_book(**{**yes, "ts": open_ts}, metal="eth"))
+        self.assertIsNone(desk_book(**{**yes, "ts": open_ts}, metal="eth"))
         self.assertIsNone(desk_book(**{**yes, "ts": open_ts}, metal="btc"))
         self.assertIsNotNone(desk_book(**{**yes, "ts": open_ts}, metal="gold"))
-        # T+2:53 (the 13:15Z live BTC NO) still sits; T+3:00 clips.
+        # T+19s (13:15Z live ETH NO) and T+2:53 (BTC) still sit.
+        t_19 = close - (900 - 19)
         t_173 = close - (900 - 173)
+        self.assertIsNone(desk_book(**{**yes, "ts": t_19}, metal="eth"))
         self.assertIsNone(desk_book(**{**yes, "ts": t_173}, metal="btc"))
-        self.assertIsNotNone(desk_book(**{**yes, "ts": open_ts + BTC_OPEN_WAIT_S},
-                                       metal="btc"))
-        self.assertIsNotNone(desk_book(**{**yes, "ts": t_173}, metal="eth"))
-        # After the wait, Poly Up vs Kalshi NO sits; same-side Poly keeps it.
-        after = dict(yes, ts=close - 300, yes_bid=0.36, yes_ask=0.37)
-        self.assertIsNone(desk_book(**after, metal="btc", poly_yes_bid=0.70,
+        after = open_ts + CRYPTO_OPEN_WAIT_S
+        self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="eth"))
+        self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="btc"))
+        cheap = dict(yes, ts=close - 300, yes_bid=0.36, yes_ask=0.37)
+        self.assertIsNone(desk_book(**cheap, metal="eth", poly_yes_bid=0.70,
                                        poly_yes_ask=0.72, poly_down_ask=0.29))
-        hit = desk_book(**after, metal="btc", poly_yes_bid=0.21,
-                          poly_yes_ask=0.22, poly_down_ask=0.78)
-        self.assertIsNotNone(hit)
-        self.assertEqual(hit.side, "no")
-        # ETH ignores Poly disagreement.
-        eth_no = desk_book(**after, metal="eth", poly_yes_bid=0.70,
-                             poly_yes_ask=0.72, poly_down_ask=0.29)
+        self.assertIsNone(desk_book(**cheap, metal="btc", poly_yes_bid=0.70,
+                                       poly_yes_ask=0.72, poly_down_ask=0.29))
+        eth_no = desk_book(**cheap, metal="eth", poly_yes_bid=0.21,
+                              poly_yes_ask=0.22, poly_down_ask=0.78)
+        btc_no = desk_book(**cheap, metal="btc", poly_yes_bid=0.21,
+                            poly_yes_ask=0.22, poly_down_ask=0.78)
         self.assertIsNotNone(eth_no)
         self.assertEqual(eth_no.side, "no")
-        # Missing Poly still clips BTC after the wait.
-        self.assertIsNotNone(desk_book(**after, metal="btc"))
+        self.assertIsNotNone(btc_no)
+        self.assertEqual(btc_no.side, "no")
+        self.assertIsNotNone(desk_book(**cheap, metal="eth"))
+        self.assertIsNotNone(desk_book(**cheap, metal="btc"))
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")

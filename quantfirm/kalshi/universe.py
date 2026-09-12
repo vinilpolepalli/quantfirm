@@ -66,11 +66,10 @@ CRYPTO_LIVE = ("btc", "eth")
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
 
 # Live canary on the 24/7 supervisor. Commodities: 8% FLB ≥60¢ from
-# window open until close. ETH: 4% / ≥60¢ / from open. BTC: wait the
-# first 3 minutes, then 4% / ≥60¢, and sit if Polymarket's 15m favorite
-# disagrees. Sit out coin-flips, longshots, and fee-eat (that is the
-# 99¢ last-tick skip). Risky mixes stay registered as yolo_* / nuke_lock
-# and off this loop.
+# window open until close. BTC and ETH: wait the first 3 minutes, then
+# 4% / ≥60¢, and sit if Polymarket's 15m favorite disagrees. Sit out
+# coin-flips, longshots, and fee-eat (that is the 99¢ last-tick skip).
+# Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
 PAPER_STRATEGY = "desk_book"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
