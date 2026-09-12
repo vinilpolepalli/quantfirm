@@ -7,8 +7,9 @@ desk is back near $250.
 
 Kalshi's public Trade API lists deposits/withdrawals but may not expose
 create-withdrawal (POST /portfolio/withdrawals → 404 as of 2026-09-12).
-Heals arm the sweep, attempt create once per check while due, and watch
-GET /portfolio/withdrawals so the live ledger can debit.
+Heals arm the sweep, the live engine checks after every live
+settlement (and at most every 60s), attempt create once per check while
+due, and watch GET /portfolio/withdrawals so the live ledger can debit.
 """
 from __future__ import annotations
 

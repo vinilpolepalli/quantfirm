@@ -129,17 +129,18 @@ Leave `KALSHI_LIVE` unset on Actions if a persistent host already runs the
 
 ### 6. Bank sweep (peel $50 at $300)
 
-Working bankroll stays **$250**. Do not wait until $500. Every **$50**
-of Kalshi cash above that (balance **≥ $300**) goes to the linked
-Bank of America ACH. If a heal is skipped and cash is $350, peel $100
-so the desk is back near $250. Current cash around $263 is a **hold**.
+Working bankroll stays **$250**. Do not wait until $500. **Every time**
+Kalshi cash hits **$300**, **$50** is withdrawn to the linked Bank of
+America ACH (the profit is sold off the desk; $250 stays). If cash
+skips to $350, peel $100. Below $300 is a hold.
 
-Heal (`scripts/kalshi_desk_checkin.py`) arms this. `POST
-/portfolio/withdrawals` has returned **404** on the Trade API; if that
-is still true, the check-in prints `BANK SWEEP DUE` and you withdraw in
-the Kalshi app (Transfers → Withdraw → Bank Transfer, $50 or the
-printed amount). The desk keeps running. GET `/portfolio/withdrawals`
-is watched so a completed ACH can debit the paper live ledger once.
+The live engine checks after each live settlement (and at most every
+60s). Heal also checks. `POST /portfolio/withdrawals` has returned
+**404** on the Trade API; if that is still true, the log prints
+`BANK SWEEP DUE` and you withdraw that amount in the Kalshi app
+(Transfers → Withdraw → Bank Transfer). The desk keeps running. GET
+`/portfolio/withdrawals` is watched so a completed ACH can debit the
+paper live ledger once.
 
 Report-only (no POST):
 

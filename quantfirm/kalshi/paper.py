@@ -490,7 +490,32 @@ class PaperEngine:
                 continue
             notes.extend(self._execute(intent, metal, m, q, now, close_ts))
         notes.extend(self.settle_due())
+        live_settled = any(n.startswith("SETTLE live ") for n in notes)
+        notes.extend(self.maybe_bank_sweep(force=live_settled))
         return notes
+
+    def maybe_bank_sweep(self, *, force: bool = False) -> list[str]:
+        """Every time Kalshi cash hits $300, peel $50 to BofA. Live only.
+
+        Not a position cash-out. Uses venue balance, not the paper ledger.
+        Throttled to 60s unless a live fill just settled (that's when cash
+        actually jumps). POST is tries=1; 404 → heal/app, desk keeps trading.
+        """
+        if not self.use_live:
+            return []
+        now = time.time()
+        last = getattr(self, "_last_sweep_ts", 0.0)
+        if not force and now - last < 60:
+            return []
+        self._last_sweep_ts = now
+        try:
+            from .sweep import run_sweep, checkin_line
+            view = run_sweep(self.prod)
+        except Exception as e:
+            return [f"bank_sweep error {type(e).__name__}"]
+        if view.get("due"):
+            return [checkin_line(view)]
+        return []
 
     # -------------------------------------------------------------- execution
     def _execute(self, intent, metal, m, q, now, close_ts) -> list[str]:

@@ -96,5 +96,6 @@ while true; do
   wait "$engine_pid" 2>/dev/null
   log "session ended (rc=$?)"
   python3 -m quantfirm.kalshi.cli heartbeat >/dev/null 2>&1 || true
+  python3 -m quantfirm.kalshi.cli bank-sweep >/dev/null 2>&1 || true
   sleep 20
 done

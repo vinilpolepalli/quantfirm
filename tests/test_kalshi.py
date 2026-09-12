@@ -1144,6 +1144,32 @@ class TestCashoutReplay(unittest.TestCase):
         self.assertNotIn("kalshi.cashout", body)
         self.assertNotIn("should_cash_out", body)
 
+    def test_maybe_bank_sweep_live_only(self):
+        from quantfirm.kalshi.paper import PaperEngine
+        src = inspect.getsource(PaperEngine.tick)
+        self.assertIn("maybe_bank_sweep", src)
+        self.assertNotIn("should_cash_out", src)
+        eng = PaperEngine.__new__(PaperEngine)
+        eng.use_live = False
+        self.assertEqual(eng.maybe_bank_sweep(force=True), [])
+        eng.use_live = True
+        eng.prod = object()
+        calls = []
+
+        def fake_run(client=None, **kw):
+            calls.append(client)
+            return {"due": True, "note": "SWEEP DUE"}
+
+        import quantfirm.kalshi.sweep as sweep_mod
+        orig = sweep_mod.run_sweep
+        sweep_mod.run_sweep = fake_run
+        try:
+            notes = eng.maybe_bank_sweep(force=True)
+        finally:
+            sweep_mod.run_sweep = orig
+        self.assertEqual(calls, [eng.prod])
+        self.assertTrue(notes and "SWEEP DUE" in notes[0])
+
 
 class TestBankSweep(unittest.TestCase):
     def test_constants(self):
