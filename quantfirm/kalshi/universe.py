@@ -1,7 +1,8 @@
 """15-minute series this desk knows.
 
-Default paper book: five live commodity binaries plus BTC/ETH 15-minute.
-Indexes (SPX/NDX) and dark metals stay listed for harvest, not trading.
+Default paper book: five live commodity binaries plus BTC 15-minute
+(ETH is harvested, not live). Indexes and dark metals stay listed for
+harvest, not trading.
 
 Fees are quadratic, multiplier 1, maker $0 on every series here.
 """
@@ -25,8 +26,9 @@ SERIES_LISTED_DARK = {
     "KXNDQ15M": "ndx",
 }
 
-# 15-minute crypto (live, large books). Harvested for research, not in the
-# conservative paper book — last-week lag locks lost on BTC/ETH.
+# 15-minute crypto (live, large books). BTC is the cautious 24/7 sleeve
+# so the desk still clips when commodities go dark Sat 04:00Z. ETH stays
+# harvest-only: same FLB lost on this tape (research/kalshi_crypto.md).
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
     "KXETH15M": "eth",
@@ -55,14 +57,19 @@ SWISSQUOTE = {
     "wti": "OIL",
 }
 
-# Conservative paper book: five commodities. Crypto stays in LIVE_SERIES
-# for harvest. Correlation slots are in halt.CORR_GROUPS.
-PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
+# Harvest both crypto series. Live only BTC — ETH FLB was red.
+CRYPTO_ASSETS = ("btc", "eth")
+CRYPTO_LIVE = ("btc",)
 
-# Live canary on the 24/7 supervisor. 8% FLB ≥60¢ from window open
-# until close. Sit out only coin-flips, longshots, and fee-eat.
-# Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
-PAPER_STRATEGY = "rich_fav"
+# Live book: five commodities + BTC. ETH stays in LIVE_SERIES for
+# harvest/status. Correlation slots are in halt.CORR_GROUPS.
+PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
+
+# Live canary on the 24/7 supervisor. Commodities: 8% FLB ≥60¢ from
+# window open until close. BTC: 4% / ≥72¢ / skip last 2 minutes.
+# Sit out coin-flips, longshots, and fee-eat. Risky mixes stay
+# registered as yolo_* / nuke_lock and off this loop.
+PAPER_STRATEGY = "desk_book"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /
 # energy / copper) so the $250 can sit in metals AND energy at once.

@@ -1,12 +1,14 @@
 # 24/7 Kalshi 15-minute desk — routines
 
-The book is `rich_fav` on **gold, silver, copper, WTI, natgas**.
-Paper bankroll $250. Sit out 50/50 books and 99¢ locks; take the first
-**≥60¢** favorite (no spot-agree gate) from window open **until close**.
-**8% stake cap** (half-Kelly). Skip when the quadratic fee eats ≥15% of
+The book is `desk_book`: **gold, silver, copper, WTI, natgas, BTC**.
+Paper bankroll $250.
+
+Commodities: first **≥60¢** favorite from window open **until close**,
+**8% stake** (half-Kelly). BTC: **4% / ≥72¢ / skip the last 2 minutes**.
+Sit out 50/50 books, longshots, and when the quadratic fee eats ≥15% of
 the win (that is what keeps 99¢ last ticks out — not a time gate). Maker
-quotes off. BTC/ETH are harvested for research but not in this paper book.
-`yolo_book` / `nuke_lock` / `longshot` stay registered and off this loop.
+quotes off. **ETH is harvested, not live.** `yolo_book` / `nuke_lock` /
+`longshot` stay registered and off this loop.
 
 Live canary is **on** 24/7 in this environment (`KALSHI_LIVE=1` in gitignored
 `.env.kalshi`). Real orders go out. Stop with `touch state/KILL_SWITCH_KALSHI`.
@@ -29,8 +31,8 @@ python scripts/kalshi_desk_checkin.py
 ## 2. Cursor Cloud timer
 
 Fires at `:13/:28/:43/:58` UTC (supervisor heal). Does not start a
-second agent. The engine itself trades whenever a ≥60¢ favorite is up, including
-the last seconds of the window. Do not start a second agent.
+second agent. Commodities can fill until close; BTC sits out the last
+two minutes. Do not start a second agent.
 
 ## 3. Claude Routine (no VPS)
 
@@ -42,7 +44,9 @@ the last seconds of the window. Do not start a second agent.
 
 ```
 You are the Kalshi 15-minute desk for quantfirm.
-Bankroll $250. Strategy: rich_fav at 8% stake. Universe: gold,silver,copper,wti,natgas.
+Bankroll $250. Strategy: desk_book.
+Commodities (gold,silver,copper,wti,natgas): rich_fav 8% ≥60¢ until close.
+BTC: 4% ≥72¢, skip last 2 minutes. ETH is harvest-only — do not live it.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py
@@ -50,18 +54,19 @@ Bankroll $250. Strategy: rich_fav at 8% stake. Universe: gold,silver,copper,wti,
 4. Confirm the supervisor pidfile (state/kalshi_paper_loop.pid) is alive.
    Heal with checkin only. Do NOT start a second agent.
 5. Keep live on if `.env.kalshi` has KALSHI_LIVE=1. Do not unset it.
-   Do not switch back to 4% or to yolo_book. Do not re-add a last-3-min
-   sit-out. ≥60¢ can fill from open until close.
+   Do not switch commodities back to 4% or to yolo_book.
+   Do not live ETH. Do not last-minute lock crypto.
 6. Reply with: open windows, fills this window, shadow + live cash, realized,
    strategy name, universe, any halt.
 
 Do not paper yolo_book, nuke_lock, offhours_lock, or longshot.
 Do not buy 99c last ticks (fee-eat / price_max, not a time gate).
+Do not buy 18–50¢ crypto longshots.
 ```
 
 ## 4. GitHub backstop
 
 `.github/workflows/kalshi.yml` at `:05/:20/:35/:50` UTC after merge to
-`main` (minute 5 of each window). Same `rich_fav` command, `--no-maker`.
+`main` (minute 5 of each window). Same `desk_book` command, `--no-maker`.
 
 Kill switch: `touch state/KILL_SWITCH_KALSHI`

@@ -1,8 +1,6 @@
 # Kalshi 15-minute commodities desk — this pass
 
-Status: **PAPER**, $250 shadow bankroll, $0 real. Built 2026-09-12 on
-`cursor/kalshi-15m-strategies-1c14`, on top of the prior metals desk
-(`docs/KALSHI.md`, `docs/HANDOFF.md`).
+Status: **LIVE canary 24/7**, $250. `desk_book` on five commodities + BTC.
 
 ## What changed
 
@@ -30,25 +28,24 @@ tournament, and it wires the live paper engine to the settlement feed.
 | `KXNATGAS15M` | Nat gas | Pyth `Commodities.Index.NATGAS/USD` | ~10k | yes |
 | `KXPALLADIUM15M` / `KXPLATINUM15M` | — | Pyth metals | — | listed, dark |
 | `KXINX15M` / `KXNDQ15M` | SPX / NDX | Google Finance | — | listed, dark |
-| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | yes (research only) |
-| `KXETH15M` | ETH | CF Benchmarks 60s average | large | yes (research only) |
+| `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | **live, cautious** |
+| `KXETH15M` | ETH | CF Benchmarks 60s average | large | harvest only |
 
-Hours: commodity 15M books were **open on Saturday 2026-09-12** (the prior
-note that metals go dark Sat 04:00Z is stale — treat the API as truth).
-Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
+Hours: commodity 15M books **close Sat ~04:00Z and reopen Mon ~03:15Z**.
+BTC/ETH stay open. Treat the API as truth. Fees unchanged: quadratic
+taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
-Default paper book: **gold, silver, copper, WTI, natgas**.
-Live strategy: **`rich_fav`** — first ≥60¢ favorite (skip coin-flips
-<60¢ and when the taker fee is ≥15% of the win or net payout <7¢, so
-93–94¢ / 99¢ last ticks are out), from window open **until close**, no
-spot-agree gate, **8% stake** (half-Kelly). Maker off. 24/7 supervisor.
-BTC/ETH stay in the harvest universe. 4% clips paid ~$1 after fees; 8%
-is ~$20 at risk and ~$2.20 net on an 88¢ win. 15–18% (`yolo_*`) is the
-size that can print a 2× week and also a −$38 miss in one window — off
-this loop. Least-bad n>100 lag book (test +$130 / t=1.42 at 4% on the
-old 88–94¢ band; train flat, last week +$55). t=1.42 is **not** the
-tournament gate. Numbers: `research/kalshi_iterate.md`,
-`research/kalshi_yolo.md`.
+Default paper book: **gold, silver, copper, WTI, natgas, BTC**.
+Live strategy: **`desk_book`**. Commodities are `rich_fav` — first ≥60¢
+favorite (skip coin-flips <60¢ and when the taker fee is ≥15% of the win
+or net payout <7¢), from window open **until close**, **8% stake**.
+BTC is half that: **4% / ≥72¢ / skip the last 2 minutes** (REST loses
+the last-minute crypto race; `one_pct` touch last week was BTC −$55).
+ETH FLB was red on this tape — harvest only, not live. Maker off. 24/7
+supervisor. 4% commodity clips paid ~$1 after fees; 8% is ~$20 at risk
+and ~$2.20 net on an 88¢ win. BTC 4% is ~$10 at risk. 15–18% (`yolo_*`)
+is off this loop. Numbers: `research/kalshi_crypto.md`,
+`research/kalshi_iterate.md`, `research/kalshi_yolo.md`.
 
 `spot_lock` and `offhours_lock` stay registered. Off-hours was green
 on train (t=1.18) and died on test. `nuke_lock` / `longshot` stay
@@ -84,6 +81,8 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `oracle_lag` | Prior-desk stale-quote taker | Should lose (replication) |
 | `oracle_flow` | Fade uninformed book flow | Taking an overreaction, not chasing a stale ask |
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
+| `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC 4% ≥72¢ | Same FLB; crypto sits out last 2 min |
+| `crypto_fav` | BTC-only 4% ≥72¢ | Weekend 24/7 sleeve; ETH off |
 | `favorite_confirmed` | FLB + GBM agrees | Same, fewer longshots |
 | `late_lock` | Near-certain favorite, last 6 min | Reversal needed is large |
 | `open_fade` / `open_follow` | 3-min impulse then fade/follow | Path of S, not book lag |
@@ -105,8 +104,8 @@ python -m quantfirm.kalshi.cli tournament --data data/kalshi --bankroll 250
 python -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
     --fill-mode lag --bankroll 250
 python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
-    --strategy rich_fav --bankroll 250 --log-decisions
-./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities
+    --strategy desk_book --bankroll 250 --log-decisions
+./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC
 python scripts/kalshi_desk_checkin.py   # heal + commit heartbeat
 ```
 

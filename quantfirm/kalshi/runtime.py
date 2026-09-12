@@ -60,8 +60,10 @@ def ensure_supervisor() -> str:
     os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
     os.chmod(LOOP, 0o755)
     env = os.environ.copy()
-    env.setdefault("METALS", ",".join(PAPER_ASSETS))
-    env.setdefault("STRATEGY", PAPER_STRATEGY)
+    # Registered live book. Do not inherit a stale METALS/STRATEGY from a
+    # previous commodities-only session (that sat out weekend BTC).
+    env["METALS"] = ",".join(PAPER_ASSETS)
+    env["STRATEGY"] = PAPER_STRATEGY
     env.setdefault("BANKROLL", str(int(BANKROLL)))
     env.setdefault("SESSION_MIN", "110")
     log_path = os.path.join(REPO, "state", "kalshi_paper_loop.log")
@@ -76,15 +78,19 @@ def ensure_supervisor() -> str:
 def count_open_markets(client=None) -> int:
     """How many paper-book 15m series have an open window right now.
 
-    BTC/ETH stay in LIVE_SERIES for harvest/status, but they must not
-    keep the supervisor spinning 110-minute sessions while gold/WTI
-    are dark (weekend: commodities close Sat 04:00Z, crypto does not).
+    Counts PAPER_ASSETS (commodities + BTC). ETH stays harvest-only so
+    it does not keep the loop spinning on its own. Weekend: gold/WTI
+    close Sat 04:00Z; BTC stays open and is enough to start a session.
     """
     from .client import KalshiClient
-    from .universe import SERIES
+    from .universe import LIVE_SERIES, PAPER_ASSETS
+    inv = {asset: ticker for ticker, asset in LIVE_SERIES.items()}
     c = client or KalshiClient("prod")
     n = 0
-    for series in SERIES:
+    for asset in PAPER_ASSETS:
+        series = inv.get(asset)
+        if not series:
+            continue
         try:
             if c.open_market_for_series(series):
                 n += 1

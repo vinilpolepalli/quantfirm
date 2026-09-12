@@ -19,12 +19,13 @@ Strategies that ignore those priors (always-yes, coin-flip) are CONTROLS.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from typing import Callable
 
 from .fair import fair_yes, implied_sigma_1m, kelly_fraction, taker_fee
 from .strategy import Intent, Params, decide
+from .universe import CRYPTO_LIVE
 
 
 def _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params, tag,
@@ -145,6 +146,63 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     side, cost, q, edge, fair = max(cands, key=lambda c: c[1])  # richer favorite
     return _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params,
                  "favorite", allow_min=True)
+
+
+def crypto_params(base: Params) -> Params:
+    """A priori cautious BTC overlay. Not a test-set fit.
+
+    Last-minute 15m crypto locks lost (BTC touch −$55 last week). Weekend
+    books often sit at 18–37¢ — those are longshots, not favorites. Half the
+    commodity stake, richer favorite, sit out the last two minutes where
+    REST loses the race. ETH is not in CRYPTO_LIVE.
+    """
+    return replace(
+        base,
+        price_min=0.72,
+        price_max=0.92,
+        max_stake_frac=0.04,
+        kelly_mult=0.25,
+        tau_min_s=120,
+        tau_max_s=780,
+        min_count=4,
+        max_spread=1.0,
+        min_recent_volume=0.0,
+        signal_max_age_s=0,
+    )
+
+
+def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+               bankroll, open_positions, params, recent_volume=None, **kw):
+    """Standalone BTC 15m FLB (for backtests). Same overlay as desk_book."""
+    it = favorite_blind(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume, **kw)
+    if it is not None:
+        it.tag = "crypto_fav"
+    return it
+
+
+def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+              bankroll, open_positions, params, recent_volume=None,
+              metal=None, **kw):
+    """Commodity rich_fav + cautious BTC. ETH harvest-only.
+
+    Commodities keep 8% / ≥60¢ / until close. BTC uses crypto_params.
+    Passing metal=eth never clips — last-week ETH FLB was the hole.
+    """
+    if metal == "eth":
+        return None
+    if metal in CRYPTO_LIVE:
+        it = favorite_blind(
+            ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+            bankroll, open_positions, crypto_params(params),
+            recent_volume=recent_volume, **kw)
+        if it is not None:
+            it.tag = "crypto_fav"
+        return it
+    return favorite_blind(
+        ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+        bankroll, open_positions, params, recent_volume=recent_volume, **kw)
 
 
 def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
@@ -618,6 +676,20 @@ def registry() -> list[Spec]:
                 signal_max_age_s=0),
              "lag",
              "FLB ≥60¢ until close; skip coin-flip / fee-eat; 8% half-Kelly"),
+        Spec("crypto_fav", crypto_fav,
+             _p(tau_min_s=120, tau_max_s=780, price_min=0.72, price_max=0.92,
+                theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
+                signal_max_age_s=0),
+             "lag",
+             "BTC 15m FLB ≥72¢, 4% stake, skip last 2 min / fee-eat / longshot"),
+        Spec("desk_book", desk_book,
+             _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
+                theta=0.0, max_open=6, max_stake_frac=0.08, min_count=4,
+                max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
+                signal_max_age_s=0),
+             "lag",
+             "Commodities rich_fav 8% ≥60¢; BTC 4% ≥72¢ skip last 2 min; ETH off"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,

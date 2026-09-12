@@ -11,8 +11,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from quantfirm.kalshi.fair import (VolEstimator, fair_yes, implied_sigma_1m,
                                    kelly_fraction, norm_cdf, taker_fee)
-from quantfirm.kalshi.strategies import (favorite_blind, late_lock, model_fav,
-                                         one_pct, registry)
+from quantfirm.kalshi.strategies import (crypto_fav, desk_book, favorite_blind,
+                                         late_lock, model_fav, one_pct, registry)
 from quantfirm.kalshi.strategy import Params, decide
 from quantfirm.kalshi.universe import (BANKROLL, LIVE_SERIES, PAPER_ASSETS,
                                          PAPER_STRATEGY, SERIES)
@@ -193,7 +193,8 @@ class TestNewStrategies(unittest.TestCase):
         names = {s.name for s in registry()}
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
                   "favorite_blind", "open_fade", "spot_lock", "mid_lock",
-                  "rich_fav", "model_fav", "offhours_lock", "yolo_book",
+                  "rich_fav", "crypto_fav", "desk_book", "model_fav",
+                  "offhours_lock", "yolo_book",
                   "longshot", "sprint", "yolo_lock", "nuke_lock"):
             self.assertIn(n, names)
 
@@ -236,8 +237,8 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(spec.params.signal_max_age_s, 0)
         self.assertEqual(spec.params.min_recent_volume, 0.0)
 
-    def test_rich_fav_is_paper_book(self):
-        self.assertEqual(PAPER_STRATEGY, "rich_fav")
+    def test_desk_book_is_paper_book(self):
+        self.assertEqual(PAPER_STRATEGY, "desk_book")
         spec = next(s for s in registry() if s.name == PAPER_STRATEGY)
         self.assertGreaterEqual(spec.params.max_stake_frac, 0.08)
         self.assertLess(spec.params.max_stake_frac, 0.12)
@@ -245,12 +246,17 @@ class TestNewStrategies(unittest.TestCase):
         self.assertLessEqual(spec.params.price_max, 0.94)
         self.assertEqual(spec.params.tau_min_s, 0)
         self.assertGreaterEqual(spec.params.tau_max_s, 900)
+        crypto = next(s for s in registry() if s.name == "crypto_fav")
+        self.assertEqual(crypto.params.price_min, 0.72)
+        self.assertEqual(crypto.params.max_stake_frac, 0.04)
+        self.assertGreaterEqual(crypto.params.tau_min_s, 120)
         loop_path = os.path.join(os.path.dirname(__file__),
                                  "..", "scripts", "kalshi_paper_loop.sh")
         with open(loop_path) as f:
             loop = f.read()
-        self.assertIn('STRATEGY="${STRATEGY:-rich_fav}"', loop)
-        self.assertIn("gold,silver,copper,wti,natgas", loop)
+        self.assertIn('STRATEGY="${STRATEGY:-desk_book}"', loop)
+        self.assertIn("gold,silver,copper,wti,natgas,btc", loop)
+        self.assertNotIn("natgas,btc,eth", loop)
         self.assertNotIn("nuke_lock", loop)
         self.assertNotIn("yolo_book", loop)
 
@@ -303,6 +309,41 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(late.side, "yes")
         after = favorite_blind(**{**kw, "ts": close + 1})
         self.assertIsNone(after)
+
+    def test_desk_book_crypto_is_smaller_and_sits_out_junk(self):
+        from dataclasses import replace
+        spec = next(s for s in registry() if s.name == "desk_book")
+        p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
+        close = 1_000_000
+        kw = dict(ticker="T", ts=close - 300, s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close, yes_bid=0.78, yes_ask=0.80, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        gold = desk_book(**kw, metal="gold")
+        btc = desk_book(**kw, metal="btc")
+        self.assertIsNotNone(gold)
+        self.assertIsNotNone(btc)
+        self.assertEqual(gold.side, "yes")
+        self.assertEqual(btc.side, "yes")
+        self.assertEqual(btc.tag, "crypto_fav")
+        self.assertGreater(gold.count, btc.count)
+        # Coin-flip and weekend longshot sit out on BTC.
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.49, "yes_ask": 0.52},
+                                    metal="btc"))
+        self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.36, "yes_ask": 0.37},
+                                    metal="btc"))
+        # Last 30s: commodities still clip, BTC sits out.
+        late_gold = desk_book(**{**kw, "ts": close - 30}, metal="gold")
+        late_btc = desk_book(**{**kw, "ts": close - 30}, metal="btc")
+        self.assertIsNotNone(late_gold)
+        self.assertIsNone(late_btc)
+        # ETH is harvest-only even at a rich favorite.
+        self.assertIsNone(desk_book(**kw, metal="eth"))
+        cf = next(s for s in registry() if s.name == "crypto_fav")
+        p2 = replace(cf.params, macro_blackout_et=())
+        hit = crypto_fav(**{**kw, "params": p2})
+        self.assertIsNotNone(hit)
+        self.assertEqual(hit.tag, "crypto_fav")
+        self.assertIsNone(crypto_fav(**{**kw, "params": p2, "ts": close - 30}))
 
     def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")
@@ -394,20 +435,22 @@ class TestNewStrategies(unittest.TestCase):
         it3 = one_pct(**{**kw, "yes_bid": 0.988, "yes_ask": 0.992})
         self.assertIsNone(it3)
 
-    def test_paper_universe_is_five_commodities(self):
+    def test_paper_universe_includes_btc_not_eth(self):
         self.assertEqual(PAPER_ASSETS,
-                         ("gold", "silver", "copper", "wti", "natgas"))
+                         ("gold", "silver", "copper", "wti", "natgas", "btc"))
         self.assertIn("btc", LIVE_SERIES.values())
         self.assertIn("eth", LIVE_SERIES.values())
+        self.assertNotIn("eth", PAPER_ASSETS)
         from quantfirm.kalshi.paper import PaperEngine
         sig = inspect.signature(PaperEngine.__init__)
         self.assertEqual(sig.parameters["metals"].default, PAPER_ASSETS)
 
-    def test_open_count_ignores_crypto_weekend_books(self):
+    def test_open_count_follows_paper_assets(self):
         from quantfirm.kalshi.runtime import count_open_markets
         src = inspect.getsource(count_open_markets)
-        self.assertIn("for series in SERIES:", src)
-        self.assertNotIn("for series in LIVE_SERIES", src)
+        self.assertIn("PAPER_ASSETS", src)
+        self.assertIn("LIVE_SERIES", src)
+        self.assertNotIn("for series in SERIES:", src)
 
 
 class TestDiversifyAndHalt(unittest.TestCase):
