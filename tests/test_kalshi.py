@@ -364,6 +364,26 @@ class TestBacktestCausality(unittest.TestCase):
             self.assertGreater(t.pnl, 0)
 
 
+class TestLoadMarkets(unittest.TestCase):
+    def test_expiration_value_with_commas(self):
+        from quantfirm.kalshi.backtest import load_markets
+        with tempfile.TemporaryDirectory() as tmp:
+            p = os.path.join(tmp, "markets_KXBTC15M.jsonl")
+            row = {
+                "ticker": "KXBTC15M-X",
+                "open_time": "2026-09-01T16:15:00Z",
+                "close_time": "2026-09-01T16:30:00Z",
+                "floor_strike": 77362.28,
+                "result": "yes",
+                "expiration_value": "77,362.10",
+            }
+            with open(p, "w") as f:
+                f.write(json.dumps(row) + "\n")
+            mkts = load_markets(p)
+            self.assertEqual(len(mkts), 1)
+            self.assertAlmostEqual(mkts[0]["settle_value"], 77362.10)
+
+
 class TestMakerFillRealism(unittest.TestCase):
     """Guards against the fill artifacts that invalidated both backtests."""
 

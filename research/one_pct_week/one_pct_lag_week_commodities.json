@@ -1,0 +1,75 @@
+{
+ "n_trades": 2,
+ "final_equity": 249.86,
+ "net_pnl": -0.14,
+ "return_pct": -0.06,
+ "fees": 0.02,
+ "hit_rate": 0.0,
+ "avg_pnl_per_trade": -0.071,
+ "avg_fill": 0.003,
+ "t_stat": -1.78,
+ "daily_sharpe_ann": -28.33,
+ "max_drawdown_pct": 0.06,
+ "trading_days": 2,
+ "by_metal": {
+  "silver": {
+   "n": 1,
+   "pnl": -0.11,
+   "hit": 0.0
+  },
+  "wti": {
+   "n": 1,
+   "pnl": -0.03,
+   "hit": 0.0
+  }
+ },
+ "by_side": {
+  "yes": {
+   "n": 1,
+   "pnl": -0.11,
+   "hit": 0.0
+  },
+  "no": {
+   "n": 1,
+   "pnl": -0.03,
+   "hit": 0.0
+  }
+ },
+ "by_tag": {
+  "one_pct": {
+   "n": 2,
+   "pnl": -0.14,
+   "hit": 0.0
+  }
+ },
+ "by_fill": {
+  "uncontested": {
+   "n": 2,
+   "pnl": -0.14,
+   "hit": 0.0
+  }
+ },
+ "by_week": {
+  "2026-W37": {
+   "n": 2,
+   "pnl": -0.14,
+   "hit": 0.0
+  }
+ },
+ "skipped": {
+  "no_underlying": 1265,
+  "raced_out": 203
+ },
+ "strategy": "one_pct",
+ "fill_mode": "lag",
+ "window": "week",
+ "since": "2026-09-05T00:00:00+00:00",
+ "loaded_series": [
+  "KXCOPPER15M",
+  "KXGOLD15M",
+  "KXNATGAS15M",
+  "KXSILVER15M",
+  "KXWTI15M"
+ ],
+ "universe": "commodities"
+}

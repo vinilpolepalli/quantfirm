@@ -1,0 +1,120 @@
+{
+ "n_trades": 531,
+ "final_equity": 115.12,
+ "net_pnl": -134.88,
+ "return_pct": -53.95,
+ "fees": 28.75,
+ "hit_rate": 0.932,
+ "avg_pnl_per_trade": -0.254,
+ "avg_fill": 0.944,
+ "t_stat": -1.59,
+ "daily_sharpe_ann": -8.19,
+ "max_drawdown_pct": 64.09,
+ "trading_days": 15,
+ "by_metal": {
+  "eth": {
+   "n": 69,
+   "pnl": 11.57,
+   "hit": 0.957
+  },
+  "btc": {
+   "n": 110,
+   "pnl": -36.84,
+   "hit": 0.918
+  },
+  "natgas": {
+   "n": 68,
+   "pnl": -5.67,
+   "hit": 0.971
+  },
+  "copper": {
+   "n": 71,
+   "pnl": -43.13,
+   "hit": 0.901
+  },
+  "wti": {
+   "n": 82,
+   "pnl": -9.63,
+   "hit": 0.939
+  },
+  "gold": {
+   "n": 87,
+   "pnl": -51.68,
+   "hit": 0.92
+  },
+  "silver": {
+   "n": 44,
+   "pnl": 0.5,
+   "hit": 0.932
+  }
+ },
+ "by_side": {
+  "no": {
+   "n": 283,
+   "pnl": -28.24,
+   "hit": 0.94
+  },
+  "yes": {
+   "n": 248,
+   "pnl": -106.65,
+   "hit": 0.923
+  }
+ },
+ "by_tag": {
+  "one_pct": {
+   "n": 531,
+   "pnl": -134.88,
+   "hit": 0.932
+  }
+ },
+ "by_fill": {
+  "contested": {
+   "n": 527,
+   "pnl": -85.32,
+   "hit": 0.939
+  },
+  "uncontested": {
+   "n": 4,
+   "pnl": -49.56,
+   "hit": 0.0
+  }
+ },
+ "by_week": {
+  "2026-W35": {
+   "n": 34,
+   "pnl": 10.29,
+   "hit": 0.971
+  },
+  "2026-W36": {
+   "n": 272,
+   "pnl": -116.59,
+   "hit": 0.923
+  },
+  "2026-W37": {
+   "n": 225,
+   "pnl": -28.59,
+   "hit": 0.938
+  }
+ },
+ "skipped": {
+  "no_underlying": 1159,
+  "gapped_away": 28,
+  "corr_cap": 29,
+  "no_quote": 6,
+  "daily_stop": 1602
+ },
+ "strategy": "one_pct",
+ "fill_mode": "touch",
+ "window": "2w",
+ "since": "2026-08-29T00:00:00+00:00",
+ "loaded_series": [
+  "KXBTC15M",
+  "KXCOPPER15M",
+  "KXETH15M",
+  "KXGOLD15M",
+  "KXNATGAS15M",
+  "KXSILVER15M",
+  "KXWTI15M"
+ ],
+ "universe": "live"
+}

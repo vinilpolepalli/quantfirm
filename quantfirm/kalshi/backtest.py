@@ -60,6 +60,15 @@ def _exists(path: str) -> bool:
 
 
 # --------------------------------------------------------------------- load
+def _num(v):
+    """Parse Kalshi numeric fields; some expiration_value strings use commas."""
+    if v in (None, ""):
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    return float(str(v).replace(",", "").replace("_", "").strip())
+
+
 def load_markets(path: str) -> list[dict]:
     out = []
     with _open(path) as f:
@@ -71,9 +80,9 @@ def load_markets(path: str) -> list[dict]:
                 "ticker": m["ticker"],
                 "open_ts": _ts(m["open_time"]),
                 "close_ts": _ts(m["close_time"]),
-                "strike": float(m["floor_strike"]),
+                "strike": _num(m["floor_strike"]),
                 "result": m["result"],
-                "settle_value": float(m["expiration_value"]) if m.get("expiration_value") else None,
+                "settle_value": _num(m.get("expiration_value")),
             })
     return out
 
@@ -138,19 +147,20 @@ class Trade:
 
 
 class Backtest:
-    def __init__(self, data_dir: str, bankroll: float = BANKROLL):
+    def __init__(self, data_dir: str, bankroll: float = BANKROLL, series: dict | None = None):
         self.data_dir = data_dir
         self.bankroll0 = bankroll
         self.markets: dict[str, list[dict]] = {}
         self.candles: dict[str, dict[str, dict[int, dict]]] = {}
         self.bars: dict[str, dict[int, float]] = {}
-        for series, metal in METALS.items():
-            mp = os.path.join(data_dir, f"markets_{series}.jsonl")
-            cp = os.path.join(data_dir, f"candles_{series}.csv")
+        wanted = series or METALS
+        for series_ticker, metal in wanted.items():
+            mp = os.path.join(data_dir, f"markets_{series_ticker}.jsonl")
+            cp = os.path.join(data_dir, f"candles_{series_ticker}.csv")
             bp = os.path.join(data_dir, f"yf_{metal}_1m.csv")
             if all(_exists(p) for p in (mp, cp, bp)):
-                self.markets[series] = load_markets(mp)
-                self.candles[series] = load_candles(cp)
+                self.markets[series_ticker] = load_markets(mp)
+                self.candles[series_ticker] = load_candles(cp)
                 self.bars[metal] = load_underlying(bp)
 
     def run(self, params: Params, start_ts: int | None = None,

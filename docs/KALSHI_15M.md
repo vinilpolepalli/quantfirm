@@ -39,11 +39,13 @@ Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
 Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Live strategy: **`one_pct`** — wait until the last ~90 seconds, buy a
 90–97¢ favorite whose spot already agrees, size so a win is ~1% of the
-$250. Sit out 50/50 books. Maker quotes are off.
+$250. Sit out 50/50 books. Maker quotes are off. Last-week candle score
+(`research/kalshi_one_pct_week.md`): **not a go-live**. `lag` fills 2
+trades, both losers; `touch` +$53 is the contested-race artifact and dies
+on a 14-day window. 1.01^96 is not on this sample.
 
-1.01^96 ≈ 2.6×/day **only if** almost every window fills. Most windows never
-lock; those we skip. A 99¢ last-tick book cannot deliver 1% of bankroll
-without putting nearly all of it at risk, so we skip those too.
+A 99¢ last-tick book cannot deliver 1% of bankroll without putting nearly
+all of it at risk, so we skip those too.
 
 Correlation slots: gold/silver share a side, WTI/natgas share a side,
 BTC/ETH share a side, copper is its own. 24/7 wiring is in
