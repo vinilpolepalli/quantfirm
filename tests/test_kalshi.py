@@ -536,12 +536,16 @@ class TestDiversifyAndHalt(unittest.TestCase):
         self.assertIsNone(it_liq)
 
     def test_decision_bankroll_prefers_live_cash(self):
-        from quantfirm.kalshi.paper import decision_bankroll
+        from quantfirm.kalshi.paper import decision_bankroll, taker_entries_allowed
         cash = {"shadow": 229.0, "live": 252.0}
         self.assertEqual(decision_bankroll(cash, live=True), 252.0)
         self.assertEqual(decision_bankroll(cash, live=False), 229.0)
         self.assertEqual(decision_bankroll({"shadow": 229.0, "live": 0.0},
                                             live=True), 229.0)
+        # Shadow yolo hole must not halt live when live P&L is inside the stop.
+        stopped = {"shadow": False, "live": True, "maker": True}
+        self.assertTrue(taker_entries_allowed(stopped, live=True))
+        self.assertFalse(taker_entries_allowed(stopped, live=False))
 
     def test_langgraph_desk_compiles(self):
         from quantfirm.kalshi.agent import build_desk

@@ -55,6 +55,16 @@ def decision_bankroll(cash: dict, live: bool) -> float:
     return float(cash.get("shadow") or 0.0)
 
 
+def taker_entries_allowed(allowed: dict, live: bool) -> bool:
+    """Daily stop for the taker that can send orders.
+
+    Shadow yolo this morning put the paper ledger through −10%. Live
+    is only −$3. Gate live clips on the live book, not the hole.
+    """
+    book = "live" if live else "shadow"
+    return bool(allowed.get(book))
+
+
 @dataclass
 class PaperPosition:
     ticker: str
@@ -437,7 +447,7 @@ class PaperEngine:
             if tkr not in self._open_px:
                 self._open_px[tkr] = s_now
             intent = None
-            if allowed["shadow"] and not shadow_here:
+            if taker_entries_allowed(allowed, self.use_live) and not shadow_here:
                 intent = self.decide_fn(
                     ticker=tkr, ts=now, s=s_now, k=k, sigma_1m=sigma,
                     close_ts=close_ts, yes_bid=bid, yes_ask=ask,
