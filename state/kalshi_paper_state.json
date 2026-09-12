@@ -1,0 +1,42 @@
+{
+ "bankroll0": 250.0,
+ "cash": {
+  "shadow": 250.0,
+  "demo": 250.0,
+  "maker": 250.0,
+  "live": 250.0
+ },
+ "open": [],
+ "n_settled": 0,
+ "realized": {
+  "shadow": 0.0,
+  "demo": 0.0,
+  "maker": 0.0,
+  "live": 0.0
+ },
+ "fees": {
+  "shadow": 0.0,
+  "demo": 0.0,
+  "maker": 0.0,
+  "live": 0.0
+ },
+ "started": "2026-09-12T08:07:00Z",
+ "metals": [
+  "gold",
+  "silver",
+  "copper",
+  "wti",
+  "natgas"
+ ],
+ "strategy": "rich_fav",
+ "live": false,
+ "updated": "2026-09-12T08:08:34Z",
+ "day_stop": {
+  "date": "2026-09-12",
+  "start": {
+   "shadow": 250.0,
+   "maker": 250.0,
+   "live": 250.0
+  }
+ }
+}

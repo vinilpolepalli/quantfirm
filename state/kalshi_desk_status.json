@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T03:25:01Z",
+ "ts": "2026-09-12T08:08:34Z",
  "strategy": "rich_fav",
  "universe": [
   "gold",
@@ -9,41 +9,24 @@
   "natgas"
  ],
  "bankroll": 250.0,
- "live": true,
+ "live": false,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "down",
  "cash": {
-  "shadow": 220.13899999999998,
+  "shadow": 250.0,
   "demo": 250.0,
-  "maker": 251.64999999999998,
-  "live": 243.2654
+  "maker": 250.0,
+  "live": 250.0
  },
  "realized": {
-  "shadow": -20.89100000000001,
+  "shadow": 0.0,
   "demo": 0.0,
-  "maker": 1.6499999999999968,
-  "live": 2.1393999999999993
+  "maker": 0.0,
+  "live": 0.0
  },
- "n_open": 2,
- "open": [
-  {
-   "metal": "gold",
-   "side": "no",
-   "count": 10,
-   "ticker": "KXGOLD15M-26SEP112330-30",
-   "fill_price": 0.89,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "gold",
-   "side": "no",
-   "count": 10,
-   "ticker": "KXGOLD15M-26SEP112330-30",
-   "fill_price": 0.88,
-   "adapter": "live"
-  }
- ],
- "n_settled": 37,
- "updated": "2026-09-12T03:24:59Z",
- "started": "2026-09-12T00:46:58Z"
+ "n_open": 0,
+ "open": [],
+ "n_settled": 0,
+ "updated": "2026-09-12T08:08:34Z",
+ "started": "2026-09-12T08:07:00Z"
 }
