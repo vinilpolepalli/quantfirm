@@ -83,7 +83,9 @@ SOL/DOGE/XRP 15m were open on 2026-09-12. No harvested tape. Stay off.
 `desk_book` on **gold, silver, copper, WTI, natgas, btc, eth**:
 
 - commodities: existing `rich_fav` (8%, ≥60¢, until close, fee-eat)
-- **BTC and ETH: 4%, ≥60¢, until close, fee-eat, no longshots**
+- **BTC and ETH: 4% of the book each (~$9–10), ≥60¢, until close, fee-eat**
+- independent names — not a split of one 4% budget (the 4-lot 72¢
+  fills were quarter-Kelly leftovers, not a split)
 - clip every 15m window that has a real favorite; sit 50–58¢ coin-flips
 - both can be on in the same window
 - no `one_pct` / last-90s locks, no yolo 15–18%

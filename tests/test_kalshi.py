@@ -310,7 +310,7 @@ class TestNewStrategies(unittest.TestCase):
         after = favorite_blind(**{**kw, "ts": close + 1})
         self.assertIsNone(after)
 
-    def test_desk_book_crypto_is_smaller_and_sits_out_junk(self):
+    def test_desk_book_crypto_sizes_each_name_and_sits_junk(self):
         from dataclasses import replace
         spec = next(s for s in registry() if s.name == "desk_book")
         p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
@@ -325,7 +325,11 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(gold.side, "yes")
         self.assertEqual(btc.side, "yes")
         self.assertEqual(btc.tag, "crypto_fav")
-        self.assertGreater(gold.count, btc.count)
+        # Independent 4% cap (~$10) on BTC and ETH. Commodity Kelly at 80¢
+        # can print fewer lots than that — crypto is not a leftover split.
+        btc_stake = btc.count * btc.limit_price
+        self.assertGreaterEqual(btc_stake, 8.0)
+        self.assertLessEqual(btc_stake, 10.0)
         # Coin-flip sits. A 56¢ book is still a coin-flip. A 36¢ YES is a
         # 64¢ NO favorite — clip NO, do not buy the longshot. Both-sides
         # junk (5¢ / 97¢) sits via price_min + fee-eat.
@@ -344,7 +348,8 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIsNotNone(mid)
         self.assertEqual(mid.side, "yes")
         self.assertEqual(mid.tag, "crypto_fav")
-        self.assertLess(mid.count, gold.count)
+        self.assertGreaterEqual(mid.count * mid.limit_price, 8.0)
+        self.assertLessEqual(mid.count * mid.limit_price, 10.0)
         # Last 30s: both clip. 99¢ last ticks still sit out (fee-eat).
         late_gold = desk_book(**{**kw, "ts": close - 30}, metal="gold")
         late_btc = desk_book(**{**kw, "ts": close - 30}, metal="btc")
@@ -360,6 +365,11 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIsNotNone(eth)
         self.assertEqual(eth.tag, "crypto_fav")
         self.assertEqual(eth.count, btc.count)
+        at72 = desk_book(**{**kw, "yes_bid": 0.71, "yes_ask": 0.72},
+                         metal="btc")
+        self.assertIsNotNone(at72)
+        self.assertGreaterEqual(at72.count * 0.72, 8.0)
+        self.assertLessEqual(at72.count * 0.72, 10.0)
         cf = next(s for s in registry() if s.name == "crypto_fav")
         p2 = replace(cf.params, macro_blackout_et=())
         hit = crypto_fav(**{**kw, "params": p2})

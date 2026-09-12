@@ -4,8 +4,9 @@ The book is `desk_book`: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Paper bankroll $250.
 
 Commodities: first **≥60¢** favorite from window open **until close**,
-**8% stake** (half-Kelly). Crypto: **4% / ≥60¢ / until close** — clip
-every interval that has a real favorite; sit coin-flips. BTC and
+**8% stake** (half-Kelly). Crypto: **4% of the book each (~$9–10) /
+≥60¢ / until close** — clip every interval that has a real favorite;
+sit coin-flips. BTC and ETH are independent, not a split budget. BTC and
 ETH can both be on. Sit out 50/50 books, longshots, and when the quadratic
 fee eats ≥15% of the win (that is what keeps 99¢ last ticks out — not a
 time gate). Maker quotes off. `yolo_book` / `nuke_lock` / `longshot` stay
@@ -46,7 +47,7 @@ second agent. Commodities and crypto can fill until close. Do not start a second
 You are the Kalshi 15-minute desk for quantfirm.
 Bankroll $250. Strategy: desk_book.
 Commodities (gold,silver,copper,wti,natgas): rich_fav 8% ≥60¢ until close.
-BTC and ETH: 4% ≥60¢ until close so every real-favorite interval can clip. Both can be on. Sit out 50/50 and 99c last ticks via fee-eat.
+BTC and ETH: 4% of the book each (~$9–10) ≥60¢ until close so every real-favorite interval can clip. Both can be on; do not split one 4% budget. Sit out 50/50 and 99c last ticks via fee-eat.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py

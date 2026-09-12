@@ -29,12 +29,18 @@ from .universe import CRYPTO_LIVE
 
 
 def _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params, tag,
-          allow_min: bool = False) -> Intent | None:
+          allow_min: bool = False, fill_cap: bool = False) -> Intent | None:
     if cost <= 0 or cost >= 1:
         return None
-    all_in = cost + taker_fee(1, cost)
-    f = params.kelly_mult * kelly_fraction(q, all_in)
-    stake = min(max(f, 0.0), params.max_stake_frac) * bankroll
+    if fill_cap:
+        # Spend the stake cap (crypto: ~$10 each). Quarter-Kelly of a
+        # 3pp assumed edge collapses to 4 lots at 72¢; BTC and ETH are
+        # independent books, not a split budget.
+        stake = params.max_stake_frac * bankroll
+    else:
+        all_in = cost + taker_fee(1, cost)
+        f = params.kelly_mult * kelly_fraction(q, all_in)
+        stake = min(max(f, 0.0), params.max_stake_frac) * bankroll
     count = int(stake / cost)
     if count < params.min_count:
         # Structural signals (FLB / late lock) can have a thin assumed edge
@@ -104,7 +110,8 @@ def _fee_eats_payout(cost: float, max_fee_frac: float = 0.15,
 
 
 def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
-                   bankroll, open_positions, params, recent_volume=None, **_):
+                   bankroll, open_positions, params, recent_volume=None,
+                   fill_cap: bool = False, **_):
     """Buy the market favorite (side priced ≥ price_min) and hold.
 
     No model. Tests whether Whelan's favorite-longshot bias exists on
@@ -145,18 +152,17 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         return None
     side, cost, q, edge, fair = max(cands, key=lambda c: c[1])  # richer favorite
     return _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params,
-                 "favorite", allow_min=True)
+                 "favorite", allow_min=True, fill_cap=fill_cap)
 
 
 def crypto_params(base: Params) -> Params:
     """Chill crypto overlay: clip every window that has a real favorite.
 
-    Same FLB bar as commodities (≥60¢), half the stake (4%). ≥72¢ was
-    the greenest harvested sleeve but sat out 60–71¢ books — most
-    intervals. Coin-flips (50–58¢) and weekend longshots still sit.
-    Last-minute 90¢ *locks* lost (BTC touch −$55); that is not this
-    trade. 93¢+ stay out via fee-eat / price_max, not a last-2-min
-    clock. BTC and ETH can both be on.
+    Same FLB bar as commodities (≥60¢). Stake is 4% of the book
+    (~$9–10) **per name** — BTC and ETH are independent, not a split
+    of one 4% budget. Quarter-Kelly of a 3pp assumed edge was collapsing
+    72¢ clips to 4 lots (~$3). Coin-flips (50–58¢) and weekend
+    longshots still sit. 93¢+ stay out via fee-eat / price_max.
     """
     return replace(
         base,
@@ -178,7 +184,8 @@ def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     """Standalone BTC/ETH 15m FLB (for backtests). Same overlay as desk_book."""
     it = favorite_blind(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
-        bankroll, open_positions, params, recent_volume=recent_volume, **kw)
+        bankroll, open_positions, params, recent_volume=recent_volume,
+        fill_cap=True, **kw)
     if it is not None:
         it.tag = "crypto_fav"
     return it
@@ -190,14 +197,14 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
     Commodities keep 8% / ≥60¢ / until close. Crypto uses crypto_params
-    (4% / ≥60¢ / until close) so every real-favorite interval can clip.
-    Fee-eat still skips 93¢+ last ticks; coin-flips still sit.
+    (4% / ≥60¢ / until close, **$9–10 each** so BTC and ETH are not a
+    split budget). Fee-eat still skips 93¢+ last ticks; coin-flips sit.
     """
     if metal in CRYPTO_LIVE:
         it = favorite_blind(
             ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
             bankroll, open_positions, crypto_params(params),
-            recent_volume=recent_volume, **kw)
+            recent_volume=recent_volume, fill_cap=True, **kw)
         if it is not None:
             it.tag = "crypto_fav"
         return it
@@ -683,14 +690,14 @@ def registry() -> list[Spec]:
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.25,
                 signal_max_age_s=0),
              "lag",
-             "BTC/ETH 15m FLB ≥60¢ until close, 4% stake; sit coin-flip / fee-eat"),
+             "BTC/ETH 15m FLB ≥60¢ until close, 4% each (~$10), not a split"),
         Spec("desk_book", desk_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Commodities 8% ≥60¢ until close; BTC and ETH 4% ≥60¢ until close"),
+             "Commodities 8% ≥60¢; BTC and ETH 4% each (~$10) ≥60¢ until close"),
         Spec("model_fav", model_fav,
              _p(theta=0.03, tau_min_s=120, tau_max_s=360, price_min=0.80,
                 price_max=0.94, max_spread=0.06, max_open=6,
