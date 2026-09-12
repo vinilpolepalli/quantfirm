@@ -1,6 +1,130 @@
 # Kalshi 15-minute commodities desk — this pass
 
-Status: **LIVE canary 24/7**, $250. `desk_book` on five commodities + BTC.
+Status: **LIVE canary 24/7**, $250. `desk_book` on five commodities + BTC + ETH.
+
+## Setup
+
+Public market data needs **no credentials**. Real orders need a Kalshi
+API key plus an explicit live switch. Keys never go in git (`.gitignore`
+already covers `.env*` and `*.pem`).
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/vinilpolepalli/quantfirm.git && cd quantfirm
+pip install -r requirements.txt
+python -m unittest tests.test_kalshi -q
+```
+
+### 2. Kalshi account and API key
+
+1. Create / sign in at [kalshi.com](https://kalshi.com) (prod) or
+   [demo.kalshi.co](https://demo.kalshi.co) (fake money, order plumbing only).
+2. Complete KYC and fund the account if you want **prod** orders.
+3. Profile → **API keys** → create. Download the private key PEM **once**.
+4. Copy the example env file and fill it in:
+
+```bash
+cp .env.kalshi.example .env.kalshi
+```
+
+```
+# Paper/shadow: leave everything unset. Public books are enough.
+
+# Demo (fake money, real IOC path):
+# KALSHI_DEMO_KEY_ID=your-demo-key-id
+# KALSHI_DEMO_PRIVATE_KEY_PATH=/path/to/demo.pem
+
+# Prod (real money). Live orders also need KALSHI_LIVE=1 and no
+# state/KILL_SWITCH_KALSHI file.
+# KALSHI_PROD_KEY_ID=your-prod-key-id
+# KALSHI_PROD_PRIVATE_KEY_PATH=/path/to/prod.pem
+# KALSHI_LIVE=0
+```
+
+The PEM can also be the file body in `KALSHI_PROD_PRIVATE_KEY` (newlines
+or `\n` both work). Never print it. Never commit it.
+
+Check the venue without sending orders:
+
+```bash
+python -m quantfirm.kalshi.cli status
+```
+
+`prod: ... creds=YES` means the key signed. `balance:` is your Kalshi cash.
+`creds=no` is fine for paper.
+
+### 3. Paper first (no live orders)
+
+```bash
+python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
+  --strategy desk_book --bankroll 250 --log-decisions
+```
+
+Or the 24/7 supervisor, still paper if `KALSHI_LIVE` is unset:
+
+```bash
+./scripts/kalshi_paper_loop.sh
+```
+
+Default book: gold, silver, copper, WTI, natgas, BTC, ETH. Strategy:
+`desk_book` (commodities 8% ≥60¢ until close; BTC and ETH 4% of the book
+**each**, ~$9–10). Maker off. Kill switch: `touch state/KILL_SWITCH_KALSHI`.
+
+Heartbeat / heal (does not start a second agent if the supervisor is up):
+
+```bash
+python scripts/kalshi_desk_checkin.py
+python -m quantfirm.kalshi.cli heartbeat
+python -m quantfirm.kalshi.cli open-count
+```
+
+Optional data harvest (public API):
+
+```bash
+python scripts/kalshi_harvest.py --gzip
+```
+
+### 4. Live canary (real money)
+
+All of these must be true or the engine stays paper:
+
+1. `KALSHI_PROD_KEY_ID` + PEM in the process env (or `.env.kalshi`)
+2. `KALSHI_LIVE=1` in `.env.kalshi` or the environment
+3. `python -m quantfirm.kalshi.cli agent ... --live` (the supervisor adds
+   `--live` when `KALSHI_LIVE=1`)
+4. No file at `state/KILL_SWITCH_KALSHI`
+
+Then start **one** supervisor:
+
+```bash
+# .env.kalshi has KALSHI_LIVE=1
+nohup bash scripts/kalshi_paper_loop.sh >> state/kalshi_paper_loop.log 2>&1 &
+```
+
+Confirm: heartbeat shows `"live": true` and the agent argv has
+`--strategy desk_book --live`. Stop with
+`touch state/KILL_SWITCH_KALSHI` (orders halt; supervisor can keep
+running) or by stopping the supervisor pid in
+`state/kalshi_paper_loop.pid`. Do **not** `pkill -f` the agent string —
+that self-matches the heal shell.
+
+### 5. GitHub Actions backstop (optional)
+
+After this desk is on `main`, `.github/workflows/kalshi.yml` ticks four
+times an hour. Repo → Settings → Secrets:
+
+| Secret | Purpose |
+|---|---|
+| `KALSHI_PROD_KEY_ID` | prod API key id |
+| `KALSHI_PROD_PRIVATE_KEY` | PEM body (one line / `\n` OK) |
+| `KALSHI_LIVE` | set to `1` only if CI may send real orders |
+
+Leave `KALSHI_LIVE` unset on Actions if a persistent host already runs the
+24/7 loop — otherwise you get two live agents.
+
+24/7 heal prompts: `docs/KALSHI_ROUTINE.md`. Venue charter / fees:
+`docs/KALSHI.md`.
 
 ## What changed
 

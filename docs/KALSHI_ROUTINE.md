@@ -1,5 +1,7 @@
 # 24/7 Kalshi 15-minute desk — routines
 
+**First-time setup (account, API key, env, live switch):** `docs/KALSHI_15M.md`.
+
 The book is `desk_book`: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Paper bankroll $250.
 

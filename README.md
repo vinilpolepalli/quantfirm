@@ -42,7 +42,7 @@ Two desks:
 - `docs/IDEA_BACKLOG.md` — graded idea pipeline + the graveyard of dead ends
 - `docs/TOURNAMENT.md` / `docs/RESEARCH.md` — crypto desk verdict and findings
 - `docs/RUNBOOK.md` — go-live checklist, kill switch, incident playbook
-- `docs/KALSHI.md` / `docs/KALSHI_15M.md` — 15-minute commodity desk (paper)
+- `docs/KALSHI.md` / `docs/KALSHI_15M.md` — 15-minute Kalshi desk (live canary + **setup**)
 - `docs/PROCESS.md` — build log (how agents built this)
 
 ## Quick start (backtesting only — no credentials needed)
@@ -52,7 +52,13 @@ pip install -r requirements.txt
 python -m quantfirm.equities.cli list
 python -m quantfirm.equities.cli walkforward --strategy xsec_refined --split dev
 python tests/test_backtest.py
+python -m unittest tests.test_kalshi -q
 ```
+
+Kalshi 15-minute binaries (gold/silver/copper/WTI/natgas/BTC/ETH) also need
+**no credentials** to paper-trade public books. Account, API key,
+`.env.kalshi`, 24/7 supervisor, live switch, and kill switch:
+**[`docs/KALSHI_15M.md`](docs/KALSHI_15M.md)**.
 
 ---
 
@@ -191,7 +197,8 @@ reporting) and the documented process.
 5. **Wire the loops.** Scheduled agent sessions (Claude Routines or
    equivalent) for execution / risk / research / reporting, plus the
    GitHub Actions workflows for data. Prompts for each desk are recorded in
-   this repo's history and in `docs/RUNBOOK.md`.
+   this repo's history and in `docs/RUNBOOK.md`. Kalshi 15m setup (separate
+   venue, own keys, own kill switch) is `docs/KALSHI_15M.md`.
 6. **Seed the books** with `scripts/equity_rebalance.py record --init-cash N`
    only after the account is funded, then flip `enabled: true` — and only
    then, with the owner's explicit go-ahead.

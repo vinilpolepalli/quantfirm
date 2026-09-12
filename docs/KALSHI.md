@@ -1,6 +1,10 @@
 # KALSHI 15M METALS DESK — research charter & venue dossier
 
-Status: **PAPER** (shadow vs prod book + demo-env plumbing). No real money.
+**How to set up the running desk:** `docs/KALSHI_15M.md` (Setup section).
+This file is the venue charter and the original taker/maker research. The
+live book is `desk_book`, not the 2026-09-10 oracle taker below.
+
+Status of *this charter's* oracle taker: **PAPER / do not revive**.
 Built 2026-09-10 on branch `claude/kalshi-commodity-strategy-sr27jr`.
 
 ## 1. The instrument
