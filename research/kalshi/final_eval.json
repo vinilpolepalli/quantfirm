@@ -1,0 +1,263 @@
+{
+ "TEST (chosen, once)": {
+  "n_trades": 215,
+  "net_pnl": -57.01,
+  "return_pct": -11.4,
+  "hit_rate": 0.553,
+  "avg_pnl_per_trade": -0.265,
+  "daily_sharpe_ann": -0.57,
+  "max_drawdown_pct": 58.6,
+  "fees": 206.12,
+  "trading_days": 15,
+  "by_metal": {
+   "silver": {
+    "n": 107,
+    "pnl": -341.49,
+    "hit": 0.514
+   },
+   "gold": {
+    "n": 31,
+    "pnl": 376.35,
+    "hit": 0.774
+   },
+   "copper": {
+    "n": 77,
+    "pnl": -91.87,
+    "hit": 0.519
+   }
+  },
+  "by_week": {
+   "2026-W35": {
+    "n": 70,
+    "pnl": 358.81,
+    "hit": 0.657
+   },
+   "2026-W36": {
+    "n": 83,
+    "pnl": -370.18,
+    "hit": 0.482
+   },
+   "2026-W37": {
+    "n": 62,
+    "pnl": -45.64,
+    "hit": 0.532
+   }
+  },
+  "by_side": {
+   "yes": {
+    "n": 106,
+    "pnl": -121.47,
+    "hit": 0.557
+   },
+   "no": {
+    "n": 109,
+    "pnl": 64.46,
+    "hit": 0.55
+   }
+  },
+  "skipped": {
+   "no_underlying": 5701,
+   "concurrency": 220,
+   "corr_cap": 10,
+   "daily_stop": 11325,
+   "gapped_away": 3
+  }
+ },
+ "TEST stress slip+1c": {
+  "n_trades": 200,
+  "net_pnl": -119.51,
+  "return_pct": -23.9,
+  "hit_rate": 0.555,
+  "avg_pnl_per_trade": -0.598,
+  "daily_sharpe_ann": -1.51,
+  "max_drawdown_pct": 66.06,
+  "fees": 159.65,
+  "trading_days": 15,
+  "by_metal": {
+   "silver": {
+    "n": 95,
+    "pnl": -90.49,
+    "hit": 0.547
+   },
+   "gold": {
+    "n": 22,
+    "pnl": 169.53,
+    "hit": 0.727
+   },
+   "copper": {
+    "n": 83,
+    "pnl": -198.55,
+    "hit": 0.518
+   }
+  },
+  "by_week": {
+   "2026-W35": {
+    "n": 58,
+    "pnl": 238.35,
+    "hit": 0.655
+   },
+   "2026-W36": {
+    "n": 77,
+    "pnl": -387.5,
+    "hit": 0.468
+   },
+   "2026-W37": {
+    "n": 65,
+    "pnl": 29.64,
+    "hit": 0.569
+   }
+  },
+  "by_side": {
+   "yes": {
+    "n": 93,
+    "pnl": -73.59,
+    "hit": 0.57
+   },
+   "no": {
+    "n": 107,
+    "pnl": -45.92,
+    "hit": 0.542
+   }
+  },
+  "skipped": {
+   "no_underlying": 5589,
+   "concurrency": 164,
+   "corr_cap": 11,
+   "daily_stop": 9729,
+   "gapped_away": 2
+  }
+ },
+ "TRAIN (chosen)": {
+  "n_trades": 213,
+  "net_pnl": 604.37,
+  "return_pct": 120.87,
+  "hit_rate": 0.61,
+  "avg_pnl_per_trade": 2.837,
+  "daily_sharpe_ann": 5.65,
+  "max_drawdown_pct": 36.77,
+  "fees": 265.39,
+  "trading_days": 14,
+  "by_metal": {
+   "silver": {
+    "n": 129,
+    "pnl": 990.78,
+    "hit": 0.643
+   },
+   "gold": {
+    "n": 84,
+    "pnl": -386.41,
+    "hit": 0.56
+   }
+  },
+  "by_week": {
+   "2026-W33": {
+    "n": 52,
+    "pnl": 282.84,
+    "hit": 0.673
+   },
+   "2026-W34": {
+    "n": 105,
+    "pnl": 45.82,
+    "hit": 0.6
+   },
+   "2026-W35": {
+    "n": 56,
+    "pnl": 275.71,
+    "hit": 0.571
+   }
+  },
+  "by_side": {
+   "yes": {
+    "n": 95,
+    "pnl": -79.82,
+    "hit": 0.558
+   },
+   "no": {
+    "n": 118,
+    "pnl": 684.19,
+    "hit": 0.653
+   }
+  },
+  "skipped": {
+   "no_underlying": 17317,
+   "corr_cap": 51,
+   "concurrency": 46,
+   "daily_stop": 4116,
+   "gapped_away": 1
+  }
+ },
+ "FULL (chosen)": {
+  "n_trades": 428,
+  "net_pnl": 480.35,
+  "return_pct": 96.07,
+  "hit_rate": 0.582,
+  "avg_pnl_per_trade": 1.122,
+  "daily_sharpe_ann": 1.37,
+  "max_drawdown_pct": 58.74,
+  "fees": 722.95,
+  "trading_days": 29,
+  "by_metal": {
+   "silver": {
+    "n": 236,
+    "pnl": 234.87,
+    "hit": 0.585
+   },
+   "gold": {
+    "n": 115,
+    "pnl": 451.83,
+    "hit": 0.617
+   },
+   "copper": {
+    "n": 77,
+    "pnl": -206.35,
+    "hit": 0.519
+   }
+  },
+  "by_week": {
+   "2026-W33": {
+    "n": 52,
+    "pnl": 282.84,
+    "hit": 0.673
+   },
+   "2026-W34": {
+    "n": 105,
+    "pnl": 45.82,
+    "hit": 0.6
+   },
+   "2026-W35": {
+    "n": 126,
+    "pnl": 1077.72,
+    "hit": 0.619
+   },
+   "2026-W36": {
+    "n": 83,
+    "pnl": -826.1,
+    "hit": 0.482
+   },
+   "2026-W37": {
+    "n": 62,
+    "pnl": -99.93,
+    "hit": 0.532
+   }
+  },
+  "by_side": {
+   "yes": {
+    "n": 201,
+    "pnl": -349.8,
+    "hit": 0.557
+   },
+   "no": {
+    "n": 227,
+    "pnl": 830.15,
+    "hit": 0.604
+   }
+  },
+  "skipped": {
+   "no_underlying": 23009,
+   "corr_cap": 61,
+   "concurrency": 266,
+   "daily_stop": 15441,
+   "gapped_away": 4
+  }
+ }
+}

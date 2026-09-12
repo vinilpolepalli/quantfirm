@@ -1,0 +1,146 @@
+{
+ "folds": [
+  {
+   "trade_week": 35,
+   "chosen": {
+    "theta": 0.05,
+    "vol_halflife_min": 60.0,
+    "tau_min_s": 300,
+    "tau_max_s": 600,
+    "price_min": 0.15,
+    "price_max": 0.85,
+    "flow_gate": "off",
+    "n": 188,
+    "pnl": 536.52,
+    "hit": 0.457,
+    "mdd": 48.65,
+    "by_week": {
+     "2026-W33": 1067.38,
+     "2026-W34": -530.86
+    },
+    "by_tag": {
+     "mixed": 91.49,
+     "flow": 274.84,
+     "stale": 170.19
+    }
+   },
+   "oos": {
+    "theta": 0.05,
+    "vol_halflife_min": 60.0,
+    "tau_min_s": 300,
+    "tau_max_s": 600,
+    "price_min": 0.15,
+    "price_max": 0.85,
+    "flow_gate": "off",
+    "n": 137,
+    "pnl": -129.82,
+    "hit": 0.409,
+    "mdd": 38.83,
+    "by_week": {
+     "2026-W35": -129.82
+    },
+    "by_tag": {
+     "mixed": -118.21,
+     "flow": -18.89,
+     "stale": 7.28
+    }
+   }
+  },
+  {
+   "trade_week": 36,
+   "chosen": {
+    "theta": 0.07,
+    "vol_halflife_min": 30.0,
+    "tau_min_s": 120,
+    "tau_max_s": 600,
+    "price_min": 0.35,
+    "price_max": 0.92,
+    "flow_gate": "off",
+    "n": 283,
+    "pnl": 1406.38,
+    "hit": 0.622,
+    "mdd": 36.77,
+    "by_week": {
+     "2026-W33": 282.84,
+     "2026-W34": 45.82,
+     "2026-W35": 1077.72
+    },
+    "by_tag": {
+     "mixed": 1135.93,
+     "flow": 61.29,
+     "stale": 209.16
+    }
+   },
+   "oos": {
+    "theta": 0.07,
+    "vol_halflife_min": 30.0,
+    "tau_min_s": 120,
+    "tau_max_s": 600,
+    "price_min": 0.35,
+    "price_max": 0.92,
+    "flow_gate": "off",
+    "n": 83,
+    "pnl": -215.71,
+    "hit": 0.482,
+    "mdd": 43.14,
+    "by_week": {
+     "2026-W36": -215.71
+    },
+    "by_tag": {
+     "mixed": -176.58,
+     "stale": -51.65,
+     "flow": 12.52
+    }
+   }
+  },
+  {
+   "trade_week": 37,
+   "chosen": {
+    "theta": 0.07,
+    "vol_halflife_min": 30.0,
+    "tau_min_s": 300,
+    "tau_max_s": 600,
+    "price_min": 0.35,
+    "price_max": 0.92,
+    "flow_gate": "off",
+    "n": 348,
+    "pnl": 1658.94,
+    "hit": 0.612,
+    "mdd": 36.56,
+    "by_week": {
+     "2026-W33": 269.25,
+     "2026-W34": -109.27,
+     "2026-W35": 982.29,
+     "2026-W36": 516.67
+    },
+    "by_tag": {
+     "mixed": 1445.99,
+     "flow": -9.57,
+     "stale": 222.52
+    }
+   },
+   "oos": {
+    "theta": 0.07,
+    "vol_halflife_min": 30.0,
+    "tau_min_s": 300,
+    "tau_max_s": 600,
+    "price_min": 0.35,
+    "price_max": 0.92,
+    "flow_gate": "off",
+    "n": 44,
+    "pnl": 95.09,
+    "hit": 0.591,
+    "mdd": 18.66,
+    "by_week": {
+     "2026-W37": 95.09
+    },
+    "by_tag": {
+     "mixed": 89.25,
+     "stale": 5.84
+    }
+   }
+  }
+ ],
+ "grid_size": 384,
+ "oos_total_pnl": -250.44
+}
