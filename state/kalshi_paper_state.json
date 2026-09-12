@@ -26,11 +26,13 @@
   "silver",
   "copper",
   "wti",
-  "natgas"
+  "natgas",
+  "btc",
+  "eth"
  ],
- "strategy": "rich_fav",
+ "strategy": "desk_book",
  "live": false,
- "updated": "2026-09-12T08:08:34Z",
+ "updated": "2026-09-12T12:15:24Z",
  "day_stop": {
   "date": "2026-09-12",
   "start": {
