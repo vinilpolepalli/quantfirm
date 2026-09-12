@@ -152,7 +152,7 @@ class TestNewStrategies(unittest.TestCase):
         names = {s.name for s in registry()}
         for n in ("ctrl_always_yes", "oracle_lag", "late_lock",
                   "favorite_blind", "open_fade", "spot_lock", "mid_lock",
-                  "rich_fav", "model_fav"):
+                  "rich_fav", "model_fav", "offhours_lock"):
             self.assertIn(n, names)
 
     def test_universe_covers_wti(self):
@@ -174,7 +174,14 @@ class TestNewStrategies(unittest.TestCase):
         self.assertLessEqual(spec.params.tau_max_s, 90)
         self.assertGreaterEqual(spec.params.max_open, 6)
 
-    def test_spot_lock_is_live_book(self):
+    def test_rich_fav_is_live_book(self):
+        spec = next(s for s in registry() if s.name == "rich_fav")
+        self.assertEqual(spec.params.price_min, 0.88)
+        self.assertLessEqual(spec.params.price_max, 0.94)
+        self.assertGreaterEqual(spec.params.tau_min_s, 180)
+        self.assertGreaterEqual(spec.params.tau_max_s, 600)
+
+    def test_spot_lock_is_registered_spot_agree(self):
         spec = next(s for s in registry() if s.name == "spot_lock")
         self.assertEqual(spec.params.price_min, 0.88)
         self.assertGreaterEqual(spec.params.tau_min_s, 180)
@@ -277,6 +284,42 @@ class TestDiversifyAndHalt(unittest.TestCase):
             self.assertEqual(rec["open"][0]["metal"], "gold")
             with open(status) as f:
                 self.assertEqual(json.load(f)["n_open"], 1)
+
+    def test_heartbeat_prefers_state_metals(self):
+        from quantfirm.kalshi.runtime import write_desk_status
+        with tempfile.TemporaryDirectory() as tmp:
+            state = os.path.join(tmp, "s.json")
+            status = os.path.join(tmp, "h.json")
+            with open(state, "w") as f:
+                json.dump({
+                    "strategy": "spot_lock",
+                    "metals": ["gold", "silver", "copper", "wti", "natgas"],
+                    "cash": {"shadow": 247.0},
+                    "open": [],
+                }, f)
+            rec = write_desk_status(supervisor="supervisor: alive",
+                                    state_path=state, status_path=status)
+            self.assertEqual(
+                rec["universe"], ["gold", "silver", "copper", "wti", "natgas"])
+            self.assertEqual(rec["strategy"], "spot_lock")
+
+    def test_offhours_lock_sits_out_london_ny(self):
+        from datetime import datetime, timezone
+        from dataclasses import replace
+        from quantfirm.kalshi.strategies import offhours_lock
+        p = next(s for s in registry() if s.name == "offhours_lock").params
+        p = replace(p, macro_blackout_et=(), min_recent_volume=0.0)
+        close_off = int(datetime(2026, 9, 1, 2, 4, tzinfo=timezone.utc).timestamp())
+        ts_off = close_off - 240
+        kw = dict(ticker="T", ts=ts_off, s=100.2, k=100.0, sigma_1m=0.0005,
+                  close_ts=close_off, yes_bid=0.90, yes_ask=0.91, bankroll=250.0,
+                  open_positions=0, params=p, recent_volume=200)
+        it = offhours_lock(**kw)
+        self.assertIsNotNone(it)
+        self.assertEqual(it.tag, "offhours")
+        close_liq = int(datetime(2026, 9, 1, 15, 4, tzinfo=timezone.utc).timestamp())
+        it_liq = offhours_lock(**{**kw, "ts": close_liq - 240, "close_ts": close_liq})
+        self.assertIsNone(it_liq)
 
     def test_langgraph_desk_compiles(self):
         from quantfirm.kalshi.agent import build_desk

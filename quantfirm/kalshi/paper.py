@@ -113,7 +113,8 @@ class PaperEngine:
                  use_demo: bool = True, bankroll0: float = BANKROLL,
                  maker: bool = True, maker_margin: float = 0.04,
                  maker_fade: float = 0.02, decide_fn=None,
-                 tape_path: str | None = None, live: bool = False):
+                 tape_path: str | None = None, live: bool = False,
+                 strategy: str | None = None):
         from .feeds import KalshiLiveFeed, SwissquoteFeed
         self.params = params
         self.metals = metals
@@ -144,6 +145,10 @@ class PaperEngine:
                 self._fallback[metal] = SwissquoteFeed("XAG")
         self.vol = {m: VolEstimator(halflife_min=params.vol_halflife_min,
                                     diurnal=params.diurnal) for m in metals}
+        self.state.d["metals"] = list(metals)
+        if strategy:
+            self.state.d["strategy"] = strategy
+        self.state.save()
         self._last_1m: dict[str, tuple[int, float]] = {}
         self._mkt_cache: dict[str, dict] = {}
         self._mkt_cache_ts: dict[str, float] = {}

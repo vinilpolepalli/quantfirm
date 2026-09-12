@@ -37,14 +37,16 @@ note that metals go dark Sat 04:00Z is stale — treat the API as truth).
 Fees unchanged: quadratic taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
 Default paper book: **gold, silver, copper, WTI, natgas**.
-Live strategy: **`spot_lock`** — first 88–94¢ favorite whose spot already
-agrees, 3–11 minutes left. Maker off. BTC/ETH stay in the harvest
-universe; they lost on last-week lag locks.
+Live strategy: **`rich_fav`** — first 88–94¢ favorite, 3–11 minutes left,
+no spot-agree gate (that gate did not help lag P&L). Maker off. BTC/ETH
+stay in the harvest universe; they lost on last-week lag locks.
 
-`one_pct` (last 90s) remains registered. Live paper went 7/7 on 12 Sep
-but the 1-min lag backtest is empty (`raced_out`). That is a speed
-experiment, not a candle-confirmed edge. Iteration notes:
-`research/kalshi_iterate.md`.
+`spot_lock` (same prices with a spot-agree gate) and `offhours_lock`
+(sit out 12:00–21:00 UTC) stay registered. Off-hours was green on train
+(t=1.18) and died on test. `one_pct` (last 90s) remains registered. Live
+paper went 7/7 on 12 Sep but the 1-min lag backtest is empty
+(`raced_out`). That is a speed experiment, not a candle-confirmed edge.
+Iteration notes: `research/kalshi_iterate.md`.
 
 A 99¢ last-tick book cannot deliver 1% of bankroll without putting nearly
 all of it at risk, so we skip those too.
@@ -95,8 +97,8 @@ python -m quantfirm.kalshi.cli tournament --data data/kalshi --bankroll 250
 python -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
     --fill-mode lag --bankroll 250
 python -m quantfirm.kalshi.cli paper --minutes 60 --no-demo --no-maker \
-    --strategy spot_lock --bankroll 250 --log-decisions
-./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, commodities + BTC/ETH
+    --strategy rich_fav --bankroll 250 --log-decisions
+./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities
 python scripts/kalshi_desk_checkin.py   # heal + commit heartbeat
 ```
 

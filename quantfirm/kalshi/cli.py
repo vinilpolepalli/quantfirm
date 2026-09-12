@@ -228,7 +228,8 @@ def cmd_paper(a):
         bankroll0=a.bankroll,
         maker=not a.no_maker,
         live=getattr(a, "live", False),
-        decide_fn=decide_fn)
+        decide_fn=decide_fn,
+        strategy=a.strategy)
     eng.run(minutes=a.minutes, poll_s=a.poll)
 
 
@@ -240,7 +241,7 @@ def cmd_agent(a):
     from .paper import PaperEngine
     from .strategies import registry
     specs = {s.name: s for s in registry()}
-    spec = specs.get(a.strategy) or specs["spot_lock"]
+    spec = specs.get(a.strategy) or specs["rich_fav"]
     p = spec.params
     n_assets = len(a.metals.split(","))
     if n_assets > p.max_open:
@@ -259,7 +260,8 @@ def cmd_agent(a):
         bankroll0=a.bankroll,
         maker=not a.no_maker,
         live=a.live,
-        decide_fn=spec.fn)
+        decide_fn=spec.fn,
+        strategy=spec.name)
     from .universe import YF_SYMBOLS
     for metal in eng.metals:
         if metal in eng.feeds and metal in YF_SYMBOLS:
@@ -388,7 +390,7 @@ def main():
     sp.add_argument("--minutes", type=float, default=60.0)
     sp.add_argument("--poll", type=float, default=2.0)
     sp.add_argument("--metals", default="gold,silver,copper,wti,natgas")
-    sp.add_argument("--strategy", default="spot_lock",
+    sp.add_argument("--strategy", default="rich_fav",
                     help="taker strategy name from strategies.registry()")
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
@@ -402,7 +404,7 @@ def main():
     sp.add_argument("--minutes", type=float, default=60.0)
     sp.add_argument("--poll", type=float, default=2.0)
     sp.add_argument("--metals", default="gold,silver,copper,wti,natgas")
-    sp.add_argument("--strategy", default="spot_lock")
+    sp.add_argument("--strategy", default="rich_fav")
     sp.add_argument("--no-demo", action="store_true")
     sp.add_argument("--no-maker", action="store_true")
     sp.add_argument("--live", action="store_true")

@@ -1,8 +1,8 @@
 # 24/7 Kalshi 15-minute desk — routines
 
-The book is `spot_lock` on **gold, silver, copper, WTI, natgas**.
+The book is `rich_fav` on **gold, silver, copper, WTI, natgas**.
 Paper bankroll $250. Sit out 50/50 books; take the first 88–94¢ favorite
-whose spot already agrees, 3–11 minutes before close. Maker quotes off.
+(no spot-agree gate), 3–11 minutes before close. Maker quotes off.
 BTC/ETH are harvested for research but not in this paper book (lag-fill
 locks lost on crypto last week).
 
@@ -39,24 +39,23 @@ in the last 90 seconds.
 
 ```
 You are the Kalshi 15-minute desk for quantfirm.
-Bankroll $250. Strategy: spot_lock. Universe: gold,silver,copper,wti,natgas.
+Bankroll $250. Strategy: rich_fav. Universe: gold,silver,copper,wti,natgas.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py
-3. python -m quantfirm.kalshi.cli status
-4. If the supervisor is not already running a long session, run:
-   python -m quantfirm.kalshi.cli agent --minutes 13 --poll 2 --no-demo --no-maker \
-     --log-decisions --strategy spot_lock --bankroll 250 \
-     --metals gold,silver,copper,wti,natgas
-   Add --live ONLY if KALSHI_LIVE=1 is set and the owner enabled live.
-5. Reply with: open windows, fills, shadow cash, realized, any halt.
+3. python -m quantfirm.kalshi.cli heartbeat
+4. Confirm the supervisor pidfile (state/kalshi_paper_loop.pid) is alive.
+   Heal with checkin only. Do NOT start a second agent.
+5. Reply with: open windows, fills this window, shadow cash, realized,
+   strategy name, universe, any halt.
 
 Do not buy 72c favorites. Do not buy 99c last ticks. Do not change params.
+Do not enable live. KALSHI_LIVE must stay unset.
 ```
 
 ## 4. GitHub backstop
 
 `.github/workflows/kalshi.yml` at `:05/:20/:35/:50` UTC after merge to
-`main` (minute 5 of each window). Same `spot_lock` command, `--no-maker`.
+`main` (minute 5 of each window). Same `rich_fav` command, `--no-maker`.
 
 Kill switch: `touch state/KILL_SWITCH_KALSHI`

@@ -16,7 +16,7 @@ Drop the key as:
 
     export KALSHI_PROD_KEY_ID=...
     export KALSHI_PROD_PRIVATE_KEY="$(cat kalshi.pem)"   # or _PATH=
-    python -m quantfirm.kalshi.cli agent --minutes 60 --strategy spot_lock
+    python -m quantfirm.kalshi.cli agent --minutes 60 --strategy rich_fav
 """
 
 from __future__ import annotations

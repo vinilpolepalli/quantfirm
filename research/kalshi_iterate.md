@@ -2,6 +2,9 @@
 
 Goal: a taker that is green on **lag-fill backtest** *and* live paper.
 Bankroll $250. Fill headline is always **lag**. Touch is a ceiling.
+Tournament gate: test n≥30, pnl>0, t≥1.5, max DD≤30%, beat controls.
+
+Nothing on this page is a go-live. `KALSHI_LIVE` stays unset.
 
 ## What we already knew
 
@@ -10,64 +13,108 @@ P&L is the race REST is not supposed to win. Write-up:
 `research/kalshi_one_pct_week.md`.
 
 Live paper nevertheless filled 7/7 one_pct trades on 12 Sep
-(+~$7.3, cash **$258** after the 01:45Z window). Poll is 2s, not 60s, so
-the candle lag model is too harsh for that book. 7 trades is not a
-strategy. It is a speed experiment.
+(+~$7.3). Poll is 2s, not 60s, so the candle lag model is too harsh for
+that book. 7 trades is a speed experiment, not a strategy.
 
-## Train-only scan (before 2026-08-27)
+## Train-only scan (close < 2026-08-27)
 
 Last-minute (τ=60) 90–97¢: 99% contested, lag n≈5, EV negative.
 
 Positive lag-EV cells with n_lag≥30 were **88–94¢ favorites with 3–10
-minutes left** (τ=240 and τ=600). That finding is frozen into:
+minutes left** (τ=240 and τ=600). Frozen into:
 
 | name | rule |
 |---|---|
 | `mid_lock` | `one_pct` fn, τ 180–300, 88–94¢, spot-agree |
 | `spot_lock` | `one_pct` fn, τ 180–660, 88–94¢, spot-agree |
-| `rich_fav` | FLB 88–94¢, no spot gate |
-| `model_fav` | GBM ≥88% **and** book already 80–94¢ (train late_lock lost on 22–70¢ “certain” fills) |
+| `rich_fav` | FLB 88–94¢, **no** spot gate |
+| `model_fav` | GBM ≥88% **and** book already 80–94¢ |
+| `offhours_lock` | `spot_lock` sitting out 12:00–21:00 UTC |
 
-## Lag-fill scoreboard ($250)
+### Second train scan (sequential first-fill, 1-contract, 2026-09-12)
+
+Pooled minute-cells overstate n. Sequential first-fill of 88–94¢
+spot-agree, τ 3–11 min:
+
+- Overall: n=192, hit 83.9%, t=−0.12 (matches `spot_lock` train).
+- London/NY 12:00–21:00 UTC: n=93, hit 79.6%, t=−1.14.
+- Complementary 21:00–12:00 UTC: n=99, hit 87.9%, t=+1.18, gold and
+  silver both green, same sign in train weeks 34 and 35. Week 33
+  (thin books) was red everywhere.
+- Persistence, displacement, and GBM gates did **not** help.
+- Fading the 88–94¢ favorite (buy the longshot) lag-fills at ~4% hit
+  (winner's curse) and is a hard loser.
+
+`offhours_lock` freezes the hour split from that scan. Do not retune
+the window from test.
+
+Reproduce the scan (train only — passing test is a protocol break):
+
+```bash
+python3 scripts/kalshi_train_lock_scan.py --data data/kalshi
+```
+
+## Lag-fill scoreboard ($250, official engine)
 
 | strategy | universe | train n / pnl / t | TEST n / pnl / t / hit / dd | last 7d n / pnl / t |
 |---|---|---|---|---|
 | `one_pct` | 7 series | 4 / −5 / −2.3 | 5 / −4 / −1.4 / 0% | 3 / −3 / −1.1 |
-| `mid_lock` | 7 series | 48 / −10 / −0.4 | 142 / −42 / −0.9 / 77% / 28% | 61 / −18 / −0.6 |
-| `spot_lock` | 7 series | 166 / −5 / −0.1 | 449 / **+117** / 1.12 / 85% / 23% | 212 / +24 / 0.43 |
-| `spot_lock` | **5 commodities** | 166 / −5 / −0.1 | 337 / **+96** / 1.12 / 86% / 23% | **148 / +33 / 0.67** |
+| `mid_lock` | 7 series | 48 / −10 / −0.4 | 142 / −42 / −0.9 | 61 / −18 / −0.6 |
+| `spot_lock` | 7 series | 166 / −5 / −0.1 | 449 / +117 / 1.12 / 85% / 23% | 212 / +24 / 0.43 |
+| `spot_lock` | **5 commodities** | 166 / −5 / −0.1 | 337 / +96 / 1.12 / 86% / 23% | 148 / +33 / 0.67 |
 | `rich_fav` | 7 series | 167 / −3 / −0.1 | 483 / +123 / 1.14 / 85% / 24% | 225 / +27 / 0.45 |
-| `model_fav` | 7 series | 9 / −18 / −1.0 | **43 / +70 / 2.69 / 93% / 4.4%** | 12 / +1 / 0.09 |
+| `rich_fav` | **5 commodities** | 167 / −3 / −0.1 | 368 / **+130** / **1.42** / 87% / 22% | **158 / +55 / 1.06** |
+| `offhours_lock` | 7 series | 87 / **+38** / **1.18** / 87% / 11% | 281 / +14 / 0.20 / 84% / 29% | 126 / +21 / 0.46 |
+| `offhours_lock` | 5 commodities | 87 / +38 / 1.18 | 210 / **−6** / −0.1 / 84% / 31% | 88 / +24 / 0.66 |
+| `model_fav` | 7 series | 9 / −18 / −1.0 | 43 / +70 / 2.69 / 93% / 4.4% | 12 / +1 / 0.09 |
 | `late_lock` | 7 series | 11 / −32 / −0.9 | 49 / +181 / 2.35 / 88% / 16% | 16 / +9 / 0.22 |
+| `late_lock` | 5 commodities | 11 / −32 / −0.9 | 34 / +163 / 3.07 / 91% / 8% | 9 / +20 / 0.71 |
 | `favorite_div` | 7 series | 441 / +40 / 0.63 | 1283 / +64 / 0.50 / 73% / 31% | 491 / +25 / 0.32 |
+| `favorite_div` | 5 commodities | 441 / +40 / 0.63 | 977 / +137 / 1.05 / 74% / 24% | 349 / +48 / 0.66 |
+| `favorite_blind` | 5 commodities | 342 / −21 / −0.3 | 571 / +27 / 0.24 / 74% / 35% | 259 / +68 / 0.75 |
 
-Tournament gate (test n≥30, pnl>0, t≥1.5, dd≤30): **`model_fav` and
-`late_lock` now clear TEST** after energy/crypto were added. Train n is
-still <30 and red. Last week is too thin to trust. Do not promote.
+### Reading
 
-`spot_lock` on the five commodities is the only book with **n>100 on last
-week**, positive lag P&L, and a flat (not disastrous) train. t=0.67 is
-**not** super-effective. It is the next measurement.
+`offhours_lock` is the cautionary tale for this pass. Train t=1.18 was
+the only sequential cell above 1.0 with n≥80. Test 5-commodity is red
+(gold overnight still dies; natgas off-hours −$23). **Do not paper it.
+Do not retune 12:00–21:00 from test.**
 
-Crypto 15m lag locks lost last week (BTC −$15 on `spot_lock`). They stay
-out of the paper book.
+`model_fav` / `late_lock` still clear the **test** t≥1.5 gate after
+energy was added. Train n<30 and red. Last week is too thin. Do not
+promote.
 
-## Paper switch (12 Sep ~01:50Z)
+`rich_fav` on the five commodities is the best **n>100** book: last week
+t=1.06 / +$55, test t=1.42 / +$130, train flat (not disastrous). t=1.42 is
+**not** the tournament gate. Gold is still the drag (test −$56, last
+week −$23). Copper + natgas carry it. Dropping gold would be a test-set
+edit — gold was *green* in train — so it stays in the paper universe.
 
-Previous live book `one_pct` + BTC/ETH: 7/7, +~$7, still paper.
-New live book: **`spot_lock`**, metals **gold,silver,copper,wti,natgas**,
-`--no-maker`, no `--live`.
+Crypto 15m lag locks lost last week. They stay out of the paper book.
 
-This is not a claim of edge. It is the first lag-fill-compatible trial
-with enough expected fills that a few days of paper can move the t-stat.
+## Paper (12 Sep)
+
+| window close | tag | fills | note |
+|---|---|---|---|
+| 01:00Z | `favorite` (72¢ FLB) | mixed | old book |
+| 01:15–01:45Z | `one_pct` | **7/7, +~$7.3** | 2s poll; lag backtest empty |
+| 02:00Z | `spot_lock` | copper NO 11@92¢ **+$0.82**, WTI NO 11@88¢ **+$1.23** | first lag-compatible fills |
+| ~02:10Z | switch to **`rich_fav`** | same 88–94¢ window, no spot gate | measurement, not a claim |
+
+Shadow cash at 02:06Z: **$250.33**. Realized taker **+$10.10** (n=18
+settled shadow rows including the old books). Maker leftover +$1.65
+(maker is off). Kill switch off. No `--live`.
+
+The 7/7 last-minute tape and the 2/2 `spot_lock` tape are **not** a
+strategy. They are hours.
 
 ## Reproduce
 
 ```bash
 python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \
-  --strategy spot_lock --fill-mode lag --split test --bankroll 250
+  --strategy rich_fav --fill-mode lag --split test --bankroll 250
 python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \
-  --strategy spot_lock --fill-mode lag --since 2026-09-05T00:00:00Z
+  --strategy rich_fav --fill-mode lag --since 2026-09-05T00:00:00Z
 python3 -m quantfirm.kalshi.cli backtest --data data/kalshi \
-  --strategy model_fav --fill-mode lag --split test --bankroll 250
+  --strategy offhours_lock --fill-mode lag --split test --bankroll 250
 ```

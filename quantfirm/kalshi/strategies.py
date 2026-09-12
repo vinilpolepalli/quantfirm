@@ -137,8 +137,33 @@ def _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag,
                   tag=tag, tau_s=tau_s)
 
 
+def offhours_lock(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                  bankroll, open_positions, params, recent_volume=None, **kw):
+    """spot_lock that sits out London/NY metals hours.
+
+    Train-only lock scan (close < 2026-08-27): sequential first-fill 88–94¢
+    spot-agree locks were flat overall (n=192, t=−0.12) but split hard by
+    session. 12:00–21:00 UTC (London open through COMEX/NY) hit 79.6% and
+    lost (n=93, t=−1.14). The complementary 21:00–12:00 UTC book hit 87.9%
+    (n=99, t=+1.18) with gold and silver both green, and the same sign in
+    train weeks 34 and 35. Week 33 (thin books) was red everywhere.
+
+    Prior: informed 15-minute flow lives in COMEX/London hours, so an
+    88–94¢ favorite there is often about to reverse. Off-hours the same
+    quote is inventory; lag-fillable locks stick. Do not retune the hour
+    window from test.
+    """
+    hour = datetime.fromtimestamp(ts, tz=timezone.utc).hour
+    if 12 <= hour < 21:
+        return None
+    return one_pct(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
+                    bankroll, open_positions, params,
+                    recent_volume=recent_volume, tag="offhours", **kw)
+
+
 def one_pct(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
-            bankroll, open_positions, params, recent_volume=None, **_):
+            bankroll, open_positions, params, recent_volume=None, tag="one_pct",
+            **_):
     """Last-minute ≥90¢ lock, sized for ~1% of bankroll on a win.
 
     Sit out 50/50 books. Wait until the last ~90 seconds when one side is
@@ -163,7 +188,7 @@ def one_pct(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     if not cands:
         return None
     side, cost, fair = max(cands, key=lambda c: c[1])
-    return _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, "one_pct")
+    return _size_lock(ticker, side, cost, fair, tau_s, bankroll, params, tag)
 
 
 def favorite_confirmed(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -475,6 +500,12 @@ def registry() -> list[Spec]:
                 max_spread=0.04, min_recent_volume=40.0),
              "lag",
              "Spot-agree 88–94¢ lock, first chance from 11 min to 3 min left"),
+        Spec("offhours_lock", offhours_lock,
+             _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
+                theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
+                max_spread=0.04, min_recent_volume=40.0),
+             "lag",
+             "spot_lock sitting out 12:00-21:00 UTC (London/NY metals hours)"),
         Spec("rich_fav", favorite_blind,
              _p(tau_min_s=180, tau_max_s=660, price_min=0.88, price_max=0.94,
                 theta=0.0, max_open=6, max_stake_frac=0.04, min_count=4,
