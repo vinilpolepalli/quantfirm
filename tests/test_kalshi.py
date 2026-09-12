@@ -381,7 +381,7 @@ class TestNewStrategies(unittest.TestCase):
         late_cf = crypto_fav(**{**kw, "params": p2, "ts": close - 30})
         self.assertIsNotNone(late_cf)
 
-    def test_desk_book_crypto_waits_then_poly_confirms(self):
+    def test_desk_book_waits_then_crypto_poly_confirms(self):
         from dataclasses import replace
         from quantfirm.kalshi.strategies import CRYPTO_OPEN_WAIT_S
         spec = next(s for s in registry() if s.name == "desk_book")
@@ -393,7 +393,8 @@ class TestNewStrategies(unittest.TestCase):
         open_ts = close - 900
         self.assertIsNone(desk_book(**{**yes, "ts": open_ts}, metal="eth"))
         self.assertIsNone(desk_book(**{**yes, "ts": open_ts}, metal="btc"))
-        self.assertIsNotNone(desk_book(**{**yes, "ts": open_ts}, metal="gold"))
+        self.assertIsNone(desk_book(**{**yes, "ts": open_ts}, metal="gold"))
+        self.assertIsNone(desk_book(**{**yes, "ts": open_ts}, metal="wti"))
         # T+19s (13:15Z live ETH NO) and T+2:53 (BTC) still sit.
         t_19 = close - (900 - 19)
         t_173 = close - (900 - 173)
@@ -402,6 +403,11 @@ class TestNewStrategies(unittest.TestCase):
         after = open_ts + CRYPTO_OPEN_WAIT_S
         self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="eth"))
         self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="btc"))
+        self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="gold"))
+        # Commodities have no Poly 15m book — Poly disagreement does not sit.
+        self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="gold",
+                                       poly_yes_bid=0.20, poly_yes_ask=0.21,
+                                       poly_down_ask=0.80))
         cheap = dict(yes, ts=close - 300, yes_bid=0.36, yes_ask=0.37)
         self.assertIsNone(desk_book(**cheap, metal="eth", poly_yes_bid=0.70,
                                        poly_yes_ask=0.72, poly_down_ask=0.29))

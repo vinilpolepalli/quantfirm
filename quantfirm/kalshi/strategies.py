@@ -155,14 +155,15 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  "favorite", allow_min=True, fill_cap=fill_cap)
 
 
-# Crypto open flicker: Kalshi often prints a ≥60¢ NO/YES in the first
-# 2–3 minutes that later dies. 13:15Z 2026-09-12: live ETH NO at T+19s
-# @ 61¢ lost −$8.77 (Poly agreed Down — wait is the filter). Live BTC NO
-# at T+2:53 @ 61¢ while Poly was Up. Sit the first 3 minutes of the 15m
-# window (tau_s > 720) on BTC and ETH, then require Poly agreement when
-# a quote is present. Commodities still clip from open.
-CRYPTO_OPEN_WAIT_S = 180
-BTC_OPEN_WAIT_S = CRYPTO_OPEN_WAIT_S
+# Open flicker: Kalshi often prints a ≥60¢ favorite in the first 2–3
+# minutes that later dies. 13:15Z 2026-09-12: live ETH NO at T+19s @ 61¢
+# lost −$8.77; live BTC NO at T+2:53 while Poly was Up. Sit the first 3
+# minutes of every 15m window on the live book (commodities + BTC + ETH).
+# Crypto then also requires Poly agreement when a quote is present.
+# No Poly 15m gold/WTI/natgas — commodities wait only.
+OPEN_WAIT_S = 180
+CRYPTO_OPEN_WAIT_S = OPEN_WAIT_S
+BTC_OPEN_WAIT_S = OPEN_WAIT_S
 
 
 def crypto_params(base: Params) -> Params:
@@ -191,7 +192,12 @@ def crypto_params(base: Params) -> Params:
 
 def crypto_wait_params(base: Params) -> Params:
     """4% crypto overlay plus a first-3-minute sit (tau_max = 12 min to close)."""
-    return replace(crypto_params(base), tau_max_s=900 - CRYPTO_OPEN_WAIT_S)
+    return replace(crypto_params(base), tau_max_s=900 - OPEN_WAIT_S)
+
+
+def commodity_wait_params(base: Params) -> Params:
+    """8% commodity overlay plus the same first-3-minute sit."""
+    return replace(base, tau_max_s=900 - OPEN_WAIT_S)
 
 
 def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -212,10 +218,11 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               poly_down_ask=None, **kw):
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
-    Commodities keep 8% / ≥60¢ / until close. BTC and ETH: 4% / ≥60¢
-    after the first 3 minutes, and sit when Polymarket's 15m favorite
-    disagrees. Missing Poly does not sit (feed outage ≠ a signal).
-    Fee-eat still skips 93¢+ last ticks; coin-flips sit.
+    Whole book waits the first 3 minutes. Commodities: 8% / ≥60¢ after
+    that (no Poly 15m book). BTC and ETH: 4% / ≥60¢ after the wait, and
+    sit when Polymarket's 15m favorite disagrees. Missing Poly does not
+    sit (feed outage ≠ a signal). Fee-eat still skips 93¢+ last ticks;
+    coin-flips sit.
     """
     if metal in CRYPTO_LIVE:
         it = favorite_blind(
@@ -236,7 +243,8 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         return it
     return favorite_blind(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
-        bankroll, open_positions, params, recent_volume=recent_volume, **kw)
+        bankroll, open_positions, commodity_wait_params(params),
+        recent_volume=recent_volume, **kw)
 
 
 def poly_confirm(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -792,7 +800,7 @@ def registry() -> list[Spec]:
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Commodities 8% ≥60¢; BTC and ETH 4% after 3 min + Poly confirm"),
+             "Whole book waits 3 min; commodities 8%; BTC/ETH 4% + Poly confirm"),
         Spec("poly_confirm", poly_confirm,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,

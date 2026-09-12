@@ -57,10 +57,9 @@ log, not to arb blindly: different settlement.
   Separate state (`--state-prefix kalshi_poly_paper`), **never `--live`**.
 * `python -m quantfirm.kalshi.cli poly-compare` — today's live crypto
   fills vs that paper sleeve.
-* Live `desk_book` crypto overlay: wait first 3 minutes on **BTC and
-  ETH**, then sit if Poly's favorite disagrees. 13:15 live ETH NO at
-  T+19s @ 61¢ lost −$8.77 (Poly agreed Down — wait is the filter). Live
-  BTC NO at T+2:53 @ 61¢ while Poly was already Up.
+* Live `desk_book` overlay: wait first 3 minutes on **the whole book**
+  (commodities + BTC + ETH). Crypto then sits if Poly disagrees. No
+  Poly 15m gold/WTI — commodities wait only.
 
 
 ## Paper sleeve (not arb)
@@ -77,7 +76,7 @@ without starting a second live agent. Scoreboard is UTC day in
 
 ## What would change the live book
 
-BTC and ETH wait + Poly confirm is now **in** `desk_book`. Do not
-promote the whole book to `poly_book` until EOD `poly-compare` is ahead
-with enough n (`ready` needs ≥8 each). Do not sit out commodities for
-the first 3 minutes.
+Whole-book 3 min wait is now **in** `desk_book` (commodities + crypto).
+Crypto also sits when Poly disagrees. Do not promote the whole book to
+`poly_book` until EOD `poly-compare` is ahead with enough n (`ready`
+needs ≥8 each).

@@ -68,8 +68,8 @@ Or the 24/7 supervisor, still paper if `KALSHI_LIVE` is unset:
 ```
 
 Default book: gold, silver, copper, WTI, natgas, BTC, ETH. Strategy:
-`desk_book` (commodities 8% ≥60¢ until close; BTC and ETH wait the first
-3 minutes then 4% / ≥60¢ and sit if Poly disagrees). Maker off.
+`desk_book` (whole book waits 3 min; commodities 8% / ≥60¢ after that;
+BTC and ETH 4% / ≥60¢ and sit if Poly disagrees). Maker off.
 Kill switch: `touch state/KILL_SWITCH_KALSHI`.
 
 Heartbeat / heal (does not start a second agent if the supervisor is up):
@@ -195,10 +195,11 @@ on the CF Benchmarks 60s print at the close vs strike; Poly resolves on
 a Chainlink 60s TWAP over the whole window vs the start. Gold/WTI/natgas
 have no matching Poly 15m book.
 
-The live loop stays `desk_book` on Kalshi. BTC and ETH wait the first
-3 minutes, then the same 4% / ≥60¢ clip, and sit when Poly's 15m
-favorite disagrees (missing Poly does not sit). Commodities still clip
-from open. The engine logs Poly CLOB BBOs on crypto ticks.
+The live loop stays `desk_book` on Kalshi. The whole book waits the first
+3 minutes. Commodities then clip 8% / ≥60¢ (no Poly 15m book). BTC and
+ETH clip 4% / ≥60¢ after the wait, and sit when Poly's 15m favorite
+disagrees (missing Poly does not sit). The engine logs Poly CLOB BBOs
+on crypto ticks.
 
 Two registered (off-loop) uses of that tape:
 
@@ -240,7 +241,7 @@ See `quantfirm/kalshi/strategies.py` (parameters frozen) and
 | `oracle_lag` | Prior-desk stale-quote taker | Should lose (replication) |
 | `oracle_flow` | Fade uninformed book flow | Taking an overreaction, not chasing a stale ask |
 | `favorite_blind` | Whelan FLB on 15M metals | Structural, no race |
-| `rich_fav` / `desk_book` | ≥60¢ commodities until close; BTC and ETH wait 3 min + Poly | Open flicker filter |
+| `rich_fav` / `desk_book` | Whole book waits 3 min; commodities 8%; BTC/ETH 4% + Poly | Open flicker filter |
 | `poly_confirm` | desk_book + sit crypto when Poly 15m disagrees | Off the live loop; second tape |
 | `poly_book` | Poly ≥60¢ picks side; Kalshi executes if that side is also ≥60¢ | Paper sleeve; EOD compare vs live |
 | `crypto_fav` | BTC/ETH 4% each (~$10) ≥60¢ until close | Weekend 24/7 sleeve |
