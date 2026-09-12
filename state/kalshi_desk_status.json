@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T16:43:18Z",
+ "ts": "2026-09-12T16:54:59Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,26 +13,26 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "alive",
  "cash": {
-  "shadow": 226.74899999999997,
+  "shadow": 243.05899999999997,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 251.87074000000007
+  "live": 268.18734000000006
  },
  "realized": {
-  "shadow": -2.3810000000000078,
+  "shadow": 3.7489999999999926,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 22.641440000000003
+  "live": 29.048740000000002
  },
- "n_open": 4,
+ "n_open": 2,
  "open": [
   {
    "metal": "btc",
    "side": "no",
    "count": 14,
-   "ticker": "KXBTC15M-26SEP121245-45",
+   "ticker": "KXBTC15M-26SEP121300-00",
    "fill_price": 0.75,
    "adapter": "shadow"
   },
@@ -40,58 +40,30 @@
    "metal": "btc",
    "side": "no",
    "count": 14,
-   "ticker": "KXBTC15M-26SEP121245-45",
-   "fill_price": 0.74,
-   "adapter": "live"
-  },
-  {
-   "metal": "eth",
-   "side": "no",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP121245-45",
-   "fill_price": 0.77,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "eth",
-   "side": "no",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP121245-45",
-   "fill_price": 0.76,
+   "ticker": "KXBTC15M-26SEP121300-00",
+   "fill_price": 0.75,
    "adapter": "live"
   }
  ],
- "n_settled": 120,
- "updated": "2026-09-12T16:43:17Z",
+ "n_settled": 124,
+ "updated": "2026-09-12T16:54:57Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 2,
- "poly_paper_cash": 221.92999999999992,
+ "poly_paper_cash": 217.4199999999999,
  "poly_paper": {
   "day": "2026-09-12",
   "live_crypto": {
-   "n": 29,
-   "pnl": 25.1,
-   "hit": 0.759
+   "n": 31,
+   "pnl": 31.51,
+   "hit": 0.774
   },
   "poly_paper": {
-   "n": 26,
-   "pnl": -10.15,
-   "hit": 0.654
+   "n": 28,
+   "pnl": -15.07,
+   "hit": 0.643
   },
   "poly_ahead": false,
   "ready": true
- },
- "bank_sweep": {
-  "threshold": 300.0,
-  "peel_unit": 50.0,
-  "leave": 250.0,
-  "destination": "linked Bank of America ACH",
-  "due": false,
-  "kalshi_cash": 271.5224,
-  "note": "hold (Kalshi cash $271.5224; peel $50 at $300)",
-  "last_peel_id": null,
-  "last_peel_ts": null,
-  "create_api": "unknown"
  }
 }
