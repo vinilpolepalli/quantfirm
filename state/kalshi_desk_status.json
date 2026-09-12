@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T02:32:04Z",
+ "ts": "2026-09-12T02:43:25Z",
  "strategy": "yolo_book",
  "universe": [
   "gold",
@@ -15,7 +15,7 @@
  "kill_switch": false,
  "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 256.36899999999997,
+  "shadow": 157.85899999999998,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 250.0
@@ -26,9 +26,34 @@
   "maker": 1.6499999999999968,
   "live": 0.0
  },
- "n_open": 0,
- "open": [],
+ "n_open": 3,
+ "open": [
+  {
+   "metal": "natgas",
+   "side": "yes",
+   "count": 43,
+   "ticker": "KXNATGAS15M-26SEP112245-45",
+   "fill_price": 0.88,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "btc",
+   "side": "no",
+   "count": 37,
+   "ticker": "KXBTC15M-26SEP112245-45",
+   "fill_price": 0.88,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 31,
+   "ticker": "KXGOLD15M-26SEP112245-45",
+   "fill_price": 0.88,
+   "adapter": "shadow"
+  }
+ ],
  "n_settled": 29,
- "updated": "2026-09-12T02:32:03Z",
+ "updated": "2026-09-12T02:43:24Z",
  "started": "2026-09-12T00:46:58Z"
 }
