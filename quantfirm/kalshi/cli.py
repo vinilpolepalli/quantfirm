@@ -7,6 +7,7 @@
   python -m quantfirm.kalshi.cli status    # venue + feed + credential check
   python -m quantfirm.kalshi.cli open-count
   python -m quantfirm.kalshi.cli heartbeat
+  python -m quantfirm.kalshi.cli bank-sweep --no-create  # $50 peel at $300
   python -m quantfirm.kalshi.cli poly          # Polymarket 15m vs Kalshi (read-only)
   python -m quantfirm.kalshi.cli poly-compare  # live crypto fills vs poly_book paper
   python -m quantfirm.kalshi.cli cashout-replay  # sell-if-signal-dies vs hold (off live)
@@ -314,6 +315,11 @@ def cmd_heartbeat(_a):
     print(json.dumps(write_desk_status(), indent=1))
 
 
+def cmd_bank_sweep(a):
+    from .sweep import run_sweep
+    print(json.dumps(run_sweep(try_create=not a.no_create), indent=1, default=str))
+
+
 def cmd_status(a):
     from .client import KalshiClient
     from .feeds import SwissquoteFeed
@@ -526,6 +532,14 @@ def main():
 
     sp = sub.add_parser("heartbeat")
     sp.set_defaults(fn=cmd_heartbeat)
+
+    sp = sub.add_parser(
+        "bank-sweep",
+        help="peel $50 to BofA when Kalshi cash hits $300 (heal also runs this)",
+    )
+    sp.add_argument("--no-create", action="store_true",
+                    help="arm/report only; do not POST a withdrawal")
+    sp.set_defaults(fn=cmd_bank_sweep)
 
     sp = sub.add_parser("poly")
     sp.set_defaults(fn=cmd_poly)

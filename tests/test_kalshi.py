@@ -6,6 +6,7 @@ import os
 import sys
 import tempfile
 import unittest
+from decimal import Decimal
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -1142,6 +1143,237 @@ class TestCashoutReplay(unittest.TestCase):
             body = f.read()
         self.assertNotIn("kalshi.cashout", body)
         self.assertNotIn("should_cash_out", body)
+
+
+class TestBankSweep(unittest.TestCase):
+    def test_constants(self):
+        from quantfirm.kalshi.sweep import (
+            LEAVE, PEEL_UNIT, THRESHOLD, LEAVE_CENTS, PEEL_UNIT_CENTS,
+            THRESHOLD_CENTS,
+        )
+        self.assertEqual(LEAVE, Decimal("250"))
+        self.assertEqual(PEEL_UNIT, Decimal("50"))
+        self.assertEqual(THRESHOLD, Decimal("300"))
+        self.assertEqual(LEAVE_CENTS, 25000)
+        self.assertEqual(PEEL_UNIT_CENTS, 5000)
+        self.assertEqual(THRESHOLD_CENTS, 30000)
+
+    def test_peel_amount(self):
+        from quantfirm.kalshi.sweep import peel_amount
+        self.assertEqual(peel_amount(Decimal("263.08")), Decimal("0"))
+        self.assertEqual(peel_amount("299.99"), Decimal("0"))
+        self.assertEqual(peel_amount("300"), Decimal("50"))
+        self.assertEqual(peel_amount("300.01"), Decimal("50"))
+        self.assertEqual(peel_amount("349.99"), Decimal("50"))
+        self.assertEqual(peel_amount("350"), Decimal("100"))
+        self.assertEqual(peel_amount("399"), Decimal("100"))
+        self.assertEqual(peel_amount("400"), Decimal("150"))
+
+    def test_plan(self):
+        from quantfirm.kalshi.sweep import plan
+        self.assertEqual(plan("263")["action"], "hold")
+        self.assertEqual(plan("299.99")["amount"], Decimal("0"))
+        w = plan("300")
+        self.assertEqual(w["action"], "withdraw")
+        self.assertEqual(w["amount"], Decimal("50"))
+        self.assertEqual(plan("350")["amount"], Decimal("100"))
+        pending = plan("350", pending=True)
+        self.assertEqual(pending["action"], "wait_pending")
+        self.assertEqual(pending["amount"], Decimal("0"))
+
+    def test_create_withdrawal_tries_once(self):
+        from quantfirm.kalshi.client import KalshiClient
+        src = inspect.getsource(KalshiClient.create_withdrawal)
+        self.assertIn("tries=1", src)
+
+    def test_run_sweep_holds_under_300(self):
+        from quantfirm.kalshi.sweep import run_sweep, checkin_line
+
+        class Fake:
+            can_trade = True
+
+            def balance(self):
+                return Decimal("263.08")
+
+            def withdrawals(self, limit=50):
+                return {"withdrawals": [{
+                    "id": "old-50",
+                    "status": "applied",
+                    "amount_dollars": "50.00",
+                    "created_ts": 1,
+                    "type": "ach",
+                }]}
+
+            def create_withdrawal(self, amount_cents):
+                raise AssertionError(f"must not POST at $263, got {amount_cents}")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "sweep.json")
+            view = run_sweep(Fake(), path=path, try_create=True, now=1_000_000,
+                             paper_state_path=os.path.join(tmp, "paper.json"))
+            self.assertFalse(view["due"])
+            self.assertIn("hold", view["note"])
+            self.assertIn("$300", view["note"])
+            line = checkin_line(view)
+            self.assertTrue(line.startswith("bank_sweep="))
+            self.assertNotIn("BANK SWEEP DUE", line)
+
+    def test_run_sweep_posts_50_at_300(self):
+        from quantfirm.kalshi.sweep import run_sweep, load_state
+
+        class Fake:
+            can_trade = True
+            calls = []
+
+            def balance(self):
+                return Decimal("300")
+
+            def withdrawals(self, limit=50):
+                return {"withdrawals": []}
+
+            def create_withdrawal(self, amount_cents):
+                self.calls.append(amount_cents)
+                return {"withdrawal": {
+                    "id": "wd-50", "status": "pending", "type": "ach",
+                }}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "sweep.json")
+            fake = Fake()
+            view = run_sweep(fake, path=path, try_create=True, now=1_000_000,
+                             paper_state_path=os.path.join(tmp, "paper.json"))
+            self.assertEqual(fake.calls, [5000])
+            self.assertTrue(view["due"] or "posted" in view["note"])
+            self.assertIn("posted $50", view["note"])
+            st = load_state(path)
+            self.assertEqual(st.get("pending_id"), "wd-50")
+            self.assertEqual(st.get("due_since"), 1_000_000)
+
+            fake.calls.clear()
+            view2 = run_sweep(fake, path=path, try_create=True, now=1_000_100,
+                              paper_state_path=os.path.join(tmp, "paper.json"))
+            self.assertEqual(fake.calls, [])
+            self.assertIn("pending", view2["note"])
+
+    def test_run_sweep_peels_100_at_350(self):
+        from quantfirm.kalshi.client import KalshiApiError
+        from quantfirm.kalshi.sweep import run_sweep, load_state
+
+        class Fake:
+            can_trade = True
+            calls = []
+
+            def balance(self):
+                return Decimal("350")
+
+            def withdrawals(self, limit=50):
+                return {"withdrawals": []}
+
+            def create_withdrawal(self, amount_cents):
+                self.calls.append(amount_cents)
+                raise KalshiApiError(404, "not found")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "sweep.json")
+            fake = Fake()
+            view = run_sweep(fake, path=path, try_create=True, now=2_000_000,
+                             paper_state_path=os.path.join(tmp, "paper.json"))
+            self.assertEqual(fake.calls, [10000])
+            self.assertTrue(view["due"])
+            self.assertIn("$100", view["note"])
+            self.assertIn("404", view["note"])
+            self.assertIn("Bank of America", view["note"])
+            st = load_state(path)
+            self.assertFalse(st.get("create_blocked"))
+
+            fake.calls.clear()
+            run_sweep(fake, path=path, try_create=True, now=2_000_100,
+                      paper_state_path=os.path.join(tmp, "paper.json"))
+            self.assertEqual(fake.calls, [10000])
+
+    def test_timeout_does_not_repost(self):
+        from quantfirm.kalshi.client import KalshiApiError
+        from quantfirm.kalshi.sweep import run_sweep
+
+        class Fake:
+            can_trade = True
+            calls = []
+
+            def balance(self):
+                return Decimal("300")
+
+            def withdrawals(self, limit=50):
+                return {"withdrawals": []}
+
+            def create_withdrawal(self, amount_cents):
+                self.calls.append(amount_cents)
+                raise KalshiApiError(0, "retries exhausted")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "sweep.json")
+            fake = Fake()
+            run_sweep(fake, path=path, try_create=True, now=3_000_000,
+                      paper_state_path=os.path.join(tmp, "paper.json"))
+            run_sweep(fake, path=path, try_create=True, now=3_000_100,
+                      paper_state_path=os.path.join(tmp, "paper.json"))
+            self.assertEqual(fake.calls, [5000])
+
+    def test_applied_withdrawal_debits_ledger_once(self):
+        from quantfirm.kalshi.sweep import apply_ledger_debits, save_state
+
+        with tempfile.TemporaryDirectory() as tmp:
+            sweep = os.path.join(tmp, "sweep.json")
+            save_state({
+                "due": False,
+                "events": [{
+                    "id": "wd-50",
+                    "status": "applied",
+                    "amount_usd": 50,
+                    "booked": False,
+                }],
+                "seen_ids": ["wd-50"],
+            }, sweep)
+            state = {"cash": {"live": 300.0}}
+            first = apply_ledger_debits(state, sweep)
+            second = apply_ledger_debits(state, sweep)
+            self.assertEqual(first, 50.0)
+            self.assertEqual(second, 0.0)
+            self.assertEqual(state["cash"]["live"], 250.0)
+
+    def test_get_applied_confirms_after_armed(self):
+        from quantfirm.kalshi.sweep import run_sweep, save_state
+
+        class Fake:
+            can_trade = True
+
+            def balance(self):
+                return Decimal("250")
+
+            def withdrawals(self, limit=50):
+                return {"withdrawals": [{
+                    "id": "wd-app",
+                    "status": "applied",
+                    "amount_cents": 5000,
+                    "created_ts": 4_000_050,
+                    "type": "ach",
+                }]}
+
+            def create_withdrawal(self, amount_cents):
+                raise AssertionError("must not POST after GET confirms")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "sweep.json")
+            save_state({
+                "due": True,
+                "due_since": 4_000_000,
+                "events": [],
+                "seen_ids": [],
+            }, path)
+            view = run_sweep(Fake(), path=path, try_create=True, now=4_000_100,
+                             paper_state_path=os.path.join(tmp, "paper.json"))
+            self.assertFalse(view["due"])
+            self.assertIn("peeled $50", view["note"])
+            self.assertIn("applied", view["note"])
 
 
 if __name__ == "__main__":

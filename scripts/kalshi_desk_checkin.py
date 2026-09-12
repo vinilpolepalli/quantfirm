@@ -35,6 +35,7 @@ COMMIT_PATHS = (
     "state/kalshi_paper_trades.csv",
     "state/kalshi_poly_paper_trades.csv",
     "state/kalshi_checkin_mark.json",
+    "state/kalshi_sweep.json",
     "research/kalshi_backtest.md",
 )
 
@@ -72,6 +73,11 @@ def stats(rows, adapter):
 
 def main():
     status = [ensure_supervisor(), ensure_poly_paper()]
+    try:
+        from quantfirm.kalshi.sweep import run_sweep, checkin_line
+        status.append(checkin_line(run_sweep()))
+    except Exception as e:
+        status.append(f"bank_sweep error {type(e).__name__}")
     rec = write_desk_status(supervisor=status[0])
     rows = load_trades()
     mark = {"n_settled": 0, "t_history": []}
