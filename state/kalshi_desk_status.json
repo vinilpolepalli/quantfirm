@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-12T02:11:14Z",
+ "ts": "2026-09-12T02:12:14Z",
  "strategy": "rich_fav",
  "universe": [
   "gold",
@@ -11,7 +11,7 @@
  "bankroll": 250.0,
  "live": false,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "alive",
  "cash": {
   "shadow": 231.68199999999996,
   "demo": 250.0,
@@ -52,6 +52,6 @@
   }
  ],
  "n_settled": 23,
- "updated": "2026-09-12T02:11:14Z",
+ "updated": "2026-09-12T02:12:14Z",
  "started": "2026-09-12T00:46:58Z"
 }
