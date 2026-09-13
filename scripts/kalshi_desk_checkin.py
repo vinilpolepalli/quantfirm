@@ -33,6 +33,7 @@ MARK = os.path.join(REPO, "state", "kalshi_checkin_mark.json")
 LOGDOC = os.path.join(REPO, "research", "kalshi_backtest.md")
 COMMIT_PATHS = (
     "state/kalshi_desk_status.json",
+    "state/KILL_SWITCH_KALSHI",
     "state/kalshi_paper_trades.csv",
     "state/kalshi_poly_paper_trades.csv",
     "state/kalshi_div_paper_trades.csv",

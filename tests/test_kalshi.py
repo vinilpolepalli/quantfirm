@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from decimal import Decimal
+from unittest import mock
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -1459,6 +1460,33 @@ class TestBankSweep(unittest.TestCase):
             self.assertFalse(view["due"])
             self.assertIn("peeled $50", view["note"])
             self.assertIn("applied", view["note"])
+
+
+class KillSwitchSupervisor(unittest.TestCase):
+    def test_ensure_loops_do_not_restart_under_kill_switch(self):
+        from quantfirm.kalshi import runtime
+        with mock.patch.object(runtime, "kill_switch_tripped", return_value=True), \
+             mock.patch.object(runtime, "supervisor_alive", return_value=False), \
+             mock.patch.object(runtime, "poly_paper_alive", return_value=False), \
+             mock.patch.object(runtime, "div_paper_alive", return_value=False), \
+             mock.patch.object(runtime.subprocess, "Popen") as popen:
+            self.assertIn("not restarting", runtime.ensure_supervisor())
+            self.assertIn("not restarting", runtime.ensure_poly_paper())
+            self.assertIn("not restarting", runtime.ensure_div_paper())
+            popen.assert_not_called()
+
+    def test_heartbeat_live_false_under_kill_switch(self):
+        from quantfirm.kalshi import runtime
+        with tempfile.TemporaryDirectory() as tmp:
+            state = os.path.join(tmp, "state.json")
+            status = os.path.join(tmp, "status.json")
+            with open(state, "w") as f:
+                json.dump({"live": True, "cash": {}, "open": []}, f)
+            with mock.patch.object(runtime, "kill_switch_tripped", return_value=True), \
+                 mock.patch.object(runtime, "supervisor_alive", return_value=False):
+                rec = runtime.write_desk_status(state_path=state, status_path=status)
+            self.assertTrue(rec["kill_switch"])
+            self.assertFalse(rec["live"])
 
 
 if __name__ == "__main__":

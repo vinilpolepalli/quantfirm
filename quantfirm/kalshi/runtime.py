@@ -63,6 +63,10 @@ def ensure_supervisor() -> str:
     Inherit this process environment so Cloud Agent secrets
     (KALSHI_PROD_*) reach the loop. Do not ``tmux send-keys`` the PEM.
     """
+    if kill_switch_tripped():
+        if supervisor_alive():
+            return "supervisor: alive (kill switch — not restarting)"
+        return "supervisor: down (kill switch — not restarting)"
     if supervisor_alive():
         return "supervisor: alive"
     os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
@@ -98,6 +102,10 @@ def poly_paper_alive() -> bool:
 
 def ensure_poly_paper() -> str:
     """Paper-only Poly vs Kalshi sleeve. Never live."""
+    if kill_switch_tripped():
+        if poly_paper_alive():
+            return "poly_paper: alive (kill switch — not restarting)"
+        return "poly_paper: down (kill switch — not restarting)"
     if poly_paper_alive():
         return "poly_paper: alive"
     if not os.path.isfile(POLY_LOOP):
@@ -137,6 +145,10 @@ def div_paper_alive() -> bool:
 
 def ensure_div_paper() -> str:
     """Paper-only DOGE/XRP/NEAR 15m sleeve. Never live."""
+    if kill_switch_tripped():
+        if div_paper_alive():
+            return "div_paper: alive (kill switch — not restarting)"
+        return "div_paper: down (kill switch — not restarting)"
     if div_paper_alive():
         return "div_paper: alive"
     if not os.path.isfile(DIV_LOOP):
@@ -201,8 +213,9 @@ def write_desk_status(supervisor: str | None = None,
         "strategy": state.get("strategy") or os.environ.get("STRATEGY", PAPER_STRATEGY),
         "universe": list(state.get("metals") or PAPER_ASSETS),
         "bankroll": BANKROLL,
-        "live": bool(state.get("live")) or os.environ.get("KALSHI_LIVE") in (
-            "1", "true", "TRUE", "yes"),
+        "live": (not kill_switch_tripped()) and (
+            bool(state.get("live")) or os.environ.get("KALSHI_LIVE") in (
+                "1", "true", "TRUE", "yes")),
         "kill_switch": kill_switch_tripped(),
         "supervisor": supervisor or ("alive" if supervisor_alive() else "down"),
         "cash": state.get("cash") or {},
