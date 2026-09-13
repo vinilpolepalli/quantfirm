@@ -134,3 +134,5 @@ settled_at,adapter,ticker,metal,side,count,fill_price,fee,fair_at_entry,result,p
 2026-09-13T14:01:01Z,shadow,KXETH15M-26SEP131000-00,eth,yes,15,0.65,0.24,0.65,yes,5.01,poly_book,278.05
 2026-09-13T14:16:02Z,shadow,KXETH15M-26SEP131015-15,eth,yes,17,0.62,0.29,0.62,yes,6.17,poly_book,273.87
 2026-09-13T14:16:02Z,shadow,KXBTC15M-26SEP131015-15,btc,yes,16,0.63,0.27,0.63,yes,5.65,poly_book,289.87
+2026-09-13T14:31:00Z,shadow,KXBTC15M-26SEP131030-30,btc,yes,14,0.77,0.18,0.77,yes,3.04,poly_book,281.94
+2026-09-13T14:31:00Z,shadow,KXETH15M-26SEP131030-30,eth,yes,16,0.67,0.25,0.67,yes,5.03,poly_book,297.94
