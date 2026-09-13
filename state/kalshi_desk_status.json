@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T03:13:40Z",
+ "ts": "2026-09-13T03:31:17Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,75 +13,59 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 232.73900000000026,
+  "shadow": 236.43900000000025,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 255.06981999999962
+  "live": 258.7738199999996
  },
  "realized": {
-  "shadow": 3.9789999999999903,
+  "shadow": -3.26100000000001,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 26.95261999999999
+  "live": 19.72361999999999
  },
- "n_open": 4,
+ "n_open": 2,
  "open": [
   {
    "metal": "eth",
-   "side": "no",
-   "count": 14,
-   "ticker": "KXETH15M-26SEP122315-15",
-   "fill_price": 0.75,
+   "side": "yes",
+   "count": 13,
+   "ticker": "KXETH15M-26SEP122330-30",
+   "fill_price": 0.78,
    "adapter": "shadow"
   },
   {
    "metal": "eth",
-   "side": "no",
-   "count": 14,
-   "ticker": "KXETH15M-26SEP122315-15",
-   "fill_price": 0.75,
-   "adapter": "live"
-  },
-  {
-   "metal": "btc",
    "side": "yes",
    "count": 13,
-   "ticker": "KXBTC15M-26SEP122315-15",
-   "fill_price": 0.8,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "btc",
-   "side": "yes",
-   "count": 13,
-   "ticker": "KXBTC15M-26SEP122315-15",
-   "fill_price": 0.8,
+   "ticker": "KXETH15M-26SEP122330-30",
+   "fill_price": 0.78,
    "adapter": "live"
   }
  ],
- "n_settled": 286,
- "updated": "2026-09-13T03:13:38Z",
+ "n_settled": 290,
+ "updated": "2026-09-13T03:26:34Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
- "poly_paper_n_open": 2,
- "poly_paper_cash": 210.5499999999999,
+ "poly_paper_n_open": 1,
+ "poly_paper_cash": 227.1499999999999,
  "div_paper_loop": "alive",
  "div_paper_n_open": 3,
- "div_paper_cash": 225.85999999999996,
- "div_paper_realized": 4.449999999999999,
+ "div_paper_cash": 201.11999999999995,
+ "div_paper_realized": -24.14,
  "poly_paper": {
   "day": "2026-09-13",
   "live_crypto": {
-   "n": 23,
-   "pnl": -28.2,
-   "hit": 0.696
+   "n": 25,
+   "pnl": -35.43,
+   "hit": 0.68
   },
   "poly_paper": {
-   "n": 22,
-   "pnl": 9.91,
-   "hit": 0.682
+   "n": 24,
+   "pnl": 18.88,
+   "hit": 0.708
   },
   "poly_ahead": true,
   "ready": true
