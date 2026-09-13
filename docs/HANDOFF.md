@@ -113,6 +113,29 @@ touch the supervisor, keep them passing. There is one known artifact of
 overlapping engines in the data: a double-entry on `KXGOLD15M-26SEP111115-15`
 (2026-09-11 15:16Z, two maker fills at 0.58 and 0.57, $21.25 total).
 
+## 2b. Duty cycle — this environment cannot run the desk continuously
+
+Measured 2026-09-13, markets open: **10% uptime.** The engine ran 22:06-22:10,
+the container was reclaimed, and nothing traded until the hourly check-in
+restarted it at 23:06 — a 56-minute dark gap and zero settled fills in an open
+market hour.
+
+The container is reclaimed on **session** inactivity, not process activity.
+Backgrounding the engine and ending the turn therefore kills it within minutes;
+`nohup`/`setsid` do not help. Two partial mitigations, both in place:
+
+* the hourly Routine restarts the supervisor (recovers from the reclaim), and
+* it then runs the engine in the **foreground** for ~9 minutes, which keeps the
+  container alive for that window. Verified: 8.5 min of continuous trading, tape
+  +3,652 prints. Sub-hourly Routines are rejected (1 hour is the floor), so
+  ~15-20% is the ceiling here.
+
+**Anything that needs a real duty cycle must run somewhere persistent** — a VPS,
+a laptop that stays awake, any always-on host — with `scripts/kalshi_paper_loop.sh`
+under a process supervisor. Nothing about the desk code needs changing; it is
+purely where it runs. Scale every fills-per-week projection by the duty cycle
+rather than implying continuous operation.
+
 ## 3. Where it stands
 
 Live shadow, paper money, $0 real:
