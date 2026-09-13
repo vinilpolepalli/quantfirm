@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T00:53:55Z",
+ "ts": "2026-09-13T01:11:38Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,71 +15,55 @@
  "kill_switch": false,
  "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 233.07900000000026,
+  "shadow": 249.11900000000028,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 256.85941999999966
+  "live": 272.90581999999966
  },
  "realized": {
-  "shadow": 4.578999999999992,
+  "shadow": 10.07899999999999,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 29.000119999999985
+  "live": 34.51321999999998
  },
- "n_open": 4,
+ "n_open": 2,
  "open": [
   {
-   "metal": "btc",
-   "side": "yes",
-   "count": 14,
-   "ticker": "KXBTC15M-26SEP122100-00",
-   "fill_price": 0.76,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "btc",
-   "side": "yes",
-   "count": 14,
-   "ticker": "KXBTC15M-26SEP122100-00",
-   "fill_price": 0.76,
-   "adapter": "live"
-  },
-  {
    "metal": "eth",
-   "side": "yes",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP122100-00",
-   "fill_price": 0.81,
+   "side": "no",
+   "count": 14,
+   "ticker": "KXETH15M-26SEP122115-15",
+   "fill_price": 0.77,
    "adapter": "shadow"
   },
   {
    "metal": "eth",
-   "side": "yes",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP122100-00",
-   "fill_price": 0.81,
+   "side": "no",
+   "count": 14,
+   "ticker": "KXETH15M-26SEP122115-15",
+   "fill_price": 0.77,
    "adapter": "live"
   }
  ],
- "n_settled": 251,
- "updated": "2026-09-13T00:51:00Z",
+ "n_settled": 255,
+ "updated": "2026-09-13T01:09:03Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 2,
- "poly_paper_cash": 217.6699999999999,
+ "poly_paper_cash": 227.6699999999999,
  "poly_paper": {
   "day": "2026-09-13",
   "live_crypto": {
-   "n": 8,
-   "pnl": -19.92,
-   "hit": 0.625
+   "n": 10,
+   "pnl": -14.41,
+   "hit": 0.7
   },
   "poly_paper": {
-   "n": 6,
-   "pnl": 14.32,
-   "hit": 0.833
+   "n": 8,
+   "pnl": 25.0,
+   "hit": 0.875
   },
   "poly_ahead": true,
-  "ready": false
+  "ready": true
  }
 }
