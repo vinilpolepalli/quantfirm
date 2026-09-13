@@ -1,0 +1,2036 @@
+{
+ "ts": "2026-09-13T01:40:27.096027+00:00",
+ "settlement": "Daily highs/lows: NWS CLI for the named station (NYC = Central Park KNYC). Hourly temps: The Weather Company, not NWS. Ensemble members are GFS GEFS + ECMWF IFS EPS via Open-Meteo, not the print.",
+ "hurricane": [
+  {
+   "series": "HURCLAND",
+   "n_open": 0,
+   "titles": []
+  },
+  {
+   "series": "KXHURPATHGENERAL",
+   "n_open": 0,
+   "titles": []
+  },
+  {
+   "series": "KXHURLAND",
+   "n_open": 0,
+   "titles": []
+  }
+ ],
+ "events": [
+  {
+   "series": "KXHIGHNY",
+   "event": "KXHIGHNY-26SEP12",
+   "title": "Highest temperature in New York City on Sep 12, 2026?",
+   "day": "2026-09-12",
+   "obs": {
+    "station": "KNYC",
+    "temp_f": 71.06,
+    "timestamp": "2026-09-13T00:51:00+00:00",
+    "text": "Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHNY-26SEP12-T75": 0.0,
+     "KXHIGHNY-26SEP12-B75.5": 0.1625,
+     "KXHIGHNY-26SEP12-B77.5": 0.675,
+     "KXHIGHNY-26SEP12-B79.5": 0.15,
+     "KXHIGHNY-26SEP12-B81.5": 0.0125,
+     "KXHIGHNY-26SEP12-T82": 0.0
+    },
+    "counts": {
+     "KXHIGHNY-26SEP12-T75": 0,
+     "KXHIGHNY-26SEP12-B75.5": 13,
+     "KXHIGHNY-26SEP12-B77.5": 54,
+     "KXHIGHNY-26SEP12-B79.5": 12,
+     "KXHIGHNY-26SEP12-B81.5": 1,
+     "KXHIGHNY-26SEP12-T82": 0
+    },
+    "unmapped": 0,
+    "mean": 77.675,
+    "p10": 76.0,
+    "p50": 78.0,
+    "p90": 79.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.05,
+    "sum_bid": null,
+    "ask_depth": 0.0,
+    "bid_depth": 0.0,
+    "buy_complete": false,
+    "buy_count": 0,
+    "buy_cost": null,
+    "buy_fees": null,
+    "buy_payout": null,
+    "buy_edge": null,
+    "buy_reason": "no_ask_depth",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 4,
+   "edges": [
+    {
+     "ticker": "KXHIGHNY-26SEP12-B75.5",
+     "title": "Will the maximum temperature be 75-76\u00b0 on Sep 12, 2026?",
+     "model_p": 0.1625,
+     "yes_edge": 0.7525,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 75.0,
+     "cap": 76.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP12-B77.5",
+     "title": "Will the maximum temperature be 77-78\u00b0 on Sep 12, 2026?",
+     "model_p": 0.675,
+     "yes_edge": null,
+     "no_edge": 1.565,
+     "side": "no",
+     "px": 0.010000000000000009,
+     "count": 5,
+     "ask": 1.0,
+     "bid": 0.99,
+     "floor": 77.0,
+     "cap": 78.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP12-B79.5",
+     "title": "Will the maximum temperature be 79-80\u00b0 on Sep 12, 2026?",
+     "model_p": 0.15,
+     "yes_edge": 0.69,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 79.0,
+     "cap": 80.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP12-B81.5",
+     "title": "Will the maximum temperature be 81-82\u00b0 on Sep 12, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": 0.0025,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 81.0,
+     "cap": 82.0
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHNY",
+   "event": "KXHIGHNY-26SEP13",
+   "title": "Highest temperature in New York City on Sep 13, 2026?",
+   "day": "2026-09-13",
+   "obs": {
+    "station": "KNYC",
+    "temp_f": 71.06,
+    "timestamp": "2026-09-13T00:51:00+00:00",
+    "text": "Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHNY-26SEP13-T78": 0.0,
+     "KXHIGHNY-26SEP13-B78.5": 0.1125,
+     "KXHIGHNY-26SEP13-B80.5": 0.3875,
+     "KXHIGHNY-26SEP13-B82.5": 0.2625,
+     "KXHIGHNY-26SEP13-B84.5": 0.15,
+     "KXHIGHNY-26SEP13-T85": 0.0875
+    },
+    "counts": {
+     "KXHIGHNY-26SEP13-T78": 0,
+     "KXHIGHNY-26SEP13-B78.5": 9,
+     "KXHIGHNY-26SEP13-B80.5": 31,
+     "KXHIGHNY-26SEP13-B82.5": 21,
+     "KXHIGHNY-26SEP13-B84.5": 12,
+     "KXHIGHNY-26SEP13-T85": 7
+    },
+    "unmapped": 0,
+    "mean": 81.8625,
+    "p10": 79.0,
+    "p50": 82.0,
+    "p90": 85.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.06,
+    "sum_bid": null,
+    "ask_depth": 36.0,
+    "bid_depth": 0.0,
+    "buy_complete": true,
+    "buy_count": 36,
+    "buy_cost": 38.16,
+    "buy_fees": 1.92,
+    "buy_payout": 36.0,
+    "buy_edge": -4.08,
+    "buy_reason": "no_edge",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 6,
+   "edges": [
+    {
+     "ticker": "KXHIGHNY-26SEP13-T78",
+     "title": "Will the maximum temperature be <78\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0,
+     "yes_edge": -1.48,
+     "no_edge": 1.28,
+     "side": "no",
+     "px": 0.73,
+     "count": 5,
+     "ask": 0.28,
+     "bid": 0.27,
+     "floor": null,
+     "cap": 78.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP13-B78.5",
+     "title": "Will the maximum temperature be 78-79\u00b0 on Sep 13, 2026?",
+     "model_p": 0.1125,
+     "yes_edge": -1.4275,
+     "no_edge": 1.1475,
+     "side": "no",
+     "px": 0.64,
+     "count": 5,
+     "ask": 0.38,
+     "bid": 0.36,
+     "floor": 78.0,
+     "cap": 79.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP13-B80.5",
+     "title": "Will the maximum temperature be 80-81\u00b0 on Sep 13, 2026?",
+     "model_p": 0.3875,
+     "yes_edge": 0.4575,
+     "no_edge": -0.7075,
+     "side": "yes",
+     "px": 0.28,
+     "count": 5,
+     "ask": 0.28,
+     "bid": 0.26,
+     "floor": 80.0,
+     "cap": 81.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP13-B82.5",
+     "title": "Will the maximum temperature be 82-83\u00b0 on Sep 13, 2026?",
+     "model_p": 0.2625,
+     "yes_edge": 0.8825,
+     "no_edge": -1.0325,
+     "side": "yes",
+     "px": 0.08,
+     "count": 5,
+     "ask": 0.08,
+     "bid": 0.06,
+     "floor": 82.0,
+     "cap": 83.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP13-B84.5",
+     "title": "Will the maximum temperature be 84-85\u00b0 on Sep 13, 2026?",
+     "model_p": 0.15,
+     "yes_edge": 0.58,
+     "no_edge": -0.66,
+     "side": "yes",
+     "px": 0.03,
+     "count": 5,
+     "ask": 0.03,
+     "bid": 0.02,
+     "floor": 84.0,
+     "cap": 85.0
+    },
+    {
+     "ticker": "KXHIGHNY-26SEP13-T85",
+     "title": "Will the maximum temperature be >85\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0875,
+     "yes_edge": 0.3775,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 85.0,
+     "cap": null
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHTBOS",
+   "event": "KXHIGHTBOS-26SEP12",
+   "title": "Highest temperature in Boston on Sep 12, 2026?",
+   "day": "2026-09-12",
+   "obs": {
+    "station": "KBOS",
+    "temp_f": 66.2,
+    "timestamp": "2026-09-13T01:20:00+00:00",
+    "text": "Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHTBOS-26SEP12-T73": 0.0,
+     "KXHIGHTBOS-26SEP12-B73.5": 0.025,
+     "KXHIGHTBOS-26SEP12-B75.5": 0.725,
+     "KXHIGHTBOS-26SEP12-B77.5": 0.25,
+     "KXHIGHTBOS-26SEP12-B79.5": 0.0,
+     "KXHIGHTBOS-26SEP12-T80": 0.0
+    },
+    "counts": {
+     "KXHIGHTBOS-26SEP12-T73": 0,
+     "KXHIGHTBOS-26SEP12-B73.5": 2,
+     "KXHIGHTBOS-26SEP12-B75.5": 58,
+     "KXHIGHTBOS-26SEP12-B77.5": 20,
+     "KXHIGHTBOS-26SEP12-B79.5": 0,
+     "KXHIGHTBOS-26SEP12-T80": 0
+    },
+    "unmapped": 0,
+    "mean": 76.1,
+    "p10": 75.0,
+    "p50": 76.0,
+    "p90": 77.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.05,
+    "sum_bid": null,
+    "ask_depth": 0.0,
+    "bid_depth": 0.0,
+    "buy_complete": false,
+    "buy_count": 0,
+    "buy_cost": null,
+    "buy_fees": null,
+    "buy_payout": null,
+    "buy_edge": null,
+    "buy_reason": "no_ask_depth",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 4,
+   "edges": [
+    {
+     "ticker": "KXHIGHTBOS-26SEP12-T73",
+     "title": "Will the maximum temperature be <73\u00b0 on Sep 12, 2026?",
+     "model_p": 0.0,
+     "yes_edge": null,
+     "no_edge": 4.94,
+     "side": "no",
+     "px": 0.010000000000000009,
+     "count": 5,
+     "ask": 1.0,
+     "bid": 0.99,
+     "floor": null,
+     "cap": 73.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP12-B73.5",
+     "title": "Will the maximum temperature be 73-74\u00b0 on Sep 12, 2026?",
+     "model_p": 0.025,
+     "yes_edge": 0.065,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 73.0,
+     "cap": 74.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP12-B75.5",
+     "title": "Will the maximum temperature be 75-76\u00b0 on Sep 12, 2026?",
+     "model_p": 0.725,
+     "yes_edge": 3.565,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 75.0,
+     "cap": 76.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP12-B77.5",
+     "title": "Will the maximum temperature be 77-78\u00b0 on Sep 12, 2026?",
+     "model_p": 0.25,
+     "yes_edge": 1.19,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 77.0,
+     "cap": 78.0
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHTBOS",
+   "event": "KXHIGHTBOS-26SEP13",
+   "title": "Highest temperature in Boston on Sep 13, 2026?",
+   "day": "2026-09-13",
+   "obs": {
+    "station": "KBOS",
+    "temp_f": 66.2,
+    "timestamp": "2026-09-13T01:20:00+00:00",
+    "text": "Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHTBOS-26SEP13-T69": 0.0625,
+     "KXHIGHTBOS-26SEP13-B69.5": 0.2375,
+     "KXHIGHTBOS-26SEP13-B71.5": 0.325,
+     "KXHIGHTBOS-26SEP13-B73.5": 0.2625,
+     "KXHIGHTBOS-26SEP13-B75.5": 0.0625,
+     "KXHIGHTBOS-26SEP13-T76": 0.05
+    },
+    "counts": {
+     "KXHIGHTBOS-26SEP13-T69": 5,
+     "KXHIGHTBOS-26SEP13-B69.5": 19,
+     "KXHIGHTBOS-26SEP13-B71.5": 26,
+     "KXHIGHTBOS-26SEP13-B73.5": 21,
+     "KXHIGHTBOS-26SEP13-B75.5": 5,
+     "KXHIGHTBOS-26SEP13-T76": 4
+    },
+    "unmapped": 0,
+    "mean": 71.8625,
+    "p10": 69.0,
+    "p50": 72.0,
+    "p90": 75.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.06,
+    "sum_bid": null,
+    "ask_depth": 1.0,
+    "bid_depth": 0.0,
+    "buy_complete": true,
+    "buy_count": 1,
+    "buy_cost": 1.06,
+    "buy_fees": 0.08,
+    "buy_payout": 1.0,
+    "buy_edge": -0.14,
+    "buy_reason": "no_edge",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 6,
+   "edges": [
+    {
+     "ticker": "KXHIGHTBOS-26SEP13-T69",
+     "title": "Will the maximum temperature be <69\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0625,
+     "yes_edge": -0.3275,
+     "no_edge": 0.1975,
+     "side": "no",
+     "px": 0.89,
+     "count": 5,
+     "ask": 0.12,
+     "bid": 0.11,
+     "floor": null,
+     "cap": 69.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP13-B69.5",
+     "title": "Will the maximum temperature be 69-70\u00b0 on Sep 13, 2026?",
+     "model_p": 0.2375,
+     "yes_edge": -0.5925,
+     "no_edge": 0.3825,
+     "side": "no",
+     "px": 0.6699999999999999,
+     "count": 5,
+     "ask": 0.34,
+     "bid": 0.33,
+     "floor": 69.0,
+     "cap": 70.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP13-B71.5",
+     "title": "Will the maximum temperature be 71-72\u00b0 on Sep 13, 2026?",
+     "model_p": 0.325,
+     "yes_edge": -0.515,
+     "no_edge": 0.085,
+     "side": "no",
+     "px": 0.64,
+     "count": 5,
+     "ask": 0.41,
+     "bid": 0.36,
+     "floor": 71.0,
+     "cap": 72.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP13-B73.5",
+     "title": "Will the maximum temperature be 73-74\u00b0 on Sep 13, 2026?",
+     "model_p": 0.2625,
+     "yes_edge": 0.4625,
+     "no_edge": -0.6125,
+     "side": "yes",
+     "px": 0.16,
+     "count": 5,
+     "ask": 0.16,
+     "bid": 0.15,
+     "floor": 73.0,
+     "cap": 74.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP13-B75.5",
+     "title": "Will the maximum temperature be 75-76\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0625,
+     "yes_edge": 0.2025,
+     "no_edge": -0.2725,
+     "side": "yes",
+     "px": 0.02,
+     "count": 5,
+     "ask": 0.02,
+     "bid": 0.01,
+     "floor": 75.0,
+     "cap": 76.0
+    },
+    {
+     "ticker": "KXHIGHTBOS-26SEP13-T76",
+     "title": "Will the maximum temperature be >76\u00b0 on Sep 13, 2026?",
+     "model_p": 0.05,
+     "yes_edge": 0.19,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 76.0,
+     "cap": null
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHCHI",
+   "event": "KXHIGHCHI-26SEP12",
+   "title": "Highest temperature in Chicago on Sep 12, 2026?",
+   "day": "2026-09-12",
+   "obs": {
+    "station": "KORD",
+    "temp_f": 78.8,
+    "timestamp": "2026-09-13T01:20:00+00:00",
+    "text": "Mostly Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHCHI-26SEP12-T84": 0.3125,
+     "KXHIGHCHI-26SEP12-B84.5": 0.5375,
+     "KXHIGHCHI-26SEP12-B86.5": 0.125,
+     "KXHIGHCHI-26SEP12-B88.5": 0.0125,
+     "KXHIGHCHI-26SEP12-B90.5": 0.0125,
+     "KXHIGHCHI-26SEP12-T91": 0.0
+    },
+    "counts": {
+     "KXHIGHCHI-26SEP12-T84": 25,
+     "KXHIGHCHI-26SEP12-B84.5": 43,
+     "KXHIGHCHI-26SEP12-B86.5": 10,
+     "KXHIGHCHI-26SEP12-B88.5": 1,
+     "KXHIGHCHI-26SEP12-B90.5": 1,
+     "KXHIGHCHI-26SEP12-T91": 0
+    },
+    "unmapped": 0,
+    "mean": 84.275,
+    "p10": 83.0,
+    "p50": 84.0,
+    "p90": 86.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.05,
+    "sum_bid": null,
+    "ask_depth": 0.0,
+    "bid_depth": 0.0,
+    "buy_complete": false,
+    "buy_count": 0,
+    "buy_cost": null,
+    "buy_fees": null,
+    "buy_payout": null,
+    "buy_edge": null,
+    "buy_reason": "no_ask_depth",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 5,
+   "edges": [
+    {
+     "ticker": "KXHIGHCHI-26SEP12-T84",
+     "title": "Will the maximum temperature be <84\u00b0 on Sep 12, 2026?",
+     "model_p": 0.3125,
+     "yes_edge": 1.5025,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": null,
+     "cap": 84.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP12-B84.5",
+     "title": "Will the maximum temperature be 84-85\u00b0 on Sep 12, 2026?",
+     "model_p": 0.5375,
+     "yes_edge": 2.6275,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 84.0,
+     "cap": 85.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP12-B86.5",
+     "title": "Will the maximum temperature be 86-87\u00b0 on Sep 12, 2026?",
+     "model_p": 0.125,
+     "yes_edge": 0.565,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 86.0,
+     "cap": 87.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP12-B88.5",
+     "title": "Will the maximum temperature be 88-89\u00b0 on Sep 12, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": null,
+     "no_edge": 4.8775,
+     "side": "no",
+     "px": 0.010000000000000009,
+     "count": 5,
+     "ask": 1.0,
+     "bid": 0.99,
+     "floor": 88.0,
+     "cap": 89.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP12-B90.5",
+     "title": "Will the maximum temperature be 90-91\u00b0 on Sep 12, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": 0.0025,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 90.0,
+     "cap": 91.0
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHCHI",
+   "event": "KXHIGHCHI-26SEP13",
+   "title": "Highest temperature in Chicago on Sep 13, 2026?",
+   "day": "2026-09-13",
+   "obs": {
+    "station": "KORD",
+    "temp_f": 78.8,
+    "timestamp": "2026-09-13T01:20:00+00:00",
+    "text": "Mostly Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHCHI-26SEP13-T72": 0.25,
+     "KXHIGHCHI-26SEP13-B72.5": 0.425,
+     "KXHIGHCHI-26SEP13-B74.5": 0.2625,
+     "KXHIGHCHI-26SEP13-B76.5": 0.05,
+     "KXHIGHCHI-26SEP13-B78.5": 0.0125,
+     "KXHIGHCHI-26SEP13-T79": 0.0
+    },
+    "counts": {
+     "KXHIGHCHI-26SEP13-T72": 20,
+     "KXHIGHCHI-26SEP13-B72.5": 34,
+     "KXHIGHCHI-26SEP13-B74.5": 21,
+     "KXHIGHCHI-26SEP13-B76.5": 4,
+     "KXHIGHCHI-26SEP13-B78.5": 1,
+     "KXHIGHCHI-26SEP13-T79": 0
+    },
+    "unmapped": 0,
+    "mean": 72.675,
+    "p10": 70.0,
+    "p50": 72.0,
+    "p90": 75.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.01,
+    "sum_bid": 0.91,
+    "ask_depth": 1.0,
+    "bid_depth": 1.0,
+    "buy_complete": true,
+    "buy_count": 1,
+    "buy_cost": 1.01,
+    "buy_fees": 0.08,
+    "buy_payout": 1.0,
+    "buy_edge": -0.09,
+    "buy_reason": "no_edge",
+    "sell_complete": true,
+    "sell_count": 1,
+    "sell_proceeds": 0.91,
+    "sell_fees": 0.08,
+    "sell_payout": 1.0,
+    "sell_edge": -0.17,
+    "sell_reason": "no_edge",
+    "tradeable": false
+   },
+   "n_edge": 6,
+   "edges": [
+    {
+     "ticker": "KXHIGHCHI-26SEP13-T72",
+     "title": "Will the maximum temperature be <72\u00b0 on Sep 13, 2026?",
+     "model_p": 0.25,
+     "yes_edge": 1.08,
+     "no_edge": -1.21,
+     "side": "yes",
+     "px": 0.03,
+     "count": 5,
+     "ask": 0.03,
+     "bid": 0.01,
+     "floor": null,
+     "cap": 72.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP13-B72.5",
+     "title": "Will the maximum temperature be 72-73\u00b0 on Sep 13, 2026?",
+     "model_p": 0.425,
+     "yes_edge": 1.645,
+     "no_edge": -1.755,
+     "side": "yes",
+     "px": 0.09,
+     "count": 5,
+     "ask": 0.09,
+     "bid": 0.08,
+     "floor": 72.0,
+     "cap": 73.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP13-B74.5",
+     "title": "Will the maximum temperature be 74-75\u00b0 on Sep 13, 2026?",
+     "model_p": 0.2625,
+     "yes_edge": -0.3675,
+     "no_edge": 0.1075,
+     "side": "no",
+     "px": 0.7,
+     "count": 5,
+     "ask": 0.32,
+     "bid": 0.3,
+     "floor": 74.0,
+     "cap": 75.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP13-B76.5",
+     "title": "Will the maximum temperature be 76-77\u00b0 on Sep 13, 2026?",
+     "model_p": 0.05,
+     "yes_edge": -1.99,
+     "no_edge": 1.76,
+     "side": "no",
+     "px": 0.5800000000000001,
+     "count": 5,
+     "ask": 0.43,
+     "bid": 0.42,
+     "floor": 76.0,
+     "cap": 77.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP13-B78.5",
+     "title": "Will the maximum temperature be 78-79\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": -0.4175,
+     "no_edge": 0.2575,
+     "side": "no",
+     "px": 0.9299999999999999,
+     "count": 5,
+     "ask": 0.09,
+     "bid": 0.07,
+     "floor": 78.0,
+     "cap": 79.0
+    },
+    {
+     "ticker": "KXHIGHCHI-26SEP13-T79",
+     "title": "Will the maximum temperature be >79\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0,
+     "yes_edge": -0.27,
+     "no_edge": 0.13,
+     "side": "no",
+     "px": 0.97,
+     "count": 5,
+     "ask": 0.05,
+     "bid": 0.03,
+     "floor": 79.0,
+     "cap": null
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHLAX",
+   "event": "KXHIGHLAX-26SEP12",
+   "title": "Highest temperature in Los Angeles on Sep 12, 2026?",
+   "day": "2026-09-12",
+   "obs": {
+    "station": "KLAX",
+    "temp_f": 73.4,
+    "timestamp": "2026-09-13T01:25:00+00:00",
+    "text": "Mostly Cloudy"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHLAX-26SEP12-T77": 0.0,
+     "KXHIGHLAX-26SEP12-B77.5": 0.0,
+     "KXHIGHLAX-26SEP12-B79.5": 0.2,
+     "KXHIGHLAX-26SEP12-B81.5": 0.175,
+     "KXHIGHLAX-26SEP12-B83.5": 0.025,
+     "KXHIGHLAX-26SEP12-T84": 0.6
+    },
+    "counts": {
+     "KXHIGHLAX-26SEP12-T77": 0,
+     "KXHIGHLAX-26SEP12-B77.5": 0,
+     "KXHIGHLAX-26SEP12-B79.5": 16,
+     "KXHIGHLAX-26SEP12-B81.5": 14,
+     "KXHIGHLAX-26SEP12-B83.5": 2,
+     "KXHIGHLAX-26SEP12-T84": 48
+    },
+    "unmapped": 0,
+    "mean": 84.675,
+    "p10": 80.0,
+    "p50": 86.0,
+    "p90": 88.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.05,
+    "sum_bid": null,
+    "ask_depth": 0.0,
+    "bid_depth": 0.0,
+    "buy_complete": false,
+    "buy_count": 0,
+    "buy_cost": null,
+    "buy_fees": null,
+    "buy_payout": null,
+    "buy_edge": null,
+    "buy_reason": "no_ask_depth",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 4,
+   "edges": [
+    {
+     "ticker": "KXHIGHLAX-26SEP12-B79.5",
+     "title": "Will the maximum temperature be 79-80\u00b0 on Sep 12, 2026?",
+     "model_p": 0.2,
+     "yes_edge": 0.94,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 79.0,
+     "cap": 80.0
+    },
+    {
+     "ticker": "KXHIGHLAX-26SEP12-B81.5",
+     "title": "Will the maximum temperature be 81-82\u00b0 on Sep 12, 2026?",
+     "model_p": 0.175,
+     "yes_edge": null,
+     "no_edge": 4.065,
+     "side": "no",
+     "px": 0.010000000000000009,
+     "count": 5,
+     "ask": 1.0,
+     "bid": 0.99,
+     "floor": 81.0,
+     "cap": 82.0
+    },
+    {
+     "ticker": "KXHIGHLAX-26SEP12-B83.5",
+     "title": "Will the maximum temperature be 83-84\u00b0 on Sep 12, 2026?",
+     "model_p": 0.025,
+     "yes_edge": 0.065,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 83.0,
+     "cap": 84.0
+    },
+    {
+     "ticker": "KXHIGHLAX-26SEP12-T84",
+     "title": "Will the maximum temperature be >84\u00b0 on Sep 12, 2026?",
+     "model_p": 0.6,
+     "yes_edge": 2.94,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 84.0,
+     "cap": null
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHLAX",
+   "event": "KXHIGHLAX-26SEP13",
+   "title": "Highest temperature in Los Angeles on Sep 13, 2026?",
+   "day": "2026-09-13",
+   "obs": {
+    "station": "KLAX",
+    "temp_f": 73.4,
+    "timestamp": "2026-09-13T01:25:00+00:00",
+    "text": "Mostly Cloudy"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHLAX-26SEP13-T76": 0.0,
+     "KXHIGHLAX-26SEP13-B76.5": 0.0,
+     "KXHIGHLAX-26SEP13-B78.5": 0.1125,
+     "KXHIGHLAX-26SEP13-B80.5": 0.2625,
+     "KXHIGHLAX-26SEP13-B82.5": 0.0125,
+     "KXHIGHLAX-26SEP13-T83": 0.6125
+    },
+    "counts": {
+     "KXHIGHLAX-26SEP13-T76": 0,
+     "KXHIGHLAX-26SEP13-B76.5": 0,
+     "KXHIGHLAX-26SEP13-B78.5": 9,
+     "KXHIGHLAX-26SEP13-B80.5": 21,
+     "KXHIGHLAX-26SEP13-B82.5": 1,
+     "KXHIGHLAX-26SEP13-T83": 49
+    },
+    "unmapped": 0,
+    "mean": 84.125,
+    "p10": 79.0,
+    "p50": 86.0,
+    "p90": 88.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.09,
+    "sum_bid": null,
+    "ask_depth": 4.0,
+    "bid_depth": 0.0,
+    "buy_complete": true,
+    "buy_count": 4,
+    "buy_cost": 4.36,
+    "buy_fees": 0.21,
+    "buy_payout": 4.0,
+    "buy_edge": -0.57,
+    "buy_reason": "no_edge",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 5,
+   "edges": [
+    {
+     "ticker": "KXHIGHLAX-26SEP13-B76.5",
+     "title": "Will the maximum temperature be 76-77\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0,
+     "yes_edge": -0.32,
+     "no_edge": 0.23,
+     "side": "no",
+     "px": 0.95,
+     "count": 5,
+     "ask": 0.06,
+     "bid": 0.05,
+     "floor": 76.0,
+     "cap": 77.0
+    },
+    {
+     "ticker": "KXHIGHLAX-26SEP13-B78.5",
+     "title": "Will the maximum temperature be 78-79\u00b0 on Sep 13, 2026?",
+     "model_p": 0.1125,
+     "yes_edge": -1.5775,
+     "no_edge": 1.2475,
+     "side": "no",
+     "px": 0.62,
+     "count": 5,
+     "ask": 0.41,
+     "bid": 0.38,
+     "floor": 78.0,
+     "cap": 79.0
+    },
+    {
+     "ticker": "KXHIGHLAX-26SEP13-B80.5",
+     "title": "Will the maximum temperature be 80-81\u00b0 on Sep 13, 2026?",
+     "model_p": 0.2625,
+     "yes_edge": -1.1775,
+     "no_edge": 0.8975,
+     "side": "no",
+     "px": 0.54,
+     "count": 5,
+     "ask": 0.48,
+     "bid": 0.46,
+     "floor": 80.0,
+     "cap": 81.0
+    },
+    {
+     "ticker": "KXHIGHLAX-26SEP13-B82.5",
+     "title": "Will the maximum temperature be 82-83\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": -0.4775,
+     "no_edge": 0.3575,
+     "side": "no",
+     "px": 0.91,
+     "count": 5,
+     "ask": 0.1,
+     "bid": 0.09,
+     "floor": 82.0,
+     "cap": 83.0
+    },
+    {
+     "ticker": "KXHIGHLAX-26SEP13-T83",
+     "title": "Will the maximum temperature be >83\u00b0 on Sep 13, 2026?",
+     "model_p": 0.6125,
+     "yes_edge": 2.8925,
+     "no_edge": -2.9725,
+     "side": "yes",
+     "px": 0.03,
+     "count": 5,
+     "ask": 0.03,
+     "bid": 0.02,
+     "floor": 83.0,
+     "cap": null
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHMIA",
+   "event": "KXHIGHMIA-26SEP12",
+   "title": "Highest temperature in Miami on Sep 12, 2026?",
+   "day": "2026-09-12",
+   "obs": {
+    "station": "KMIA",
+    "temp_f": 80.6,
+    "timestamp": "2026-09-13T01:25:00+00:00",
+    "text": "Mostly Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHMIA-26SEP12-T86": 0.1,
+     "KXHIGHMIA-26SEP12-B86.5": 0.1875,
+     "KXHIGHMIA-26SEP12-B88.5": 0.325,
+     "KXHIGHMIA-26SEP12-B90.5": 0.3875,
+     "KXHIGHMIA-26SEP12-B92.5": 0.0,
+     "KXHIGHMIA-26SEP12-T93": 0.0
+    },
+    "counts": {
+     "KXHIGHMIA-26SEP12-T86": 8,
+     "KXHIGHMIA-26SEP12-B86.5": 15,
+     "KXHIGHMIA-26SEP12-B88.5": 26,
+     "KXHIGHMIA-26SEP12-B90.5": 31,
+     "KXHIGHMIA-26SEP12-B92.5": 0,
+     "KXHIGHMIA-26SEP12-T93": 0
+    },
+    "unmapped": 0,
+    "mean": 88.4125,
+    "p10": 85.0,
+    "p50": 89.0,
+    "p90": 90.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.05,
+    "sum_bid": null,
+    "ask_depth": 0.0,
+    "bid_depth": 0.0,
+    "buy_complete": false,
+    "buy_count": 0,
+    "buy_cost": null,
+    "buy_fees": null,
+    "buy_payout": null,
+    "buy_edge": null,
+    "buy_reason": "no_ask_depth",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 5,
+   "edges": [
+    {
+     "ticker": "KXHIGHMIA-26SEP12-T86",
+     "title": "Will the maximum temperature be <86\u00b0 on Sep 12, 2026?",
+     "model_p": 0.1,
+     "yes_edge": 0.44,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": null,
+     "cap": 86.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP12-B86.5",
+     "title": "Will the maximum temperature be 86-87\u00b0 on Sep 12, 2026?",
+     "model_p": 0.1875,
+     "yes_edge": 0.8775,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 86.0,
+     "cap": 87.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP12-B88.5",
+     "title": "Will the maximum temperature be 88-89\u00b0 on Sep 12, 2026?",
+     "model_p": 0.325,
+     "yes_edge": 1.565,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 88.0,
+     "cap": 89.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP12-B90.5",
+     "title": "Will the maximum temperature be 90-91\u00b0 on Sep 12, 2026?",
+     "model_p": 0.3875,
+     "yes_edge": 1.8775,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 90.0,
+     "cap": 91.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP12-B92.5",
+     "title": "Will the maximum temperature be 92-93\u00b0 on Sep 12, 2026?",
+     "model_p": 0.0,
+     "yes_edge": null,
+     "no_edge": 4.94,
+     "side": "no",
+     "px": 0.010000000000000009,
+     "count": 5,
+     "ask": 1.0,
+     "bid": 0.99,
+     "floor": 92.0,
+     "cap": 93.0
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHMIA",
+   "event": "KXHIGHMIA-26SEP13",
+   "title": "Highest temperature in Miami on Sep 13, 2026?",
+   "day": "2026-09-13",
+   "obs": {
+    "station": "KMIA",
+    "temp_f": 80.6,
+    "timestamp": "2026-09-13T01:25:00+00:00",
+    "text": "Mostly Clear"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHMIA-26SEP13-T85": 0.025,
+     "KXHIGHMIA-26SEP13-B85.5": 0.2625,
+     "KXHIGHMIA-26SEP13-B87.5": 0.375,
+     "KXHIGHMIA-26SEP13-B89.5": 0.25,
+     "KXHIGHMIA-26SEP13-B91.5": 0.0875,
+     "KXHIGHMIA-26SEP13-T92": 0.0
+    },
+    "counts": {
+     "KXHIGHMIA-26SEP13-T85": 2,
+     "KXHIGHMIA-26SEP13-B85.5": 21,
+     "KXHIGHMIA-26SEP13-B87.5": 30,
+     "KXHIGHMIA-26SEP13-B89.5": 20,
+     "KXHIGHMIA-26SEP13-B91.5": 7,
+     "KXHIGHMIA-26SEP13-T92": 0
+    },
+    "unmapped": 0,
+    "mean": 87.7875,
+    "p10": 85.0,
+    "p50": 88.0,
+    "p90": 90.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.05,
+    "sum_bid": null,
+    "ask_depth": 3.0,
+    "bid_depth": 0.0,
+    "buy_complete": true,
+    "buy_count": 3,
+    "buy_cost": 3.15,
+    "buy_fees": 0.19,
+    "buy_payout": 3.0,
+    "buy_edge": -0.34,
+    "buy_reason": "no_edge",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 5,
+   "edges": [
+    {
+     "ticker": "KXHIGHMIA-26SEP13-T85",
+     "title": "Will the maximum temperature be <85\u00b0 on Sep 13, 2026?",
+     "model_p": 0.025,
+     "yes_edge": 0.065,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": null,
+     "cap": 85.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP13-B85.5",
+     "title": "Will the maximum temperature be 85-86\u00b0 on Sep 13, 2026?",
+     "model_p": 0.2625,
+     "yes_edge": 1.2025,
+     "no_edge": -1.2725,
+     "side": "yes",
+     "px": 0.02,
+     "count": 5,
+     "ask": 0.02,
+     "bid": 0.01,
+     "floor": 85.0,
+     "cap": 86.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP13-B87.5",
+     "title": "Will the maximum temperature be 87-88\u00b0 on Sep 13, 2026?",
+     "model_p": 0.375,
+     "yes_edge": 1.445,
+     "no_edge": -1.555,
+     "side": "yes",
+     "px": 0.08,
+     "count": 5,
+     "ask": 0.08,
+     "bid": 0.07,
+     "floor": 87.0,
+     "cap": 88.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP13-B91.5",
+     "title": "Will the maximum temperature be 91-92\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0875,
+     "yes_edge": -2.0025,
+     "no_edge": 1.7725,
+     "side": "no",
+     "px": 0.54,
+     "count": 5,
+     "ask": 0.47,
+     "bid": 0.46,
+     "floor": 91.0,
+     "cap": 92.0
+    },
+    {
+     "ticker": "KXHIGHMIA-26SEP13-T92",
+     "title": "Will the maximum temperature be >92\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0,
+     "yes_edge": -1.11,
+     "no_edge": 0.94,
+     "side": "no",
+     "px": 0.8,
+     "count": 5,
+     "ask": 0.21,
+     "bid": 0.2,
+     "floor": 92.0,
+     "cap": null
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHDEN",
+   "event": "KXHIGHDEN-26SEP12",
+   "title": "Highest temperature in Denver on Sep 12, 2026?",
+   "day": "2026-09-12",
+   "obs": {
+    "station": "KDEN",
+    "temp_f": 75.02,
+    "timestamp": "2026-09-13T00:53:00+00:00",
+    "text": "Mostly Cloudy"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHDEN-26SEP12-T80": 0.0875,
+     "KXHIGHDEN-26SEP12-B80.5": 0.15,
+     "KXHIGHDEN-26SEP12-B82.5": 0.375,
+     "KXHIGHDEN-26SEP12-B84.5": 0.375,
+     "KXHIGHDEN-26SEP12-B86.5": 0.0125,
+     "KXHIGHDEN-26SEP12-T87": 0.0
+    },
+    "counts": {
+     "KXHIGHDEN-26SEP12-T80": 7,
+     "KXHIGHDEN-26SEP12-B80.5": 12,
+     "KXHIGHDEN-26SEP12-B82.5": 30,
+     "KXHIGHDEN-26SEP12-B84.5": 30,
+     "KXHIGHDEN-26SEP12-B86.5": 1,
+     "KXHIGHDEN-26SEP12-T87": 0
+    },
+    "unmapped": 0,
+    "mean": 82.5125,
+    "p10": 80.0,
+    "p50": 83.0,
+    "p90": 84.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.05,
+    "sum_bid": null,
+    "ask_depth": 5.92,
+    "bid_depth": 0.0,
+    "buy_complete": true,
+    "buy_count": 5,
+    "buy_cost": 5.25,
+    "buy_fees": 0.08,
+    "buy_payout": 5.0,
+    "buy_edge": -0.33,
+    "buy_reason": "no_edge",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": false
+   },
+   "n_edge": 5,
+   "edges": [
+    {
+     "ticker": "KXHIGHDEN-26SEP12-T80",
+     "title": "Will the maximum temperature be <80\u00b0 on Sep 12, 2026?",
+     "model_p": 0.0875,
+     "yes_edge": -4.3825,
+     "no_edge": 4.1325,
+     "side": "no",
+     "px": 0.07999999999999996,
+     "count": 5,
+     "ask": 0.96,
+     "bid": 0.92,
+     "floor": null,
+     "cap": 80.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP12-B80.5",
+     "title": "Will the maximum temperature be 80-81\u00b0 on Sep 12, 2026?",
+     "model_p": 0.15,
+     "yes_edge": 0.48,
+     "no_edge": -0.71,
+     "side": "yes",
+     "px": 0.05,
+     "count": 5,
+     "ask": 0.05,
+     "bid": 0.01,
+     "floor": 80.0,
+     "cap": 81.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP12-B82.5",
+     "title": "Will the maximum temperature be 82-83\u00b0 on Sep 12, 2026?",
+     "model_p": 0.375,
+     "yes_edge": 1.815,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 82.0,
+     "cap": 83.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP12-B84.5",
+     "title": "Will the maximum temperature be 84-85\u00b0 on Sep 12, 2026?",
+     "model_p": 0.375,
+     "yes_edge": 1.815,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 84.0,
+     "cap": 85.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP12-B86.5",
+     "title": "Will the maximum temperature be 86-87\u00b0 on Sep 12, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": 0.0025,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.01,
+     "count": 5,
+     "ask": 0.01,
+     "bid": 0.0,
+     "floor": 86.0,
+     "cap": 87.0
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHDEN",
+   "event": "KXHIGHDEN-26SEP13",
+   "title": "Highest temperature in Denver on Sep 13, 2026?",
+   "day": "2026-09-13",
+   "obs": {
+    "station": "KDEN",
+    "temp_f": 75.02,
+    "timestamp": "2026-09-13T00:53:00+00:00",
+    "text": "Mostly Cloudy"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 80,
+   "dist": {
+    "n_members": 80,
+    "probs": {
+     "KXHIGHDEN-26SEP13-T89": 0.0125,
+     "KXHIGHDEN-26SEP13-B89.5": 0.1875,
+     "KXHIGHDEN-26SEP13-B91.5": 0.375,
+     "KXHIGHDEN-26SEP13-B93.5": 0.4125,
+     "KXHIGHDEN-26SEP13-B95.5": 0.0125,
+     "KXHIGHDEN-26SEP13-T96": 0.0
+    },
+    "counts": {
+     "KXHIGHDEN-26SEP13-T89": 1,
+     "KXHIGHDEN-26SEP13-B89.5": 15,
+     "KXHIGHDEN-26SEP13-B91.5": 30,
+     "KXHIGHDEN-26SEP13-B93.5": 33,
+     "KXHIGHDEN-26SEP13-B95.5": 1,
+     "KXHIGHDEN-26SEP13-T96": 0
+    },
+    "unmapped": 0,
+    "mean": 91.975,
+    "p10": 90.0,
+    "p50": 92.0,
+    "p90": 94.0
+   },
+   "dutch": {
+    "n_legs": 6,
+    "n_with_ask": 6,
+    "n_with_bid": 6,
+    "sum_ask": 1.06,
+    "sum_bid": 1.0,
+    "ask_depth": 0.97,
+    "bid_depth": 1.47,
+    "buy_complete": false,
+    "buy_count": 0,
+    "buy_cost": null,
+    "buy_fees": null,
+    "buy_payout": null,
+    "buy_edge": null,
+    "buy_reason": "no_ask_depth",
+    "sell_complete": true,
+    "sell_count": 1,
+    "sell_proceeds": 1.0,
+    "sell_fees": 0.08,
+    "sell_payout": 1.0,
+    "sell_edge": -0.08,
+    "sell_reason": "no_edge",
+    "tradeable": false
+   },
+   "n_edge": 5,
+   "edges": [
+    {
+     "ticker": "KXHIGHDEN-26SEP13-T89",
+     "title": "Will the maximum temperature be <89\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": -0.1575,
+     "no_edge": 0.0675,
+     "side": "no",
+     "px": 0.97,
+     "count": 5,
+     "ask": 0.04,
+     "bid": 0.03,
+     "floor": null,
+     "cap": 89.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP13-B89.5",
+     "title": "Will the maximum temperature be 89-90\u00b0 on Sep 13, 2026?",
+     "model_p": 0.1875,
+     "yes_edge": 0.5075,
+     "no_edge": -0.6175,
+     "side": "yes",
+     "px": 0.08,
+     "count": 5,
+     "ask": 0.08,
+     "bid": 0.07,
+     "floor": 89.0,
+     "cap": 90.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP13-B93.5",
+     "title": "Will the maximum temperature be 93-94\u00b0 on Sep 13, 2026?",
+     "model_p": 0.4125,
+     "yes_edge": -0.4275,
+     "no_edge": 0.1975,
+     "side": "no",
+     "px": 0.53,
+     "count": 5,
+     "ask": 0.48,
+     "bid": 0.47,
+     "floor": 93.0,
+     "cap": 94.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP13-B95.5",
+     "title": "Will the maximum temperature be 95-96\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0125,
+     "yes_edge": -0.3675,
+     "no_edge": 0.2575,
+     "side": "no",
+     "px": 0.9299999999999999,
+     "count": 5,
+     "ask": 0.08,
+     "bid": 0.07,
+     "floor": 95.0,
+     "cap": 96.0
+    },
+    {
+     "ticker": "KXHIGHDEN-26SEP13-T96",
+     "title": "Will the maximum temperature be >96\u00b0 on Sep 13, 2026?",
+     "model_p": 0.0,
+     "yes_edge": -0.11,
+     "no_edge": 0.04,
+     "side": "no",
+     "px": 0.99,
+     "count": 5,
+     "ask": 0.02,
+     "bid": 0.01,
+     "floor": 96.0,
+     "cap": null
+    }
+   ]
+  },
+  {
+   "series": "KXRAINDENM",
+   "event": "KXRAINDENM-26SEP",
+   "title": "Rain in Denver in Sep 2026?",
+   "day": null,
+   "obs": {
+    "station": "KDEN",
+    "temp_f": 75.02,
+    "timestamp": "2026-09-13T00:53:00+00:00",
+    "text": "Mostly Cloudy"
+   },
+   "ensemble": {
+    "gfs025": {
+     "ok": true,
+     "n_members": 30,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    },
+    "ecmwf_ifs025": {
+     "ok": true,
+     "n_members": 50,
+     "dates": [
+      "2026-09-12",
+      "2026-09-13",
+      "2026-09-14",
+      "2026-09-15",
+      "2026-09-16",
+      "2026-09-17",
+      "2026-09-18"
+     ]
+    }
+   },
+   "n_members_used": 0,
+   "dist": null,
+   "dutch": {
+    "n_legs": 7,
+    "n_with_ask": 7,
+    "n_with_bid": 7,
+    "sum_ask": 0.68,
+    "sum_bid": null,
+    "ask_depth": 12.64,
+    "bid_depth": 0.0,
+    "buy_complete": true,
+    "buy_count": 12,
+    "buy_cost": 8.16,
+    "buy_fees": 0.44,
+    "buy_payout": 12.0,
+    "buy_edge": 3.4,
+    "buy_reason": "ok",
+    "sell_complete": false,
+    "sell_count": 0,
+    "sell_proceeds": null,
+    "sell_fees": null,
+    "sell_payout": null,
+    "sell_edge": null,
+    "sell_reason": "missing_bid",
+    "tradeable": true
+   },
+   "n_edge": 0,
+   "edges": []
+  }
+ ],
+ "n_tradeable_ensemble": 12
+}

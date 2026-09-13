@@ -1,0 +1,58 @@
+{
+ "ts": "2026-09-13T02:09:52.562435+00:00",
+ "note": "Few settled nested events in the harvest window. Persistence is not a print-speed tape. Do not paper.",
+ "books": [
+  {
+   "series": "KXJOBLESSCLAIMS",
+   "event": "KXJOBLESSCLAIMS-26SEP10",
+   "close": "2026-09-10T12:25:00Z",
+   "n_legs": 11,
+   "n_yes": 5,
+   "yes": [
+    "KXJOBLESSCLAIMS-26SEP10-205000",
+    "KXJOBLESSCLAIMS-26SEP10-200000",
+    "KXJOBLESSCLAIMS-26SEP10-195000",
+    "KXJOBLESSCLAIMS-26SEP10-190000",
+    "KXJOBLESSCLAIMS-26SEP10-185000"
+   ],
+   "point": 206000.0,
+   "n_locked": 0
+  },
+  {
+   "series": "KXJOBLESSCLAIMS",
+   "event": "KXJOBLESSCLAIMS-26SEP03",
+   "close": "2026-09-03T12:25:00Z",
+   "n_legs": 11,
+   "n_yes": 6,
+   "yes": [
+    "KXJOBLESSCLAIMS-26SEP03-205000",
+    "KXJOBLESSCLAIMS-26SEP03-200000",
+    "KXJOBLESSCLAIMS-26SEP03-195000",
+    "KXJOBLESSCLAIMS-26SEP03-190000",
+    "KXJOBLESSCLAIMS-26SEP03-185000",
+    "KXJOBLESSCLAIMS-26SEP03-180000"
+   ],
+   "point": 207000.0,
+   "n_locked": 0
+  },
+  {
+   "series": "KXCPI",
+   "event": "KXCPI-26AUG",
+   "close": "2026-09-11T12:25:00Z",
+   "n_legs": 15,
+   "n_yes": 8,
+   "yes": [
+    "KXCPI-26AUG-T-0.4",
+    "KXCPI-26AUG-T-0.3",
+    "KXCPI-26AUG-T-0.2",
+    "KXCPI-26AUG-T0.3",
+    "KXCPI-26AUG-T0.2",
+    "KXCPI-26AUG-T0.1",
+    "KXCPI-26AUG-T-0.1",
+    "KXCPI-26AUG-T0.0"
+   ],
+   "point": null,
+   "n_locked": 0
+  }
+ ]
+}

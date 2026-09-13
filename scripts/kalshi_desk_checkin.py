@@ -25,7 +25,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 
 from quantfirm.kalshi.runtime import (  # noqa: E402
-    TRADES_PATH, ensure_poly_paper, ensure_supervisor, write_desk_status,
+    TRADES_PATH, ensure_div_paper, ensure_poly_paper, ensure_supervisor,
+    write_desk_status,
 )
 
 MARK = os.path.join(REPO, "state", "kalshi_checkin_mark.json")
@@ -34,6 +35,7 @@ COMMIT_PATHS = (
     "state/kalshi_desk_status.json",
     "state/kalshi_paper_trades.csv",
     "state/kalshi_poly_paper_trades.csv",
+    "state/kalshi_div_paper_trades.csv",
     "state/kalshi_checkin_mark.json",
     "research/kalshi_backtest.md",
 )
@@ -71,7 +73,7 @@ def stats(rows, adapter):
 
 
 def main():
-    status = [ensure_supervisor(), ensure_poly_paper()]
+    status = [ensure_supervisor(), ensure_poly_paper(), ensure_div_paper()]
     rec = write_desk_status(supervisor=status[0])
     rows = load_trades()
     mark = {"n_settled": 0, "t_history": []}

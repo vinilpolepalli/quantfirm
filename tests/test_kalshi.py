@@ -17,7 +17,8 @@ from quantfirm.kalshi.strategies import (crypto_fav, desk_book, favorite_blind,
                                          poly_book, poly_confirm, registry)
 from quantfirm.kalshi.strategy import Params, decide
 from quantfirm.kalshi.universe import (BANKROLL, LIVE_SERIES, PAPER_ASSETS,
-                                         PAPER_STRATEGY, SERIES)
+                                         PAPER_STRATEGY, SERIES,
+                                         CRYPTO_LIVE, CRYPTO_PAPER)
 
 
 class TestFair(unittest.TestCase):
@@ -349,6 +350,22 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIsNotNone(cheap_yes)
         self.assertEqual(cheap_yes.side, "no")
         self.assertAlmostEqual(cheap_yes.limit_price, 0.82, places=2)
+        doge = desk_book(**kw, metal="doge")
+        xrp = desk_book(**kw, metal="xrp")
+        near = desk_book(**kw, metal="near")
+        self.assertIsNotNone(doge)
+        self.assertIsNotNone(xrp)
+        self.assertIsNotNone(near)
+        self.assertEqual(doge.tag, "crypto_fav")
+        self.assertEqual(xrp.tag, "crypto_fav")
+        self.assertEqual(near.tag, "crypto_fav")
+        doge_stake = doge.count * doge.limit_price
+        self.assertGreaterEqual(doge_stake, 8.0)
+        self.assertLessEqual(doge_stake, 10.0)
+        self.assertEqual(near.count, doge.count)
+        self.assertNotIn("doge", PAPER_ASSETS)
+        self.assertNotIn("xrp", PAPER_ASSETS)
+        self.assertNotIn("near", PAPER_ASSETS)
         self.assertIsNone(desk_book(**{**kw, "yes_bid": 0.03, "yes_ask": 0.05},
                                     metal="btc"))
         # 70¢ YES sits. 76¢ YES clips.
@@ -1073,6 +1090,28 @@ class TestPolymarketTape(unittest.TestCase):
             self.assertEqual(rec["poly_paper"]["pnl"], 9.0)
             self.assertTrue(rec["poly_ahead"])
             self.assertFalse(rec["ready"])
+
+    def test_div_paper_loop_never_live(self):
+        loop_path = os.path.join(os.path.dirname(__file__),
+                                 "..", "scripts", "kalshi_div_paper_loop.sh")
+        with open(loop_path) as f:
+            loop = f.read()
+        self.assertIn("KALSHI_LIVE=0", loop)
+        self.assertIn("STRATEGY=desk_book", loop)
+        self.assertIn("METALS=doge,xrp,near", loop)
+        self.assertIn("--state-prefix kalshi_div_paper", loop)
+        self.assertNotIn("--live", loop)
+        self.assertNotIn("LIVE_ARGS", loop)
+        self.assertNotIn("METALS=sol", loop)
+        from quantfirm.kalshi.runtime import ensure_div_paper
+        src = inspect.getsource(ensure_div_paper)
+        self.assertIn('env["KALSHI_LIVE"] = "0"', src)
+        self.assertNotIn("--live", src)
+        from quantfirm.kalshi.universe import CRYPTO_LIVE, CRYPTO_PAPER, PAPER_ASSETS
+        self.assertEqual(CRYPTO_PAPER, ("doge", "xrp", "near"))
+        self.assertEqual(CRYPTO_LIVE, ("btc", "eth"))
+        self.assertNotIn("doge", PAPER_ASSETS)
+        self.assertNotIn("near", PAPER_ASSETS)
 
 
 class TestCashoutReplay(unittest.TestCase):

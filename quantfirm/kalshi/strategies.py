@@ -25,7 +25,7 @@ from typing import Callable
 
 from .fair import fair_yes, implied_sigma_1m, kelly_fraction, taker_fee
 from .strategy import Intent, Params, decide
-from .universe import CRYPTO_LIVE
+from .universe import CRYPTO_LIVE, CRYPTO_OVERLAY
 
 
 def _size(ticker, side, cost, q, edge, fair, tau_s, bankroll, params, tag,
@@ -234,7 +234,7 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     if mkt_move_max is not None and abs(kw.get("recent_mkt_move") or 0) > mkt_move_max:
         return None
     wait = OPEN_WAIT_S if wait_s is None else wait_s
-    if metal in CRYPTO_LIVE:
+    if metal in CRYPTO_OVERLAY:
         p = crypto_wait_params(params, wait)
         if price_min_ov is not None:
             p = replace(p, price_min=price_min_ov)

@@ -1,0 +1,652 @@
+{
+ "ts": "2026-09-13T01:57:03.363392+00:00",
+ "bar": "wait3 \u226575\u00a2 4% lag-fill; name independently pnl>0 and n>=20",
+ "cleared": [
+  "doge",
+  "xrp"
+ ],
+ "promote_paper": true,
+ "promote_all_three": false,
+ "results": [
+  {
+   "name": "wait3_75",
+   "metal": "sol",
+   "n": 280,
+   "pnl": -94.68,
+   "t": -1.15,
+   "hit": 0.643,
+   "dd": 48.48,
+   "avg_fill": 0.664,
+   "by_metal": {
+    "sol": {
+     "n": 280,
+     "pnl": -94.68,
+     "hit": 0.643
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 69,
+     "pnl": 31.3
+    },
+    "2026-W36": {
+     "n": 115,
+     "pnl": -78.72
+    },
+    "2026-W37": {
+     "n": 96,
+     "pnl": -47.25
+    }
+   },
+   "skipped": {
+    "raced_out": 4021,
+    "corr_cap": 130,
+    "no_underlying": 37,
+    "daily_stop": 1947
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "sol",
+   "n": 118,
+   "pnl": -85.03,
+   "t": -1.84,
+   "hit": 0.61,
+   "dd": 34.01,
+   "avg_fill": 0.671,
+   "by_metal": {
+    "sol": {
+     "n": 118,
+     "pnl": -85.03,
+     "hit": 0.61
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 22,
+     "pnl": -33.02
+    },
+    "2026-W37": {
+     "n": 96,
+     "pnl": -52.01
+    }
+   },
+   "skipped": {
+    "raced_out": 1858,
+    "corr_cap": 66,
+    "daily_stop": 1494,
+    "no_underlying": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "sol",
+   "n": 328,
+   "pnl": -84.58,
+   "t": -0.91,
+   "hit": 0.652,
+   "dd": 48.85,
+   "avg_fill": 0.663,
+   "by_metal": {
+    "sol": {
+     "n": 328,
+     "pnl": -84.58,
+     "hit": 0.652
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 73,
+     "pnl": 45.06
+    },
+    "2026-W36": {
+     "n": 142,
+     "pnl": -78.18
+    },
+    "2026-W37": {
+     "n": 113,
+     "pnl": -51.46
+    }
+   },
+   "skipped": {
+    "raced_out": 4442,
+    "corr_cap": 194,
+    "no_underlying": 41,
+    "daily_stop": 825
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "sol",
+   "n": 151,
+   "pnl": -82.23,
+   "t": -1.5,
+   "hit": 0.629,
+   "dd": 36.29,
+   "avg_fill": 0.667,
+   "by_metal": {
+    "sol": {
+     "n": 151,
+     "pnl": -82.23,
+     "hit": 0.629
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 46,
+     "pnl": -30.55
+    },
+    "2026-W37": {
+     "n": 105,
+     "pnl": -51.68
+    }
+   },
+   "skipped": {
+    "raced_out": 2023,
+    "corr_cap": 106,
+    "no_underlying": 1,
+    "daily_stop": 965
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "sol",
+   "n": 225,
+   "pnl": -69.53,
+   "t": -0.93,
+   "hit": 0.68,
+   "dd": 44.47,
+   "avg_fill": 0.695,
+   "by_metal": {
+    "sol": {
+     "n": 225,
+     "pnl": -69.53,
+     "hit": 0.68
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 47,
+     "pnl": 36.29
+    },
+    "2026-W36": {
+     "n": 100,
+     "pnl": -49.05
+    },
+    "2026-W37": {
+     "n": 78,
+     "pnl": -56.76
+    }
+   },
+   "skipped": {
+    "raced_out": 3479,
+    "corr_cap": 59,
+    "no_underlying": 37
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "sol",
+   "n": 104,
+   "pnl": -79.57,
+   "t": -1.84,
+   "hit": 0.635,
+   "dd": 31.83,
+   "avg_fill": 0.699,
+   "by_metal": {
+    "sol": {
+     "n": 104,
+     "pnl": -79.57,
+     "hit": 0.635
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 26,
+     "pnl": -26.88
+    },
+    "2026-W37": {
+     "n": 78,
+     "pnl": -52.69
+    }
+   },
+   "skipped": {
+    "raced_out": 1742,
+    "corr_cap": 37,
+    "no_underlying": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "doge",
+   "n": 295,
+   "pnl": 78.49,
+   "t": 0.8,
+   "hit": 0.705,
+   "dd": 17.39,
+   "avg_fill": 0.668,
+   "by_metal": {
+    "doge": {
+     "n": 295,
+     "pnl": 78.49,
+     "hit": 0.705
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 66,
+     "pnl": 28.98
+    },
+    "2026-W36": {
+     "n": 115,
+     "pnl": 26.21
+    },
+    "2026-W37": {
+     "n": 114,
+     "pnl": 23.31
+    }
+   },
+   "skipped": {
+    "raced_out": 4273,
+    "corr_cap": 160,
+    "no_underlying": 37,
+    "daily_stop": 153
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "doge",
+   "n": 148,
+   "pnl": 15.57,
+   "t": 0.27,
+   "hit": 0.689,
+   "dd": 17.62,
+   "avg_fill": 0.661,
+   "by_metal": {
+    "doge": {
+     "n": 148,
+     "pnl": 15.57,
+     "hit": 0.689
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 34,
+     "pnl": -1.9
+    },
+    "2026-W37": {
+     "n": 114,
+     "pnl": 17.47
+    }
+   },
+   "skipped": {
+    "raced_out": 2144,
+    "corr_cap": 88,
+    "no_underlying": 1,
+    "daily_stop": 36
+   },
+   "split": "7d"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "doge",
+   "n": 307,
+   "pnl": 143.25,
+   "t": 1.29,
+   "hit": 0.72,
+   "dd": 17.82,
+   "avg_fill": 0.671,
+   "by_metal": {
+    "doge": {
+     "n": 307,
+     "pnl": 143.25,
+     "hit": 0.72
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 72,
+     "pnl": 54.77
+    },
+    "2026-W36": {
+     "n": 126,
+     "pnl": 40.27
+    },
+    "2026-W37": {
+     "n": 109,
+     "pnl": 48.21
+    }
+   },
+   "skipped": {
+    "raced_out": 4397,
+    "corr_cap": 201,
+    "daily_stop": 368,
+    "no_underlying": 40
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "doge",
+   "n": 145,
+   "pnl": 38.39,
+   "t": 0.64,
+   "hit": 0.703,
+   "dd": 15.9,
+   "avg_fill": 0.662,
+   "by_metal": {
+    "doge": {
+     "n": 145,
+     "pnl": 38.39,
+     "hit": 0.703
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 36,
+     "pnl": 4.23
+    },
+    "2026-W37": {
+     "n": 109,
+     "pnl": 34.16
+    }
+   },
+   "skipped": {
+    "raced_out": 2166,
+    "corr_cap": 108,
+    "no_underlying": 1,
+    "daily_stop": 233
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "doge",
+   "n": 211,
+   "pnl": 35.53,
+   "t": 0.51,
+   "hit": 0.73,
+   "dd": 19.96,
+   "avg_fill": 0.697,
+   "by_metal": {
+    "doge": {
+     "n": 211,
+     "pnl": 35.53,
+     "hit": 0.73
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 54,
+     "pnl": -10.71
+    },
+    "2026-W36": {
+     "n": 75,
+     "pnl": 52.31
+    },
+    "2026-W37": {
+     "n": 82,
+     "pnl": -6.07
+    }
+   },
+   "skipped": {
+    "raced_out": 3184,
+    "corr_cap": 84,
+    "daily_stop": 654,
+    "no_underlying": 37
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "doge",
+   "n": 105,
+   "pnl": 17.85,
+   "t": 0.37,
+   "hit": 0.724,
+   "dd": 14.08,
+   "avg_fill": 0.69,
+   "by_metal": {
+    "doge": {
+     "n": 105,
+     "pnl": 17.85,
+     "hit": 0.724
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 23,
+     "pnl": 22.8
+    },
+    "2026-W37": {
+     "n": 82,
+     "pnl": -4.95
+    }
+   },
+   "skipped": {
+    "raced_out": 1652,
+    "corr_cap": 43,
+    "no_underlying": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "xrp",
+   "n": 270,
+   "pnl": 204.32,
+   "t": 2.37,
+   "hit": 0.752,
+   "dd": 31.01,
+   "avg_fill": 0.686,
+   "by_metal": {
+    "xrp": {
+     "n": 270,
+     "pnl": 204.32,
+     "hit": 0.752
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 51,
+     "pnl": -43.81
+    },
+    "2026-W36": {
+     "n": 123,
+     "pnl": 52.29
+    },
+    "2026-W37": {
+     "n": 96,
+     "pnl": 195.84
+    }
+   },
+   "skipped": {
+    "raced_out": 4656,
+    "corr_cap": 145,
+    "daily_stop": 201,
+    "no_underlying": 37
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "xrp",
+   "n": 125,
+   "pnl": 234.43,
+   "t": 3.41,
+   "hit": 0.808,
+   "dd": 7.06,
+   "avg_fill": 0.681,
+   "by_metal": {
+    "xrp": {
+     "n": 125,
+     "pnl": 234.43,
+     "hit": 0.808
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 29,
+     "pnl": 24.83
+    },
+    "2026-W37": {
+     "n": 96,
+     "pnl": 209.6
+    }
+   },
+   "skipped": {
+    "raced_out": 2359,
+    "corr_cap": 64,
+    "no_underlying": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "xrp",
+   "n": 306,
+   "pnl": 224.11,
+   "t": 2.18,
+   "hit": 0.745,
+   "dd": 24.62,
+   "avg_fill": 0.683,
+   "by_metal": {
+    "xrp": {
+     "n": 306,
+     "pnl": 224.11,
+     "hit": 0.745
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 64,
+     "pnl": -28.54
+    },
+    "2026-W36": {
+     "n": 137,
+     "pnl": 72.95
+    },
+    "2026-W37": {
+     "n": 105,
+     "pnl": 179.7
+    }
+   },
+   "skipped": {
+    "raced_out": 4867,
+    "corr_cap": 186,
+    "no_underlying": 40
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "xrp",
+   "n": 136,
+   "pnl": 196.56,
+   "t": 2.59,
+   "hit": 0.794,
+   "dd": 8.13,
+   "avg_fill": 0.687,
+   "by_metal": {
+    "xrp": {
+     "n": 136,
+     "pnl": 196.56,
+     "hit": 0.794
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 31,
+     "pnl": 30.22
+    },
+    "2026-W37": {
+     "n": 105,
+     "pnl": 166.34
+    }
+   },
+   "skipped": {
+    "raced_out": 2434,
+    "corr_cap": 80,
+    "no_underlying": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "xrp",
+   "n": 205,
+   "pnl": 146.3,
+   "t": 1.95,
+   "hit": 0.776,
+   "dd": 17.63,
+   "avg_fill": 0.711,
+   "by_metal": {
+    "xrp": {
+     "n": 205,
+     "pnl": 146.3,
+     "hit": 0.776
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 43,
+     "pnl": 5.22
+    },
+    "2026-W36": {
+     "n": 93,
+     "pnl": 47.1
+    },
+    "2026-W37": {
+     "n": 69,
+     "pnl": 93.98
+    }
+   },
+   "skipped": {
+    "raced_out": 3637,
+    "corr_cap": 82,
+    "no_underlying": 37
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "xrp",
+   "n": 91,
+   "pnl": 102.29,
+   "t": 2.12,
+   "hit": 0.813,
+   "dd": 8.16,
+   "avg_fill": 0.715,
+   "by_metal": {
+    "xrp": {
+     "n": 91,
+     "pnl": 102.29,
+     "hit": 0.813
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 22,
+     "pnl": 18.24
+    },
+    "2026-W37": {
+     "n": 69,
+     "pnl": 84.05
+    }
+   },
+   "skipped": {
+    "raced_out": 1825,
+    "corr_cap": 33,
+    "no_underlying": 1
+   },
+   "split": "7d"
+  }
+ ]
+}
