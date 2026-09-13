@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T03:31:17Z",
+ "ts": "2026-09-13T03:48:21Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -21,51 +21,34 @@
   "live": 258.7738199999996
  },
  "realized": {
-  "shadow": -3.26100000000001,
+  "shadow": -13.56100000000001,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 19.72361999999999
+  "live": 9.427619999999989
  },
- "n_open": 2,
- "open": [
-  {
-   "metal": "eth",
-   "side": "yes",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP122330-30",
-   "fill_price": 0.78,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "eth",
-   "side": "yes",
-   "count": 13,
-   "ticker": "KXETH15M-26SEP122330-30",
-   "fill_price": 0.78,
-   "adapter": "live"
-  }
- ],
- "n_settled": 290,
- "updated": "2026-09-13T03:26:34Z",
+ "n_open": 0,
+ "open": [],
+ "n_settled": 292,
+ "updated": "2026-09-13T03:46:04Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
- "poly_paper_n_open": 1,
- "poly_paper_cash": 227.1499999999999,
+ "poly_paper_n_open": 2,
+ "poly_paper_cash": 220.18999999999988,
  "div_paper_loop": "alive",
- "div_paper_n_open": 3,
- "div_paper_cash": 201.11999999999995,
- "div_paper_realized": -24.14,
+ "div_paper_n_open": 0,
+ "div_paper_cash": 211.11999999999995,
+ "div_paper_realized": -38.879999999999995,
  "poly_paper": {
   "day": "2026-09-13",
   "live_crypto": {
-   "n": 25,
-   "pnl": -35.43,
-   "hit": 0.68
+   "n": 26,
+   "pnl": -45.73,
+   "hit": 0.654
   },
   "poly_paper": {
-   "n": 24,
-   "pnl": 18.88,
-   "hit": 0.708
+   "n": 27,
+   "pnl": 20.24,
+   "hit": 0.704
   },
   "poly_ahead": true,
   "ready": true
