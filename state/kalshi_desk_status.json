@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T10:41:59Z",
+ "ts": "2026-09-13T12:01:10Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -11,9 +11,9 @@
   "eth"
  ],
  "bankroll": 250.0,
- "live": false,
- "kill_switch": true,
- "supervisor": "down",
+ "live": true,
+ "kill_switch": false,
+ "supervisor": "supervisor: WAS DEAD -> restarted (inherited env)",
  "cash": {
   "shadow": 236.43900000000025,
   "demo": 250.0,
