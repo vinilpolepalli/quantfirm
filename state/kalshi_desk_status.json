@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T10:22:27Z",
+ "ts": "2026-09-13T10:22:37Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,7 +13,7 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "alive",
  "cash": {
   "shadow": 236.43900000000025,
   "demo": 250.0,
