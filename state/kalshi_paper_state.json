@@ -1,26 +1,35 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 250.0,
+  "shadow": 236.43900000000025,
   "demo": 250.0,
-  "maker": 250.0,
-  "live": 250.0
+  "maker": 251.64999999999998,
+  "live": 258.7738199999996
  },
  "open": [],
- "n_settled": 0,
+ "n_settled": 292,
  "realized": {
-  "shadow": 0.0,
+  "shadow": -13.56100000000001,
   "demo": 0.0,
-  "maker": 0.0,
-  "live": 0.0
+  "maker": 1.6499999999999968,
+  "live": 9.427619999999989
  },
  "fees": {
-  "shadow": 0.0,
+  "shadow": 27.550000000000008,
   "demo": 0.0,
   "maker": 0.0,
-  "live": 0.0
+  "live": 23.952379999999994
  },
- "started": "2026-09-12T08:07:00Z",
+ "started": "2026-09-12T00:46:58Z",
+ "day_stop": {
+  "date": "2026-09-13",
+  "start": {
+   "shadow": 271.68900000000025,
+   "maker": 251.64999999999998,
+   "live": 298.0605199999997
+  }
+ },
+ "updated": "2026-09-13T03:50:13Z",
  "metals": [
   "gold",
   "silver",
@@ -31,14 +40,5 @@
   "eth"
  ],
  "strategy": "desk_book",
- "live": false,
- "updated": "2026-09-12T12:15:24Z",
- "day_stop": {
-  "date": "2026-09-12",
-  "start": {
-   "shadow": 250.0,
-   "maker": 250.0,
-   "live": 250.0
-  }
- }
+ "live": true
 }
