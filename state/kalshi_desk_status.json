@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T23:13:35Z",
+ "ts": "2026-09-13T23:28:11Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -29,11 +29,11 @@
  "n_open": 0,
  "open": [],
  "n_settled": 292,
- "updated": "2026-09-13T23:13:35Z",
+ "updated": "2026-09-13T23:28:11Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 2,
- "poly_paper_cash": 412.0899999999995,
+ "poly_paper_cash": 403.9599999999995,
  "div_paper_loop": "alive",
  "div_paper_n_open": 0,
  "div_paper_cash": 211.11999999999995,
@@ -46,9 +46,9 @@
    "hit": 0.654
   },
   "poly_paper": {
-   "n": 171,
-   "pnl": 228.08,
-   "hit": 0.749
+   "n": 173,
+   "pnl": 220.42,
+   "hit": 0.746
   },
   "poly_ahead": true,
   "ready": true
