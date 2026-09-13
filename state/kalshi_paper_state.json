@@ -1,50 +1,50 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 227.51000000000002,
+  "shadow": 219.59000000000003,
   "demo": 250.0,
   "maker": 250.0,
   "live": 250.0
  },
  "open": [
   {
-   "ticker": "KXETH15M-26SEP130100-00",
+   "ticker": "KXETH15M-26SEP130615-15",
    "metal": "eth",
-   "side": "yes",
-   "count": 10,
-   "fill_price": 0.918,
-   "fee": 0.06,
-   "fair": 0.918,
-   "entry_ts": 1789275503,
-   "close_ts": 1789275600,
+   "side": "no",
+   "count": 15,
+   "fill_price": 0.6,
+   "fee": 0.26,
+   "fair": 0.4,
+   "entry_ts": 1789294250,
+   "close_ts": 1789294500,
    "adapter": "shadow",
    "tag": "crypto_fav",
    "order_id": null
   },
   {
-   "ticker": "KXBTC15M-26SEP130100-00",
+   "ticker": "KXBTC15M-26SEP130615-15",
    "metal": "btc",
-   "side": "yes",
-   "count": 15,
-   "fill_price": 0.6,
-   "fee": 0.26,
-   "fair": 0.6,
-   "entry_ts": 1789275511,
-   "close_ts": 1789275600,
+   "side": "no",
+   "count": 13,
+   "fill_price": 0.65,
+   "fee": 0.21,
+   "fair": 0.35,
+   "entry_ts": 1789294262,
+   "close_ts": 1789294500,
    "adapter": "shadow",
    "tag": "crypto_fav",
    "order_id": null
   }
  ],
- "n_settled": 5,
+ "n_settled": 7,
  "realized": {
-  "shadow": -3.99,
+  "shadow": -12.49,
   "demo": 0.0,
   "maker": 0.0,
   "live": 0.0
  },
  "fees": {
-  "shadow": 0.63,
+  "shadow": 0.95,
   "demo": 0.0,
   "maker": 0.0,
   "live": 0.0
@@ -61,7 +61,7 @@
  ],
  "strategy": "desk_book",
  "live": false,
- "updated": "2026-09-13T04:59:53Z",
+ "updated": "2026-09-13T10:11:52Z",
  "day_stop": {
   "date": "2026-09-13",
   "start": {
