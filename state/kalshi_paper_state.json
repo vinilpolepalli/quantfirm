@@ -1,12 +1,97 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 288.5290000000001,
+  "shadow": 257.4590000000001,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 312.568093999999
+  "live": 281.660593999999
  },
- "open": [],
+ "open": [
+  {
+   "ticker": "KXCOPPER15M-26SEP140230-30",
+   "metal": "copper",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.79,
+   "fee": 0.12,
+   "fair": 0.20999999999999996,
+   "entry_ts": 1789366838,
+   "close_ts": 1789367400,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP140230-30",
+   "metal": "copper",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.79,
+   "fee": 0.11599999999999999,
+   "fair": 0.20999999999999996,
+   "entry_ts": 1789366838,
+   "close_ts": 1789367400,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a09e93-26d8-720a-ae25-d75c2b272806"
+  },
+  {
+   "ticker": "KXBTC15M-26SEP140230-30",
+   "metal": "btc",
+   "side": "no",
+   "count": 15,
+   "fill_price": 0.75,
+   "fee": 0.2,
+   "fair": 0.25,
+   "entry_ts": 1789366838,
+   "close_ts": 1789367400,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXBTC15M-26SEP140230-30",
+   "metal": "btc",
+   "side": "no",
+   "count": 15,
+   "fill_price": 0.74,
+   "fee": 0.201,
+   "fair": 0.25,
+   "entry_ts": 1789366838,
+   "close_ts": 1789367400,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a09e93-2ac0-7053-b2c2-2661eb6f2ddb"
+  },
+  {
+   "ticker": "KXETH15M-26SEP140230-30",
+   "metal": "eth",
+   "side": "no",
+   "count": 15,
+   "fill_price": 0.76,
+   "fee": 0.2,
+   "fair": 0.24,
+   "entry_ts": 1789366859,
+   "close_ts": 1789367400,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXETH15M-26SEP140230-30",
+   "metal": "eth",
+   "side": "no",
+   "count": 15,
+   "fill_price": 0.76,
+   "fee": 0.1905,
+   "fair": 0.24,
+   "entry_ts": 1789366859,
+   "close_ts": 1789367400,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a09e93-8498-7340-b85a-74d21c75d621"
+  }
+ ],
  "n_settled": 623,
  "realized": {
   "shadow": 38.52899999999998,
@@ -29,7 +114,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T06:19:13Z",
+ "updated": "2026-09-14T06:22:04Z",
  "metals": [
   "gold",
   "silver",
