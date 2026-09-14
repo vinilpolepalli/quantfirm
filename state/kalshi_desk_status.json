@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-13T22:23:34Z",
+ "ts": "2026-09-14T00:24:34Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,53 +15,37 @@
  "kill_switch": false,
  "supervisor": "down",
  "cash": {
-  "shadow": 202.62900000000005,
+  "shadow": 221.71900000000005,
   "demo": 250.0,
   "maker": 250.0,
   "live": 250.0
  },
  "realized": {
-  "shadow": -12.600000000000003,
+  "shadow": -7.371000000000005,
   "demo": 0.0,
   "maker": 0.0,
   "live": 0.0
  },
- "n_open": 4,
+ "n_open": 2,
  "open": [
   {
    "metal": "gold",
-   "side": "yes",
-   "count": 5,
-   "ticker": "KXGOLD15M-26SEP131830-30",
-   "fill_price": 0.68,
+   "side": "no",
+   "count": 7,
+   "ticker": "KXGOLD15M-26SEP132030-30",
+   "fill_price": 0.82,
    "adapter": "shadow"
   },
   {
    "metal": "wti",
-   "side": "no",
-   "count": 19,
-   "ticker": "KXWTI15M-26SEP131830-30",
-   "fill_price": 0.9,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "copper",
    "side": "yes",
-   "count": 7,
-   "ticker": "KXCOPPER15M-26SEP131830-30",
-   "fill_price": 0.81,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "btc",
-   "side": "no",
-   "count": 9,
-   "ticker": "KXBTC15M-26SEP131830-30",
-   "fill_price": 0.919,
+   "count": 17,
+   "ticker": "KXWTI15M-26SEP132030-30",
+   "fill_price": 0.88,
    "adapter": "shadow"
   }
  ],
- "n_settled": 13,
- "updated": "2026-09-13T22:23:34Z",
+ "n_settled": 17,
+ "updated": "2026-09-14T00:24:34Z",
  "started": "2026-09-12T08:07:00Z"
 }

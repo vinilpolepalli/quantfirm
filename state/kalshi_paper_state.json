@@ -1,78 +1,50 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 202.62900000000005,
+  "shadow": 221.71900000000005,
   "demo": 250.0,
   "maker": 250.0,
   "live": 250.0
  },
  "open": [
   {
-   "ticker": "KXGOLD15M-26SEP131830-30",
+   "ticker": "KXGOLD15M-26SEP132030-30",
    "metal": "gold",
-   "side": "yes",
-   "count": 5,
-   "fill_price": 0.68,
-   "fee": 0.08,
-   "fair": 0.68,
-   "entry_ts": 1789338124,
-   "close_ts": 1789338600,
-   "adapter": "shadow",
-   "tag": "favorite",
-   "order_id": null
-  },
-  {
-   "ticker": "KXWTI15M-26SEP131830-30",
-   "metal": "wti",
    "side": "no",
-   "count": 19,
-   "fill_price": 0.9,
-   "fee": 0.12,
-   "fair": 0.09999999999999998,
-   "entry_ts": 1789338124,
-   "close_ts": 1789338600,
-   "adapter": "shadow",
-   "tag": "favorite",
-   "order_id": null
-  },
-  {
-   "ticker": "KXCOPPER15M-26SEP131830-30",
-   "metal": "copper",
-   "side": "yes",
    "count": 7,
-   "fill_price": 0.81,
+   "fill_price": 0.82,
    "fee": 0.08,
-   "fair": 0.81,
-   "entry_ts": 1789338132,
-   "close_ts": 1789338600,
+   "fair": 0.17999999999999994,
+   "entry_ts": 1789345384,
+   "close_ts": 1789345800,
    "adapter": "shadow",
    "tag": "favorite",
    "order_id": null
   },
   {
-   "ticker": "KXBTC15M-26SEP131830-30",
-   "metal": "btc",
-   "side": "no",
-   "count": 9,
-   "fill_price": 0.919,
-   "fee": 0.05,
-   "fair": 0.08099999999999996,
-   "entry_ts": 1789338152,
-   "close_ts": 1789338600,
+   "ticker": "KXWTI15M-26SEP132030-30",
+   "metal": "wti",
+   "side": "yes",
+   "count": 17,
+   "fill_price": 0.88,
+   "fee": 0.13,
+   "fair": 0.88,
+   "entry_ts": 1789345384,
+   "close_ts": 1789345800,
    "adapter": "shadow",
-   "tag": "crypto_fav",
+   "tag": "favorite",
    "order_id": null
   }
  ],
- "n_settled": 13,
+ "n_settled": 17,
  "realized": {
-  "shadow": -12.600000000000003,
+  "shadow": -7.371000000000005,
   "demo": 0.0,
   "maker": 0.0,
   "live": 0.0
  },
  "fees": {
-  "shadow": 2.2800000000000002,
+  "shadow": 2.6100000000000003,
   "demo": 0.0,
   "maker": 0.0,
   "live": 0.0
@@ -89,11 +61,11 @@
  ],
  "strategy": "desk_book",
  "live": false,
- "updated": "2026-09-13T22:23:34Z",
+ "updated": "2026-09-14T00:24:34Z",
  "day_stop": {
-  "date": "2026-09-13",
+  "date": "2026-09-14",
   "start": {
-   "shadow": 255.61,
+   "shadow": 237.07000000000005,
    "maker": 250.0,
    "live": 250.0
   }
