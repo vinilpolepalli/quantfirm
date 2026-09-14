@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-14T22:21:01Z",
+ "ts": "2026-09-14T22:28:44Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,10 +15,10 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 255.49799999999988,
+  "shadow": 243.27799999999985,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 294.1101049999971
+  "live": 281.90050499999705
  },
  "realized": {
   "shadow": 45.098,
@@ -26,7 +26,7 @@
   "maker": 1.6499999999999968,
   "live": 84.35930499999968
  },
- "n_open": 8,
+ "n_open": 12,
  "open": [
   {
    "metal": "btc",
@@ -91,10 +91,42 @@
    "ticker": "KXCOPPER15M-26SEP141830-30",
    "fill_price": 0.78,
    "adapter": "live"
+  },
+  {
+   "metal": "silver",
+   "side": "yes",
+   "count": 8,
+   "ticker": "KXSILVER15M-26SEP141830-30",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "silver",
+   "side": "yes",
+   "count": 8,
+   "ticker": "KXSILVER15M-26SEP141830-30",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXGOLD15M-26SEP141830-30",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXGOLD15M-26SEP141830-30",
+   "fill_price": 0.75,
+   "adapter": "live"
   }
  ],
  "n_settled": 1476,
- "updated": "2026-09-14T22:20:59Z",
+ "updated": "2026-09-14T22:28:43Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
