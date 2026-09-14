@@ -1,7 +1,7 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 255.27799999999985,
+  "shadow": 239.09799999999987,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 283.1277049999968
@@ -90,6 +90,48 @@
    "adapter": "live",
    "tag": "favorite",
    "order_id": "01a0a252-26c0-792c-b28f-4cac32f17c62"
+  },
+  {
+   "ticker": "KXSILVER15M-26SEP142000-00",
+   "metal": "silver",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.75,
+   "fee": 0.1,
+   "fair": 0.25,
+   "entry_ts": 1789429853,
+   "close_ts": 1789430400,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXWTI15M-26SEP142000-00",
+   "metal": "wti",
+   "side": "yes",
+   "count": 7,
+   "fill_price": 0.77,
+   "fee": 0.09,
+   "fair": 0.77,
+   "entry_ts": 1789429853,
+   "close_ts": 1789430400,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP142000-00",
+   "metal": "copper",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.75,
+   "fee": 0.1,
+   "fair": 0.25,
+   "entry_ts": 1789429856,
+   "close_ts": 1789430400,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
   }
  ],
  "n_settled": 1553,
@@ -114,7 +156,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T23:49:59Z",
+ "updated": "2026-09-14T23:52:22Z",
  "metals": [
   "gold",
   "silver",
@@ -125,5 +167,5 @@
   "eth"
  ],
  "strategy": "desk_book",
- "live": true
+ "live": false
 }
