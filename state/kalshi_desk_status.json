@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-14T02:28:15Z",
+ "ts": "2026-09-14T02:28:41Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,7 +13,7 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "alive",
  "cash": {
   "shadow": 220.6530000000001,
   "demo": 250.0,
@@ -142,7 +142,7 @@
   }
  ],
  "n_settled": 403,
- "updated": "2026-09-14T02:28:15Z",
+ "updated": "2026-09-14T02:28:41Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 2,
