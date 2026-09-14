@@ -1,12 +1,41 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 313.46500000000015,
+  "shadow": 287.01100000000014,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 337.31609399999905
+  "live": 310.87099399999903
  },
- "open": [],
+ "open": [
+  {
+   "ticker": "KXGOLD15M-26SEP140145-45",
+   "metal": "gold",
+   "side": "yes",
+   "count": 29,
+   "fill_price": 0.906,
+   "fee": 0.18,
+   "fair": 0.906,
+   "entry_ts": 1789363981,
+   "close_ts": 1789364700,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXGOLD15M-26SEP140145-45",
+   "metal": "gold",
+   "side": "yes",
+   "count": 29,
+   "fill_price": 0.906,
+   "fee": 0.1711,
+   "fair": 0.906,
+   "entry_ts": 1789363981,
+   "close_ts": 1789364700,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a09e67-8ac8-704c-a742-b1f4872eac60"
+  }
+ ],
  "n_settled": 581,
  "realized": {
   "shadow": 63.46499999999999,
@@ -29,7 +58,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T05:31:05Z",
+ "updated": "2026-09-14T05:33:12Z",
  "metals": [
   "gold",
   "silver",
