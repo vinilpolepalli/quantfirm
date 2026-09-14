@@ -1,10 +1,10 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 226.28300000000016,
+  "shadow": 205.59300000000016,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 258.90399399999933
+  "live": 238.23309399999934
  },
  "open": [
   {
@@ -118,6 +118,90 @@
    "adapter": "live",
    "tag": "favorite",
    "order_id": "01a09ded-edf8-767d-8484-e43350c2d034"
+  },
+  {
+   "ticker": "KXBTC15M-26SEP132330-30",
+   "metal": "btc",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.75,
+   "fee": 0.18,
+   "fair": 0.75,
+   "entry_ts": 1789356179,
+   "close_ts": 1789356600,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXBTC15M-26SEP132330-30",
+   "metal": "btc",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.75,
+   "fee": 0.1703,
+   "fair": 0.75,
+   "entry_ts": 1789356179,
+   "close_ts": 1789356600,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a09df0-89f0-77f3-9ebf-944fd2702515"
+  },
+  {
+   "ticker": "KXSILVER15M-26SEP132330-30",
+   "metal": "silver",
+   "side": "yes",
+   "count": 7,
+   "fill_price": 0.76,
+   "fee": 0.09,
+   "fair": 0.76,
+   "entry_ts": 1789356308,
+   "close_ts": 1789356600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXSILVER15M-26SEP132330-30",
+   "metal": "silver",
+   "side": "yes",
+   "count": 7,
+   "fill_price": 0.76,
+   "fee": 0.08889999999999999,
+   "fair": 0.76,
+   "entry_ts": 1789356308,
+   "close_ts": 1789356600,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a09df2-7a08-7a5a-9435-7fa2e3c08cd9"
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP132330-30",
+   "metal": "copper",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.75,
+   "fee": 0.1,
+   "fair": 0.25,
+   "entry_ts": 1789356482,
+   "close_ts": 1789356600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP132330-30",
+   "metal": "copper",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.75,
+   "fee": 0.0917,
+   "fair": 0.25,
+   "entry_ts": 1789356482,
+   "close_ts": 1789356600,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a09df5-25a0-7e1d-837c-10c68e223997"
   }
  ],
  "n_settled": 457,
@@ -142,7 +226,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T03:21:07Z",
+ "updated": "2026-09-14T03:28:42Z",
  "metals": [
   "gold",
   "silver",
