@@ -136,6 +136,26 @@ under a process supervisor. Nothing about the desk code needs changing; it is
 purely where it runs. Scale every fills-per-week projection by the duty cycle
 rather than implying continuous operation.
 
+## 2c. Two engines run at once — writes must be idempotent
+
+The duty-cycle mitigation in 2b has a side effect: the supervisor keeps an
+engine alive *and* the hourly check-in runs one in the foreground. Both read
+the same `state/kalshi_paper_state.json`, so both settle the same positions.
+
+`append_trade_log` used to append unconditionally, so each engine wrote its
+own row. Three duplicates landed between 2026-09-13T23:06Z and
+2026-09-14T13:06Z (+$7.49, +$11.88, −$25.91) before it was caught — small,
+but it inflates `n`, double-counts P&L, and would have grown hourly.
+
+It is now idempotent: a settled position is keyed on
+`(adapter, ticker, side, count, fill_price)` and a repeat of that key is
+dropped. The same book cannot hold two identical positions in one 15-minute
+window, so the key is safe. The three bad rows were removed from the log.
+
+**Any new writer to `state/` must assume a concurrent engine.** Appending
+without a dedupe key will silently corrupt the record, and the corruption
+looks like ordinary fills.
+
 ## 3. Where it stands
 
 Live shadow, paper money, $0 real:

@@ -86,6 +86,26 @@ def _now_iso() -> str:
 
 
 def append_trade_log(path: str, row: dict):
+    """Append one settled fill, idempotently.
+
+    Two engines can be live at once -- the supervisor keeps one running while
+    the hourly check-in runs another in the foreground to hold the container
+    awake. Both read the same state file, so both settle the same positions and
+    both used to append, silently double-counting. Three such rows landed
+    between 2026-09-13T23:06Z and 2026-09-14T13:06Z.
+
+    A settled position is uniquely identified by (adapter, ticker, side, count,
+    fill_price); the same book cannot hold two identical positions in one
+    window. Re-appending that key is a duplicate, not a second trade.
+    """
+    key_fields = ("adapter", "ticker", "side", "count", "fill_price")
+    def _key(r):
+        return tuple(str(r.get(k, "")) for k in key_fields)
+    if os.path.exists(path):
+        with open(path, newline="") as f:
+            for existing in csv.DictReader(f):
+                if _key(existing) == _key(row):
+                    return          # already recorded by the other engine
     new = not os.path.exists(path)
     with open(path, "a", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(row.keys()))
