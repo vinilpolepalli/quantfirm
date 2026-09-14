@@ -1,0 +1,136 @@
+{
+  "generated": "2026-09-13T01:16:54Z",
+  "note": "lag-fill, $250, 4% cap, first fill per window. Not live.",
+  "pair_arb": {
+    "minutes": 190032,
+    "empty": 43,
+    "crossed": 0,
+    "sum_lt_1": 0,
+    "sum_lt_0_99": 0,
+    "min_sum": 1.001,
+    "examples": []
+  },
+  "panic_yes": {
+    "train": {
+      "split": "train",
+      "n": 731,
+      "pnl": -952.12,
+      "hit": 0.159,
+      "t": -2.99,
+      "btc": 0.0,
+      "eth": 0.0,
+      "cmdty": -952.12,
+      "n_btc": 0,
+      "n_eth": 0,
+      "both": false
+    },
+    "test": {
+      "split": "test",
+      "n": 1291,
+      "pnl": -1539.21,
+      "hit": 0.168,
+      "t": -3.62,
+      "btc": -355.01,
+      "eth": -268.69,
+      "cmdty": -915.52,
+      "n_btc": 243,
+      "n_eth": 204,
+      "both": false
+    },
+    "last7d": {
+      "split": "last7d",
+      "n": 595,
+      "pnl": -482.03,
+      "hit": 0.178,
+      "t": -1.59,
+      "btc": -159.23,
+      "eth": -158.11,
+      "cmdty": -164.69,
+      "n_btc": 129,
+      "n_eth": 103,
+      "both": false
+    }
+  },
+  "fade_97_atm": {
+    "train": {
+      "split": "train",
+      "n": 11,
+      "pnl": -26.44,
+      "hit": 0.0,
+      "t": -7.03,
+      "btc": 0.0,
+      "eth": 0.0,
+      "cmdty": -26.44,
+      "n_btc": 0,
+      "n_eth": 0,
+      "both": false
+    },
+    "test": {
+      "split": "test",
+      "n": 95,
+      "pnl": -148.77,
+      "hit": 0.011,
+      "t": -1.26,
+      "btc": -21.71,
+      "eth": -33.39,
+      "cmdty": -93.66,
+      "n_btc": 20,
+      "n_eth": 26,
+      "both": false
+    },
+    "last7d": {
+      "split": "last7d",
+      "n": 48,
+      "pnl": -142.64,
+      "hit": 0.0,
+      "t": -7.16,
+      "btc": -11.35,
+      "eth": -20.67,
+      "cmdty": -110.61,
+      "n_btc": 10,
+      "n_eth": 14,
+      "both": false
+    }
+  },
+  "btc_lead_eth_1m": {
+    "train": {
+      "split": "train",
+      "n": 0,
+      "pnl": 0,
+      "hit": null,
+      "t": 0.0,
+      "btc": 0.0,
+      "eth": 0.0,
+      "cmdty": 0,
+      "n_btc": 0,
+      "n_eth": 0,
+      "both": false
+    },
+    "test": {
+      "split": "test",
+      "n": 225,
+      "pnl": -26.11,
+      "hit": 0.587,
+      "t": -0.28,
+      "btc": 0.0,
+      "eth": -26.11,
+      "cmdty": 0,
+      "n_btc": 0,
+      "n_eth": 225,
+      "both": false
+    },
+    "last7d": {
+      "split": "last7d",
+      "n": 109,
+      "pnl": -46.45,
+      "hit": 0.578,
+      "t": -0.73,
+      "btc": 0.0,
+      "eth": -46.45,
+      "cmdty": 0,
+      "n_btc": 0,
+      "n_eth": 109,
+      "both": false
+    }
+  }
+}
