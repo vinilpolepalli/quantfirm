@@ -59,3 +59,9 @@ settled_at,adapter,ticker,metal,side,count,fill_price,fee,fair_at_entry,result,p
 2026-09-14T04:16:01Z,shadow,KXNEAR15M-26SEP140015-15,near,yes,12,0.78,0.15,0.78,yes,2.49,crypto_fav,239.12
 2026-09-14T04:16:01Z,shadow,KXXRP15M-26SEP140015-15,xrp,yes,12,0.77,0.15,0.77,yes,2.61,crypto_fav,251.12
 2026-09-14T04:16:01Z,shadow,KXDOGE15M-26SEP140015-15,doge,yes,12,0.76,0.16,0.76,yes,2.72,crypto_fav,263.12
+2026-09-14T04:31:01Z,shadow,KXNEAR15M-26SEP140030-30,near,yes,13,0.75,0.18,0.75,yes,3.07,crypto_fav,246.87
+2026-09-14T04:31:01Z,shadow,KXXRP15M-26SEP140030-30,xrp,yes,13,0.75,0.18,0.75,yes,3.07,crypto_fav,259.87
+2026-09-14T04:31:01Z,shadow,KXDOGE15M-26SEP140030-30,doge,yes,12,0.77,0.15,0.77,yes,2.61,crypto_fav,271.87
+2026-09-14T04:46:01Z,shadow,KXNEAR15M-26SEP140045-45,near,no,14,0.76,0.18,0.24,no,3.18,crypto_fav,255.38
+2026-09-14T04:46:01Z,shadow,KXDOGE15M-26SEP140045-45,doge,yes,12,0.8,0.14,0.8,yes,2.26,crypto_fav,267.38
+2026-09-14T04:46:01Z,shadow,KXXRP15M-26SEP140045-45,xrp,yes,13,0.75,0.18,0.75,yes,3.07,crypto_fav,280.38
