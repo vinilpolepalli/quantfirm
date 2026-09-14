@@ -55,3 +55,5 @@ settled_at,adapter,ticker,metal,side,count,fill_price,fee,fair_at_entry,result,p
 2026-09-14T00:23:05Z,shadow,KXWTI15M-26SEP131830-30,wti,no,19,0.9,0.12,0.1,no,1.78,favorite,205.72
 2026-09-14T00:23:05Z,shadow,KXCOPPER15M-26SEP131830-30,copper,yes,7,0.81,0.08,0.81,yes,1.25,favorite,212.72
 2026-09-14T00:23:05Z,shadow,KXBTC15M-26SEP131830-30,btc,no,9,0.919,0.05,0.081,no,0.679,crypto_fav,221.72
+2026-09-14T05:23:48Z,shadow,KXGOLD15M-26SEP132030-30,gold,no,7,0.82,0.08,0.18,no,1.18,favorite,205.69
+2026-09-14T05:23:48Z,shadow,KXWTI15M-26SEP132030-30,wti,yes,17,0.88,0.13,0.88,yes,1.91,favorite,222.69
