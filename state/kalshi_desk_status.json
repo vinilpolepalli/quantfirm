@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-14T23:49:59Z",
+ "ts": "2026-09-14T23:58:42Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,10 +15,10 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 255.27799999999985,
+  "shadow": 231.30799999999982,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 283.1277049999968
+  "live": 259.17320499999676
  },
  "realized": {
   "shadow": 34.658,
@@ -26,7 +26,7 @@
   "maker": 1.6499999999999968,
   "live": 63.084304999999674
  },
- "n_open": 6,
+ "n_open": 14,
  "open": [
   {
    "metal": "eth",
@@ -75,10 +75,74 @@
    "ticker": "KXNATGAS15M-26SEP142000-00",
    "fill_price": 0.75,
    "adapter": "live"
+  },
+  {
+   "metal": "silver",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXSILVER15M-26SEP142000-00",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "silver",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXSILVER15M-26SEP142000-00",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "copper",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXCOPPER15M-26SEP142000-00",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "copper",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXCOPPER15M-26SEP142000-00",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "wti",
+   "side": "yes",
+   "count": 8,
+   "ticker": "KXWTI15M-26SEP142000-00",
+   "fill_price": 0.78,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "wti",
+   "side": "yes",
+   "count": 8,
+   "ticker": "KXWTI15M-26SEP142000-00",
+   "fill_price": 0.78,
+   "adapter": "live"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 7,
+   "ticker": "KXGOLD15M-26SEP142000-00",
+   "fill_price": 0.76,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 7,
+   "ticker": "KXGOLD15M-26SEP142000-00",
+   "fill_price": 0.76,
+   "adapter": "live"
   }
  ],
  "n_settled": 1553,
- "updated": "2026-09-14T23:49:59Z",
+ "updated": "2026-09-14T23:58:42Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
