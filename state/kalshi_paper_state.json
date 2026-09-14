@@ -1,36 +1,64 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 241.95000000000002,
+  "shadow": 237.565,
   "demo": 250.0,
   "maker": 250.0,
   "live": 250.0
  },
  "open": [
   {
-   "ticker": "KXCOPPER15M-26SEP141300-00",
+   "ticker": "KXSILVER15M-26SEP141700-00",
+   "metal": "silver",
+   "side": "yes",
+   "count": 21,
+   "fill_price": 0.915,
+   "fee": 0.12,
+   "fair": 0.915,
+   "entry_ts": 1789419299,
+   "close_ts": 1789419600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP141700-00",
+   "metal": "natgas",
+   "side": "no",
+   "count": 5,
+   "fill_price": 0.7,
+   "fee": 0.08,
+   "fair": 0.30000000000000004,
+   "entry_ts": 1789419299,
+   "close_ts": 1789419600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP141700-00",
    "metal": "copper",
    "side": "yes",
-   "count": 23,
-   "fill_price": 0.9,
-   "fee": 0.15,
-   "fair": 0.9,
-   "entry_ts": 1789404978,
-   "close_ts": 1789405200,
+   "count": 6,
+   "fill_price": 0.73,
+   "fee": 0.09,
+   "fair": 0.73,
+   "entry_ts": 1789419303,
+   "close_ts": 1789419600,
    "adapter": "shadow",
    "tag": "favorite",
    "order_id": null
   }
  ],
- "n_settled": 32,
+ "n_settled": 33,
  "realized": {
-  "shadow": 12.799999999999994,
+  "shadow": 14.949999999999994,
   "demo": 0.0,
   "maker": 0.0,
   "live": 0.0
  },
  "fees": {
-  "shadow": 4.07,
+  "shadow": 4.220000000000001,
   "demo": 0.0,
   "maker": 0.0,
   "live": 0.0
@@ -47,7 +75,7 @@
  ],
  "strategy": "desk_book",
  "live": false,
- "updated": "2026-09-14T16:57:42Z",
+ "updated": "2026-09-14T20:56:29Z",
  "day_stop": {
   "date": "2026-09-14",
   "start": {
