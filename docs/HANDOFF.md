@@ -14,14 +14,20 @@ Repo scope: `quantfirm/kalshi/`, `scripts/kalshi_*`, `docs/KALSHI.md`,
 This desk is a **paper/shadow** system. No real money is at risk anywhere, and
 none should be added without clearing §5.
 
-Two backtests looked excellent and were both artifacts:
+Three results looked excellent and were all artifacts of the instrumentation:
 
 | what it printed | why it was wrong |
 | :--- | :--- |
 | taker **+103.7%** | Kalshi 1-min candle *opens* are carry-forward quotes, so the "fill only if the next candle confirms" gate was zero-latency. At realistic latency: **−14.6%**. |
 | maker **+944%** | The fill test read the *quote* range. We post at `best_bid + 1c`, so `bid_low <= our_price` is true **by construction** — every quote filled instantly. |
+| passive edge **t=+23.3** | Pseudo-replication. ~1,000 tape prints inside one 15-minute market settle on ONE draw, so they are one observation counted a thousand times; t inflates ~30×. Clustered per market: **t=+0.38**. (§3d of `docs/KALSHI.md`.) |
 
-The maker one survived the first fix (+793% after requiring real trade prints)
+The pattern is the point: **every time this desk produced a spectacular
+number, the cause was our own measurement, not the market.** Four times now.
+Before believing any result, ask what the independent unit of observation is
+and whether the code is using it.
+
+The +944% one survived the first fix (+793% after requiring real trade prints)
 and was only killed by a **null-model control**: a market-mid quoter with no
 model at all earned *more* (+1268%, t=12.05). That control is shipped:
 
@@ -73,6 +79,9 @@ python3 -m quantfirm.kalshi.cli backtest --data data/kalshi --split test \
 
 # the guard that invalidated the maker backtest
 python3 -m quantfirm.kalshi.cli maker-control --data data/kalshi
+
+# maker edge from the tape, no queue model assumed (docs/KALSHI.md 3d)
+python3 scripts/kalshi_passive_edge.py
 
 # audit the live shadow P&L against pessimistic fill assumptions
 python3 scripts/kalshi_fill_audit.py --adapter maker
@@ -189,13 +198,23 @@ green week.
    carry `taker_book_side` and `is_block_trade`, both of which a serious queue
    model wants — a block print is not ordinary queue-clearing flow.
    **The desk must run through a full session before there is data to use.**
-2. **Replace the `3 * q.count` guess — now unblocked, and the top priority.**
-   Replay `_maker_filled` offline against the recorded tape and model queue
-   position properly (volume ahead of us, decay, partial fills) instead of a
-   magic multiplier. Then re-run `scripts/kalshi_fill_audit.py`: the honest
-   haircut should stop being a guess. Cross-check against
-   `cli maker-control` — if a null model still earns comparably, the new fill
-   model is wrong too.
+2. ~~**Replace the `3 * q.count` guess.**~~ **ANSWERED — don't do this yet**
+   (2026-09-14, `scripts/kalshi_passive_edge.py`, `docs/KALSHI.md` §3d). The
+   queue model is not the binding constraint. Every tape print had a real
+   passive counterparty that actually filled, so the tape *is* the population
+   of achievable maker fills at *perfect* queue priority — no assumption
+   needed. Measured there, across 59 settled markets, the maker edge is
+   **+1.86c/contract at t=1.98**, below the |t|≥3 gate, and the
+   favorite/underdog split is flat (−0.02 / +1.20, |t|<0.4). Tuning the `3×`
+   cannot rescue a strategy whose best-case fills have no measurable edge.
+   **The replacement task is to accumulate tape**: the unconditional claim
+   needs ~135 markets (~17h of uninterrupted 24h coverage on both metals) to
+   reach t=3. The per-metal and per-side splits need 750–3,700 and are not
+   worth targeting.
+   ⚠️ Counted per *print* the same data says t=+23.3 for the underdog side.
+   That is pseudo-replication — ~1,000 prints per 15-minute market share one
+   settlement, inflating t ~30×. The script prints both columns and labels the
+   fake one. Do not quote it.
 3. **Fix the daily-stop baseline.** `_entries_allowed` resets at 00:00 UTC,
    mid-session for metals, so a drawdown spanning midnight re-arms the stop at
    full size halfway through (this happened on 2026-09-11/12 and cost roughly

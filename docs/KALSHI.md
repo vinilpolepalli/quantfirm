@@ -207,6 +207,75 @@ already been burned by twice. A fade change is a NEW pre-registered
 experiment with its own fresh fill count, and the existing n=149 stays on the
 books as the 5-second-quote regime.
 
+### 3d. The queue model was never the binding constraint (2026-09-14)
+
+§3b flagged `_maker_filled`'s `at >= 3 * q.count` as a guess about queue
+position, and open problem 2 of `docs/HANDOFF.md` asked for a better one.
+`scripts/kalshi_passive_edge.py` answers a prior question that makes the queue
+model moot for now.
+
+**The method.** Every print on the public tape had a real passive
+counterparty: a resting maker order that actually filled, at a real price, at
+a real moment, ahead of everyone behind it in the queue. So the tape *is* the
+population of achievable maker fills. Asking what that passive side earned
+requires no assumption about our own queue position at all — it is the
+best case, a maker with perfect priority. Passive P&L per contract is
+`p - settle` when the taker bought YES at `p`, and `settle - p` when the taker
+bought NO. Makers pay no Kalshi fee, so that is the whole of it.
+
+**First, the sign was verified rather than assumed.** Every number here
+inverts if `taker_outcome_side` does not mean the contract the taker bought,
+and the field's joint distribution with `taker_book_side` is degenerate
+(`yes`→`bid`, `no`→`ask`), which reads backwards. Resolved against 55,726
+prints matched to order books this desk recorded itself: a taker marked `yes`
+landed on the ask 13,342 times vs the bid 3,352; a taker marked `no` landed on
+the bid 11,484 times vs the ask 3,040. Mapping confirmed, ~4:1 both ways. The
+script re-runs this check on every invocation and says CONTRADICTED if it ever
+stops holding.
+
+**The result, on 59 settled gold/silver markets:**
+
+| bucket | markets | c/contract | t | markets for t=3 |
+|---|---|---|---|---|
+| all passive fills | 59 | +1.86 | **1.98** | 135 |
+| maker long the underdog (0.10–0.50) | 59 | +1.20 | 0.38 | 3,673 |
+| maker long the favorite (0.50–0.90) | 59 | −0.02 | −0.01 | — |
+| gold | 32 | +0.73 | 0.62 | 757 |
+| silver | 27 | +3.21 | 2.16 | 52 |
+
+Nothing clears the |t| ≥ 3 gate of §4. Silver's 2.16 is one of two metals
+tested and is not corrected for that.
+
+**What it settles.** Granting a maker *perfect* queue priority, the edge on
+this sample is not distinguishable from zero. Tuning the `3×` multiplier
+cannot rescue a strategy whose achievable fills have no measurable edge, so
+the fill rule is not what to work on. It does **not** show the maker thesis is
+wrong — the interval is wide enough to contain a good business and a bad one.
+It prices the cost of finding out: ~135 markets for the unconditional claim,
+which is ~17 hours of uninterrupted 24h tape on both metals, or a few days at
+this environment's duty cycle (`docs/HANDOFF.md` §2b). That is reachable, and
+accumulating tape is now the highest-value thing the desk does.
+
+**The methodological trap, because it nearly took me.** Counted per *print*,
+the same rows say the underdog maker earns +6.92c/contract at **t = +23.3**
+and the favorite maker bleeds −3.73c at **t = −13.0** — a spectacular,
+tradeable-looking, completely fake result. Roughly 1,000 prints inside one
+15-minute market settle on ONE draw of the underlying; they are one
+observation measured a thousand times, and treating them as independent
+inflates t by about √(prints per market) ≈ 30×. The per-market column is the
+honest one.
+
+A second trap was checked and was *not* the cause: bucketing prints by their
+own price conditions on that print's noise (with `p = π + ε`, selecting
+`p < 0.5` selects `ε < 0` and manufactures a positive edge), which would also
+produce a sign flip at exactly 0.50. Re-bucketing on a price at least 60s old
+barely moved the per-print numbers. The clustering was the whole effect. Both
+checks stay in the script, because either one alone would have let a false
+result through.
+
+This is the fourth time on this desk that the instrumentation, not the market,
+produced the interesting number. Cluster first, believe later.
+
 ## 4. Backtest protocol & honesty constraints
 
 Data: full settled-market history + per-market 1-min contract candles

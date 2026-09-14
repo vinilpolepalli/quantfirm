@@ -1,9 +1,11 @@
 """Unit tests for the Kalshi 15M metals desk (no network)."""
+import json
 import math
 import os
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -297,3 +299,67 @@ class TestTapePersistence(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestPassiveEdgeClustering(unittest.TestCase):
+    """Pins the fix in docs/KALSHI.md 3d. The per-print statistic said the
+    underdog maker earned t=+23.3; clustered by market the same rows gave
+    t=+0.38. If someone 'simplifies' per_market back into a flat mean over
+    prints, the desk starts believing a fake edge again."""
+
+    @staticmethod
+    def _mod():
+        import importlib.util
+        path = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "scripts", "kalshi_passive_edge.py")
+        spec = importlib.util.spec_from_file_location("kpe", path)
+        m = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(m)
+        return m
+
+    def test_market_clustering_beats_pseudo_replication(self):
+        m = self._mod()
+        # Two markets. Every print inside a market shares its settlement, so
+        # there are TWO independent observations, not 400.
+        recs = []
+        for tkr, pnl in (("A", 0.04), ("B", -0.02)):
+            for _ in range(200):
+                recs.append({"pnl": pnl, "c": 10.0, "tkr": tkr})
+        n, mu, t = m.per_market(recs)
+        self.assertEqual(n, 2, "must count markets, not prints")
+        self.assertAlmostEqual(mu, 0.01, places=9)
+        # 200x more 'observations' would inflate t by ~sqrt(200).
+        self.assertLess(abs(t), abs(m.per_print_t(recs)) / 5)
+
+    def test_per_market_is_equal_weight_not_volume_weight(self):
+        m = self._mod()
+        # One huge market must not be able to outvote many small ones: its
+        # settlement is still a single draw.
+        recs = [{"pnl": -0.5, "c": 100000.0, "tkr": "BIG"}]
+        recs += [{"pnl": 0.1, "c": 1.0, "tkr": f"S{i}"} for i in range(20)]
+        n, mu, _ = m.per_market(recs)
+        self.assertEqual(n, 21)
+        self.assertGreater(mu, 0.0, "volume weighting would make this negative")
+
+    def test_taker_semantics_verifier_flags_contradiction(self):
+        m = self._mod()
+        # A tape whose prints land on the wrong side of the book must report
+        # CONTRADICTED -- every sign in the analysis depends on this mapping.
+        with tempfile.TemporaryDirectory() as d:
+            dec = os.path.join(d, "dec.jsonl")
+            with open(dec, "w") as f:
+                for i in range(50):
+                    f.write(json.dumps({"ticker": "T", "ts": 1000 + i,
+                                        "bid": 0.40, "ask": 0.60}) + "\n")
+            tape = []
+            for i in range(50):
+                ts = datetime.fromtimestamp(1000 + i, timezone.utc).isoformat().replace("+00:00", "Z")
+                tape.append({"ticker": "T", "created_time": ts,
+                             "yes_price_dollars": "0.4000",   # the BID
+                             "taker_outcome_side": "yes"})     # claims a lift
+            orig, m.DECISIONS = m.DECISIONS, dec
+            try:
+                out = m.verify_taker_semantics(tape)
+            finally:
+                m.DECISIONS = orig
+        self.assertIn("CONTRADICTED", out)
