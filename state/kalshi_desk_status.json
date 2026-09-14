@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-14T07:15:24Z",
+ "ts": "2026-09-14T07:17:13Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,148 +15,35 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 219.1050000000001,
+  "shadow": 273.10500000000013,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 250.58149399999888
+  "live": 304.5814939999989
  },
  "realized": {
-  "shadow": 23.884999999999973,
+  "shadow": 23.10499999999997,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 55.985593999999935
+  "live": 55.250793999999935
  },
- "n_open": 14,
- "open": [
-  {
-   "metal": "copper",
-   "side": "yes",
-   "count": 10,
-   "ticker": "KXCOPPER15M-26SEP140315-15",
-   "fill_price": 0.8,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "copper",
-   "side": "yes",
-   "count": 10,
-   "ticker": "KXCOPPER15M-26SEP140315-15",
-   "fill_price": 0.8,
-   "adapter": "live"
-  },
-  {
-   "metal": "gold",
-   "side": "no",
-   "count": 8,
-   "ticker": "KXGOLD15M-26SEP140315-15",
-   "fill_price": 0.75,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "gold",
-   "side": "no",
-   "count": 8,
-   "ticker": "KXGOLD15M-26SEP140315-15",
-   "fill_price": 0.75,
-   "adapter": "live"
-  },
-  {
-   "metal": "btc",
-   "side": "yes",
-   "count": 15,
-   "ticker": "KXBTC15M-26SEP140315-15",
-   "fill_price": 0.76,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "btc",
-   "side": "yes",
-   "count": 15,
-   "ticker": "KXBTC15M-26SEP140315-15",
-   "fill_price": 0.76,
-   "adapter": "live"
-  },
-  {
-   "metal": "eth",
-   "side": "yes",
-   "count": 14,
-   "ticker": "KXETH15M-26SEP140315-15",
-   "fill_price": 0.75,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "eth",
-   "side": "yes",
-   "count": 14,
-   "ticker": "KXETH15M-26SEP140315-15",
-   "fill_price": 0.75,
-   "adapter": "live"
-  },
-  {
-   "metal": "wti",
-   "side": "yes",
-   "count": 7,
-   "ticker": "KXWTI15M-26SEP140315-15",
-   "fill_price": 0.75,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "wti",
-   "side": "yes",
-   "count": 7,
-   "ticker": "KXWTI15M-26SEP140315-15",
-   "fill_price": 0.75,
-   "adapter": "live"
-  },
-  {
-   "metal": "natgas",
-   "side": "yes",
-   "count": 8,
-   "ticker": "KXNATGAS15M-26SEP140315-15",
-   "fill_price": 0.79,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "natgas",
-   "side": "yes",
-   "count": 8,
-   "ticker": "KXNATGAS15M-26SEP140315-15",
-   "fill_price": 0.79,
-   "adapter": "live"
-  },
-  {
-   "metal": "silver",
-   "side": "no",
-   "count": 8,
-   "ticker": "KXSILVER15M-26SEP140315-15",
-   "fill_price": 0.8,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "silver",
-   "side": "no",
-   "count": 8,
-   "ticker": "KXSILVER15M-26SEP140315-15",
-   "fill_price": 0.8,
-   "adapter": "live"
-  }
- ],
- "n_settled": 665,
- "updated": "2026-09-14T07:15:23Z",
+ "n_open": 0,
+ "open": [],
+ "n_settled": 679,
+ "updated": "2026-09-14T07:17:13Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
  "poly_paper_cash": 363.8629999999994,
  "div_paper_loop": "alive",
- "div_paper_n_open": 3,
- "div_paper_cash": 230.9759999999998,
- "div_paper_realized": 9.826000000000004,
+ "div_paper_n_open": 0,
+ "div_paper_cash": 255.9759999999998,
+ "div_paper_realized": 5.976000000000003,
  "poly_paper": {
   "day": "2026-09-14",
   "live_crypto": {
-   "n": 54,
-   "pnl": 4.56,
-   "hit": 0.796
+   "n": 56,
+   "pnl": 11.29,
+   "hit": 0.804
   },
   "poly_paper": {
    "n": 24,
