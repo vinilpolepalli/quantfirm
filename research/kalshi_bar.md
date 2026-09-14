@@ -68,20 +68,10 @@ not beat live enough to bounce. `research/kalshi_eth_wait.md`.
 
 ## What went live
 
-`desk_book` favorite bar **60¢ → 68¢ → 75¢**. Harvest (through Sep 12)
-kept wait 3 on both names. Live fills after that (110 crypto, wait-3
-era) retuned **waits**, not the bar:
+`desk_book` favorite bar **60¢ → 68¢ → 75¢**. Whole book wait 3 min.
+All seven names can clip (no one-slot gold/silver). Live IOC under 4
+lots is dust, not a clip. Extra ETH wait-5 / last-2-min sit were
+scored on the live tape and dropped so we stay in the names.
 
-| name | wait | bar | late sit |
-|---|---|---|---|
-| gold/silver/copper/WTI/natgas | 3 min | ≥75¢ | until close (fee-eat 99¢) |
-| BTC | 3 min | ≥75¢ | last 2 min |
-| ETH | **5 min** | ≥75¢ | last 2 min |
-
-Do **not** raise 75¢. Live 75–77¢ ETH is +$34 hit 85%; 78¢+ is red.
-ETH T+3/T+4 is the flicker wait-3 missed. Crypto T+13 dumped BTC.
-8% / 4% size unchanged. Next 110-min session loads this; do not
-bounce the running agent.
-
-This is a 2-week harvest peak plus two live days, not a months-proven
-edge. Next tape should re-score ETH wait 5 vs 6 and crypto last-2 vs last-3.
+This is a 2-week local peak on a 147-point search, not a months-proven
+edge. Next tape should re-score 68 vs 75 vs wait-4 74¢.

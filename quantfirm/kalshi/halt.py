@@ -7,14 +7,10 @@ import os
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 KILL_SWITCH = os.path.join(REPO, "state", "KILL_SWITCH_KALSHI")
 
-# One slot per cluster. Metals, energy, and crypto can all sit on the
-# $250 in the same window; gold+silver share a side, WTI/natgas share a
-# side. Copper, BTC, and ETH are their own books — we can be in BTC and
-# ETH together.
-CORR_GROUPS = (
-    frozenset({"gold", "silver"}),
-    frozenset({"wti", "natgas"}),
-)
+# Each name is its own book. Gold and silver (or WTI/natgas) can both
+# clip the same side in one window. Day-stop is the portfolio brake.
+# Same-name same-side still sits via the {metal} fallback below.
+CORR_GROUPS = ()
 
 
 def kill_switch_tripped() -> bool:
@@ -22,7 +18,11 @@ def kill_switch_tripped() -> bool:
 
 
 def blocked_by_corr(metal: str, side: str, open_positions) -> bool:
-    """True if an open position in the same cluster already holds this side."""
+    """True only if this name+side is already open (don't double a clip).
+
+    Clusters are not one-slot. Gold and silver can both be NO in the
+    same window. Day-stop is the portfolio brake.
+    """
     group = next((g for g in CORR_GROUPS if metal in g), frozenset({metal}))
     for p in open_positions:
         other = getattr(p, "metal", None)

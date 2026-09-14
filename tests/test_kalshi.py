@@ -378,20 +378,17 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(mid.tag, "crypto_fav")
         self.assertGreaterEqual(mid.count * mid.limit_price, 8.0)
         self.assertLessEqual(mid.count * mid.limit_price, 10.0)
-        # Last 30s: commodities still clip. Crypto sits last 2 min.
-        # 99¢ last ticks still sit out (fee-eat) even before that.
+        # Last 30s: both clip. 99¢ last ticks still sit out (fee-eat).
         late_gold = desk_book(**{**kw, "ts": close - 30}, metal="gold")
         late_btc = desk_book(**{**kw, "ts": close - 30}, metal="btc")
         self.assertIsNotNone(late_gold)
-        self.assertIsNone(late_btc)
-        at_two_min = desk_book(**{**kw, "ts": close - 120}, metal="btc")
-        self.assertIsNotNone(at_two_min)
+        self.assertIsNotNone(late_btc)
         junk_late = desk_book(**{**kw, "ts": close - 5,
                                   "yes_bid": 0.988, "yes_ask": 0.992},
                               metal="btc")
         self.assertIsNone(junk_late)
-        # ETH uses the same 4% / 75¢ overlay after the 5 min wait (this
-        # call is tau=300, into=600).
+        # ETH uses the same 4% overlay after the 3 min wait (this call
+        # is tau=300).
         eth = desk_book(**kw, metal="eth")
         self.assertIsNotNone(eth)
         self.assertEqual(eth.tag, "crypto_fav")
@@ -414,8 +411,7 @@ class TestNewStrategies(unittest.TestCase):
 
     def test_desk_book_waits_then_crypto_poly_confirms(self):
         from dataclasses import replace
-        from quantfirm.kalshi.strategies import (
-            CRYPTO_LATE_SIT_S, CRYPTO_OPEN_WAIT_S, ETH_OPEN_WAIT_S)
+        from quantfirm.kalshi.strategies import CRYPTO_OPEN_WAIT_S, ETH_OPEN_WAIT_S
         spec = next(s for s in registry() if s.name == "desk_book")
         p = replace(spec.params, macro_blackout_et=(), min_recent_volume=0.0)
         close = 1_000_000
@@ -433,15 +429,10 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIsNone(desk_book(**{**yes, "ts": t_19}, metal="eth"))
         self.assertIsNone(desk_book(**{**yes, "ts": t_173}, metal="btc"))
         after = open_ts + CRYPTO_OPEN_WAIT_S
-        self.assertIsNone(desk_book(**{**yes, "ts": after}, metal="eth"))
+        self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="eth"))
         self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="btc"))
         self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="gold"))
-        t4 = open_ts + 240
-        self.assertIsNone(desk_book(**{**yes, "ts": t4}, metal="eth"))
-        after_eth = open_ts + ETH_OPEN_WAIT_S
-        self.assertIsNotNone(desk_book(**{**yes, "ts": after_eth}, metal="eth"))
-        self.assertEqual(ETH_OPEN_WAIT_S, 300)
-        self.assertEqual(CRYPTO_LATE_SIT_S, 120)
+        self.assertEqual(ETH_OPEN_WAIT_S, CRYPTO_OPEN_WAIT_S)
         # Commodities have no Poly 15m book — Poly disagreement does not sit.
         self.assertIsNotNone(desk_book(**{**yes, "ts": after}, metal="gold",
                                        poly_yes_bid=0.20, poly_yes_ask=0.21,
@@ -502,10 +493,6 @@ class TestNewStrategies(unittest.TestCase):
         self.assertIsNone(desk_book(
             **{**base, "ts": open_ts + 19, "yes_bid": 0.87, "yes_ask": 0.88},
             metal="btc"))
-        # ETH still sits at T+3 (live T+3/T+4 ETH is red).
-        self.assertIsNone(desk_book(
-            **{**base, "ts": open_ts + 180, "yes_bid": 0.87, "yes_ask": 0.88},
-            metal="eth"))
 
     def test_wait7_sits_past_desk_book_open(self):
         from dataclasses import replace
@@ -647,16 +634,17 @@ class TestNewStrategies(unittest.TestCase):
 
 
 class TestDiversifyAndHalt(unittest.TestCase):
-    def test_corr_allows_metal_and_energy(self):
+    def test_corr_allows_every_name(self):
         from quantfirm.kalshi.halt import blocked_by_corr
         from types import SimpleNamespace
         open_ = [SimpleNamespace(metal="gold", side="yes")]
-        self.assertTrue(blocked_by_corr("silver", "yes", open_))
+        self.assertTrue(blocked_by_corr("gold", "yes", open_))
+        self.assertFalse(blocked_by_corr("silver", "yes", open_))
         self.assertFalse(blocked_by_corr("silver", "no", open_))
         self.assertFalse(blocked_by_corr("wti", "yes", open_))
         self.assertFalse(blocked_by_corr("copper", "yes", open_))
         open_.append(SimpleNamespace(metal="wti", side="no"))
-        self.assertTrue(blocked_by_corr("natgas", "no", open_))
+        self.assertFalse(blocked_by_corr("natgas", "no", open_))
         self.assertFalse(blocked_by_corr("natgas", "yes", open_))
         self.assertFalse(blocked_by_corr("btc", "yes", open_))
         open_.append(SimpleNamespace(metal="btc", side="yes"))
@@ -664,6 +652,15 @@ class TestDiversifyAndHalt(unittest.TestCase):
         self.assertFalse(blocked_by_corr("eth", "no", open_))
         self.assertFalse(blocked_by_corr("gold", "yes",
                                           [SimpleNamespace(metal="btc", side="yes")]))
+
+    def test_live_ioc_dust_is_not_a_clip(self):
+        from quantfirm.kalshi.paper import contracts_filled
+        self.assertIsNone(contracts_filled({"fill_count": 0.01}, 4))
+        self.assertIsNone(contracts_filled({"fill_count": "0.01"}, 4))
+        self.assertIsNone(contracts_filled({"fill_count": 0}, 4))
+        self.assertIsNone(contracts_filled({"fill_count": 3}, 4))
+        self.assertEqual(contracts_filled({"fill_count": 7}, 4), 7.0)
+        self.assertEqual(contracts_filled({"fill_count_fp": "8.00"}, 4), 8.0)
 
     def test_heartbeat_from_state_file(self):
         from quantfirm.kalshi.runtime import write_desk_status

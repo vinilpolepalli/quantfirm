@@ -6,13 +6,12 @@ The book is `desk_book`: **gold, silver, copper, WTI, natgas, BTC, ETH**.
 Paper bankroll $250.
 
 Commodities **wait the first 3 minutes**, then **8%** / ≥75¢ (no Poly
-15m book). BTC waits 3 min, ETH waits 5 min; both **4% of the book
-each (~$9–10) / ≥75¢**, sit the last 2 minutes, and sit if Polymarket's
-15m favorite disagrees. Independent books — they do **not** have to
-agree. Sit out 60–74¢, longshots, and when the quadratic fee eats ≥15%
-of the win (99¢ last ticks). Do not raise 75¢ — live 78¢+ is red.
-Maker quotes off. `yolo_book` / `nuke_lock` / `longshot` stay
-registered and off this loop.
+15m book). BTC and ETH: **4% of the book each (~$9–10) / ≥75¢** after
+the same wait, and sit if Polymarket's 15m favorite disagrees.
+All seven names can clip. Independent books — they do **not** have to
+agree. Sit out 60–74¢, longshots, 99¢ last ticks (fee-eat), and live
+IOC dust under 4 lots. Maker quotes off. `yolo_book` / `nuke_lock` /
+`longshot` stay registered and off this loop.
 
 Live canary is **on** 24/7 in this environment (`KALSHI_LIVE=1` in gitignored
 `.env.kalshi`). Real orders go out. Stop with `touch state/KILL_SWITCH_KALSHI`.
@@ -51,7 +50,7 @@ second agent. Commodities and crypto can fill until close. Do not start a second
 ```
 You are the Kalshi 15-minute desk for quantfirm.
 Bankroll $250. Strategy: desk_book.
-Commodities wait 3 min then 8% ≥75¢. BTC wait 3 + last-2-min sit; ETH wait 5 + last-2-min sit; both 4% each (~$9–10) ≥75¢; sit if Polymarket 15m disagrees. Names are independent (BTC YES and ETH NO in the same window is allowed). Sit out 60–74¢. 99c last ticks via fee-eat; crypto also sits last 2 min.
+Whole book waits first 3 min. Commodities 8% ≥75¢ after that. BTC and ETH: 4% each (~$9–10) ≥75¢ after the wait; sit if Polymarket 15m disagrees. All seven names can clip. Sit out 60–74¢ and 99c last ticks via fee-eat. Live IOC under 4 lots is dust, skip it.
 
 1. If state/KILL_SWITCH_KALSHI exists, stop.
 2. python scripts/kalshi_desk_checkin.py
@@ -60,9 +59,9 @@ Commodities wait 3 min then 8% ≥75¢. BTC wait 3 + last-2-min sit; ETH wait 5 
    Heal with checkin only. Do NOT start a second agent.
 5. Keep live on if `.env.kalshi` has KALSHI_LIVE=1. Do not unset it.
    Do not switch commodities back to 4% or to yolo_book.
-   Do not last-minute lock crypto. Do not raise the 75¢ bar.
-   ETH wait 5 + crypto last-2-min sit + Poly confirm is the live overlay.
-   Do not switch the whole book to poly_book.
+   Do not last-minute lock crypto. Whole-book 3 min wait + crypto Poly
+   confirm is the live overlay. All seven names can clip. Do not switch
+   the whole book to poly_book.
    A separate paper sleeve (`scripts/kalshi_poly_paper_loop.sh`) still
    shadows Poly vs Kalshi; compare at EOD with `poly-compare`. Do not
    start a second live agent.
@@ -71,7 +70,7 @@ Commodities wait 3 min then 8% ≥75¢. BTC wait 3 + last-2-min sit; ETH wait 5 
    withdrawals; do not POST /portfolio/withdrawals.
 
 Do not paper yolo_book, nuke_lock, offhours_lock, or longshot.
-Do not buy 99c last ticks (fee-eat / price_max). Crypto also sits last 2 min.
+Do not buy 99c last ticks (fee-eat / price_max). Do not book 1¢ dust fills.
 Do not buy 18–50¢ crypto longshots.
 ```
 

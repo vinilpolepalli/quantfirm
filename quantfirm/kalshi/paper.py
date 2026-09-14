@@ -28,7 +28,7 @@ import math
 import os
 import time
 import uuid
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from decimal import Decimal
 
@@ -63,6 +63,25 @@ def taker_entries_allowed(allowed: dict, live: bool) -> bool:
     """
     book = "live" if live else "shadow"
     return bool(allowed.get(book))
+
+
+def contracts_filled(order: dict, min_count: int) -> float | None:
+    """Kalshi V2 fill_count is a decimal string. 0.01 is leftover dust.
+
+    2026-09-14 20:45Z silver/natgas live IOC returned fill_count=0.01
+    (thin book). The app showed Cost $0.01. That is not a clip — skip
+    anything under min_count (4).
+    """
+    raw = order.get("fill_count_fp")
+    if raw is None or raw == "":
+        raw = order.get("fill_count") or 0
+    try:
+        n = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if n + 1e-9 < float(min_count):
+        return None
+    return n
 
 
 @dataclass
@@ -514,10 +533,21 @@ class PaperEngine:
             still = (q2.yes_bid is not None
                      and (1.0 - float(q2.yes_bid)) <= intent.limit_price + 1e-9)
             size_at_touch = q2.yes_bid_size
+        min_lot = int(self.params.min_count)
+        thin = (size_at_touch is not None
+                and float(size_at_touch) + 1e-9 < min_lot)
+        live_intent = intent
+        if size_at_touch is not None:
+            avail = int(float(size_at_touch))
+            if avail >= min_lot and avail < intent.count:
+                live_intent = replace(intent, count=avail)
         if not still:
             notes.append(f"shadow race-loss (repriced) {intent.ticker}")
+            if thin:
+                notes.append(f"skip live thin book {intent.ticker} size={size_at_touch}")
+                return notes + self._demo_leg(intent, metal, now, close_ts)
             return notes + self._demo_leg(intent, metal, now, close_ts) \
-                + self._live_leg(intent, metal, now, close_ts)
+                + self._live_leg(live_intent, metal, now, close_ts)
         size_ok = size_at_touch is not None and float(size_at_touch) >= intent.count
         if size_ok:
             fee = taker_fee(intent.count, intent.limit_price)
@@ -533,8 +563,11 @@ class PaperEngine:
                              f" @ {intent.limit_price:.3f} fair={intent.fair:.3f}")
         else:
             notes.append(f"shadow no-fill (size at touch) {intent.ticker}")
+        if thin:
+            notes.append(f"skip live thin book {intent.ticker} size={size_at_touch}")
+            return notes + self._demo_leg(intent, metal, now, close_ts)
         return notes + self._demo_leg(intent, metal, now, close_ts) \
-            + self._live_leg(intent, metal, now, close_ts)
+            + self._live_leg(live_intent, metal, now, close_ts)
 
     def _place_ioc(self, client, adapter: str, intent, metal, now, close_ts) -> list[str]:
         """Shared IOC path for demo plumbing and gated live prod orders."""
@@ -552,23 +585,34 @@ class PaperEngine:
                 time_in_force="immediate_or_cancel",
                 client_order_id=str(uuid.uuid4()))
             order = resp.get("order", resp)
-            filled = float(order.get("fill_count") or 0)
-            if filled > 0:
+            filled = contracts_filled(order, self.params.min_count)
+            if filled is not None:
                 afp = order.get("average_fill_price")
-                yes_fill = float(afp) if afp else yes_price
+                yes_fill = float(afp) if afp else float(yes_price)
                 side_fill = yes_fill if intent.side == "yes" else 1.0 - yes_fill
                 fee = float(order.get("average_fee_paid") or 0) * filled \
                     or taker_fee(filled, side_fill)
-                self.state.d["cash"][adapter] -= filled * side_fill + fee
+                lots = int(round(filled))
+                self.state.d["cash"][adapter] -= lots * side_fill + fee
                 self.state.open.append(PaperPosition(
                     ticker=intent.ticker, metal=metal, side=intent.side,
-                    count=int(filled), fill_price=side_fill, fee=fee,
+                    count=lots, fill_price=side_fill, fee=fee,
                     fair=intent.fair, entry_ts=now, close_ts=close_ts,
                     adapter=adapter, tag=intent.tag,
                     order_id=order.get("order_id")))
-                notes.append(f"{adapter.upper()} FILL {intent.side} {filled} {intent.ticker}")
+                notes.append(f"{adapter.upper()} FILL {intent.side} {lots} {intent.ticker}")
             else:
-                notes.append(f"{adapter} IOC no-fill {intent.ticker}")
+                raw = order.get("fill_count_fp") or order.get("fill_count") or 0
+                try:
+                    dust = float(raw)
+                except (TypeError, ValueError):
+                    dust = 0.0
+                if dust > 0:
+                    notes.append(
+                        f"{adapter} IOC dust {dust} {intent.ticker} "
+                        f"(need {self.params.min_count})")
+                else:
+                    notes.append(f"{adapter} IOC no-fill {intent.ticker}")
         except Exception as e:
             notes.append(f"{adapter} order error {intent.ticker}: {e}")
         return notes
