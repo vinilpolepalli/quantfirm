@@ -1,109 +1,24 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 251.76900000000012,
+  "shadow": 288.5290000000001,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 275.787993999999
+  "live": 312.568093999999
  },
- "open": [
-  {
-   "ticker": "KXWTI15M-26SEP140215-15",
-   "metal": "wti",
-   "side": "yes",
-   "count": 8,
-   "fill_price": 0.75,
-   "fee": 0.11,
-   "fair": 0.75,
-   "entry_ts": 1789365780,
-   "close_ts": 1789366500,
-   "adapter": "shadow",
-   "tag": "favorite",
-   "order_id": null
-  },
-  {
-   "ticker": "KXWTI15M-26SEP140215-15",
-   "metal": "wti",
-   "side": "yes",
-   "count": 8,
-   "fill_price": 0.75,
-   "fee": 0.1048,
-   "fair": 0.75,
-   "entry_ts": 1789365780,
-   "close_ts": 1789366500,
-   "adapter": "live",
-   "tag": "favorite",
-   "order_id": "01a09e83-0208-70e8-9fa7-279cb0470822"
-  },
-  {
-   "ticker": "KXETH15M-26SEP140215-15",
-   "metal": "eth",
-   "side": "yes",
-   "count": 15,
-   "fill_price": 0.75,
-   "fee": 0.2,
-   "fair": 0.75,
-   "entry_ts": 1789365780,
-   "close_ts": 1789366500,
-   "adapter": "shadow",
-   "tag": "crypto_fav",
-   "order_id": null
-  },
-  {
-   "ticker": "KXETH15M-26SEP140215-15",
-   "metal": "eth",
-   "side": "yes",
-   "count": 15,
-   "fill_price": 0.75,
-   "fee": 0.1965,
-   "fair": 0.75,
-   "entry_ts": 1789365780,
-   "close_ts": 1789366500,
-   "adapter": "live",
-   "tag": "crypto_fav",
-   "order_id": "01a09e83-05f0-7da4-a85b-278cd5db50db"
-  },
-  {
-   "ticker": "KXBTC15M-26SEP140215-15",
-   "metal": "btc",
-   "side": "yes",
-   "count": 15,
-   "fill_price": 0.75,
-   "fee": 0.2,
-   "fair": 0.75,
-   "entry_ts": 1789365794,
-   "close_ts": 1789366500,
-   "adapter": "shadow",
-   "tag": "crypto_fav",
-   "order_id": null
-  },
-  {
-   "ticker": "KXBTC15M-26SEP140215-15",
-   "metal": "btc",
-   "side": "yes",
-   "count": 15,
-   "fill_price": 0.75,
-   "fee": 0.1965,
-   "fair": 0.75,
-   "entry_ts": 1789365794,
-   "close_ts": 1789366500,
-   "adapter": "live",
-   "tag": "crypto_fav",
-   "order_id": "01a09e83-3ca0-7c01-b490-f682e8f893b7"
-  }
- ],
- "n_settled": 609,
+ "open": [],
+ "n_settled": 623,
  "realized": {
-  "shadow": 30.778999999999982,
+  "shadow": 38.52899999999998,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 55.45509399999998
+  "live": 63.23739399999997
  },
  "fees": {
-  "shadow": 48.89000000000003,
+  "shadow": 49.81000000000004,
   "demo": 0.0,
   "maker": 0.0,
-  "live": 43.59790599999998
+  "live": 44.485605999999976
  },
  "started": "2026-09-12T00:46:58Z",
  "day_stop": {
@@ -114,7 +29,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T06:04:18Z",
+ "updated": "2026-09-14T06:19:13Z",
  "metals": [
   "gold",
   "silver",
