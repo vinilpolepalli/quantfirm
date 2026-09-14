@@ -1,0 +1,14 @@
+quantfirm options paper desk — day 7 (2026-08-31)
+============================================================
+equity        $496.84  (-3.16 vs $500 start)
+realized P&L  $+0.00
+SPY           767.07
+
+open positions:
+  PCS-20260828-01  -743P/+742P 2026-10-02  dte 32  credit 0.12 -> mark 0.15  unrl $-3.08
+  PCS-20260831-02  -744P/+743P 2026-10-02  dte 32  credit 0.13 -> mark 0.13  unrl $-0.08
+
+today:
+  - OPENED PCS-20260831-02: short 744.0P / long 743.0P 2026-10-02 (dte 32, delta -0.22) credit 0.13 (mid 0.15), max loss $87
+
+paper simulation — fills modeled at 60% of combined half-spread plus $0.04/contract/side; not real orders, not investment advice.

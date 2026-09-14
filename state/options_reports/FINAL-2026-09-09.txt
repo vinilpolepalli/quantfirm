@@ -1,0 +1,179 @@
+quantfirm options paper desk — FINAL REPORT (two-week verdict)
+==============================================================
+window 2026-08-25 → 2026-09-09 · bankroll $500 · PAPER ONLY
+
+  ending equity      $373.04     -$126.96   (-25.4%)
+  realized P&L       -$133.64    5 closed, 2 winners (40%)
+  open at close      +$6.68 unrealized across 4 positions
+  peak / trough      $522.68 (09-02) / $369.16 (09-08)
+  max drawdown       -29.4% from peak
+  incidents          1 (Labor Day, correctly skipped)
+
+The window ran two mandates. 08-25 → 08-31 was the conservative v1 spec
+(SPY put credit spreads, 0.18 delta, 28-45 DTE). On 08-31 the owner replaced
+it with an explicit MAXIMUM-RISK mandate and the v2 engine took over. Almost
+all of the movement below belongs to v2.
+
+EQUITY CURVE
+------------
+  2026-08-25  $ 500.00  open 0  risk $  0    v1 bootstrap
+  2026-08-26  $ 500.00  open 0  risk $  0
+  2026-08-27  $ 500.00  open 0  risk $  0
+  2026-08-28  $ 499.92  open 1  risk $  0
+  2026-08-31  $ 496.84  open 2  risk $  0
+  2026-09-01  $ 485.76  open 3  risk $323    v2 HIGH-RISK begins
+  2026-09-02  $ 522.68  open 4  risk $454    peak
+  2026-09-03  $ 489.48  open 5  risk $497
+  2026-09-04  $ 418.40  open 5  risk $492
+  2026-09-07     —  market holiday, no session
+  2026-09-08  $ 369.16  open 4  risk $362    trough
+  2026-09-09  $ 373.04  open 4  risk $452
+
+(The risk column reads $0 before 09-01 because v1 history rows predate
+per-row risk accounting. Migrated records, not a mis-measurement.)
+
+EVERY TRADE — FILL vs MID
+-------------------------
+id                sleeve  structure                  entry mid  entry fill  exit mid  exit fill      P&L
+FAT-20260901-03   fat     SPY +756P/-758P 09-04         -0.530      -0.520    -0.010     -0.020   +49.84
+FAT-20260902-04   fat     QQQ -714C/+716C 09-08         -0.720      -0.690    -1.980     -2.060  -137.16
+FAT-20260903-05   fat     QQQ -721C/+723C 09-08         -0.710      -0.690    -0.010     -0.020   +66.84
+LOT-20260903-06   lotto   NVDA +232.5C 09-04            +0.600      +0.600    +0.010     +0.010   -59.08
+LOT-20260904-07   lotto   NVDA +237.5C 09-09            +0.550      +0.550    +0.010     +0.010   -54.08
+                                                                                       realized  -133.64
+
+STILL OPEN AT WINDOW CLOSE
+  PCS-20260828-01  legacy  SPY +742P/-743P 10-02   entry -0.12  mark -0.17  risk $ 88   -5.08
+  PCS-20260831-02  legacy  SPY +743P/-744P 10-02   entry -0.13  mark -0.17  risk $ 87   -4.08
+  FAT-20260908-08  fat     QQQ -723C/+725C 09-11   entry -0.68  mark -0.52  risk $132  +15.92
+  FAT-20260909-09  fat     QQQ +710P/-712P 09-11   entry -0.55  mark -0.55  risk $145   -0.08
+                                                                          unrealized   +6.68
+
+PER-SLEEVE REALIZED
+  fat      3 trades   -$20.48    (one +$49.84, one +$66.84, one -$137.16)
+  lotto    2 trades  -$113.16    (both tickets to zero)
+  legacy   0 trades        —     (still open, expire 10-02)
+
+COST METER — the number this window existed to measure
+------------------------------------------------------
+  entry slippage       $13.00
+  exit slippage        $10.00
+  regulatory fees       $0.96
+  TOTAL                $23.96   =  4.79% of the $500 bankroll
+                                =  5.29% of the $453 gross premium traded
+                                =  $2.66 per ticket across 9 tickets
+
+The research estimate going in was 0.3-6.6% of premium depending on
+liquidity. Realized 5.3% — the high end of the range, on the most liquid
+underlyings available (SPY, QQQ, NVDA). This is the finding with the most
+carry-over value: on a $500 book, friction alone is a 4.8% headwind per
+two-week cycle.
+
+Two caveats on that number, both understating it:
+  - Slippage is recorded to the cent. On tight single-leg LOTTO tickets the
+    mid and the modeled fill round to the same cent, so ~$0.30/ticket of real
+    modeled cost is lost to rounding.
+  - It excludes the four still-open tickets' exit costs.
+
+OPS RELIABILITY
+---------------
+  trading days in window      11
+  ticks recorded              11   (100%)
+  missed sessions              0
+  stale-quote skips            0
+  holidays handled             1   (Labor Day, logged, no false history row)
+  incidents                    1   (that holiday)
+
+The loop ran unattended every trading day for two weeks, including a
+container reprovision and a market holiday. That is the one unambiguous pass
+in this report.
+
+WHAT THE ENGINE GOT RIGHT, AND WHAT BROKE
+------------------------------------------
+Both closing paths ran live and computed correctly: the 25% profit target
+(+$49.84) and the expiry-day sellout (four times). The bounded-loss invariant
+held throughout — no naked shorts, book never below zero.
+
+Five defects were found and fixed during the window, three of them the same
+species: a silent no-trade that would have looked like "no opportunities."
+  1. Delta/strike band was wrong by ~5% of spot. Caught pre-flight against
+     live data; would have found zero candidates every single day.
+  2. Migrated v1 positions had no exit rules at all (sleeve "legacy" absent
+     from the table). Would have drifted past the window unmanaged.
+  3. Half-strikes printed as whole ones (232.5 shown as 232 — a different,
+     real contract). Reporting only; fixed with a test.
+  4. QQQ lists $1 strikes only on the current week's expiries; 09-14, 09-15
+     and 09-16 are $5-only, where a $2-wide spread cannot be built at all.
+     The runbook's "nearest 5 DTE" rule would have selected an unusable
+     expiry and the sleeve would have silently found nothing.
+  5. max_loss is a settlement cap, not a sellout cap. FAT-04 stated $131 and
+     realized -$137.16, because a force-close pays the spread where
+     settlement does not.
+
+STRUCTURAL FINDING: THE SLEEVES DO NOT FIT THE BANKROLL
+-------------------------------------------------------
+FAT tickets cost $131-150 of risk each. LOTTO tickets are capped at $67.50.
+With $500 total and 100% deployable, three FAT positions plus the two legacy
+spreads saturate the book. The consequences showed up repeatedly:
+  - On 4 of 7 v2 sessions, a sleeve produced a valid candidate and the
+    capital-at-risk ceiling refused it — including 09-04, when FAT found its
+    cleanest entry of the week (0.345 delta against a 0.35 target).
+  - LOTTO opened just 2 tickets in the whole window. On every other day its
+    candidates cleared the delta band and failed on ticket size, not signal.
+    PLTR, TSLA, AMD and COIN were never affordable at 0.15-0.35 delta.
+
+Both sleeves were pre-registered to deploy ~98% of the book together. In
+practice they crowded each other out. That is a sizing conclusion the paper
+window was built to surface, and it did.
+
+WHAT THIS DOES AND DOES NOT PROVE
+----------------------------------
+It does NOT prove the strategy is bad. Five closed trades is statistically
+nothing; a -25% fortnight on a maximum-risk mandate is well inside the range
+of outcomes for a book with no stops that rides defined-risk spreads into
+expiry. One QQQ spread getting run over on 09-03 accounts for essentially the
+entire loss.
+
+It DOES establish, with real venue data:
+  - the cost model, measured rather than assumed: 4.8% of bankroll, 5.3% of
+    premium, per two-week cycle;
+  - that the settlement and force-close machinery is correct;
+  - that the ops loop is reliable enough to run unattended;
+  - that the sleeve sizing is wrong for $500.
+
+And the published evidence base has not changed: every structure in this
+desk has documented negative expected value (JoF 2023 on retail option
+buying; Review of Finance 2025 on earnings buys; Carr & Wu on single-name
+variance premium; WPUT vs PUT on cadence). The window measured mechanics and
+costs, not edge, because two weeks cannot measure edge.
+
+THE DECISION
+------------
+Three options, with my honest read on each.
+
+1. FUND A REAL DESK.  Requires options Level 3 approval on the account plus
+   $1,000-2,500 of dedicated capital — the current $261 balance cannot carry
+   a single FAT ticket, let alone a sleeve. I do not recommend this. Nothing
+   in this window produced evidence of edge, the sizing is demonstrably
+   wrong, and the go/no-go gate in FIRM.md (a full gauntlet against
+   historical chains) has never been run for options.
+
+2. EXTEND PAPER, RESIZED.  The cheapest way to learn more. Concretely: drop
+   to one sleeve at a time so they stop crowding each other, or raise the
+   simulated bankroll to $2,000 so both sleeves can size properly and the
+   $67.50 LOTTO cap stops being the binding constraint. Also worth running
+   the FIRM.md gauntlet against historical chains before any more forward
+   testing — the quote snapshots archived in state/options_quotes/ are the
+   start of that dataset.
+
+3. STOP.  Defensible. The desk works; the evidence says the trades do not.
+
+My recommendation is 2, and specifically: fix the bankroll-to-ticket ratio
+before collecting another day of data, because 4 of the last 7 sessions the
+engine was making sizing decisions rather than trading decisions.
+
+--------------------------------------------------------------------------
+PAPER SIMULATION throughout. No real order was ever placed. Every trading
+decision was made by deterministic code (quantfirm/options/paper.py,
+pre-registered in docs/OPTIONS_PAPER_V2.md); the agent fetched quotes, ran
+the tick, and shipped the outputs. Not investment advice.

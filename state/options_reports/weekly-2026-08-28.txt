@@ -1,0 +1,16 @@
+quantfirm options paper desk — weekly report (week ending 2026-08-28)
+================================================================
+equity $499.92 | week P&L $-0.08 | since start $-0.08 on $500
+
+trades closed this week: 0
+
+cost meter (cumulative): modeled slippage $2.00, fees $0.08 — 0.4% of bankroll
+incidents to date: 0
+
+equity curve:
+  2026-08-25  $500.00  open 0
+  2026-08-26  $500.00  open 0
+  2026-08-27  $500.00  open 0
+  2026-08-28  $499.92  open 1
+
+paper simulation — see docs/OPTIONS_PAPER.md for the pre-registered spec and what this window can and cannot prove.
