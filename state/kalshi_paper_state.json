@@ -1,12 +1,41 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 283.9950000000001,
+  "shadow": 274.96500000000015,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 312.56219399999884
+  "live": 303.53449399999886
  },
- "open": [],
+ "open": [
+  {
+   "ticker": "KXWTI15M-26SEP140430-30",
+   "metal": "wti",
+   "side": "yes",
+   "count": 11,
+   "fill_price": 0.81,
+   "fee": 0.12,
+   "fair": 0.81,
+   "entry_ts": 1789373881,
+   "close_ts": 1789374600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXWTI15M-26SEP140430-30",
+   "metal": "wti",
+   "side": "yes",
+   "count": 11,
+   "fill_price": 0.81,
+   "fee": 0.1177,
+   "fair": 0.81,
+   "entry_ts": 1789373881,
+   "close_ts": 1789374600,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a09efe-9e90-787b-85cf-c5ccc667501e"
+  }
+ ],
  "n_settled": 733,
  "realized": {
   "shadow": 33.994999999999955,
@@ -29,7 +58,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T08:17:48Z",
+ "updated": "2026-09-14T08:18:54Z",
  "metals": [
   "gold",
   "silver",
