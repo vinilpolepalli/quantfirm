@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Paper-only DOGE/XRP/NEAR 15m sleeve (Kalshi).
 #
-# Same overlay as live crypto: wait 3 min, ≥75¢ favorite, 4% of $250.
+# Same overlay as live BTC: wait 3 min, last-2-min sit, ≥75¢, 4% of $250.
 # SOL/HYPE/BNB/ZEC 15m are red or one-week flips and are not in this sleeve.
 # Never sends live Kalshi orders. Different state files from the live desk
 # (prefix kalshi_div_paper). Do not auto-switch PAPER_STRATEGY.

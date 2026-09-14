@@ -155,15 +155,21 @@ def favorite_blind(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                  "favorite", allow_min=True, fill_cap=fill_cap)
 
 
-# Open flicker: a 60–64¢ favorite in the first 2–3 minutes often dies
-# (13:15Z ETH NO T+19s @ 61¢ −$8.77). Sit the first 3 minutes, then clip
-# ≥75¢ (1¢ mixed-book sweep: 60 red both names, 68 both-green, 75 the
-# wait-3 peak; 72/74 dump ETH). No-wait 79¢ looks strong on ALL but
-# weekend ETH still red and W37 BTC dies — keep the wait. Crypto also
-# sits when Poly's ≥55¢ favorite disagrees. Missing Poly does not sit.
+# Live overlay (2026-09-14). Harvest through Sep 12 picked wait-3 + 75¢
+# on both names. 110 live crypto fills after that wait say:
+#   * ETH T+3 / T+4 are red (−$12 / −$15); minutes 5–6 are the peak.
+#     ETH waits 5 min. Do not raise the 75¢ bar — 78¢+ is red live.
+#   * BTC T+3–4 still green; harvest said longer BTC waits lose. BTC
+#     stays wait 3 + 75¢.
+#   * Crypto T+13 dumped BTC −$27. Sit last 2 min on crypto. Commodities
+#     still clip until close (fee-eat skips 99¢ last ticks).
+# Crypto also sits when Poly's ≥55¢ favorite disagrees. Missing Poly
+# does not sit.
 OPEN_WAIT_S = 180
-CRYPTO_OPEN_WAIT_S = OPEN_WAIT_S
-BTC_OPEN_WAIT_S = OPEN_WAIT_S
+BTC_OPEN_WAIT_S = 180
+ETH_OPEN_WAIT_S = 300
+CRYPTO_OPEN_WAIT_S = BTC_OPEN_WAIT_S
+CRYPTO_LATE_SIT_S = 120
 
 
 def crypto_params(base: Params) -> Params:
@@ -202,7 +208,8 @@ def commodity_wait_params(base: Params, wait_s: int = OPEN_WAIT_S) -> Params:
 
 def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
                bankroll, open_positions, params, recent_volume=None, **kw):
-    """Standalone BTC/ETH 15m FLB (for backtests). Same overlay as desk_book."""
+    """Standalone BTC/ETH 15m FLB (for backtests). No wait / late-sit;
+    ``desk_book`` applies those on the live loop."""
     it = favorite_blind(
         ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
         bankroll, open_positions, params, recent_volume=recent_volume,
@@ -210,6 +217,16 @@ def crypto_fav(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
     if it is not None:
         it.tag = "crypto_fav"
     return it
+
+
+def _desk_wait(metal, wait_s) -> int:
+    if wait_s is not None:
+        return wait_s
+    if metal == "eth":
+        return ETH_OPEN_WAIT_S
+    if metal in CRYPTO_OVERLAY:
+        return BTC_OPEN_WAIT_S
+    return OPEN_WAIT_S
 
 
 def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
@@ -220,11 +237,12 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
               tau_min_ov=None, skip_eth=False, **kw):
     """Commodity rich_fav + cautious BTC and ETH, both allowed.
 
-    Whole book waits the first 3 minutes. Commodities: 8% / ≥75¢ after
-    that (no Poly 15m book). BTC and ETH: 4% / ≥75¢ after the wait, and
-    sit when Polymarket's 15m favorite disagrees. Names are independent:
-    BTC YES and ETH NO in the same window is allowed. Missing Poly does
-    not sit. Fee-eat still skips 93¢+ last ticks; 60–74¢ sits.
+    Commodities wait 3 min then 8% / ≥75¢ (no Poly 15m book). BTC waits
+    3 min, ETH waits 5 min; both 4% / ≥75¢ after that, sit the last 2
+    minutes, and sit when Polymarket's 15m favorite disagrees. Names are
+    independent: BTC YES and ETH NO in the same window is allowed.
+    Missing Poly does not sit. Fee-eat still skips 93¢+ last ticks;
+    60–74¢ sits. Do not raise the 75¢ bar — live 78¢+ is the hole.
     """
     if skip_eth and metal == "eth":
         return None
@@ -233,15 +251,15 @@ def desk_book(ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
             return None
     if mkt_move_max is not None and abs(kw.get("recent_mkt_move") or 0) > mkt_move_max:
         return None
-    wait = OPEN_WAIT_S if wait_s is None else wait_s
+    wait = _desk_wait(metal, wait_s)
     if metal in CRYPTO_OVERLAY:
         p = crypto_wait_params(params, wait)
         if price_min_ov is not None:
             p = replace(p, price_min=price_min_ov)
         if price_max_ov is not None:
             p = replace(p, price_max=price_max_ov)
-        if tau_min_ov is not None:
-            p = replace(p, tau_min_s=tau_min_ov)
+        late = CRYPTO_LATE_SIT_S if tau_min_ov is None else tau_min_ov
+        p = replace(p, tau_min_s=late)
         it = favorite_blind(
             ticker, ts, s, k, sigma_1m, close_ts, yes_bid, yes_ask,
             bankroll, open_positions, p,
@@ -984,7 +1002,8 @@ def registry() -> list[Spec]:
                 max_spread=1.0, min_recent_volume=0.0, kelly_mult=0.5,
                 signal_max_age_s=0),
              "lag",
-             "Whole book waits 3 min; commodities 8%; BTC/ETH 4% / ≥75¢ + Poly"),
+             "Cmdty wait 3 / 8% / ≥75¢; BTC wait 3 + last-2m sit; "
+             "ETH wait 5 + last-2m sit; both 4% / ≥75¢ + Poly"),
         Spec("wait7_book", wait7_book,
              _p(tau_min_s=0, tau_max_s=900, price_min=0.60, price_max=0.94,
                 theta=0.0, max_open=7, max_stake_frac=0.08, min_count=4,
