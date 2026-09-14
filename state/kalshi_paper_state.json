@@ -1,10 +1,10 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 232.93300000000025,
+  "shadow": 189.98300000000023,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 273.5004199999996
+  "live": 230.56841999999963
  },
  "open": [
   {
@@ -76,6 +76,118 @@
    "adapter": "live",
    "tag": "favorite",
    "order_id": "01a09d67-2228-7c10-9bb2-745fb0a6cf84"
+  },
+  {
+   "ticker": "KXETH15M-26SEP132100-00",
+   "metal": "eth",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.78,
+   "fee": 0.16,
+   "fair": 0.78,
+   "entry_ts": 1789347243,
+   "close_ts": 1789347600,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXETH15M-26SEP132100-00",
+   "metal": "eth",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.78,
+   "fee": 0.156,
+   "fair": 0.78,
+   "entry_ts": 1789347243,
+   "close_ts": 1789347600,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a09d68-2fb0-78ca-9a3a-d4c2c62d3049"
+  },
+  {
+   "ticker": "KXBTC15M-26SEP132100-00",
+   "metal": "btc",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.77,
+   "fee": 0.17,
+   "fair": 0.77,
+   "entry_ts": 1789347291,
+   "close_ts": 1789347600,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXBTC15M-26SEP132100-00",
+   "metal": "btc",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.77,
+   "fee": 0.16119999999999998,
+   "fair": 0.77,
+   "entry_ts": 1789347291,
+   "close_ts": 1789347600,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a09d68-e748-719b-b84c-0b7bf6e230a5"
+  },
+  {
+   "ticker": "KXGOLD15M-26SEP132100-00",
+   "metal": "gold",
+   "side": "yes",
+   "count": 20,
+   "fill_price": 0.84,
+   "fee": 0.19,
+   "fair": 0.84,
+   "entry_ts": 1789347378,
+   "close_ts": 1789347600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXGOLD15M-26SEP132100-00",
+   "metal": "gold",
+   "side": "yes",
+   "count": 20,
+   "fill_price": 0.84,
+   "fee": 0.188,
+   "fair": 0.84,
+   "entry_ts": 1789347378,
+   "close_ts": 1789347600,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a09d6a-3350-708a-b54a-0b0ad43963ac"
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP132100-00",
+   "metal": "natgas",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.77,
+   "fee": 0.09,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789347378,
+   "close_ts": 1789347600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP132100-00",
+   "metal": "natgas",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.77,
+   "fee": 0.0868,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789347378,
+   "close_ts": 1789347600,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a09d6a-3b20-719f-a015-6878e2b01057"
   }
  ],
  "n_settled": 322,
@@ -100,7 +212,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T00:53:38Z",
+ "updated": "2026-09-14T01:00:03Z",
  "metals": [
   "gold",
   "silver",
