@@ -146,10 +146,24 @@ def main():
     # believing it was needed to stop Vercel creating a deployment for these
     # state-only commits. It is not: commit 28ad3ff carried the marker and
     # Vercel created a deployment anyway, then correctly reported
-    # "Canceled by Ignored Build Step". The ignoreCommand in
-    # dashboard/vercel.json is what actually skips these; it only looked
-    # broken while the free-tier rate limit was rejecting deployments before
-    # the ignore step could run. Marker removed rather than left as cargo cult.
+    # "Canceled by Ignored Build Step". Marker removed rather than left as
+    # cargo cult.
+    #
+    # Expect the Vercel check on this PR to flap red anyway, and do NOT treat
+    # that as a regression here. Two different limits are in play:
+    #   ignoreCommand (dashboard/vercel.json) runs at BUILD time, so it can
+    #     only skip a deployment that was already CREATED. It works -- e29c686
+    #     shows "Canceled by Ignored Build Step".
+    #   api-deployments-free-per-day is a CREATION cap, account-wide. Once it
+    #     is spent, creation is rejected before the ignore step ever runs and
+    #     the check goes red no matter what the commit touched.
+    # This loop pushes ~24 commits/day against a 100/day cap for a dashboard
+    # it never modifies, so it is a substantial contributor to spending it.
+    # The only repo-side control acting before creation is branch-level
+    # ("git": {"deploymentEnabled": {"<branch>": false}}), which would also
+    # kill previews for commits that DO touch dashboard/. That trade-off is
+    # the repo owner's call, not this script's -- see PR #60 for the full
+    # writeup. Do not "fix" it here by reintroducing a commit-message marker.
     msg = ("desk: auto check-in — "
            + (f"maker {mk['pnl']:+.2f} n={mk['n']} t={mk['t']:.2f}" if mk else "no fills")
            + "\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
