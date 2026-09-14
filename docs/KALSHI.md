@@ -171,6 +171,42 @@ that work is now the top open problem, not a blocked one. See
 `docs/HANDOFF.md`. No tape exists until the desk runs a full session.
 
 
+### 3c. The maker leg was never actually resting (2026-09-14)
+
+`scripts/kalshi_quote_churn.py` on the live supervisor log:
+
+```
+quote episodes   : 41
+median lifetime  : 5s
+under 10s        : 63%
+under 30s        : 73%
+ended by         : {'cancel': 41}    <- every episode, zero fills
+```
+
+**Median quote lifetime is 5 seconds and not one episode ended in a fill.**
+`maker_fade = 0.02` cancels on a 2c adverse move in fair value, and fair is
+recomputed every tick from a live feed, so the threshold re-triggers almost
+immediately: quote, cancel, requote, sometimes 2s apart.
+
+This changes the reading of the matched-window result in 3b. On 43 windows
+where both legs filled the same market on the same side, the maker lost
+$37.13 while the taker made $47.58 *despite a better average entry*
+(0.608 vs 0.648). I attributed that to adverse selection. Adverse selection
+is still the most likely mechanism, but it cannot be the whole story: a quote
+resting 5 seconds barely participates at all, and the fills it does get are a
+far more extreme selection than ordinary picking-off — caused by our own
+cancel logic, not by the market.
+
+**So the maker P&L to date does not measure the maker thesis.** It measures
+what a 5-second quote earns. The honest status of the "structurally sound
+direction" is untested, not refuted.
+
+**Do not retune `maker_fade` against this sample.** Changing a strategy
+parameter in response to bad P&L is the overfitting move this desk has
+already been burned by twice. A fade change is a NEW pre-registered
+experiment with its own fresh fill count, and the existing n=149 stays on the
+books as the 5-second-quote regime.
+
 ## 4. Backtest protocol & honesty constraints
 
 Data: full settled-market history + per-market 1-min contract candles

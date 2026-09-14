@@ -186,15 +186,22 @@ green week.
    side or the desk is systematically selling trend continuation. Diagnose
    before changing anything — do NOT just disable NO, that is curve-fitting to
    one regime.
-5. **Measure the cancel race.** The engine cancels on a 2c adverse move and
+5. **The maker leg is churning quotes — diagnose before anything else.**
+   `python3 scripts/kalshi_quote_churn.py` reports a 5s median quote lifetime
+   with 100% of episodes ending in a cancel (docs/KALSHI.md 3c). `maker_fade`
+   (2c) re-triggers on nearly every tick. Until a quote actually rests, the
+   maker P&L describes the cancel logic rather than the strategy, and n=149 of
+   it is already on the books. Treat any fade change as a fresh pre-registered
+   run, not a tweak to the existing sample.
+6. **Measure the cancel race.** The engine cancels on a 2c adverse move and
    always wins in shadow. Log intended-cancel vs next-print timestamps to
    estimate how many of those cancels a real venue would have refused.
-6. **Get the demo key** (one manual web signup, `docs/KALSHI.md` §7) and run
+7. **Get the demo key** (one manual web signup, `docs/KALSHI.md` §7) and run
    real resting orders. This is the only thing that actually settles the
    queue-priority question, and it still risks no real money.
-7. **Copper.** `KXCOPPER15M` is plumbed but not traded (`--metals gold,silver`).
+8. **Copper.** `KXCOPPER15M` is plumbed but not traded (`--metals gold,silver`).
    Thinner book; check it is not just wider spreads.
-8. Taker leg is dead unless a genuinely faster signal appears. Do not tune
+9. Taker leg is dead unless a genuinely faster signal appears. Do not tune
    `theta` to revive it — that is how PBO 0.40 happened.
 
 ---
