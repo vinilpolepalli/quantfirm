@@ -1,24 +1,81 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 300.1679999999999,
+  "shadow": 266.1079999999999,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 341.2968049999972
+  "live": 307.6388049999971
  },
- "open": [],
- "n_settled": 1451,
+ "open": [
+  {
+   "ticker": "KXGOLD15M-26SEP141815-15",
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.78,
+   "fee": 0.13,
+   "fair": 0.21999999999999997,
+   "entry_ts": 1789423380,
+   "close_ts": 1789424100,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXGOLD15M-26SEP141815-15",
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.78,
+   "fee": 0.12,
+   "fair": 0.21999999999999997,
+   "entry_ts": 1789423380,
+   "close_ts": 1789424100,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a1f1-e620-7853-91d0-7a0b5c8811da"
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP141815-15",
+   "metal": "copper",
+   "side": "no",
+   "count": 9,
+   "fill_price": 0.75,
+   "fee": 0.12,
+   "fair": 0.25,
+   "entry_ts": 1789423557,
+   "close_ts": 1789424100,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP141815-15",
+   "metal": "copper",
+   "side": "no",
+   "count": 9,
+   "fill_price": 0.75,
+   "fee": 0.1179,
+   "fair": 0.25,
+   "entry_ts": 1789423557,
+   "close_ts": 1789424100,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a1f4-9d70-7e1d-9f53-9c37cecb09be"
+  }
+ ],
+ "n_settled": 1465,
  "realized": {
-  "shadow": 50.16799999999999,
+  "shadow": 30.907999999999998,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 91.96610499999967
+  "live": 73.09600499999968
  },
  "fees": {
-  "shadow": 110.06000000000009,
+  "shadow": 111.12000000000009,
   "demo": 0.0,
   "maker": 0.0,
-  "live": 99.27789499999992
+  "live": 100.31799499999993
  },
  "started": "2026-09-12T00:46:58Z",
  "day_stop": {
@@ -29,7 +86,7 @@
    "live": 258.7738199999996
   }
  },
- "updated": "2026-09-14T21:50:28Z",
+ "updated": "2026-09-14T22:06:00Z",
  "metals": [
   "gold",
   "silver",
