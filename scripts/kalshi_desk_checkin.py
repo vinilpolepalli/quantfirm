@@ -142,8 +142,16 @@ def main():
     if sh_:
         status.append(f"taker n={sh_['n']} pnl=${sh_['pnl']:+.2f}")
 
+    # "[skip ci]" stops Vercel CREATING a deployment for these state-only
+    # commits. An ignoreCommand in dashboard/vercel.json is not enough: it runs
+    # during the BUILD, whereas the free-tier cap we hit is
+    # "api-deployments-free-per-day" -- a deployment CREATION limit. The
+    # deployment is created and rejected before the ignore step ever executes,
+    # so the marker has to be on the commit itself. (Learned by shipping the
+    # ignoreCommand first and watching 1868737 fail anyway.)
     msg = ("desk: auto check-in — "
            + (f"maker {mk['pnl']:+.2f} n={mk['n']} t={mk['t']:.2f}" if mk else "no fills")
+           + " [skip ci]"
            + "\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
            + "\nClaude-Session: https://claude.ai/code/session_01QEzLS4u6E7dCgjXtCZdfGQ")
     sh("git add -A state/ research/ 2>/dev/null")
