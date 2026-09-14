@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-14T17:13:32Z",
+ "ts": "2026-09-14T17:19:08Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,140 +15,84 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 225.34600000000012,
+  "shadow": 264.44600000000014,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 272.446104999998
+  "live": 311.55100499999793
  },
  "realized": {
-  "shadow": 59.565999999999974,
+  "shadow": 42.345999999999975,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 88.1916049999997
+  "live": 90.1154049999997
  },
- "n_open": 13,
+ "n_open": 6,
  "open": [
   {
-   "metal": "wti",
-   "side": "yes",
-   "count": 10,
-   "ticker": "KXWTI15M-26SEP141315-15",
-   "fill_price": 0.76,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "wti",
-   "side": "yes",
-   "count": 10,
-   "ticker": "KXWTI15M-26SEP141315-15",
-   "fill_price": 0.76,
-   "adapter": "live"
-  },
-  {
-   "metal": "natgas",
-   "side": "yes",
-   "count": 26,
-   "ticker": "KXNATGAS15M-26SEP141315-15",
-   "fill_price": 0.84,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "natgas",
-   "side": "yes",
-   "count": 26,
-   "ticker": "KXNATGAS15M-26SEP141315-15",
-   "fill_price": 0.84,
-   "adapter": "live"
-  },
-  {
-   "metal": "gold",
+   "metal": "copper",
    "side": "no",
-   "count": 9,
-   "ticker": "KXGOLD15M-26SEP141315-15",
-   "fill_price": 0.77,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "gold",
-   "side": "no",
-   "count": 9,
-   "ticker": "KXGOLD15M-26SEP141315-15",
-   "fill_price": 0.77,
-   "adapter": "live"
-  },
-  {
-   "metal": "btc",
-   "side": "yes",
-   "count": 14,
-   "ticker": "KXBTC15M-26SEP141315-15",
+   "count": 11,
+   "ticker": "KXCOPPER15M-26SEP141330-30",
    "fill_price": 0.79,
    "adapter": "shadow"
   },
   {
-   "metal": "btc",
-   "side": "yes",
-   "count": 14,
-   "ticker": "KXBTC15M-26SEP141315-15",
-   "fill_price": 0.78,
-   "adapter": "live"
-  },
-  {
    "metal": "copper",
    "side": "no",
-   "count": 8,
-   "ticker": "KXCOPPER15M-26SEP141315-15",
-   "fill_price": 0.77,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "copper",
-   "side": "no",
-   "count": 8,
-   "ticker": "KXCOPPER15M-26SEP141315-15",
-   "fill_price": 0.76,
-   "adapter": "live"
-  },
-  {
-   "metal": "eth",
-   "side": "no",
-   "count": 14,
-   "ticker": "KXETH15M-26SEP141315-15",
-   "fill_price": 0.77,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "eth",
-   "side": "no",
-   "count": 14,
-   "ticker": "KXETH15M-26SEP141315-15",
-   "fill_price": 0.77,
+   "count": 11,
+   "ticker": "KXCOPPER15M-26SEP141330-30",
+   "fill_price": 0.79,
    "adapter": "live"
   },
   {
    "metal": "silver",
-   "side": "yes",
-   "count": 22,
-   "ticker": "KXSILVER15M-26SEP141315-15",
-   "fill_price": 0.85,
+   "side": "no",
+   "count": 9,
+   "ticker": "KXSILVER15M-26SEP141330-30",
+   "fill_price": 0.75,
    "adapter": "shadow"
+  },
+  {
+   "metal": "silver",
+   "side": "no",
+   "count": 9,
+   "ticker": "KXSILVER15M-26SEP141330-30",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "eth",
+   "side": "no",
+   "count": 16,
+   "ticker": "KXETH15M-26SEP141330-30",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "eth",
+   "side": "no",
+   "count": 16,
+   "ticker": "KXETH15M-26SEP141330-30",
+   "fill_price": 0.75,
+   "adapter": "live"
   }
  ],
- "n_settled": 1204,
- "updated": "2026-09-14T17:13:32Z",
+ "n_settled": 1217,
+ "updated": "2026-09-14T17:19:08Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
  "poly_paper_cash": 363.8629999999994,
  "div_paper_loop": "alive",
- "div_paper_n_open": 3,
- "div_paper_cash": 261.5999999999996,
- "div_paper_realized": 43.89999999999999,
+ "div_paper_n_open": 2,
+ "div_paper_cash": 266.71999999999963,
+ "div_paper_realized": 38.599999999999994,
  "poly_paper": {
   "day": "2026-09-14",
   "live_crypto": {
-   "n": 131,
-   "pnl": 9.14,
-   "hit": 0.794
+   "n": 133,
+   "pnl": 1.1,
+   "hit": 0.789
   },
   "poly_paper": {
    "n": 24,
