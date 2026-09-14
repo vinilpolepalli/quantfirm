@@ -201,6 +201,13 @@ cancel logic, not by the market.
 what a 5-second quote earns. The honest status of the "structurally sound
 direction" is untested, not refuted.
 
+**Addendum (2026-09-14T17:00Z): not every quiet stretch is churn.** The maker
+leg took zero fills through the 15:00, 16:00 and 17:00 sessions and I first
+read that as more of the same 5-second churn. It was not — the daily loss stop
+had tripped on a corrupted baseline and was blocking maker entries outright
+(`docs/HANDOFF.md` §2c). Churn and a halted book look identical from the fill
+count alone. Check `_entries_allowed` before attributing silence to §3c.
+
 **Do not retune `maker_fade` against this sample.** Changing a strategy
 parameter in response to bad P&L is the overfitting move this desk has
 already been burned by twice. A fade change is a NEW pre-registered

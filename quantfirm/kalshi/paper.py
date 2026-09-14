@@ -236,21 +236,52 @@ class PaperEngine:
 
     # ------------------------------------------------------------- daily stop
     def _entries_allowed(self) -> dict:
-        """Per-book daily loss stop, mirroring the backtest gate. The day
-        baseline is PERSISTED in state (review finding: an in-memory baseline
-        re-arms from depleted equity on every restart, defeating the stop)."""
+        """Per-book daily loss stop, DERIVED from the settled-trade log.
+
+        It used to read `state["cash"]` and persist a day baseline captured
+        from it. That broke on 2026-09-14 and silently halted the maker leg
+        for hours. Two engines run concurrently by design (the supervisor's,
+        plus the foreground one the hourly check-in runs to hold the container
+        awake -- docs/HANDOFF.md 2c). `PaperState` loads the whole state once
+        at startup and `save()` rewrites it wholesale: atomic per write, but
+        LAST WRITER WINS across processes, so each engine's settlements
+        overwrite the other's. Cash drifted $38.96 below the trade log, the
+        00:00 UTC baseline was captured from the drifted figure, and a real
+        -9.38% day read as -10.08% against it. The stop fired ~0.6pp early.
+
+        The trade log does not have this problem: `append_trade_log` is
+        idempotent and append-only, so it holds BOTH engines' settlements
+        exactly once. Deriving the gate from it makes the stop deterministic
+        and recomputable from history, and removes the persisted baseline
+        along with the old worry that a restart re-arms it from depleted
+        equity -- there is nothing left to re-arm.
+
+        Known and deliberately not fixed here: `state["cash"]` is still racy.
+        It only feeds Kelly sizing, where drifting low means sizing small,
+        which is the safe direction. Reconciling it is open problem 10.
+        """
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        eq = {}
-        for book in ("shadow", "maker"):
-            eq[book] = self.state.d["cash"][book] + sum(
-                p.count * p.fill_price for p in self.state.open
-                if p.adapter == book)
-        day = self.state.d.setdefault("day_stop", {})
-        if day.get("date") != today:
-            day.clear()
-            day.update({"date": today, "start": dict(eq)})
-        lim = 1.0 - self.params.daily_stop_frac
-        return {b: eq[b] >= lim * day["start"].get(b, eq[b]) for b in eq}
+        before = {"shadow": 0.0, "maker": 0.0}
+        todays = {"shadow": 0.0, "maker": 0.0}
+        try:
+            with open(self.log_path, newline="") as f:
+                for r in csv.DictReader(f):
+                    b = r.get("adapter")
+                    if b not in before:
+                        continue
+                    try:
+                        pnl = float(r["pnl"])
+                    except (KeyError, TypeError, ValueError):
+                        continue
+                    if (r.get("settled_at") or "")[:10] < today:
+                        before[b] += pnl
+                    else:
+                        todays[b] += pnl
+        except FileNotFoundError:
+            pass  # no history yet -> nothing can have been lost today
+        b0 = self.state.d.get("bankroll0", 500.0)
+        frac = self.params.daily_stop_frac
+        return {b: todays[b] >= -frac * (b0 + before[b]) for b in before}
 
     # ------------------------------------------------------------- maker leg
     def _maker_tick(self, metal: str, tkr: str, now: float, fair: float,

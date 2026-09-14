@@ -165,6 +165,34 @@ window, so the key is safe. The three bad rows were removed from the log.
 without a dedupe key will silently corrupt the record, and the corruption
 looks like ordinary fills.
 
+### The same race also corrupts `state["cash"]` — and it halted the desk
+
+Fixing the log was not enough. `PaperState` loads the whole state file **once
+at startup** and `save()` rewrites it wholesale. That is atomic per write
+(`os.replace`) but **last-writer-wins across processes**: each engine's
+settlements overwrite the other's. By 2026-09-14T17:00Z the maker book read
+
+| source | maker P&L | trustworthy? |
+| :--- | ---: | :--- |
+| `state/kalshi_paper_trades.csv` (idempotent, append-only) | **+$5.22** | yes |
+| `state["cash"]` (racy, last-writer-wins) | −$33.74 | no |
+
+a **$38.96** divergence. That mattered because `_entries_allowed` captured its
+00:00 UTC day baseline *from the drifted cash*: the book really started the day
+at $557.51 and was down $52.29 (**−9.38%**, stop fires at −$55.75), but against
+the recorded $518.55 baseline the same loss read **−10.08%** and tripped the
+10% stop. The maker leg was silently blocked for hours. I misread the silence
+at 16:05Z as the quote-churn finding in `docs/KALSHI.md` §3c; it was not.
+
+**The daily stop is now derived from the trade log**, which holds both engines'
+settlements exactly once, so it is deterministic and recomputable from history.
+`TestDailyStopFromTradeLog` pins the incident numbers.
+
+`state["cash"]` is still racy. It only feeds Kelly sizing, where drifting low
+means sizing small — the safe direction — so it is filed as open problem 10
+rather than patched in a hurry. **Do not build a new risk control on
+`state["cash"]`.** Derive it from the trade log.
+
 ## 3. Where it stands
 
 Live shadow, paper money, $0 real:
@@ -215,11 +243,12 @@ green week.
    That is pseudo-replication — ~1,000 prints per 15-minute market share one
    settlement, inflating t ~30×. The script prints both columns and labels the
    fake one. Do not quote it.
-3. **Fix the daily-stop baseline.** `_entries_allowed` resets at 00:00 UTC,
-   mid-session for metals, so a drawdown spanning midnight re-arms the stop at
-   full size halfway through (this happened on 2026-09-11/12 and cost roughly
-   a second full stop-loss). Use a rolling window or a session baseline. Risk
-   control, not a tunable.
+3. **Fix the daily-stop *boundary*.** (The *baseline* half of this is fixed —
+   the stop now derives from the trade log instead of racy cash, §2c.) What
+   remains: the day still rolls at 00:00 UTC, mid-session for metals, so a
+   drawdown spanning midnight re-arms the stop at full size halfway through
+   (this happened on 2026-09-11/12 and cost roughly a second full stop-loss).
+   Use a rolling window or a session baseline. Risk control, not a tunable.
 4. **Investigate the NO side.** n=96 for -$4.09 lifetime vs YES n=39 for
    +$57.10, and NO is 71% of fills. Either the fair value is biased on that
    side or the desk is systematically selling trend continuation. Diagnose
@@ -240,6 +269,15 @@ green week.
    queue-priority question, and it still risks no real money.
 8. **Copper.** `KXCOPPER15M` is plumbed but not traded (`--metals gold,silver`).
    Thinner book; check it is not just wider spreads.
+10. **Reconcile `state["cash"]` with the trade log.** It drifts because two
+   engines hold the state in memory and overwrite each other on save (§2c).
+   Cheapest correct fix: recompute `cash[book] = bankroll0 + sum(pnl)` from the
+   log on `PaperState.__init__`, so every 110-minute restart re-converges and
+   drift is bounded by one session. Only Kelly sizing reads it today, and it
+   errs small, so this is not urgent — but it is the last place the two
+   concurrent engines can still disagree, and the daily stop already got
+   burned by it once.
+
 9. Taker leg is dead unless a genuinely faster signal appears. Do not tune
    `theta` to revive it — that is how PBO 0.40 happened.
 

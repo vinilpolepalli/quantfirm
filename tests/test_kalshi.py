@@ -1,4 +1,5 @@
 """Unit tests for the Kalshi 15M metals desk (no network)."""
+import csv
 import json
 import math
 import os
@@ -363,3 +364,77 @@ class TestPassiveEdgeClustering(unittest.TestCase):
             finally:
                 m.DECISIONS = orig
         self.assertIn("CONTRADICTED", out)
+
+
+class TestDailyStopFromTradeLog(unittest.TestCase):
+    """Pins the 2026-09-14 halt. The stop used to read state['cash'], which two
+    concurrent engines corrupt via last-writer-wins saves; a real -9.38% day
+    read as -10.08% against a baseline captured from the drifted cash, and the
+    maker leg was blocked for hours by a stop that should not have fired."""
+
+    @staticmethod
+    def _engine(tmp, rows, bankroll0=500.0, frac=0.1):
+        from quantfirm.kalshi.paper import PaperEngine, PaperState
+        log = os.path.join(tmp, "trades.csv")
+        cols = ["settled_at", "adapter", "ticker", "metal", "side", "count",
+                "fill_price", "fee", "fair_at_entry", "result", "pnl", "tag",
+                "cash_after"]
+        with open(log, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=cols)
+            w.writeheader()
+            for r in rows:
+                w.writerow({c: r.get(c, "") for c in cols})
+        e = PaperEngine.__new__(PaperEngine)
+        e.log_path = log
+        e.params = Params(daily_stop_frac=frac)
+        e.state = PaperState(os.path.join(tmp, "state.json"), bankroll0)
+        return e
+
+    def _today(self):
+        return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    def test_stop_ignores_corrupted_cash(self):
+        # The exact numbers from the incident: book really started the day at
+        # 557.51 and lost 52.29 (-9.38%). Cash had drifted 38.96 low.
+        rows = [{"settled_at": "2026-09-10", "adapter": "maker", "pnl": "57.51"},
+                {"settled_at": self._today(), "adapter": "maker", "pnl": "-52.29"}]
+        with tempfile.TemporaryDirectory() as d:
+            e = self._engine(d, rows)
+            e.state.d["cash"]["maker"] = 466.26        # the drifted figure
+            e.state.d["day_stop"] = {"date": self._today(),
+                                     "start": {"maker": 518.55}}  # stale baseline
+            self.assertTrue(e._entries_allowed()["maker"],
+                            "-9.38% must not trip a 10% stop, whatever cash says")
+
+    def test_stop_still_fires_on_a_real_breach(self):
+        rows = [{"settled_at": "2026-09-10", "adapter": "maker", "pnl": "57.51"},
+                {"settled_at": self._today(), "adapter": "maker", "pnl": "-60.00"}]
+        with tempfile.TemporaryDirectory() as d:
+            e = self._engine(d, rows)
+            e.state.d["cash"]["maker"] = 900.0   # flattering cash must not rescue it
+            self.assertFalse(e._entries_allowed()["maker"],
+                             "-10.8% must trip a 10% stop")
+
+    def test_books_are_independent(self):
+        rows = [{"settled_at": self._today(), "adapter": "maker", "pnl": "-80"},
+                {"settled_at": self._today(), "adapter": "shadow", "pnl": "+20"}]
+        with tempfile.TemporaryDirectory() as d:
+            a = self._engine(d, rows)._entries_allowed()
+        self.assertFalse(a["maker"])
+        self.assertTrue(a["shadow"])
+
+    def test_no_history_allows_entries(self):
+        with tempfile.TemporaryDirectory() as d:
+            e = self._engine(d, [])
+            os.remove(e.log_path)
+            self.assertEqual(e._entries_allowed(), {"shadow": True, "maker": True})
+
+    def test_derived_not_persisted(self):
+        """Two engines must agree on the gate without sharing a baseline."""
+        rows = [{"settled_at": self._today(), "adapter": "maker", "pnl": "-60"}]
+        with tempfile.TemporaryDirectory() as d:
+            a = self._engine(d, rows)
+            b = self._engine(d, rows)
+            b.state.d["cash"]["maker"] = 1000.0     # b's state raced ahead
+            self.assertEqual(a._entries_allowed()["maker"],
+                             b._entries_allowed()["maker"])
