@@ -1,0 +1,885 @@
+{
+ "ts": "2026-09-13T02:42:07.057088+00:00",
+ "bar": "wait3 \u226575\u00a2 4% lag-fill; name independently pnl>0 and n>=20",
+ "cleared": [
+  "near"
+ ],
+ "promote_paper": true,
+ "results": [
+  {
+   "name": "wait3_75",
+   "metal": "hype",
+   "n": 255,
+   "pnl": -73.47,
+   "t": -1.44,
+   "hit": 0.671,
+   "dd": 59.7,
+   "avg_fill": 0.685,
+   "by_metal": {
+    "hype": {
+     "n": 255,
+     "pnl": -73.47,
+     "hit": 0.671
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 50,
+     "pnl": -56.91
+    },
+    "2026-W36": {
+     "n": 90,
+     "pnl": -72.46
+    },
+    "2026-W37": {
+     "n": 115,
+     "pnl": 55.9
+    }
+   },
+   "skipped": {
+    "no_underlying": 590,
+    "raced_out": 3606,
+    "corr_cap": 138,
+    "daily_stop": 2694
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "hype",
+   "n": 153,
+   "pnl": 86.35,
+   "t": 1.51,
+   "hit": 0.745,
+   "dd": 29.18,
+   "avg_fill": 0.688,
+   "by_metal": {
+    "hype": {
+     "n": 153,
+     "pnl": 86.35,
+     "hit": 0.745
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 38,
+     "pnl": -19.64
+    },
+    "2026-W37": {
+     "n": 115,
+     "pnl": 105.99
+    }
+   },
+   "skipped": {
+    "raced_out": 2047,
+    "corr_cap": 81,
+    "daily_stop": 510
+   },
+   "split": "7d"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "hype",
+   "n": 289,
+   "pnl": -51.83,
+   "t": -0.91,
+   "hit": 0.689,
+   "dd": 51.33,
+   "avg_fill": 0.689,
+   "by_metal": {
+    "hype": {
+     "n": 289,
+     "pnl": -51.83,
+     "hit": 0.689
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 54,
+     "pnl": -54.61
+    },
+    "2026-W36": {
+     "n": 115,
+     "pnl": -50.56
+    },
+    "2026-W37": {
+     "n": 120,
+     "pnl": 53.34
+    }
+   },
+   "skipped": {
+    "no_underlying": 688,
+    "raced_out": 4051,
+    "corr_cap": 191,
+    "daily_stop": 2103
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "hype",
+   "n": 163,
+   "pnl": 94.13,
+   "t": 1.48,
+   "hit": 0.748,
+   "dd": 26.43,
+   "avg_fill": 0.693,
+   "by_metal": {
+    "hype": {
+     "n": 163,
+     "pnl": 94.13,
+     "hit": 0.748
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 43,
+     "pnl": -2.24
+    },
+    "2026-W37": {
+     "n": 120,
+     "pnl": 96.38
+    }
+   },
+   "skipped": {
+    "raced_out": 2139,
+    "corr_cap": 106,
+    "daily_stop": 592
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "hype",
+   "n": 203,
+   "pnl": -100.79,
+   "t": -2.27,
+   "hit": 0.675,
+   "dd": 51.64,
+   "avg_fill": 0.717,
+   "by_metal": {
+    "hype": {
+     "n": 203,
+     "pnl": -100.79,
+     "hit": 0.675
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 32,
+     "pnl": -55.27
+    },
+    "2026-W36": {
+     "n": 83,
+     "pnl": -58.93
+    },
+    "2026-W37": {
+     "n": 88,
+     "pnl": 13.41
+    }
+   },
+   "skipped": {
+    "no_underlying": 590,
+    "raced_out": 3038,
+    "corr_cap": 69,
+    "daily_stop": 1836
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "hype",
+   "n": 121,
+   "pnl": 15.93,
+   "t": 0.33,
+   "hit": 0.736,
+   "dd": 23.42,
+   "avg_fill": 0.711,
+   "by_metal": {
+    "hype": {
+     "n": 121,
+     "pnl": 15.93,
+     "hit": 0.736
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 33,
+     "pnl": -10.84
+    },
+    "2026-W37": {
+     "n": 88,
+     "pnl": 26.77
+    }
+   },
+   "skipped": {
+    "raced_out": 1681,
+    "corr_cap": 40,
+    "daily_stop": 189
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "bnb",
+   "n": 310,
+   "pnl": -146.19,
+   "t": -2.06,
+   "hit": 0.668,
+   "dd": 61.51,
+   "avg_fill": 0.713,
+   "by_metal": {
+    "bnb": {
+     "n": 310,
+     "pnl": -146.19,
+     "hit": 0.668
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 52,
+     "pnl": -15.24
+    },
+    "2026-W36": {
+     "n": 160,
+     "pnl": -35.69
+    },
+    "2026-W37": {
+     "n": 98,
+     "pnl": -95.27
+    }
+   },
+   "skipped": {
+    "raced_out": 3461,
+    "corr_cap": 168,
+    "daily_stop": 2358,
+    "no_underlying": 38,
+    "no_quote": 1
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "bnb",
+   "n": 143,
+   "pnl": -102.8,
+   "t": -1.86,
+   "hit": 0.65,
+   "dd": 51.76,
+   "avg_fill": 0.713,
+   "by_metal": {
+    "bnb": {
+     "n": 143,
+     "pnl": -102.8,
+     "hit": 0.65
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 49,
+     "pnl": 24.36
+    },
+    "2026-W37": {
+     "n": 94,
+     "pnl": -127.16
+    }
+   },
+   "skipped": {
+    "raced_out": 1593,
+    "corr_cap": 82,
+    "no_underlying": 1,
+    "daily_stop": 1845,
+    "no_quote": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "bnb",
+   "n": 308,
+   "pnl": -144.76,
+   "t": -2.08,
+   "hit": 0.666,
+   "dd": 61.78,
+   "avg_fill": 0.711,
+   "by_metal": {
+    "bnb": {
+     "n": 308,
+     "pnl": -144.76,
+     "hit": 0.666
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 52,
+     "pnl": -15.24
+    },
+    "2026-W36": {
+     "n": 153,
+     "pnl": -27.26
+    },
+    "2026-W37": {
+     "n": 103,
+     "pnl": -102.26
+    }
+   },
+   "skipped": {
+    "raced_out": 3345,
+    "corr_cap": 201,
+    "daily_stop": 4118,
+    "no_underlying": 42,
+    "no_quote": 1
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "bnb",
+   "n": 157,
+   "pnl": -100.32,
+   "t": -1.69,
+   "hit": 0.656,
+   "dd": 54.2,
+   "avg_fill": 0.711,
+   "by_metal": {
+    "bnb": {
+     "n": 157,
+     "pnl": -100.32,
+     "hit": 0.656
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 53,
+     "pnl": 39.77
+    },
+    "2026-W37": {
+     "n": 104,
+     "pnl": -140.09
+    }
+   },
+   "skipped": {
+    "raced_out": 1699,
+    "corr_cap": 106,
+    "no_underlying": 1,
+    "daily_stop": 1949,
+    "no_quote": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "bnb",
+   "n": 249,
+   "pnl": -127.39,
+   "t": -2.01,
+   "hit": 0.695,
+   "dd": 56.17,
+   "avg_fill": 0.74,
+   "by_metal": {
+    "bnb": {
+     "n": 249,
+     "pnl": -127.39,
+     "hit": 0.695
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 50,
+     "pnl": -9.01
+    },
+    "2026-W36": {
+     "n": 127,
+     "pnl": -40.12
+    },
+    "2026-W37": {
+     "n": 72,
+     "pnl": -78.27
+    }
+   },
+   "skipped": {
+    "raced_out": 2821,
+    "corr_cap": 83,
+    "no_underlying": 38,
+    "daily_stop": 1437,
+    "no_quote": 1
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "bnb",
+   "n": 115,
+   "pnl": -79.86,
+   "t": -1.57,
+   "hit": 0.687,
+   "dd": 46.33,
+   "avg_fill": 0.741,
+   "by_metal": {
+    "bnb": {
+     "n": 115,
+     "pnl": -79.86,
+     "hit": 0.687
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 43,
+     "pnl": 28.53
+    },
+    "2026-W37": {
+     "n": 72,
+     "pnl": -108.39
+    }
+   },
+   "skipped": {
+    "raced_out": 1330,
+    "corr_cap": 38,
+    "no_underlying": 1,
+    "daily_stop": 1395,
+    "no_quote": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "near",
+   "n": 423,
+   "pnl": 61.02,
+   "t": 0.62,
+   "hit": 0.733,
+   "dd": 30.77,
+   "avg_fill": 0.705,
+   "by_metal": {
+    "near": {
+     "n": 423,
+     "pnl": 61.02,
+     "hit": 0.733
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 127,
+     "pnl": 4.67
+    },
+    "2026-W36": {
+     "n": 169,
+     "pnl": 35.45
+    },
+    "2026-W37": {
+     "n": 127,
+     "pnl": 20.9
+    }
+   },
+   "skipped": {
+    "raced_out": 2952,
+    "corr_cap": 212,
+    "no_quote": 5,
+    "no_underlying": 38,
+    "daily_stop": 2841
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "near",
+   "n": 177,
+   "pnl": 79.14,
+   "t": 1.12,
+   "hit": 0.723,
+   "dd": 31.19,
+   "avg_fill": 0.669,
+   "by_metal": {
+    "near": {
+     "n": 177,
+     "pnl": 79.14,
+     "hit": 0.723
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 50,
+     "pnl": 60.69
+    },
+    "2026-W37": {
+     "n": 127,
+     "pnl": 18.45
+    }
+   },
+   "skipped": {
+    "raced_out": 1556,
+    "corr_cap": 99,
+    "no_underlying": 1,
+    "daily_stop": 1542,
+    "no_quote": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "near",
+   "n": 456,
+   "pnl": 0.22,
+   "t": 0.0,
+   "hit": 0.721,
+   "dd": 38.05,
+   "avg_fill": 0.705,
+   "by_metal": {
+    "near": {
+     "n": 456,
+     "pnl": 0.22,
+     "hit": 0.721
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 133,
+     "pnl": -10.4
+    },
+    "2026-W36": {
+     "n": 194,
+     "pnl": 34.87
+    },
+    "2026-W37": {
+     "n": 129,
+     "pnl": -24.26
+    }
+   },
+   "skipped": {
+    "corr_cap": 310,
+    "raced_out": 3006,
+    "no_quote": 4,
+    "no_underlying": 42,
+    "daily_stop": 3517
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "near",
+   "n": 183,
+   "pnl": 8.77,
+   "t": 0.13,
+   "hit": 0.694,
+   "dd": 38.59,
+   "avg_fill": 0.668,
+   "by_metal": {
+    "near": {
+     "n": 183,
+     "pnl": 8.77,
+     "hit": 0.694
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 54,
+     "pnl": 34.65
+    },
+    "2026-W37": {
+     "n": 129,
+     "pnl": -25.88
+    }
+   },
+   "skipped": {
+    "raced_out": 1488,
+    "corr_cap": 125,
+    "no_underlying": 1,
+    "daily_stop": 2379
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "near",
+   "n": 337,
+   "pnl": 71.7,
+   "t": 0.92,
+   "hit": 0.774,
+   "dd": 31.45,
+   "avg_fill": 0.742,
+   "by_metal": {
+    "near": {
+     "n": 337,
+     "pnl": 71.7,
+     "hit": 0.774
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 91,
+     "pnl": -32.75
+    },
+    "2026-W36": {
+     "n": 123,
+     "pnl": 27.46
+    },
+    "2026-W37": {
+     "n": 123,
+     "pnl": 76.98
+    }
+   },
+   "skipped": {
+    "raced_out": 2418,
+    "corr_cap": 124,
+    "no_quote": 6,
+    "daily_stop": 2256,
+    "no_underlying": 38
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "near",
+   "n": 162,
+   "pnl": 128.88,
+   "t": 1.98,
+   "hit": 0.784,
+   "dd": 11.95,
+   "avg_fill": 0.709,
+   "by_metal": {
+    "near": {
+     "n": 162,
+     "pnl": 128.88,
+     "hit": 0.784
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 39,
+     "pnl": 37.86
+    },
+    "2026-W37": {
+     "n": 123,
+     "pnl": 91.02
+    }
+   },
+   "skipped": {
+    "raced_out": 1473,
+    "corr_cap": 67,
+    "no_underlying": 1,
+    "no_quote": 1
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "zec",
+   "n": 377,
+   "pnl": -86.21,
+   "t": -1.05,
+   "hit": 0.698,
+   "dd": 37.69,
+   "avg_fill": 0.703,
+   "by_metal": {
+    "zec": {
+     "n": 377,
+     "pnl": -86.21,
+     "hit": 0.698
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 77,
+     "pnl": -67.24
+    },
+    "2026-W36": {
+     "n": 200,
+     "pnl": 4.56
+    },
+    "2026-W37": {
+     "n": 100,
+     "pnl": -23.53
+    }
+   },
+   "skipped": {
+    "raced_out": 3531,
+    "corr_cap": 211,
+    "daily_stop": 1539,
+    "no_quote": 1,
+    "no_underlying": 36
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_75",
+   "metal": "zec",
+   "n": 157,
+   "pnl": -43.71,
+   "t": -0.65,
+   "hit": 0.682,
+   "dd": 27.82,
+   "avg_fill": 0.689,
+   "by_metal": {
+    "zec": {
+     "n": 157,
+     "pnl": -43.71,
+     "hit": 0.682
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 57,
+     "pnl": -12.67
+    },
+    "2026-W37": {
+     "n": 100,
+     "pnl": -31.04
+    }
+   },
+   "skipped": {
+    "raced_out": 1704,
+    "corr_cap": 96,
+    "no_underlying": 1,
+    "daily_stop": 1035
+   },
+   "split": "7d"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "zec",
+   "n": 394,
+   "pnl": -73.23,
+   "t": -0.79,
+   "hit": 0.701,
+   "dd": 39.7,
+   "avg_fill": 0.7,
+   "by_metal": {
+    "zec": {
+     "n": 394,
+     "pnl": -73.23,
+     "hit": 0.701
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 78,
+     "pnl": -47.0
+    },
+    "2026-W36": {
+     "n": 217,
+     "pnl": 11.17
+    },
+    "2026-W37": {
+     "n": 99,
+     "pnl": -37.4
+    }
+   },
+   "skipped": {
+    "raced_out": 3514,
+    "corr_cap": 263,
+    "thin_depth": 1,
+    "daily_stop": 2365,
+    "no_quote": 1,
+    "no_underlying": 40
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "nowait_75",
+   "metal": "zec",
+   "n": 159,
+   "pnl": -43.62,
+   "t": -0.62,
+   "hit": 0.679,
+   "dd": 31.18,
+   "avg_fill": 0.687,
+   "by_metal": {
+    "zec": {
+     "n": 159,
+     "pnl": -43.62,
+     "hit": 0.679
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 60,
+     "pnl": -0.34
+    },
+    "2026-W37": {
+     "n": 99,
+     "pnl": -43.28
+    }
+   },
+   "skipped": {
+    "raced_out": 1643,
+    "corr_cap": 104,
+    "no_underlying": 1,
+    "daily_stop": 1772
+   },
+   "split": "7d"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "zec",
+   "n": 304,
+   "pnl": -36.17,
+   "t": -0.52,
+   "hit": 0.734,
+   "dd": 28.53,
+   "avg_fill": 0.728,
+   "by_metal": {
+    "zec": {
+     "n": 304,
+     "pnl": -36.17,
+     "hit": 0.734
+    }
+   },
+   "weeks": {
+    "2026-W35": {
+     "n": 62,
+     "pnl": -56.78
+    },
+    "2026-W36": {
+     "n": 152,
+     "pnl": -9.68
+    },
+    "2026-W37": {
+     "n": 90,
+     "pnl": 30.29
+    }
+   },
+   "skipped": {
+    "raced_out": 2894,
+    "corr_cap": 108,
+    "daily_stop": 405,
+    "no_quote": 1,
+    "no_underlying": 36
+   },
+   "split": "ALL"
+  },
+  {
+   "name": "wait3_80",
+   "metal": "zec",
+   "n": 132,
+   "pnl": -0.19,
+   "t": -0.0,
+   "hit": 0.735,
+   "dd": 20.8,
+   "avg_fill": 0.719,
+   "by_metal": {
+    "zec": {
+     "n": 132,
+     "pnl": -0.19,
+     "hit": 0.735
+    }
+   },
+   "weeks": {
+    "2026-W36": {
+     "n": 42,
+     "pnl": -33.07
+    },
+    "2026-W37": {
+     "n": 90,
+     "pnl": 32.88
+    }
+   },
+   "skipped": {
+    "raced_out": 1393,
+    "corr_cap": 56,
+    "no_underlying": 1,
+    "daily_stop": 357
+   },
+   "split": "7d"
+  }
+ ]
+}

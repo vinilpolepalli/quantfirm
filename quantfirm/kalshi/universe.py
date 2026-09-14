@@ -27,11 +27,22 @@ SERIES_LISTED_DARK = {
 }
 
 # 15-minute crypto (live, large books). BTC and ETH both clip at 4%
-# of the book each (~$9–10), ≥60¢ / until close. Not a split budget.
-# SOL/DOGE/XRP 15m exist but are not scored.
+# of the book each (~$9–10), ≥75¢ after the 3 min wait. Not a split
+# budget. Names may disagree. SOL/DOGE/XRP 15m exist but stay off
+# the live loop until a lag-fill pass clears each name independently.
 SERIES_COMPARE = {
     "KXBTC15M": "btc",
     "KXETH15M": "eth",
+}
+
+# Scored in research/kalshi_div_nowcast.md. Not PAPER_ASSETS, not live.
+# SOL is in the map so a CLI `--metals sol` still gets the 4% overlay
+# instead of the 8% commodity book. It is not CRYPTO_PAPER.
+SERIES_CRYPTO_EXTRA = {
+    "KXSOL15M": "sol",
+    "KXDOGE15M": "doge",
+    "KXXRP15M": "xrp",
+    "KXNEAR15M": "near",
 }
 
 LIVE_SERIES = {**SERIES, **SERIES_COMPARE}
@@ -46,6 +57,10 @@ YF_SYMBOLS = {
     "platinum": "PL=F",
     "btc": "BTC-USD",
     "eth": "ETH-USD",
+    "sol": "SOL-USD",
+    "doge": "DOGE-USD",
+    "xrp": "XRP-USD",
+    "near": "NEAR-USD",
 }
 
 # Swissquote public BBO (keyless). Gold/silver measured ~1 bp vs Pyth.
@@ -61,15 +76,22 @@ SWISSQUOTE = {
 CRYPTO_ASSETS = ("btc", "eth")
 CRYPTO_LIVE = ("btc", "eth")
 
-# Live book: five commodities + BTC + ETH. Correlation slots are in
-# halt.CORR_GROUPS (precious / energy). Crypto names are their own books.
+# Lag-fill cleared 2026-09-13 (research/kalshi_div_nowcast.md). SOL/HYPE/BNB/ZEC
+# did not. Overlay is 4% / ≥75¢ / wait-3 like BTC/ETH. Not PAPER_ASSETS.
+CRYPTO_PAPER = ("doge", "xrp", "near")
+CRYPTO_OVERLAY = CRYPTO_LIVE + tuple(SERIES_CRYPTO_EXTRA.values())
+
+# Live book: five commodities + BTC + ETH. Each name is its own clip.
 PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
 
-# Live canary on the 24/7 supervisor. Commodities: 8% FLB ≥60¢ from
-# window open until close. Crypto: 4% of the book **each** (~$9–10)
-# / ≥60¢ / until close so every real-favorite interval can clip. Sit out
-# coin-flips, longshots, and fee-eat (that is the 99¢ last-tick skip).
-# Risky mixes stay registered as yolo_* / nuke_lock and off this loop.
+# Live canary on the 24/7 supervisor. Whole book waits the first 3
+# minutes of each 15m window. Commodities: 8% FLB ≥75¢ after that (no
+# Poly 15m book). BTC and ETH: 4% / ≥75¢ after the wait, sit if
+# Polymarket's 15m favorite disagrees. All seven names can clip in the
+# same window (no one-slot gold/silver or WTI/natgas gate). Sit out
+# 60–74¢, longshots, fee-eat (99¢ last ticks), and live IOC dust
+# under 4 lots. Risky mixes stay registered as yolo_* / nuke_lock
+# and off this loop.
 PAPER_STRATEGY = "desk_book"
 
 # Legacy single cluster. Live gating uses halt.CORR_GROUPS (precious /

@@ -1,0 +1,650 @@
+{
+ "ts": "2026-09-13T01:40:29.127712+00:00",
+ "note": "Sunday 13 Sep 2026: no US CPI/GDP/claims print. Last FRED prints are lagged; Cleveland Fed nowcast is the live CPI mapping when the page parses. Nested monotone is bookkeeping regardless.",
+ "fred": {
+  "GDPNOW": {
+   "ok": true,
+   "n": 61,
+   "last": [
+    [
+     "2026-01-01",
+     1.2392
+    ],
+    [
+     "2026-04-01",
+     1.54
+    ],
+    [
+     "2026-07-01",
+     4.4164
+    ]
+   ]
+  },
+  "ICSA": {
+   "ok": true,
+   "n": 3114,
+   "last": [
+    [
+     "2026-08-22",
+     204000.0
+    ],
+    [
+     "2026-08-29",
+     207000.0
+    ],
+    [
+     "2026-09-05",
+     206000.0
+    ]
+   ]
+  },
+  "CCSA": {
+   "ok": true,
+   "n": 3113,
+   "last": [
+    [
+     "2026-08-15",
+     1771000.0
+    ],
+    [
+     "2026-08-22",
+     1775000.0
+    ],
+    [
+     "2026-08-29",
+     1774000.0
+    ]
+   ]
+  },
+  "CPIAUCSL": {
+   "ok": true,
+   "n": 955,
+   "last": [
+    [
+     "2026-06-01",
+     332.568
+    ],
+    [
+     "2026-07-01",
+     332.813
+    ],
+    [
+     "2026-08-01",
+     334.131
+    ]
+   ]
+  },
+  "CPILFESL": {
+   "ok": true,
+   "n": 835,
+   "last": [
+    [
+     "2026-06-01",
+     336.065
+    ],
+    [
+     "2026-07-01",
+     336.789
+    ],
+    [
+     "2026-08-01",
+     337.765
+    ]
+   ]
+  }
+ },
+ "cpi_mom": {
+  "index_last": 334.131,
+  "index_prev": 332.813,
+  "last_date": "2026-08-01",
+  "mom": 0.396
+ },
+ "core_mom": {
+  "index_last": 337.765,
+  "last_date": "2026-08-01",
+  "mom": 0.2898
+ },
+ "gdpnow": [
+  [
+   "2026-01-01",
+   1.2392
+  ],
+  [
+   "2026-04-01",
+   1.54
+  ],
+  [
+   "2026-07-01",
+   4.4164
+  ]
+ ],
+ "claims": {
+  "last": 206000.0,
+  "last_date": "2026-09-05",
+  "seasonal_median": 227000.0,
+  "n_seasonal": 5,
+  "expect": 227000.0,
+  "mom_drift": -1500.0
+ },
+ "cleveland": {
+  "ok": true,
+  "asof": "2026-09-11",
+  "source": "clevelandfed.org/indicators-and-data/inflation-nowcasting",
+  "cpi_sep_mom": 0.37,
+  "core_cpi_sep_mom": 0.2,
+  "pce_sep_mom": 0.37,
+  "core_pce_sep_mom": 0.28,
+  "cpi_sep_yoy": 3.43,
+  "core_cpi_sep_yoy": 2.39,
+  "note": "Table scraped 2026-09-13. August CPI already printed so those cells are blank."
+ },
+ "books": [
+  {
+   "series": "KXCPICORE",
+   "event": "KXCPICORE-26SEP",
+   "title": "CPI core in September",
+   "label": "cleveland_core_sep",
+   "point": 0.2,
+   "nested": {
+    "n_legs": 11,
+    "n_mid_inversions": 0,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": {
+    "point": 0.2,
+    "sigma": 0.08,
+    "probs": {
+     "KXCPICORE-26SEP-T0.0": 0.99379,
+     "KXCPICORE-26SEP-T0.1": 0.89435,
+     "KXCPICORE-26SEP-T0.2": 0.5,
+     "KXCPICORE-26SEP-T0.3": 0.10565,
+     "KXCPICORE-26SEP-T0.4": 0.00621,
+     "KXCPICORE-26SEP-T0.5": 8.8e-05,
+     "KXCPICORE-26SEP-T0.6": 0.0,
+     "KXCPICORE-26SEP-T0.7": 0.0,
+     "KXCPICORE-26SEP-T0.8": 0.0,
+     "KXCPICORE-26SEP-T0.9": 0.0,
+     "KXCPICORE-26SEP-T1.0": 0.0
+    }
+   },
+   "n_edge": 1,
+   "edges": [
+    {
+     "ticker": "KXCPICORE-26SEP-T0.2",
+     "model_p": 0.5,
+     "yes_edge": 0.01,
+     "no_edge": -1.32,
+     "side": "yes",
+     "px": 0.48,
+     "count": 5,
+     "threshold": 0.2
+    }
+   ]
+  },
+  {
+   "series": "KXCPICORE",
+   "event": "KXCPICORE-26OCT",
+   "title": "CPI core in October",
+   "label": "cleveland_core_sep",
+   "point": null,
+   "nested": {
+    "n_legs": 11,
+    "n_mid_inversions": 2,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": null,
+   "n_edge": 0,
+   "edges": []
+  },
+  {
+   "series": "KXCPI",
+   "event": "KXCPI-26SEP",
+   "title": "CPI in September",
+   "label": "cleveland_cpi_sep",
+   "point": 0.37,
+   "nested": {
+    "n_legs": 11,
+    "n_mid_inversions": 2,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": {
+    "point": 0.37,
+    "sigma": 0.1,
+    "probs": {
+     "KXCPI-26SEP-T-0.4": 1.0,
+     "KXCPI-26SEP-T-0.3": 1.0,
+     "KXCPI-26SEP-T-0.2": 1.0,
+     "KXCPI-26SEP-T-0.1": 0.999999,
+     "KXCPI-26SEP-T0.0": 0.999892,
+     "KXCPI-26SEP-T0.1": 0.996533,
+     "KXCPI-26SEP-T0.2": 0.955435,
+     "KXCPI-26SEP-T0.3": 0.758036,
+     "KXCPI-26SEP-T0.4": 0.382089,
+     "KXCPI-26SEP-T0.5": 0.0968,
+     "KXCPI-26SEP-T0.6": 0.010724
+    }
+   },
+   "n_edge": 10,
+   "edges": [
+    {
+     "ticker": "KXCPI-26SEP-T-0.4",
+     "model_p": 1.0,
+     "yes_edge": 0.09,
+     "no_edge": -0.22,
+     "side": "yes",
+     "px": 0.98,
+     "count": 5,
+     "threshold": -0.4
+    },
+    {
+     "ticker": "KXCPI-26SEP-T-0.3",
+     "model_p": 1.0,
+     "yes_edge": 0.09,
+     "no_edge": -0.43,
+     "side": "yes",
+     "px": 0.98,
+     "count": 5,
+     "threshold": -0.3
+    },
+    {
+     "ticker": "KXCPI-26SEP-T-0.2",
+     "model_p": 1.0,
+     "yes_edge": 0.09,
+     "no_edge": -0.43,
+     "side": "yes",
+     "px": 0.98,
+     "count": 5,
+     "threshold": -0.2
+    },
+    {
+     "ticker": "KXCPI-26SEP-T-0.1",
+     "model_p": 0.999999,
+     "yes_edge": 0.04,
+     "no_edge": -0.75,
+     "side": "yes",
+     "px": 0.99,
+     "count": 5,
+     "threshold": -0.1
+    },
+    {
+     "ticker": "KXCPI-26SEP-T0.0",
+     "model_p": 0.999892,
+     "yes_edge": 0.0395,
+     "no_edge": -0.6895,
+     "side": "yes",
+     "px": 0.99,
+     "count": 5,
+     "threshold": 0.0
+    },
+    {
+     "ticker": "KXCPI-26SEP-T0.1",
+     "model_p": 0.996533,
+     "yes_edge": 0.0227,
+     "no_edge": -0.9927,
+     "side": "yes",
+     "px": 0.99,
+     "count": 5,
+     "threshold": 0.1
+    },
+    {
+     "ticker": "KXCPI-26SEP-T0.3",
+     "model_p": 0.758036,
+     "yes_edge": -0.6998,
+     "no_edge": 0.1998,
+     "side": "no",
+     "px": 0.18999999999999995,
+     "count": 5,
+     "threshold": 0.3
+    },
+    {
+     "ticker": "KXCPI-26SEP-T0.4",
+     "model_p": 0.382089,
+     "yes_edge": -1.2296,
+     "no_edge": 0.8996,
+     "side": "no",
+     "px": 0.42000000000000004,
+     "count": 5,
+     "threshold": 0.4
+    },
+    {
+     "ticker": "KXCPI-26SEP-T0.5",
+     "model_p": 0.0968,
+     "yes_edge": -1.556,
+     "no_edge": 1.186,
+     "side": "no",
+     "px": 0.65,
+     "count": 5,
+     "threshold": 0.5
+    },
+    {
+     "ticker": "KXCPI-26SEP-T0.6",
+     "model_p": 0.010724,
+     "yes_edge": -1.2164,
+     "no_edge": 0.6464,
+     "side": "no",
+     "px": 0.85,
+     "count": 5,
+     "threshold": 0.6
+    }
+   ]
+  },
+  {
+   "series": "KXCPI",
+   "event": "KXCPI-26OCT",
+   "title": "CPI in October",
+   "label": "cleveland_cpi_sep",
+   "point": null,
+   "nested": {
+    "n_legs": 7,
+    "n_mid_inversions": 1,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": null,
+   "n_edge": 0,
+   "edges": []
+  },
+  {
+   "series": "KXPAYROLLS",
+   "event": "KXPAYROLLS-26SEP",
+   "title": "Jobs numbers in Sep 2026?",
+   "label": "payrolls_no_nowcast",
+   "point": null,
+   "nested": {
+    "n_legs": 13,
+    "n_mid_inversions": 0,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": null,
+   "n_edge": 0,
+   "edges": []
+  },
+  {
+   "series": "KXPAYROLLS",
+   "event": "KXPAYROLLS-26OCT",
+   "title": "Jobs numbers in October 2026?",
+   "label": "payrolls_no_nowcast",
+   "point": null,
+   "nested": {
+    "n_legs": 13,
+    "n_mid_inversions": 0,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": null,
+   "n_edge": 0,
+   "edges": []
+  },
+  {
+   "series": "KXGDP",
+   "event": "KXGDP-26OCT30",
+   "title": "US real GDP growth in Q3 2026?",
+   "label": "gdpnow_q3_rmse",
+   "point": 4.4,
+   "nested": {
+    "n_legs": 9,
+    "n_mid_inversions": 0,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": {
+    "point": 4.4,
+    "sigma": 1.17,
+    "probs": {
+     "KXGDP-26OCT30-T0.0": 0.999915,
+     "KXGDP-26OCT30-T0.5": 0.999571,
+     "KXGDP-26OCT30-T1.0": 0.998169,
+     "KXGDP-26OCT30-T1.5": 0.993406,
+     "KXGDP-26OCT30-T2.0": 0.97988,
+     "KXGDP-26OCT30-T2.5": 0.947805,
+     "KXGDP-26OCT30-T3.0": 0.884265,
+     "KXGDP-26OCT30-T3.5": 0.779122,
+     "KXGDP-26OCT30-T4.0": 0.63378
+    }
+   },
+   "n_edge": 9,
+   "edges": [
+    {
+     "ticker": "KXGDP-26OCT30-T0.0",
+     "model_p": 0.999915,
+     "yes_edge": 0.0396,
+     "no_edge": -0.1696,
+     "side": "yes",
+     "px": 0.99,
+     "count": 5,
+     "threshold": 0.0
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T0.5",
+     "model_p": 0.999571,
+     "yes_edge": 0.1779,
+     "no_edge": -0.7479,
+     "side": "yes",
+     "px": 0.96,
+     "count": 5,
+     "threshold": 0.5
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T1.0",
+     "model_p": 0.998169,
+     "yes_edge": 0.5008,
+     "no_edge": -0.8408,
+     "side": "yes",
+     "px": 0.89,
+     "count": 5,
+     "threshold": 1.0
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T1.5",
+     "model_p": 0.993406,
+     "yes_edge": 0.857,
+     "no_edge": -1.337,
+     "side": "yes",
+     "px": 0.81,
+     "count": 5,
+     "threshold": 1.5
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T2.0",
+     "model_p": 0.97988,
+     "yes_edge": 1.4694,
+     "no_edge": -1.7294,
+     "side": "yes",
+     "px": 0.67,
+     "count": 5,
+     "threshold": 2.0
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T2.5",
+     "model_p": 0.947805,
+     "yes_edge": 2.099,
+     "no_edge": -2.329,
+     "side": "yes",
+     "px": 0.51,
+     "count": 5,
+     "threshold": 2.5
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T3.0",
+     "model_p": 0.884265,
+     "yes_edge": 2.2313,
+     "no_edge": -2.4613,
+     "side": "yes",
+     "px": 0.42,
+     "count": 5,
+     "threshold": 3.0
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T3.5",
+     "model_p": 0.779122,
+     "yes_edge": 2.2656,
+     "no_edge": -2.4756,
+     "side": "yes",
+     "px": 0.31,
+     "count": 5,
+     "threshold": 3.5
+    },
+    {
+     "ticker": "KXGDP-26OCT30-T4.0",
+     "model_p": 0.63378,
+     "yes_edge": 2.1589,
+     "no_edge": -2.5189,
+     "side": "yes",
+     "px": 0.19,
+     "count": 5,
+     "threshold": 4.0
+    }
+   ]
+  },
+  {
+   "series": "KXGDP",
+   "event": "KXGDP-27JAN28",
+   "title": "US real GDP growth in Q4 2026?",
+   "label": "gdpnow_q3_rmse",
+   "point": null,
+   "nested": {
+    "n_legs": 9,
+    "n_mid_inversions": 0,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": null,
+   "n_edge": 0,
+   "edges": []
+  },
+  {
+   "series": "KXJOBLESSCLAIMS",
+   "event": "KXJOBLESSCLAIMS-26SEP17",
+   "title": "Initial jobless claims for the week ending September 12, 2026",
+   "label": "claims_last_plus_12k",
+   "point": 206000.0,
+   "nested": {
+    "n_legs": 11,
+    "n_mid_inversions": 0,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": {
+    "point": 206000.0,
+    "sigma": 12000,
+    "probs": {
+     "KXJOBLESSCLAIMS-26SEP17-185000": 0.959941,
+     "KXJOBLESSCLAIMS-26SEP17-190000": 0.908789,
+     "KXJOBLESSCLAIMS-26SEP17-195000": 0.820341,
+     "KXJOBLESSCLAIMS-26SEP17-200000": 0.691462,
+     "KXJOBLESSCLAIMS-26SEP17-205000": 0.533207,
+     "KXJOBLESSCLAIMS-26SEP17-210000": 0.369441,
+     "KXJOBLESSCLAIMS-26SEP17-215000": 0.226627,
+     "KXJOBLESSCLAIMS-26SEP17-220000": 0.121673,
+     "KXJOBLESSCLAIMS-26SEP17-225000": 0.056673,
+     "KXJOBLESSCLAIMS-26SEP17-230000": 0.02275,
+     "KXJOBLESSCLAIMS-26SEP17-235000": 0.007832
+    }
+   },
+   "n_edge": 7,
+   "edges": [
+    {
+     "ticker": "KXJOBLESSCLAIMS-26SEP17-200000",
+     "model_p": 0.691462,
+     "yes_edge": 0.1273,
+     "no_edge": -0.5973,
+     "side": "yes",
+     "px": 0.65,
+     "count": 5,
+     "threshold": 200000.0
+    },
+    {
+     "ticker": "KXJOBLESSCLAIMS-26SEP17-205000",
+     "model_p": 0.533207,
+     "yes_edge": 0.126,
+     "no_edge": -0.706,
+     "side": "yes",
+     "px": 0.49,
+     "count": 5,
+     "threshold": 205000.0
+    },
+    {
+     "ticker": "KXJOBLESSCLAIMS-26SEP17-210000",
+     "model_p": 0.369441,
+     "yes_edge": 0.7372,
+     "no_edge": -0.9072,
+     "side": "yes",
+     "px": 0.21,
+     "count": 5,
+     "threshold": 210000.0
+    },
+    {
+     "ticker": "KXJOBLESSCLAIMS-26SEP17-215000",
+     "model_p": 0.226627,
+     "yes_edge": 0.4931,
+     "no_edge": -0.6731,
+     "side": "yes",
+     "px": 0.12,
+     "count": 5,
+     "threshold": 215000.0
+    },
+    {
+     "ticker": "KXJOBLESSCLAIMS-26SEP17-220000",
+     "model_p": 0.121673,
+     "yes_edge": 0.4984,
+     "no_edge": -0.5684,
+     "side": "yes",
+     "px": 0.02,
+     "count": 5,
+     "threshold": 220000.0
+    },
+    {
+     "ticker": "KXJOBLESSCLAIMS-26SEP17-225000",
+     "model_p": 0.056673,
+     "yes_edge": 0.1734,
+     "no_edge": -0.2434,
+     "side": "yes",
+     "px": 0.02,
+     "count": 5,
+     "threshold": 225000.0
+    },
+    {
+     "ticker": "KXJOBLESSCLAIMS-26SEP17-230000",
+     "model_p": 0.02275,
+     "yes_edge": 0.0037,
+     "no_edge": null,
+     "side": "yes",
+     "px": 0.02,
+     "count": 5,
+     "threshold": 230000.0
+    }
+   ]
+  },
+  {
+   "series": "KXCONTCLAIMS",
+   "event": "KXCONTCLAIMS-26SEP17",
+   "title": "Continuing jobless claims for the week ending Sep 5, 2026",
+   "label": "continued_claims",
+   "point": null,
+   "nested": {
+    "n_legs": 11,
+    "n_mid_inversions": 0,
+    "n_locked": 0,
+    "tradeable": false,
+    "locked": []
+   },
+   "mapped": null,
+   "n_edge": 0,
+   "edges": []
+  }
+ ],
+ "n_locked_nested": 0
+}

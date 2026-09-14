@@ -26,7 +26,18 @@ SERIES = ["KXGOLD15M", "KXSILVER15M", "KXCOPPER15M", "KXWTI15M", "KXNATGAS15M",
           "KXBTC15M", "KXETH15M"]
 YF = {"gold": "GC=F", "silver": "SI=F", "copper": "HG=F",
       "wti": "CL=F", "natgas": "NG=F",
-      "btc": "BTC-USD", "eth": "ETH-USD"}
+      "btc": "BTC-USD", "eth": "ETH-USD",
+      "sol": "SOL-USD", "doge": "DOGE-USD", "xrp": "XRP-USD",
+      "hype": "HYPE-USD", "bnb": "BNB-USD", "near": "NEAR-USD",
+      "zec": "ZEC-USD"}
+SERIES_YF = {
+    "KXGOLD15M": "gold", "KXSILVER15M": "silver", "KXCOPPER15M": "copper",
+    "KXWTI15M": "wti", "KXNATGAS15M": "natgas",
+    "KXBTC15M": "btc", "KXETH15M": "eth",
+    "KXSOL15M": "sol", "KXDOGE15M": "doge", "KXXRP15M": "xrp",
+    "KXHYPE15M": "hype", "KXBNB15M": "bnb", "KXNEAR15M": "near",
+    "KXZEC15M": "zec",
+}
 
 S = requests.Session()
 S.headers["User-Agent"] = "quantfirm-research/0.1"
@@ -147,14 +158,17 @@ def harvest_candles(series, markets):
             time.sleep(0.12)
 
 
-def harvest_yf():
+def harvest_yf(metals=None):
     import pandas as pd
     import yfinance as yf
     import yfinance._http as yh
     yh.HAS_CURL_CFFI = False  # agent-proxy compatibility
     import datetime as dt
     now = dt.datetime.now(dt.timezone.utc)
+    wanted = set(metals) if metals else set(YF)
     for metal, sym in YF.items():
+        if metal not in wanted:
+            continue
         chunks = []
         for k in range(4):
             end = now - dt.timedelta(days=7 * k)
@@ -215,7 +229,8 @@ if __name__ == "__main__":
     for s in a.series:
         harvest_candles(s, harvest_markets(s, min_close_ts=min_close_ts))
     if not a.skip_yf:
-        harvest_yf()
+        metals = [SERIES_YF[s] for s in a.series if s in SERIES_YF]
+        harvest_yf(metals or None)
     if a.gzip:
         gzip_all()
     print("done", flush=True)

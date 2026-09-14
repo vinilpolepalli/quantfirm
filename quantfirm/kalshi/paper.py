@@ -28,17 +28,17 @@ import math
 import os
 import time
 import uuid
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from decimal import Decimal
 
 from .client import KalshiClient, parse_market_times
 from .fair import VolEstimator, taker_fee
 from .strategy import Params, decide
-from .universe import (BANKROLL, PAPER_ASSETS, LIVE_SERIES as _SERIES,
-                       YF_SYMBOLS)
+from .universe import (BANKROLL, PAPER_ASSETS, LIVE_SERIES as _LIVE,
+                       SERIES_CRYPTO_EXTRA, YF_SYMBOLS)
 
-SERIES = {v: k for k, v in _SERIES.items()}
+SERIES = {v: k for k, v in {**_LIVE, **SERIES_CRYPTO_EXTRA}.items()}
 
 
 def decision_bankroll(cash: dict, live: bool) -> float:
@@ -63,6 +63,25 @@ def taker_entries_allowed(allowed: dict, live: bool) -> bool:
     """
     book = "live" if live else "shadow"
     return bool(allowed.get(book))
+
+
+def contracts_filled(order: dict, min_count: int) -> float | None:
+    """Kalshi V2 fill_count is a decimal string. 0.01 is leftover dust.
+
+    2026-09-14 20:45Z silver/natgas live IOC returned fill_count=0.01
+    (thin book). The app showed Cost $0.01. That is not a clip — skip
+    anything under min_count (4).
+    """
+    raw = order.get("fill_count_fp")
+    if raw is None or raw == "":
+        raw = order.get("fill_count") or 0
+    try:
+        n = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if n + 1e-9 < float(min_count):
+        return None
+    return n
 
 
 @dataclass
@@ -186,6 +205,10 @@ class PaperEngine:
         self._quotes: dict[str, MakerQuote] = {}
         self._day: dict = {}
         self._open_px: dict[str, float] = {}
+        from .poly import POLY_ASSETS, PolymarketFeed
+        self.poly = PolymarketFeed()
+        self._poly_assets = POLY_ASSETS
+        self._last_bbo: dict[str, tuple] = {}
 
     # ------------------------------------------------------------ vol warmup
     def warm_vol_from_bars(self, metal: str, sym: str, minutes: int = 400):
@@ -427,6 +450,11 @@ class PaperEngine:
                 continue
             bid = float(q.yes_bid) if q.yes_bid is not None else None
             ask = float(q.yes_ask) if q.yes_ask is not None else None
+            self._last_bbo[metal] = (bid, ask)
+            peer_bid = peer_ask = None
+            if metal in ("btc", "eth"):
+                other = "eth" if metal == "btc" else "btc"
+                peer_bid, peer_ask = self._last_bbo.get(other, (None, None))
             sigma = self.vol[metal].sigma_1m(now)
             # 3-min regime lookback from the sample history
             from .fair import fair_yes
@@ -446,6 +474,12 @@ class PaperEngine:
             shadow_open = [p for p in self.state.open if p.adapter == "shadow"]
             if tkr not in self._open_px:
                 self._open_px[tkr] = s_now
+            poly_q = None
+            if metal in self._poly_assets:
+                try:
+                    poly_q = self.poly.quote(metal, now=now)
+                except Exception:
+                    poly_q = None
             intent = None
             if taker_entries_allowed(allowed, self.use_live) and not shadow_here:
                 intent = self.decide_fn(
@@ -455,10 +489,14 @@ class PaperEngine:
                     open_positions=len(shadow_open), params=self.params,
                     recent_fair_move=fair_move, recent_mkt_move=mkt_move,
                     f_now=s_now, f_open=self._open_px[tkr], open_ts=open_ts,
-                    metal=metal)
+                    metal=metal,
+                    poly_yes_bid=(poly_q.yes_bid if poly_q else None),
+                    poly_yes_ask=(poly_q.yes_ask if poly_q else None),
+                    poly_down_ask=(poly_q.down_ask if poly_q else None),
+                    peer_yes_bid=peer_bid, peer_yes_ask=peer_ask)
             if self.decisions_path:
                 self._log_decision(now, metal, tkr, s_now, k, sigma, bid, ask,
-                                   close_ts, intent)
+                                   close_ts, intent, poly_q)
             if self.maker:
                 notes.extend(self._maker_tick(metal, tkr, now, fair_now, bid,
                                               ask, close_ts, allowed["maker"]))
@@ -495,10 +533,21 @@ class PaperEngine:
             still = (q2.yes_bid is not None
                      and (1.0 - float(q2.yes_bid)) <= intent.limit_price + 1e-9)
             size_at_touch = q2.yes_bid_size
+        min_lot = int(self.params.min_count)
+        thin = (size_at_touch is not None
+                and float(size_at_touch) + 1e-9 < min_lot)
+        live_intent = intent
+        if size_at_touch is not None:
+            avail = int(float(size_at_touch))
+            if avail >= min_lot and avail < intent.count:
+                live_intent = replace(intent, count=avail)
         if not still:
             notes.append(f"shadow race-loss (repriced) {intent.ticker}")
+            if thin:
+                notes.append(f"skip live thin book {intent.ticker} size={size_at_touch}")
+                return notes + self._demo_leg(intent, metal, now, close_ts)
             return notes + self._demo_leg(intent, metal, now, close_ts) \
-                + self._live_leg(intent, metal, now, close_ts)
+                + self._live_leg(live_intent, metal, now, close_ts)
         size_ok = size_at_touch is not None and float(size_at_touch) >= intent.count
         if size_ok:
             fee = taker_fee(intent.count, intent.limit_price)
@@ -514,8 +563,11 @@ class PaperEngine:
                              f" @ {intent.limit_price:.3f} fair={intent.fair:.3f}")
         else:
             notes.append(f"shadow no-fill (size at touch) {intent.ticker}")
+        if thin:
+            notes.append(f"skip live thin book {intent.ticker} size={size_at_touch}")
+            return notes + self._demo_leg(intent, metal, now, close_ts)
         return notes + self._demo_leg(intent, metal, now, close_ts) \
-            + self._live_leg(intent, metal, now, close_ts)
+            + self._live_leg(live_intent, metal, now, close_ts)
 
     def _place_ioc(self, client, adapter: str, intent, metal, now, close_ts) -> list[str]:
         """Shared IOC path for demo plumbing and gated live prod orders."""
@@ -533,23 +585,34 @@ class PaperEngine:
                 time_in_force="immediate_or_cancel",
                 client_order_id=str(uuid.uuid4()))
             order = resp.get("order", resp)
-            filled = float(order.get("fill_count") or 0)
-            if filled > 0:
+            filled = contracts_filled(order, self.params.min_count)
+            if filled is not None:
                 afp = order.get("average_fill_price")
-                yes_fill = float(afp) if afp else yes_price
+                yes_fill = float(afp) if afp else float(yes_price)
                 side_fill = yes_fill if intent.side == "yes" else 1.0 - yes_fill
                 fee = float(order.get("average_fee_paid") or 0) * filled \
                     or taker_fee(filled, side_fill)
-                self.state.d["cash"][adapter] -= filled * side_fill + fee
+                lots = int(round(filled))
+                self.state.d["cash"][adapter] -= lots * side_fill + fee
                 self.state.open.append(PaperPosition(
                     ticker=intent.ticker, metal=metal, side=intent.side,
-                    count=int(filled), fill_price=side_fill, fee=fee,
+                    count=lots, fill_price=side_fill, fee=fee,
                     fair=intent.fair, entry_ts=now, close_ts=close_ts,
                     adapter=adapter, tag=intent.tag,
                     order_id=order.get("order_id")))
-                notes.append(f"{adapter.upper()} FILL {intent.side} {filled} {intent.ticker}")
+                notes.append(f"{adapter.upper()} FILL {intent.side} {lots} {intent.ticker}")
             else:
-                notes.append(f"{adapter} IOC no-fill {intent.ticker}")
+                raw = order.get("fill_count_fp") or order.get("fill_count") or 0
+                try:
+                    dust = float(raw)
+                except (TypeError, ValueError):
+                    dust = 0.0
+                if dust > 0:
+                    notes.append(
+                        f"{adapter} IOC dust {dust} {intent.ticker} "
+                        f"(need {self.params.min_count})")
+                else:
+                    notes.append(f"{adapter} IOC no-fill {intent.ticker}")
         except Exception as e:
             notes.append(f"{adapter} order error {intent.ticker}: {e}")
         return notes
@@ -634,13 +697,18 @@ class PaperEngine:
             for row in new_rows:
                 f.write(json.dumps(row) + "\n")
 
-    def _log_decision(self, ts, metal, tkr, s, k, sigma, bid, ask, close_ts, intent):
+    def _log_decision(self, ts, metal, tkr, s, k, sigma, bid, ask, close_ts, intent,
+                      poly_q=None):
         from .fair import fair_yes
         rec = {"ts": ts, "metal": metal, "ticker": tkr, "s": s, "k": k,
                "sigma_1m": sigma, "bid": bid, "ask": ask,
                "tau_s": close_ts - ts,
                "fair": fair_yes(s, k, sigma, (close_ts - ts) / 60.0),
                "intent": (intent.side if intent else None)}
+        if poly_q is not None:
+            rec["poly_slug"] = poly_q.slug
+            rec["poly_up"] = [poly_q.up_bid, poly_q.up_ask]
+            rec["poly_down"] = [poly_q.down_bid, poly_q.down_ask]
         with open(self.decisions_path, "a") as f:
             f.write(json.dumps(rec) + "\n")
 

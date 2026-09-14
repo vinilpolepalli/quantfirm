@@ -1,0 +1,1082 @@
+{
+ "ts": "2026-09-13T02:09:28.293591+00:00",
+ "settled": [
+  {
+   "series": "KXBTC",
+   "n_events": 7,
+   "events": [
+    {
+     "event": "KXBTC-26SEP1222",
+     "n": 188,
+     "n_traded": 6,
+     "last_sum": 1.06,
+     "n_yes": 1,
+     "volume": 78213.86,
+     "close": "2026-09-13T02:00:00Z"
+    },
+    {
+     "event": "KXBTC-26SEP1221",
+     "n": 188,
+     "n_traded": 11,
+     "last_sum": 1.47,
+     "n_yes": 1,
+     "volume": 54153.44,
+     "close": "2026-09-13T01:00:00Z"
+    },
+    {
+     "event": "KXBTC-26SEP1220",
+     "n": 188,
+     "n_traded": 5,
+     "last_sum": 1.06,
+     "n_yes": 1,
+     "volume": 24594.38,
+     "close": "2026-09-13T00:00:00Z"
+    },
+    {
+     "event": "KXBTC-26SEP1219",
+     "n": 188,
+     "n_traded": 7,
+     "last_sum": 1.08,
+     "n_yes": 1,
+     "volume": 40932.6,
+     "close": "2026-09-12T23:00:00Z"
+    },
+    {
+     "event": "KXBTC-26SEP1218",
+     "n": 188,
+     "n_traded": 6,
+     "last_sum": 1.12,
+     "n_yes": 1,
+     "volume": 51549.58,
+     "close": "2026-09-12T22:00:00Z"
+    },
+    {
+     "event": "KXBTC-26SEP1216",
+     "n": 188,
+     "n_traded": 7,
+     "last_sum": 1.07,
+     "n_yes": 1,
+     "volume": 53909.51,
+     "close": "2026-09-12T20:00:00Z"
+    },
+    {
+     "event": "KXBTC-26SEP1215",
+     "n": 72,
+     "n_traded": 0,
+     "last_sum": 0.0,
+     "n_yes": 0,
+     "volume": 0,
+     "close": "2026-09-12T19:00:00Z"
+    }
+   ]
+  },
+  {
+   "series": "KXETH",
+   "n_events": 4,
+   "events": [
+    {
+     "event": "KXETH-26SEP1222",
+     "n": 300,
+     "n_traded": 4,
+     "last_sum": 1.22,
+     "n_yes": 1,
+     "volume": 8623.85,
+     "close": "2026-09-13T02:00:00Z"
+    },
+    {
+     "event": "KXETH-26SEP1221",
+     "n": 300,
+     "n_traded": 6,
+     "last_sum": 1.07,
+     "n_yes": 1,
+     "volume": 11020.61,
+     "close": "2026-09-13T01:00:00Z"
+    },
+    {
+     "event": "KXETH-26SEP1220",
+     "n": 300,
+     "n_traded": 6,
+     "last_sum": 1.19,
+     "n_yes": 1,
+     "volume": 6384.91,
+     "close": "2026-09-13T00:00:00Z"
+    },
+    {
+     "event": "KXETH-26SEP1219",
+     "n": 300,
+     "n_traded": 5,
+     "last_sum": 1.1,
+     "n_yes": 1,
+     "volume": 4680.61,
+     "close": "2026-09-12T23:00:00Z"
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHNY",
+   "n_events": 16,
+   "events": [
+    {
+     "event": "KXHIGHNY-26SEP11",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 313712.36,
+     "close": "2026-09-12T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP10",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 234187.91,
+     "close": "2026-09-11T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP09",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 188894.61,
+     "close": "2026-09-10T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP08",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 421128.29,
+     "close": "2026-09-09T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP07",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 290343.48,
+     "close": "2026-09-08T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP06",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 162634.14,
+     "close": "2026-09-07T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP05",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 190109.22,
+     "close": "2026-09-06T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP04",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 155324.84,
+     "close": "2026-09-05T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP03",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 205597.0,
+     "close": "2026-09-04T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP02",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 70839.47,
+     "close": "2026-09-03T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26SEP01",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 122155.1,
+     "close": "2026-09-02T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26AUG31",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 96026.74,
+     "close": "2026-09-01T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26AUG30",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 86871.25,
+     "close": "2026-08-31T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26AUG29",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 97512.08,
+     "close": "2026-08-30T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26AUG28",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 144992.04,
+     "close": "2026-08-29T05:00:00Z"
+    },
+    {
+     "event": "KXHIGHNY-26AUG27",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 431070.4,
+     "close": "2026-08-28T05:00:00Z"
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHCHI",
+   "n_events": 16,
+   "events": [
+    {
+     "event": "KXHIGHCHI-26SEP11",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 117454.55,
+     "close": "2026-09-12T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP10",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 104273.45,
+     "close": "2026-09-11T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP09",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 91113.8,
+     "close": "2026-09-10T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP08",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 92957.09,
+     "close": "2026-09-09T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP07",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 90263.49,
+     "close": "2026-09-08T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP06",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 65242.48,
+     "close": "2026-09-07T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP05",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 149438.4,
+     "close": "2026-09-06T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP04",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 206602.1,
+     "close": "2026-09-05T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP03",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 187730.92,
+     "close": "2026-09-04T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP02",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 97321.07,
+     "close": "2026-09-03T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26SEP01",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 97739.93,
+     "close": "2026-09-02T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26AUG31",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 124026.86,
+     "close": "2026-09-01T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26AUG30",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.06,
+     "n_yes": 1,
+     "volume": 31547.21,
+     "close": "2026-08-31T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26AUG29",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 137610.66,
+     "close": "2026-08-30T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26AUG28",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 75894.83,
+     "close": "2026-08-29T06:00:00Z"
+    },
+    {
+     "event": "KXHIGHCHI-26AUG27",
+     "n": 6,
+     "n_traded": 6,
+     "last_sum": 1.04,
+     "n_yes": 1,
+     "volume": 108027.99,
+     "close": "2026-08-28T06:00:00Z"
+    }
+   ]
+  }
+ ],
+ "candle_replay": [
+  {
+   "series": "KXBTC",
+   "n_markets": 188,
+   "n_minutes": 1,
+   "n_complete_ask": 1,
+   "n_sum_ask_lt_1": 0,
+   "n_sum_bid_gt_1": 0,
+   "min_sum_ask": 3.14,
+   "median_sum_ask": 3.14,
+   "minutes_head": [
+    {
+     "ts": 1789261200,
+     "n_quoted_ask": 188,
+     "n_quoted_bid": 188,
+     "sum_ask": 3.14,
+     "sum_bid": 0.99,
+     "complete_ask": true,
+     "complete_bid": true
+    }
+   ],
+   "minutes_tail": [
+    {
+     "ts": 1789261200,
+     "n_quoted_ask": 188,
+     "n_quoted_bid": 188,
+     "sum_ask": 3.14,
+     "sum_bid": 0.99,
+     "complete_ask": true,
+     "complete_bid": true
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHNY",
+   "n_markets": 6,
+   "n_minutes": 2039,
+   "n_complete_ask": 191,
+   "n_sum_ask_lt_1": 0,
+   "n_sum_bid_gt_1": 125,
+   "min_sum_ask": 1.01,
+   "median_sum_ask": 1.09,
+   "minutes_head": [
+    {
+     "ts": 1789048860,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.42,
+     "sum_bid": 0.92,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1789048920,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.24,
+     "sum_bid": 0.94,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1789048980,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049040,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049100,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049160,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049220,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049280,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ],
+   "minutes_tail": [
+    {
+     "ts": 1789188060,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789188480,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789188540,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789188720,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789188840,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789188960,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789189020,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789189080,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHNY",
+   "n_markets": 6,
+   "n_minutes": 1955,
+   "n_complete_ask": 254,
+   "n_sum_ask_lt_1": 0,
+   "n_sum_bid_gt_1": 80,
+   "min_sum_ask": 1.01,
+   "median_sum_ask": 1.08,
+   "minutes_head": [
+    {
+     "ts": 1788962460,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.13,
+     "sum_bid": 0.97,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1788962520,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.3,
+     "sum_bid": 1.01,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1788962580,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.18,
+     "sum_bid": 0.91,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1788962640,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.17,
+     "sum_bid": 1.04,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1788962700,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962760,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.19,
+     "sum_bid": 1.03,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1788962820,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962880,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ],
+   "minutes_tail": [
+    {
+     "ts": 1789100640,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789101240,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789101420,
+     "n_quoted_ask": 3,
+     "n_quoted_bid": 3,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789101480,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789101600,
+     "n_quoted_ask": 3,
+     "n_quoted_bid": 3,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789101840,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789102020,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789102140,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHCHI",
+   "n_markets": 6,
+   "n_minutes": 2099,
+   "n_complete_ask": 306,
+   "n_sum_ask_lt_1": 0,
+   "n_sum_bid_gt_1": 85,
+   "min_sum_ask": 1.01,
+   "median_sum_ask": 1.07,
+   "minutes_head": [
+    {
+     "ts": 1789048860,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.18,
+     "sum_bid": 0.88,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1789048920,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789048980,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049040,
+     "n_quoted_ask": 3,
+     "n_quoted_bid": 3,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049100,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049160,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.08,
+     "sum_bid": 0.71,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1789049220,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789049280,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ],
+   "minutes_tail": [
+    {
+     "ts": 1789191300,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789191600,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789191900,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789192020,
+     "n_quoted_ask": 3,
+     "n_quoted_bid": 3,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789192140,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789192200,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789192440,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789192620,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ]
+  },
+  {
+   "series": "KXHIGHCHI",
+   "n_markets": 6,
+   "n_minutes": 1979,
+   "n_complete_ask": 387,
+   "n_sum_ask_lt_1": 1,
+   "n_sum_bid_gt_1": 66,
+   "min_sum_ask": 0.99,
+   "median_sum_ask": 1.06,
+   "minutes_head": [
+    {
+     "ts": 1788962460,
+     "n_quoted_ask": 6,
+     "n_quoted_bid": 6,
+     "sum_ask": 1.08,
+     "sum_bid": 0.82,
+     "complete_ask": true,
+     "complete_bid": true
+    },
+    {
+     "ts": 1788962520,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962580,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962640,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962700,
+     "n_quoted_ask": 2,
+     "n_quoted_bid": 2,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962760,
+     "n_quoted_ask": 5,
+     "n_quoted_bid": 5,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962820,
+     "n_quoted_ask": 4,
+     "n_quoted_bid": 4,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1788962880,
+     "n_quoted_ask": 3,
+     "n_quoted_bid": 3,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ],
+   "minutes_tail": [
+    {
+     "ts": 1789102380,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789102620,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789102860,
+     "n_quoted_ask": 3,
+     "n_quoted_bid": 3,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789102920,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789103400,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789103940,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789105320,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    },
+    {
+     "ts": 1789105560,
+     "n_quoted_ask": 1,
+     "n_quoted_bid": 1,
+     "sum_ask": null,
+     "sum_bid": null,
+     "complete_ask": false,
+     "complete_bid": false
+    }
+   ]
+  }
+ ]
+}

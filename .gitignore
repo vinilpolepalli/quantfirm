@@ -13,3 +13,19 @@ state/kalshi_paper_state.json
 state/kalshi_paper_loop.log
 state/kalshi_paper_tape.jsonl
 state/kalshi_paper_loop.pid
+state/kalshi_poly_paper_decisions.jsonl
+state/kalshi_poly_paper_state.json
+state/kalshi_poly_paper_loop.log
+state/kalshi_poly_paper.log
+state/kalshi_poly_paper.pid
+state/kalshi_div_paper_decisions.jsonl
+state/kalshi_div_paper_state.json
+state/kalshi_div_paper_loop.log
+state/kalshi_div_paper.log
+state/kalshi_div_paper.pid
+
+# Harvest commits the .gz; leave uncompressed local.
+data/kalshi/candles_*.csv
+data/kalshi/markets_*.jsonl
+data/kalshi/yf_*_1m.csv
+

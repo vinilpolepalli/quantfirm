@@ -216,6 +216,21 @@ class KalshiClient:
     def orders(self, **params) -> dict:
         return self._req("GET", "/portfolio/events/orders", params=params, auth=True)
 
+    def withdrawals(self, limit: int = 50) -> dict:
+        """GET /portfolio/withdrawals. Empty list is fine. No account numbers logged."""
+        return self._req("GET", "/portfolio/withdrawals",
+                         params={"limit": limit}, auth=True)
+
+    def create_withdrawal(self, amount_cents: int) -> dict:
+        """POST /portfolio/withdrawals. tries=1 so a timeout cannot double-send.
+
+        Amount is integer cents. The Trade API has returned 404 here; callers
+        must treat that as 'use the Kalshi app' rather than retry.
+        """
+        body = {"amount": int(amount_cents), "amount_cents": int(amount_cents)}
+        return self._req("POST", "/portfolio/withdrawals", body=body,
+                         auth=True, tries=1)
+
     # ------------------------------------------------------------- order flow
     def create_order(self, ticker: str, side: str, count: Decimal | int,
                      price: Decimal, time_in_force: str = "immediate_or_cancel",
