@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-14T08:17:48Z",
+ "ts": "2026-09-14T08:18:14Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,10 +15,10 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 283.9950000000001,
+  "shadow": 274.96500000000015,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 312.56219399999884
+  "live": 303.53449399999886
  },
  "realized": {
   "shadow": 33.994999999999955,
@@ -26,10 +26,27 @@
   "maker": 1.6499999999999968,
   "live": 63.23149399999993
  },
- "n_open": 0,
- "open": [],
+ "n_open": 2,
+ "open": [
+  {
+   "metal": "wti",
+   "side": "yes",
+   "count": 11,
+   "ticker": "KXWTI15M-26SEP140430-30",
+   "fill_price": 0.81,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "wti",
+   "side": "yes",
+   "count": 11,
+   "ticker": "KXWTI15M-26SEP140430-30",
+   "fill_price": 0.81,
+   "adapter": "live"
+  }
+ ],
  "n_settled": 733,
- "updated": "2026-09-14T08:17:48Z",
+ "updated": "2026-09-14T08:18:13Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
