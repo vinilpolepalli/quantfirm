@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T03:20:05Z",
+ "ts": "2026-09-15T03:35:17Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,42 +13,59 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 313.9949999999996,
+  "shadow": 289.81499999999954,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 338.52070499999644
+  "live": 314.6050049999965
  },
  "realized": {
-  "shadow": 63.995000000000026,
+  "shadow": 67.00500000000004,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 89.19000499999963
+  "live": 92.43330499999963
  },
- "n_open": 0,
- "open": [],
- "n_settled": 1735,
- "updated": "2026-09-15T03:20:05Z",
+ "n_open": 2,
+ "open": [
+  {
+   "metal": "natgas",
+   "side": "yes",
+   "count": 30,
+   "ticker": "KXNATGAS15M-26SEP142345-45",
+   "fill_price": 0.9,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "natgas",
+   "side": "yes",
+   "count": 30,
+   "ticker": "KXNATGAS15M-26SEP142345-45",
+   "fill_price": 0.899,
+   "adapter": "live"
+  }
+ ],
+ "n_settled": 1749,
+ "updated": "2026-09-15T03:34:08Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 2,
- "poly_paper_cash": 336.21299999999945,
+ "poly_paper_cash": 329.85299999999944,
  "div_paper_loop": "alive",
- "div_paper_n_open": 0,
- "div_paper_cash": 449.2669999999994,
- "div_paper_realized": 199.26699999999988,
+ "div_paper_n_open": 2,
+ "div_paper_cash": 428.56699999999944,
+ "div_paper_realized": 214.0369999999999,
  "poly_paper": {
   "day": "2026-09-15",
   "live_crypto": {
-   "n": 26,
-   "pnl": 19.41,
-   "hit": 0.846
+   "n": 28,
+   "pnl": 26.15,
+   "hit": 0.857
   },
   "poly_paper": {
-   "n": 28,
-   "pnl": -4.83,
-   "hit": 0.643
+   "n": 30,
+   "pnl": -12.26,
+   "hit": 0.633
   },
   "poly_ahead": false,
   "ready": true
