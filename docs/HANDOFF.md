@@ -188,6 +188,34 @@ at 16:05Z as the quote-churn finding in `docs/KALSHI.md` §3c; it was not.
 settlements exactly once, so it is deterministic and recomputable from history.
 `TestDailyStopFromTradeLog` pins the incident numbers.
 
+### The same race was also DELETING open positions (2026-09-15)
+
+I under-called this the first time. I wrote that the wholesale rewrite "only
+drifts cash, and drifting low means sizing small — the safe direction." It
+also erased `state["open"]`, which is not safe in any direction.
+
+Observed at 11:16Z: the foreground engine filled gold NO 35 @0.79 and silver
+NO 32 @0.81 on `KX*15M-26SEP150715`, exited at ~11:14 before the 11:15 close,
+and the still-running background engine's next `save()` overwrote `open` with
+only its own position. Neither fill settled. Neither appears in the trade log:
+`grep 26SEP150715 state/kalshi_paper_trades.csv` returns one row — the
+background engine's silver NO 53 @0.52 — and the two foreground fills are
+gone. **The recorded P&L was silently missing positions**, so `n`, the hit
+rate and the t-stat were all computed on an incomplete sample.
+
+`PaperState.save()` now UNIONS open positions with whatever is on disk instead
+of overwriting them, keyed on `(adapter, ticker, side, count, fill_price)`.
+Union is well defined for `open` in a way it is not for `cash`. Already
+settled positions are excluded via `_settled_keys()`, read from the trade log,
+so the union cannot resurrect them.
+`TestOpenPositionsSurviveConcurrentSave` pins the incident.
+
+Note the measurement trap this hid behind: the supervisor log contains only
+the BACKGROUND engine's fills, so a foreground fill can never show up as
+"missing" when you diff that log against the trade log. My first attempt to
+size the loss that way returned "2 of 151" — and both were simply still open.
+No log sees both engines.
+
 `state["cash"]` is still racy. It only feeds Kelly sizing, where drifting low
 means sizing small — the safe direction — so it is filed as open problem 10
 rather than patched in a hurry. **Do not build a new risk control on
