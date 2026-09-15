@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T16:57:00+00:00",
+ "ts": "2026-09-15T21:04:33+00:00",
  "book": "incumbent",
  "adapter": "shadow",
  "strategy": "trend_long_only",
@@ -27,14 +27,14 @@
   "consecutive_loss_days_pause": 5
  },
  "bankroll0": 250,
- "equity": 249.51,
+ "equity": 249.35,
  "cash": 249.98,
  "realized": 0.0,
  "fees": 0.0317,
- "funding": -0.0014,
- "interest": 0.0149,
+ "funding": -0.0024,
+ "interest": 0.0187,
  "peak_equity": 250.0,
- "drawdown": -0.002,
+ "drawdown": -0.0026,
  "positions": [
   {
    "asset": "btc",
@@ -42,8 +42,8 @@
    "contracts": 1.0,
    "avg_price": 7.7998,
    "opened": "2026-09-15T00:28:33+00:00",
-   "mark": 7.6427,
-   "weight": 0.0306
+   "mark": 7.5777,
+   "weight": 0.0304
   },
   {
    "asset": "eth",
@@ -51,8 +51,8 @@
    "contracts": 4.0,
    "avg_price": 2.509,
    "opened": "2026-09-15T00:28:33+00:00",
-   "mark": 2.4244,
-   "weight": 0.0389
+   "mark": 2.4008,
+   "weight": 0.0385
   },
   {
    "asset": "gold",
@@ -60,13 +60,13 @@
    "contracts": 2.0,
    "avg_price": 4.2867,
    "opened": "2026-09-15T00:28:33+00:00",
-   "mark": 4.2972,
-   "weight": 0.0344
+   "mark": 4.2952,
+   "weight": 0.0345
   }
  ],
- "gross_leverage": 0.104,
+ "gross_leverage": 0.103,
  "halted": "",
  "kill_switch": false,
- "n_ticks": 4,
+ "n_ticks": 5,
  "started": "2026-09-15T00:28:32+00:00"
 }
