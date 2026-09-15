@@ -4,12 +4,13 @@ Kalshi perps are three months old (crypto since 2026-06-03, gold/silver since
 2026-09-10), so every multi-year number in this desk is measured on a PROXY
 and says so:
 
-  * crypto price  : Coinbase Exchange spot daily candles (BTC-USD 2015→,
-                    ETH-USD 2016→, SOL/XRP 2021→). Kalshi crypto perps settle
-                    and fund on the CF Benchmarks spot composite, so spot is
-                    the right proxy for the perp's price path; the live loop
-                    uses the same source, so backtest and production see the
-                    same series.
+  * crypto price  : Coinbase Exchange spot daily candles, one product per
+                    listed perp (BTC-USD 2015→, ETH-USD 2016→, LTC 2016→,
+                    … HYPE-USD 2026→; see COINBASE_PRODUCTS). Kalshi crypto
+                    perps settle and fund on the CF Benchmarks spot
+                    composite, so spot is the right proxy for the perp's
+                    price path; the live loop uses the same source, so
+                    backtest and production see the same series.
   * metals price  : Yahoo front-month futures (GC=F, SI=F), daily. Kalshi's
                     metals perps reference the Pyth spot index; at a daily
                     horizon the futures/spot basis is a slow drift (≈ the
@@ -24,6 +25,16 @@ and says so:
 
 Splits follow the firm convention (quantfirm/backtest.py): DEV before
 2025-07-01, HOLDOUT from 2025-07-01, opened once by the judge.
+
+BREADTH. Kalshi lists 23 perps and they did not all list on the same day;
+neither did their proxies. A universe whose members appear (and, on
+Coinbase, sometimes disappear) over time cannot be backtested off `align()`
+alone, because `align()` forward-fills: a delisted asset keeps printing its
+last close and reads as a zero-return, zero-vol, infinitely attractive
+holding. `first_bar()` and `availability()` below are the fix — they report
+where the NATIVE bars are, so a strategy can refuse to hold what the venue
+was not quoting. `align()`'s ffill is deliberately left alone; the mask, not
+the price frame, carries the tradability information.
 """
 
 from __future__ import annotations
@@ -48,9 +59,55 @@ HOLDOUT_START = "2025-07-01"
 DEV_START = "2016-01-01"
 
 COINBASE = "https://api.exchange.coinbase.com"
-COINBASE_PRODUCTS = {"btc": "BTC-USD", "eth": "ETH-USD", "sol": "SOL-USD", "xrp": "XRP-USD"}
+
+# One Coinbase spot product per listed Kalshi crypto perp. Keys are the asset
+# short names, which follow the venue's own ticker (KX<ASSET>PERP → <asset>);
+# that rule reproduces every pre-existing name, including "kshib" for
+# KXKSHIBPERP. Its underlying is kSHIB — title "1K kSHIB", contract_size 1000
+# and underlying_multiplier 1000, so one contract is 1,000,000 SHIB (~$5.21 on
+# 2026-09-15) and SHIB-USD spot is still the right price path. Ordered by
+# Kalshi 24h notional volume on 2026-09-15, so the table doubles as the
+# liquidity ranking the next campaign has to respect.
+COINBASE_PRODUCTS = {
+    "btc": "BTC-USD", "eth": "ETH-USD", "xrp": "XRP-USD", "sol": "SOL-USD",
+    "zec": "ZEC-USD", "near": "NEAR-USD", "hype": "HYPE-USD", "vvv": "VVV-USD",
+    "ada": "ADA-USD", "sui": "SUI-USD", "bch": "BCH-USD", "ltc": "LTC-USD",
+    "doge": "DOGE-USD", "bnb": "BNB-USD", "link": "LINK-USD", "wld": "WLD-USD",
+    "kshib": "SHIB-USD", "aave": "AAVE-USD",
+    # listed on Kalshi but with zero open interest, zero 24h volume and no
+    # two-sided quote on 2026-09-15: history is fetched so breadth studies can
+    # include them the day they start quoting, NOT because they are tradable.
+    "dot": "DOT-USD", "hbar": "HBAR-USD", "xlm": "XLM-USD",
+}
+
+# Earliest daily candle each product actually has, probed 2026-09-15. Only an
+# optimisation: fetch_coinbase_daily pages backwards until it runs out of data,
+# and these bounds stop it burning ~15 empty round trips per young product.
+COINBASE_START = {
+    "btc": "2015-01-01", "eth": "2016-01-01", "ltc": "2016-01-01", "bch": "2017-06-01",
+    "xrp": "2018-10-01", "xlm": "2018-10-01", "link": "2019-01-01", "zec": "2020-06-01",
+    "aave": "2020-06-01", "ada": "2020-10-01", "doge": "2021-01-01", "dot": "2021-01-01",
+    "sol": "2021-01-01", "kshib": "2021-03-01", "near": "2022-03-01", "hbar": "2022-04-01",
+    "sui": "2022-11-01", "vvv": "2024-07-01", "wld": "2024-10-01", "bnb": "2025-04-01",
+    "hype": "2025-08-01",
+}
+
 YAHOO = {"gold": "GC=F", "silver": "SI=F"}
-BINANCE_FUNDING = {"btc": "BTCUSDT", "eth": "ETHUSDT", "sol": "SOLUSDT", "xrp": "XRPUSDT"}
+
+# Binance USDT-perp symbol for the funding STRESS scenario. Not every Kalshi
+# perp has a Binance counterpart (VVV has none), and the ones that do start at
+# very different dates; a missing symbol yields an empty frame, not an error.
+BINANCE_FUNDING = {
+    "btc": "BTCUSDT", "eth": "ETHUSDT", "sol": "SOLUSDT", "xrp": "XRPUSDT",
+    "ltc": "LTCUSDT", "bch": "BCHUSDT", "xlm": "XLMUSDT", "link": "LINKUSDT",
+    "zec": "ZECUSDT", "aave": "AAVEUSDT", "ada": "ADAUSDT", "doge": "DOGEUSDT",
+    "dot": "DOTUSDT", "kshib": "1000SHIBUSDT", "near": "NEARUSDT", "hbar": "HBARUSDT",
+    "sui": "SUIUSDT", "wld": "WLDUSDT", "bnb": "BNBUSDT", "hype": "HYPEUSDT",
+}
+
+# Accepted spellings for an asset, resolved on every read. The venue ticker
+# rule gives "kshib"; "shib" is the obvious thing a caller will type.
+ASSET_ALIASES = {"shib": "kshib"}
 
 _S = requests.Session()
 _S.headers["User-Agent"] = "quantfirm-perps/0.1"
@@ -58,6 +115,16 @@ _S.headers["User-Agent"] = "quantfirm-perps/0.1"
 
 def _path(name: str) -> str:
     return os.path.join(DATA_DIR, name)
+
+
+def resolve_asset(asset: str) -> str:
+    """Canonical short name for an asset ("shib" → "kshib")."""
+    return ASSET_ALIASES.get(asset, asset)
+
+
+def proxy_assets() -> tuple[str, ...]:
+    """Every asset this module can fetch and load a long-history proxy for."""
+    return tuple(COINBASE_PRODUCTS) + tuple(YAHOO)
 
 
 def _read_csv(name: str) -> pd.DataFrame | None:
@@ -77,7 +144,13 @@ def _write_csv(df: pd.DataFrame, name: str) -> str:
 
 # ------------------------------------------------------------------ loaders
 def load_daily(asset: str) -> pd.DataFrame:
-    """OHLCV indexed by UTC midnight timestamps; columns open/high/low/close/volume."""
+    """OHLCV indexed by UTC midnight timestamps; columns open/high/low/close/volume.
+
+    Every row here is a NATIVE bar: no forward fill, no reindex onto anyone
+    else's calendar. Absent days are absent, which is what `availability()`
+    reads.
+    """
+    asset = resolve_asset(asset)
     df = _read_csv(f"{asset}_1d.csv")
     if df is None:
         raise FileNotFoundError(f"no daily bars for {asset} in {DATA_DIR}; run "
@@ -90,14 +163,23 @@ def load_daily(asset: str) -> pd.DataFrame:
     return df[["open", "high", "low", "close", "volume"]]
 
 
-def load_panel(assets=None) -> dict[str, pd.DataFrame]:
+def load_panel(assets=None, skip_missing: bool = False) -> dict[str, pd.DataFrame]:
+    """Native daily bars per asset. ``skip_missing`` drops assets with no file
+    instead of raising — useful when a universe is declared ahead of its data."""
     assets = assets or tuple(SPECS)
-    return {a: load_daily(a) for a in assets}
+    panel = {}
+    for a in assets:
+        try:
+            panel[a] = load_daily(a)
+        except FileNotFoundError:
+            if not skip_missing:
+                raise
+    return panel
 
 
 def load_funding_proxy(asset: str) -> pd.Series | None:
     """Binance 8h funding as a Series indexed by funding time (UTC). None if absent."""
-    df = _read_csv(f"{asset}_funding_binance.csv")
+    df = _read_csv(f"{resolve_asset(asset)}_funding_binance.csv")
     if df is None:
         return None
     s = pd.Series(pd.to_numeric(df["rate"], errors="coerce").values,
@@ -106,7 +188,7 @@ def load_funding_proxy(asset: str) -> pd.Series | None:
 
 
 def load_kalshi_funding(asset: str) -> pd.Series | None:
-    df = _read_csv(f"{asset}_funding_kalshi.csv")
+    df = _read_csv(f"{resolve_asset(asset)}_funding_kalshi.csv")
     if df is None:
         return None
     s = pd.Series(pd.to_numeric(df["rate"], errors="coerce").values,
@@ -148,6 +230,94 @@ def align(panel: dict[str, pd.DataFrame], how: str = "outer") -> pd.DataFrame:
     returns are therefore zero, which is what the venue would show too."""
     closes = pd.concat({a: d["close"] for a, d in panel.items()}, axis=1)
     return closes.sort_index().ffill()
+
+
+# ------------------------------------------------------- listing / availability
+# `align()` forward-fills, on purpose: a Saturday BTC bar must not orphan gold.
+# The cost of that convenience is that a forward-filled price is
+# indistinguishable from a real one, and on a 23-asset universe that is not a
+# rounding error — XRP was delisted from Coinbase 2021-01-19 → 2023-07-13 (SEC
+# suit), and a ffilled XRP over those 905 days is a flat line: zero return,
+# zero vol, and therefore the largest position any vol-targeted or
+# minimum-variance book would ever take, funded entirely by a price that did
+# not exist. HYPE has 223 bars against BTC's 4,076; treating its pre-listing
+# NaNs as "no opinion" instead of "not tradable" invents 10 years of history.
+#
+# So tradability is carried by a separate boolean mask, not by the price frame.
+
+def first_bar(asset: str) -> pd.Timestamp:
+    """Timestamp of the first NATIVE daily bar for ``asset`` (UTC midnight).
+
+    This is when the proxy's history begins — the earliest date a strategy may
+    claim to have known anything about the asset.
+    """
+    idx = load_daily(asset).index
+    if not len(idx):
+        raise ValueError(f"{resolve_asset(asset)} has no daily bars")
+    return idx[0]
+
+
+def last_bar(asset: str) -> pd.Timestamp:
+    """Timestamp of the most recent NATIVE daily bar for ``asset``."""
+    idx = load_daily(asset).index
+    if not len(idx):
+        raise ValueError(f"{resolve_asset(asset)} has no daily bars")
+    return idx[-1]
+
+
+def availability(panel: dict[str, pd.DataFrame], max_stale_days: int = 7,
+                 index: pd.DatetimeIndex | None = None) -> pd.DataFrame:
+    """Boolean frame on the aligned index: was each asset actually quoting?
+
+    ``True`` on a date iff that asset printed a NATIVE bar within the previous
+    ``max_stale_days`` (0 days stale — a bar that very day — counts). So:
+
+      * before an asset's first bar → False (nothing to know, nothing to hold);
+      * inside a delisting gap → False from ``max_stale_days`` after the last
+        native bar until the feed comes back, which is exactly the window where
+        `align()` is showing a flat forward-filled price;
+      * over a metals weekend or holiday → True, because a 2–4 day gap is the
+        contract's calendar, not an outage. That is why the default is 7 and
+        not 1.
+
+    The default tolerates a short data outage (the venue kept quoting, our
+    fetch missed a day) while still catching a real delisting, which on this
+    universe lasts months. Pass ``index`` to score the mask on the exact frame
+    the caller trades; it defaults to ``align(panel).index``.
+    """
+    if max_stale_days < 0:
+        raise ValueError("max_stale_days must be >= 0")
+    idx = align(panel).index if index is None else pd.DatetimeIndex(index)
+    tol = pd.Timedelta(days=max_stale_days)
+    cols = {}
+    for a, d in panel.items():
+        # value at each native bar = that bar's own timestamp; ffill carries
+        # "the last time this asset actually printed" across the aligned index.
+        last_native = pd.Series(d.index, index=d.index).reindex(idx).ffill()
+        cols[a] = last_native.notna() & ((idx - last_native) <= tol)
+    return pd.DataFrame(cols, index=idx)[list(panel)].fillna(False).astype(bool)
+
+
+def listing_table(assets=None) -> pd.DataFrame:
+    """One row per asset: first/last native bar, row count, longest gap in days.
+
+    The coverage evidence a breadth campaign has to cite before it claims a
+    cross-sectional result.
+    """
+    assets = assets or proxy_assets()
+    rows = []
+    for a in assets:
+        try:
+            d = load_daily(a)
+        except FileNotFoundError:
+            rows.append({"asset": a, "first_bar": pd.NaT, "last_bar": pd.NaT,
+                         "n_rows": 0, "max_gap_days": float("nan")})
+            continue
+        gaps = d.index.to_series().diff().dt.days
+        rows.append({"asset": resolve_asset(a), "first_bar": d.index[0], "last_bar": d.index[-1],
+                     "n_rows": len(d),
+                     "max_gap_days": float(gaps.max()) if len(d) > 1 else 0.0})
+    return pd.DataFrame(rows).set_index("asset")
 
 
 # ----------------------------------------------------------------- fetchers
@@ -261,12 +431,20 @@ def fetch_kalshi_candles(ticker: str, period: int = 1440, start_ts: int = 178000
 
 
 def update_all(assets=None, kalshi: bool = True, funding: bool = True, log=print) -> dict:
-    """Refresh every cached file. Idempotent; safe to run daily."""
-    assets = assets or tuple(SPECS)
+    """Refresh every cached file. Idempotent; safe to run daily.
+
+    ``assets`` defaults to the research universe (``SPECS``); pass
+    ``proxy_assets()`` (or the string ``"all"``) to refresh every listed perp's
+    proxy, including the three with no live quote. Assets outside ``SPECS``
+    simply skip the Kalshi leg — there is no spec to read a ticker from.
+    """
+    if assets == "all":
+        assets = proxy_assets()
+    assets = tuple(assets) if assets else tuple(SPECS)
     written = {}
-    for a in assets:
+    for a in (resolve_asset(x) for x in assets):
         if a in COINBASE_PRODUCTS:
-            df = fetch_coinbase_daily(COINBASE_PRODUCTS[a])
+            df = fetch_coinbase_daily(COINBASE_PRODUCTS[a], COINBASE_START.get(a, "2015-01-01"))
         elif a in YAHOO:
             df = fetch_yahoo_daily(YAHOO[a])
         else:
@@ -282,7 +460,7 @@ def update_all(assets=None, kalshi: bool = True, funding: bool = True, log=print
                     log(f"{a}: {len(f)} binance funding rows")
             except Exception as e:  # noqa: BLE001 — a proxy feed is not load-bearing
                 log(f"{a}: binance funding failed: {e}")
-        if kalshi:
+        if kalshi and a in SPECS:
             spec = SPECS[a]
             try:
                 kf = fetch_kalshi_funding(spec.ticker)

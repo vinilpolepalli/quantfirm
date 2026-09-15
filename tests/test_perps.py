@@ -411,8 +411,11 @@ class TestPaperEngine(unittest.TestCase):
             panel = synthetic_panel(n=400, assets=("btc", "gold"))
             for a in panel:
                 panel[a].index = panel[a].index + (pd.Timestamp.now(tz="UTC").normalize() - panel[a].index[-1])
-            with mock.patch.object(P, "STATE_DIR", tmp), mock.patch.object(P, "DECISIONS_PATH", os.path.join(tmp, "d.jsonl")), \
-                 mock.patch.object(P, "STATUS_PATH", os.path.join(tmp, "st.json")), \
+            # status and decision paths belong to the ENGINE now, so two books can
+            # run side by side without writing over each other's history
+            eng.status_path = os.path.join(tmp, "st.json")
+            eng.decisions_path = os.path.join(tmp, "d.jsonl")
+            with mock.patch.object(P, "STATE_DIR", tmp), \
                  mock.patch.object(P.D, "load_panel", return_value=panel):
                 notes = eng.tick()
             self.assertTrue(any("orders 0" in n for n in notes))
@@ -421,6 +424,22 @@ class TestPaperEngine(unittest.TestCase):
                 st = json.load(f)
             self.assertEqual(st["adapter"], "shadow")
             self.assertAlmostEqual(st["equity"], 250.0, places=2)
+            self.assertEqual(st["book"], "incumbent")   # an unnamed book is the incumbent
+
+    def test_named_books_keep_separate_state_status_and_decisions(self):
+        """Two books must never write over each other, and the incumbent's
+        unsuffixed paths must not move when a second book is added."""
+        from quantfirm.perps import paper as P
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(P, "STATE_DIR", tmp):
+                a = P.PaperEngine("flat", client=mock.Mock())
+                b = P.PaperEngine("flat", book="candidate", client=mock.Mock())
+            self.assertTrue(a.state_path.endswith("perps_paper_state.json"))
+            self.assertTrue(b.state_path.endswith("perps_paper_state_candidate.json"))
+            for x in ("state_path", "status_path", "decisions_path"):
+                self.assertNotEqual(getattr(a, x), getattr(b, x))
+            self.assertIsNone(a.book_name)
+            self.assertEqual(b.book_name, "candidate")
 
     def test_kill_switch_halts_tick(self):
         with tempfile.TemporaryDirectory() as tmp:

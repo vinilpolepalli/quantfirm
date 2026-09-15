@@ -23,6 +23,7 @@ import os
 import sys
 
 from . import data as D
+from . import specs as SPECS_MOD
 from .backtest import BacktestConfig, public, run_strategy, stress, walk_forward
 from .client import MarginClient, parse_market
 from .risk import PROFILES, kill_switch_tripped
@@ -39,9 +40,22 @@ def _out(obj) -> None:
     print(json.dumps(obj, indent=1, default=str))
 
 
+def _resolve_universe(spec):
+    """A comma list, or the name of a universe constant in specs (TRADABLE_UNIVERSE)."""
+    if not spec:
+        return tuple(RESEARCH_UNIVERSE)
+    named = getattr(SPECS_MOD, spec.upper(), None)
+    return tuple(named) if named else tuple(x for x in spec.split(",") if x)
+
+
 def _cfg(a) -> BacktestConfig:
+    # "auto" scales the band with the universe; a fixed 0.03 freezes any book
+    # of seven or more names, whose weight step is smaller than the band
+    band = a.band if a.band == "auto" else float(a.band)
+    n_assets = len(_resolve_universe(getattr(a, "universe", None)) or ())
     return BacktestConfig(cost=cost_by_name(a.cost), funding=a.funding,
-                          rebalance_every=a.every, rebalance_band=a.band)
+                          rebalance_every=a.every, rebalance_band=band,
+                          min_assets=1 if band == "auto" or n_assets > 4 else None)
 
 
 def _params(a) -> dict:
@@ -92,7 +106,7 @@ def cmd_update_data(a):
 def cmd_backtest(a):
     if a.split == "holdout" and not a.i_am_the_judge:
         sys.exit("holdout is sealed: use `holdout --i-am-the-judge`")
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     start, end = None, None
     if a.split == "dev":
         end = D.HOLDOUT_START
@@ -113,7 +127,7 @@ def cmd_backtest(a):
 
 
 def cmd_walkforward(a):
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     grid = json.loads(a.grid or "{}")
     for k, v in grid.items():
         grid[k] = [tuple(tuple(y) if isinstance(y, list) else y for y in x) if isinstance(x, list) else x for x in v]
@@ -128,9 +142,16 @@ def cmd_walkforward(a):
 
 
 def cmd_tournament(a):
-    from .tournament import run_tournament
-    out = run_tournament(universe=tuple(a.universe.split(",")), cfg=_cfg(a))
-    _out({"ranked": out["ranked"], "pbo": out["pbo"], "verdicts": {k: v["gates"] for k, v in out["verdicts"].items()}})
+    from .tournament import run_tournament, DEV_START, WARMUP_DAYS, N_FOLDS
+    out = run_tournament(universe=_resolve_universe(a.universe), cfg=_cfg(a),
+                         dev_start=a.dev_start or DEV_START,
+                         warmup_days=a.warmup or WARMUP_DAYS, n_folds=a.folds or N_FOLDS,
+                         families=tuple(a.families.split(",")) if a.families else None,
+                         tag=a.tag, version=a.version,
+                         reference_universe=_resolve_universe(a.reference_universe))
+    _out({"ranked": out["ranked"], "pbo": out["pbo"],
+          "reference": (out.get("reference") or {}).get("walk_forward", {}).get("oos_sharpe_concat"),
+          "verdicts": {k: v["gates"] for k, v in out["verdicts"].items()}})
 
 
 def cmd_holdout(a):
@@ -141,7 +162,7 @@ def cmd_holdout(a):
     marker = os.path.join(RESEARCH, f"holdout_{a.strategy}.json")
     if os.path.exists(marker) and not a.force:
         sys.exit(f"holdout already opened for {a.strategy}: {marker} (re-running is a new trial; --force to record it as one)")
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     cfg = _cfg(a)
     params = _params(a)
     r = run_strategy(panel, REGISTRY[a.strategy], params, cfg, start=D.HOLDOUT_START, end=None)
@@ -162,10 +183,18 @@ def cmd_holdout(a):
 def cmd_paper(a):
     from .paper import PaperEngine, write_status
     cfg = json.load(open(os.path.join(ROOT, "config", "perps.json"))) if os.path.exists(os.path.join(ROOT, "config", "perps.json")) else {}
-    eng = PaperEngine(a.strategy or cfg.get("strategy", "trend_long_only"), _params(a) or cfg.get("params", {}),
-                      PROFILES[a.profile or cfg.get("profile", "balanced")], adapter=a.adapter,
-                      bankroll=a.bankroll or cfg.get("bankroll_usd", 250.0),
-                      universe=tuple((a.universe or ",".join(cfg.get("universe", RESEARCH_UNIVERSE))).split(",")),
+    books = cfg.get("books") or {}
+    bk = books.get(a.book, {}) if a.book else {}
+    uni = a.universe or bk.get("universe") or cfg.get("universe", RESEARCH_UNIVERSE)
+    eng = PaperEngine(a.strategy or bk.get("strategy") or cfg.get("strategy", "trend_long_only"),
+                      _params(a) or bk.get("params") or cfg.get("params", {}),
+                      PROFILES[a.profile or bk.get("profile") or cfg.get("profile", "balanced")],
+                      adapter=a.adapter,
+                      bankroll=a.bankroll or bk.get("bankroll_usd") or cfg.get("bankroll_usd", 250.0),
+                      universe=tuple(uni if isinstance(uni, (list, tuple)) else uni.split(",")),
+                      book=a.book, band=bk.get("rebalance_band", cfg.get("rebalance_band", 0.03)),
+                      rebalance_every_days=bk.get("rebalance_every_days",
+                                                  cfg.get("rebalance_every_days", 7)),
                       log=print if a.verbose else None)
     if a.adapter == "live":
         _refuse_unless_live_armed(cfg)
@@ -186,10 +215,18 @@ def cmd_agent(a):
     cfg = json.load(open(os.path.join(ROOT, "config", "perps.json"))) if os.path.exists(os.path.join(ROOT, "config", "perps.json")) else {}
     if a.adapter == "live":
         _refuse_unless_live_armed(cfg)
-    eng = PaperEngine(a.strategy or cfg.get("strategy", "trend_long_only"), _params(a) or cfg.get("params", {}),
-                      PROFILES[a.profile or cfg.get("profile", "balanced")], adapter=a.adapter,
-                      bankroll=a.bankroll or cfg.get("bankroll_usd", 250.0),
-                      universe=tuple((a.universe or ",".join(cfg.get("universe", RESEARCH_UNIVERSE))).split(",")),
+    books = cfg.get("books") or {}
+    bk = books.get(a.book, {}) if a.book else {}
+    uni = a.universe or bk.get("universe") or cfg.get("universe", RESEARCH_UNIVERSE)
+    eng = PaperEngine(a.strategy or bk.get("strategy") or cfg.get("strategy", "trend_long_only"),
+                      _params(a) or bk.get("params") or cfg.get("params", {}),
+                      PROFILES[a.profile or bk.get("profile") or cfg.get("profile", "balanced")],
+                      adapter=a.adapter,
+                      bankroll=a.bankroll or bk.get("bankroll_usd") or cfg.get("bankroll_usd", 250.0),
+                      universe=tuple(uni if isinstance(uni, (list, tuple)) else uni.split(",")),
+                      book=a.book, band=bk.get("rebalance_band", cfg.get("rebalance_band", 0.03)),
+                      rebalance_every_days=bk.get("rebalance_every_days",
+                                                  cfg.get("rebalance_every_days", 7)),
                       log=print if a.verbose else None)
     run_agent(eng, a.minutes, poll_s=a.poll)
 
@@ -206,7 +243,7 @@ def _refuse_unless_live_armed(cfg: dict) -> None:
 def cmd_robust(a):
     """Adversarial checks on one configuration (dev only)."""
     from . import robust as RB
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     out = RB.full_report(panel, REGISTRY[a.strategy], _params(a), _cfg(a), start=a.start or "2018-01-01",
                          end=D.HOLDOUT_START, benchmark=a.benchmark, n_boot=a.n_boot, n_null=a.n_null)
     os.makedirs(RESEARCH, exist_ok=True)
@@ -251,12 +288,16 @@ def main(argv=None) -> None:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def common(sp, research=True):
-        sp.add_argument("--universe", default=",".join(RESEARCH_UNIVERSE))
+        # default None, NOT the research four: an explicit flag has to be
+        # distinguishable from "not given", or a book config could never
+        # supply its own universe. _resolve_universe falls back to the
+        # research four, so every existing command behaves as before.
+        sp.add_argument("--universe", default=None)
         if research:
             sp.add_argument("--cost", default="taker_t0")
             sp.add_argument("--funding", default="kalshi", choices=["none", "kalshi", "proxy", "proxy_raw"])
             sp.add_argument("--every", type=int, default=7)
-            sp.add_argument("--band", type=float, default=0.03)
+            sp.add_argument("--band", default=0.03, help="float, or 'auto' to scale with the universe")
             sp.add_argument("--params", default="{}")
             sp.add_argument("--note", default="")
 
@@ -273,7 +314,14 @@ def main(argv=None) -> None:
     sp.add_argument("--strategy", required=True); sp.add_argument("--grid", default="{}")
     sp.add_argument("--folds", type=int, default=6); sp.add_argument("--warmup", type=int, default=550)
     sp.add_argument("--start", default=None); sp.set_defaults(fn=cmd_walkforward)
-    sp = sub.add_parser("tournament"); common(sp); sp.set_defaults(fn=cmd_tournament)
+    sp = sub.add_parser("tournament"); common(sp)
+    sp.add_argument("--dev-start"); sp.add_argument("--warmup", type=int); sp.add_argument("--folds", type=int)
+    sp.add_argument("--families", help="comma-separated subset of declared families")
+    sp.add_argument("--tag", help="suffix for the output files, so one run never overwrites another")
+    sp.add_argument("--version", help="tournament version string recorded in the output")
+    sp.add_argument("--reference-universe",
+                    help="a second yardstick: the benchmark on this universe over the same folds")
+    sp.set_defaults(fn=cmd_tournament)
     sp = sub.add_parser("holdout"); common(sp)
     sp.add_argument("--strategy", required=True); sp.add_argument("--i-am-the-judge", action="store_true")
     sp.add_argument("--force", action="store_true"); sp.set_defaults(fn=cmd_holdout)
@@ -286,6 +334,8 @@ def main(argv=None) -> None:
         sp.add_argument("--minutes", type=float, default=1.0)
         sp.add_argument("--poll", type=float, default=3600.0)
         sp.add_argument("--verbose", action="store_true")
+        sp.add_argument("--book", default=None,
+                        help="named book from config/perps.json books{}; omit for the incumbent")
         sp.set_defaults(fn=fn)
     sp = sub.add_parser("robust"); common(sp)
     sp.add_argument("--strategy", required=True); sp.add_argument("--start", default=None)

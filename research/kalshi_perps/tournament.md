@@ -1,20 +1,36 @@
-# Kalshi perps tournament — 2026-09-15.1
+# Kalshi perps tournament — 2026-09-15.2-campaign
 
-Ran 2026-09-15T00:28:30+00:00. Universe ['btc', 'eth', 'gold', 'silver']. Dev window 2016-06-01 → 2025-07-01 (folds start after 550 warmup days, 6 folds). Cost `taker_t0`, funding `kalshi`, rebalance every 7d with a 3% band. **13 registered trials.** Holdout: SEALED — not read by this module.
+Ran 2026-09-15T01:05:00+00:00. Universe ['btc', 'eth', 'gold', 'silver']. Dev window 2016-06-01 → 2025-07-01 (folds start after 550 warmup days, 6 folds). Cost `taker_t0`, funding `kalshi`, rebalance every 7d with a 3% band. **113 registered trials.** Holdout: SEALED — not read by this module.
 
 ## Walk-forward (parameters selected in-sample per fold, scored out of sample)
 
 | family | OOS Sharpe | OOS CAGR | OOS max DD | folds + | WFE | vs bench | stress SR | DSR | gates |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | **vol_target_hold** (benchmark) | 1.131 | 18.2% | -18.4% | 6/6 | — | 0 | — | — | — |
-| trend_long_only | 0.798 | 9.8% | -12.5% | 6/6 | — | -0.333 | 1.249 | 0.6577 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
-| breakout | 0.464 | 7.2% | -13.3% | 5/6 | 0.416 | -0.667 | 0.562 | 0.3084 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
-| tsmom | 0.453 | 7.2% | -13.3% | 5/6 | 0.129 | -0.678 | 0.797 | 0.2976 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
-| ma_trend | 0.422 | 7.4% | -21.1% | 3/6 | 0.095 | -0.709 | 0.891 | 0.2704 | FAIL: beats_benchmark_oos, folds_positive_ge_4, dsr_ge_0.95, pbo_le_0.10 |
-| trend_ensemble | 0.381 | 6.5% | -15.5% | 5/6 | — | -0.75 | 0.793 | 0.2329 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| basis_crowding | 1.1 | 17.6% | -18.4% | 5/6 | 0.92 | -0.031 | 1.224 | 0.8244 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| vrp_options | 1.099 | 17.0% | -18.4% | 6/6 | 0.997 | -0.032 | 1.246 | 0.8226 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| dual_momentum_skip | 1.047 | 12.0% | -8.6% | 6/6 | — | -0.084 | 1.008 | 0.784 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| trend_v2_tsmom | 1.031 | 14.3% | -18.4% | 6/6 | 0.743 | -0.1 | 0.972 | 0.769 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| rs_turn_of_month | 1.026 | 14.5% | -16.2% | 4/6 | — | -0.105 | 1.219 | 0.7678 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| trend_v2_tsmom_live | 1.016 | 15.6% | -17.0% | 5/6 | — | -0.115 | 0.947 | 0.7589 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| crash_filter_beta | 1.011 | 14.7% | -19.6% | 5/6 | 0.68 | -0.12 | 1.355 | 0.7509 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| dual_momentum_6 | 0.975 | 12.1% | -12.7% | 6/6 | — | -0.156 | 0.988 | 0.7199 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| rs_weekend_half | 0.958 | 14.9% | -18.4% | 6/6 | — | -0.173 | 1.212 | 0.7076 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| allocator_blend | 0.911 | 12.1% | -15.5% | 5/6 | 0.63 | -0.22 | 1.254 | 0.6608 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| trend_v2_baz | 0.907 | 9.5% | -11.8% | 6/6 | 1.116 | -0.224 | 0.85 | 0.6546 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| macro_gold | 0.881 | 12.5% | -16.3% | 4/6 | 0.558 | -0.25 | 1.062 | 0.6309 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| xsec_momentum | 0.876 | 17.7% | -30.7% | 5/6 | 0.528 | -0.255 | 1.222 | 0.6275 | FAIL: beats_benchmark_oos, oos_mdd_le_25pct, dsr_ge_0.95, pbo_le_0.10 |
+| rs_weekly_reversal | 0.823 | 14.5% | -24.3% | 4/6 | — | -0.308 | 0.676 | 0.5708 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| trend_long_only | 0.798 | 9.8% | -12.5% | 6/6 | — | -0.333 | 1.249 | 0.5435 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| dual_momentum | 0.706 | 9.0% | -8.5% | 5/6 | 0.195 | -0.425 | 1.172 | 0.4443 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| breakout | 0.464 | 7.2% | -13.3% | 5/6 | 0.416 | -0.667 | 0.562 | 0.2117 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| tsmom | 0.453 | 7.2% | -13.3% | 5/6 | 0.129 | -0.678 | 0.797 | 0.2028 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| ma_trend | 0.422 | 7.4% | -21.1% | 3/6 | 0.095 | -0.709 | 0.891 | 0.1813 | FAIL: beats_benchmark_oos, folds_positive_ge_4, dsr_ge_0.95, pbo_le_0.10 |
+| trend_ensemble | 0.381 | 6.5% | -15.5% | 5/6 | — | -0.75 | 0.793 | 0.1515 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
+| rs_bollinger_mr | 0.358 | 4.6% | -5.2% | 6/6 | — | -0.773 | 0.53 | 0.1402 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
 | gold_silver_ratio | -0.803 | 1.9% | -2.6% | 6/6 | — | -1.934 | -0.772 | 0.0 | FAIL: beats_benchmark_oos, dsr_ge_0.95, pbo_le_0.10 |
 
-CSCV probability of backtest overfitting across 14 configurations (+ benchmark): **PBO = 0.3**, degradation slope -0.532.
+CSCV probability of backtest overfitting across 62 configurations (+ benchmark): **PBO = 0.586**, degradation slope -0.953.
 
 ## Controls (fixed, dev window)
 
@@ -27,6 +43,160 @@ CSCV probability of backtest overfitting across 14 configurations (+ benchmark):
 
 ## Per-fold detail
 
+### basis_crowding
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `variant=derisk_q90_flat` | 2.714 | -0.161 | +0.6% | -18.4% | 2.61 |
+| 1 | 2019-03-09 → 2020-06-11 | `variant=derisk_q90_flat` | 1.451 | 1.185 | +27.9% | -18.2% | 2.39 |
+| 2 | 2020-06-12 → 2021-09-15 | `variant=derisk_q90_flat` | 1.398 | 2.094 | +40.6% | -7.7% | 2.01 |
+| 3 | 2021-09-16 → 2022-12-20 | `variant=capitulation` | 1.503 | -0.312 | -0.8% | -15.2% | 1.42 |
+| 4 | 2022-12-21 → 2024-03-25 | `variant=capitulation` | 1.166 | 2.196 | +47.0% | -8.8% | 2.67 |
+| 5 | 2024-03-26 → 2025-06-30 | `variant=capitulation` | 1.322 | 1.437 | +29.4% | -8.2% | 2.23 |
+
+### vrp_options
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `mode=vrp_high` | 2.714 | -0.161 | +0.6% | -18.4% | 2.61 |
+| 1 | 2019-03-09 → 2020-06-11 | `mode=vrp_high` | 1.451 | 1.185 | +27.9% | -18.2% | 2.39 |
+| 2 | 2020-06-12 → 2021-09-15 | `mode=vrp_high` | 1.398 | 2.338 | +49.6% | -6.5% | 1.99 |
+| 3 | 2021-09-16 → 2022-12-20 | `mode=vrp_high` | 1.544 | -0.24 | +0.6% | -11.9% | 2.25 |
+| 4 | 2022-12-21 → 2024-03-25 | `mode=vrp_high` | 1.246 | 1.656 | +28.6% | -8.2% | 3.78 |
+| 5 | 2024-03-26 → 2025-06-30 | `mode=iv_size` | 1.321 | 1.687 | +32.0% | -5.9% | 2.09 |
+
+### dual_momentum_skip
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `lookback=365, skip=30, top_share=1.0` | — | 0.568 | +9.4% | -6.0% | 0.74 |
+| 1 | 2019-03-09 → 2020-06-11 | `lookback=365, skip=30, top_share=1.0` | — | 0.393 | +8.1% | -8.6% | 4.45 |
+| 2 | 2020-06-12 → 2021-09-15 | `lookback=365, skip=30, top_share=1.0` | — | 2.979 | +45.9% | -4.7% | 0.92 |
+| 3 | 2021-09-16 → 2022-12-20 | `lookback=365, skip=30, top_share=1.0` | — | -0.288 | +2.1% | -5.9% | 1.9 |
+| 4 | 2022-12-21 → 2024-03-25 | `lookback=365, skip=30, top_share=1.0` | — | 1.804 | +26.6% | -5.7% | 6.46 |
+| 5 | 2024-03-26 → 2025-06-30 | `lookback=365, skip=30, top_share=1.0` | — | 0.18 | +5.8% | -8.4% | 1.71 |
+
+### trend_v2_tsmom
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `sizing=ref, skip_months=1` | 2.006 | 0.319 | +7.3% | -9.9% | 3.04 |
+| 1 | 2019-03-09 → 2020-06-11 | `sizing=ref, skip_months=1` | 1.311 | 0.295 | +8.0% | -18.4% | 3.04 |
+| 2 | 2020-06-12 → 2021-09-15 | `sizing=ref, skip_months=1` | 0.867 | 2.301 | +45.4% | -7.4% | 2.45 |
+| 3 | 2021-09-16 → 2022-12-20 | `sizing=ref, skip_months=1` | 1.147 | -0.311 | +1.7% | -6.4% | 4.38 |
+| 4 | 2022-12-21 → 2024-03-25 | `sizing=ref, skip_months=1` | 0.996 | 1.556 | +27.9% | -8.3% | 3.38 |
+| 5 | 2024-03-26 → 2025-06-30 | `sizing=ref, skip_months=1` | 1.095 | 1.346 | +26.1% | -8.2% | 1.92 |
+
+### rs_turn_of_month
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `off_weight=0.5, last_days=2, first_days=3` | — | -0.321 | -0.9% | -16.2% | 8.95 |
+| 1 | 2019-03-09 → 2020-06-11 | `off_weight=0.5, last_days=2, first_days=3` | — | 1.166 | +23.1% | -11.3% | 6.08 |
+| 2 | 2020-06-12 → 2021-09-15 | `off_weight=0.5, last_days=2, first_days=3` | — | 2.501 | +45.2% | -6.1% | 4.2 |
+| 3 | 2021-09-16 → 2022-12-20 | `off_weight=0.5, last_days=2, first_days=3` | — | -0.437 | -1.2% | -12.4% | 5.83 |
+| 4 | 2022-12-21 → 2024-03-25 | `off_weight=0.5, last_days=2, first_days=3` | — | 1.945 | +36.2% | -8.3% | 6.97 |
+| 5 | 2024-03-26 → 2025-06-30 | `off_weight=0.5, last_days=2, first_days=3` | — | 0.972 | +17.3% | -7.6% | 5.96 |
+
+### trend_v2_tsmom_live
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `` | — | -0.154 | +1.6% | -13.0% | 5.55 |
+| 1 | 2019-03-09 → 2020-06-11 | `` | — | 0.995 | +23.8% | -17.0% | 3.6 |
+| 2 | 2020-06-12 → 2021-09-15 | `` | — | 2.255 | +45.3% | -8.1% | 3.32 |
+| 3 | 2021-09-16 → 2022-12-20 | `` | — | -0.82 | -5.3% | -13.1% | 6.44 |
+| 4 | 2022-12-21 → 2024-03-25 | `` | — | 1.65 | +31.5% | -7.3% | 6.51 |
+| 5 | 2024-03-26 → 2025-06-30 | `` | — | 1.544 | +31.8% | -8.2% | 2.2 |
+
+### crash_filter_beta
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `variant=d30_w60_m12` | 2.796 | 0.019 | +3.9% | -15.6% | 3.06 |
+| 1 | 2019-03-09 → 2020-06-11 | `variant=d30_w120` | 1.841 | 0.611 | +14.2% | -19.6% | 2.68 |
+| 2 | 2020-06-12 → 2021-09-15 | `variant=d30_w60_m12` | 1.59 | 2.033 | +39.0% | -6.2% | 2.54 |
+| 3 | 2021-09-16 → 2022-12-20 | `variant=d30_w60_m12` | 1.631 | -1.08 | -5.8% | -12.8% | 2.16 |
+| 4 | 2022-12-21 → 2024-03-25 | `variant=d20_w60` | 1.324 | 2.036 | +42.5% | -9.5% | 2.79 |
+| 5 | 2024-03-26 → 2025-06-30 | `variant=d20_w60` | 1.457 | 1.58 | +27.5% | -6.7% | 2.5 |
+
+### dual_momentum_6
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `lookback=365, top_share=0.7, crypto=('btc', 'eth', 'sol', 'xrp')` | — | 0.344 | +7.3% | -6.9% | 2.32 |
+| 1 | 2019-03-09 → 2020-06-11 | `lookback=365, top_share=0.7, crypto=('btc', 'eth', 'sol', 'xrp')` | — | -0.175 | +1.1% | -12.7% | 4.09 |
+| 2 | 2020-06-12 → 2021-09-15 | `lookback=365, top_share=0.7, crypto=('btc', 'eth', 'sol', 'xrp')` | — | 2.438 | +41.2% | -6.2% | 1.76 |
+| 3 | 2021-09-16 → 2022-12-20 | `lookback=365, top_share=0.7, crypto=('btc', 'eth', 'sol', 'xrp')` | — | -0.217 | +2.5% | -5.9% | 1.77 |
+| 4 | 2022-12-21 → 2024-03-25 | `lookback=365, top_share=0.7, crypto=('btc', 'eth', 'sol', 'xrp')` | — | 1.877 | +28.6% | -4.7% | 6.55 |
+| 5 | 2024-03-26 → 2025-06-30 | `lookback=365, top_share=0.7, crypto=('btc', 'eth', 'sol', 'xrp')` | — | 1.075 | +17.6% | -6.6% | 1.89 |
+
+### rs_weekend_half
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `weekend_weight=0.5` | — | -0.161 | +0.6% | -18.4% | 2.61 |
+| 1 | 2019-03-09 → 2020-06-11 | `weekend_weight=0.5` | — | 1.011 | +21.4% | -17.4% | 2.51 |
+| 2 | 2020-06-12 → 2021-09-15 | `weekend_weight=0.5` | — | 1.48 | +23.8% | -5.8% | 1.93 |
+| 3 | 2021-09-16 → 2022-12-20 | `weekend_weight=0.5` | — | -0.224 | +0.2% | -13.7% | 1.22 |
+| 4 | 2022-12-21 → 2024-03-25 | `weekend_weight=0.5` | — | 2.168 | +45.9% | -8.6% | 2.59 |
+| 5 | 2024-03-26 → 2025-06-30 | `weekend_weight=0.5` | — | 1.463 | +29.5% | -8.2% | 1.91 |
+
+### allocator_blend
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `blend=('fixed', 0.5)` | 2.984 | -0.016 | +3.5% | -12.2% | 2.5 |
+| 1 | 2019-03-09 → 2020-06-11 | `blend=('riskparity', 60)` | 1.848 | 0.818 | +16.2% | -15.5% | 3.01 |
+| 2 | 2020-06-12 → 2021-09-15 | `blend=('riskparity', 60)` | 1.592 | 2.08 | +37.8% | -7.9% | 1.84 |
+| 3 | 2021-09-16 → 2022-12-20 | `blend=('riskparity', 60)` | 1.689 | -0.643 | -1.8% | -10.8% | 1.73 |
+| 4 | 2022-12-21 → 2024-03-25 | `blend=('riskparity', 60)` | 1.388 | 1.366 | +21.3% | -5.6% | 2.95 |
+| 5 | 2024-03-26 → 2025-06-30 | `blend=('riskparity', 60)` | 1.393 | 1.25 | +20.5% | -5.4% | 2.7 |
+
+### trend_v2_baz
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `sizing=ref` | 1.328 | 1.13 | +9.4% | -2.4% | 1.93 |
+| 1 | 2019-03-09 → 2020-06-11 | `sizing=ref` | 1.034 | 0.289 | +7.2% | -11.8% | 3.4 |
+| 2 | 2020-06-12 → 2021-09-15 | `sizing=ref` | 0.875 | 1.865 | +23.7% | -4.8% | 2.04 |
+| 3 | 2021-09-16 → 2022-12-20 | `sizing=ref` | 1.158 | -0.392 | +1.9% | -3.5% | 1.54 |
+| 4 | 2022-12-21 → 2024-03-25 | `sizing=ref` | 0.951 | 1.124 | +15.5% | -5.7% | 3.38 |
+| 5 | 2024-03-26 → 2025-06-30 | `sizing=ref` | 0.985 | 1.427 | +16.6% | -4.4% | 3.13 |
+
+### macro_gold
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `lookback=60, vix_window=504, vix_pct=0.9, variant=or` | 3.011 | -0.319 | -1.2% | -16.3% | 9.27 |
+| 1 | 2019-03-09 → 2020-06-11 | `lookback=60, vix_window=504, vix_pct=0.9, variant=and_vix_haven` | 1.564 | 0.997 | +19.3% | -12.8% | 8.9 |
+| 2 | 2020-06-12 → 2021-09-15 | `lookback=60, vix_window=504, vix_pct=0.9, variant=or` | 1.442 | 2.095 | +42.3% | -7.3% | 3.4 |
+| 3 | 2021-09-16 → 2022-12-20 | `lookback=60, vix_window=504, vix_pct=0.9, variant=and` | 1.545 | -0.494 | -0.1% | -7.7% | 0.26 |
+| 4 | 2022-12-21 → 2024-03-25 | `lookback=60, vix_window=504, vix_pct=0.9, variant=and` | 1.201 | 1.733 | +30.6% | -5.1% | 4.77 |
+| 5 | 2024-03-26 → 2025-06-30 | `lookback=60, vix_window=504, vix_pct=0.9, variant=and_vix_cut` | 1.28 | 0.669 | +11.8% | -7.4% | 3.45 |
+
+### xsec_momentum
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `top_k=2, spec=('top', 252, 21)` | 3.282 | 0.779 | +20.1% | -11.1% | 3.9 |
+| 1 | 2019-03-09 → 2020-06-11 | `top_k=2, spec=('top', 252, 21)` | 2.17 | 0.094 | +4.2% | -22.2% | 11.95 |
+| 2 | 2020-06-12 → 2021-09-15 | `top_k=2, spec=('top', 63, 0)` | 1.738 | 2.957 | +87.9% | -7.9% | 6.5 |
+| 3 | 2021-09-16 → 2022-12-20 | `top_k=2, spec=('top', 63, 0)` | 1.922 | -0.611 | -10.3% | -28.2% | 9.91 |
+| 4 | 2022-12-21 → 2024-03-25 | `top_k=2, spec=('top', 63, 0)` | 1.445 | 1.154 | +30.8% | -23.8% | 9.38 |
+| 5 | 2024-03-26 → 2025-06-30 | `top_k=2, spec=('rank', 126, 0)` | 1.423 | 1.154 | +24.6% | -7.8% | 5.24 |
+
+### rs_weekly_reversal
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `lookback=5, tilt=0.5` | — | -0.263 | -1.9% | -24.3% | 22.91 |
+| 1 | 2019-03-09 → 2020-06-11 | `lookback=5, tilt=0.5` | — | 1.118 | +28.0% | -16.8% | 19.86 |
+| 2 | 2020-06-12 → 2021-09-15 | `lookback=5, tilt=0.5` | — | 2.025 | +38.1% | -9.0% | 12.58 |
+| 3 | 2021-09-16 → 2022-12-20 | `lookback=5, tilt=0.5` | — | -0.674 | -9.0% | -21.9% | 14.91 |
+| 4 | 2022-12-21 → 2024-03-25 | `lookback=5, tilt=0.5` | — | 1.458 | +29.9% | -9.5% | 16.43 |
+| 5 | 2024-03-26 → 2025-06-30 | `lookback=5, tilt=0.5` | — | 1.633 | +36.6% | -7.9% | 14.75 |
+
 ### trend_long_only
 
 | fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
@@ -37,6 +207,17 @@ CSCV probability of backtest overfitting across 14 configurations (+ benchmark):
 | 3 | 2021-09-16 → 2022-12-20 | `` | — | -0.471 | +1.0% | -5.0% | 2.73 |
 | 4 | 2022-12-21 → 2024-03-25 | `` | — | 0.671 | +11.4% | -6.1% | 5.01 |
 | 5 | 2024-03-26 → 2025-06-30 | `` | — | 0.807 | +12.7% | -5.0% | 4.78 |
+
+### dual_momentum
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `lookback=182, top_share=1.0` | 3.47 | 0.568 | +9.3% | -5.8% | 2.07 |
+| 1 | 2019-03-09 → 2020-06-11 | `lookback=182, top_share=1.0` | 2.172 | -0.519 | -2.2% | -8.5% | 3.11 |
+| 2 | 2020-06-12 → 2021-09-15 | `lookback=182, top_share=1.0` | 1.648 | 2.843 | +43.0% | -4.7% | 1.08 |
+| 3 | 2021-09-16 → 2022-12-20 | `lookback=182, top_share=1.0` | 1.869 | -0.333 | +1.4% | -5.9% | 1.72 |
+| 4 | 2022-12-21 → 2024-03-25 | `lookback=182, top_share=1.0` | 1.579 | 1.188 | +18.4% | -6.2% | 3.98 |
+| 5 | 2024-03-26 → 2025-06-30 | `lookback=182, top_share=1.0` | 1.519 | 0.117 | +5.0% | -6.6% | 1.96 |
 
 ### breakout
 
@@ -81,6 +262,17 @@ CSCV probability of backtest overfitting across 14 configurations (+ benchmark):
 | 3 | 2021-09-16 → 2022-12-20 | `` | — | -0.354 | +0.1% | -7.8% | 6.06 |
 | 4 | 2022-12-21 → 2024-03-25 | `` | — | -0.315 | -0.1% | -12.6% | 8.72 |
 | 5 | 2024-03-26 → 2025-06-30 | `` | — | 0.298 | +7.1% | -5.3% | 6.0 |
+
+### rs_bollinger_mr
+
+| fold | window | params | IS SR | OOS SR | OOS ret | OOS DD | turnover |
+|---:|---|---|---:|---:|---:|---:|---:|
+| 0 | 2017-12-03 → 2019-03-08 | `bb_window=20, bb_k=2.0, trend_window=200` | — | -0.549 | +2.2% | -2.7% | 0.85 |
+| 1 | 2019-03-09 → 2020-06-11 | `bb_window=20, bb_k=2.0, trend_window=200` | — | -0.235 | +2.4% | -5.2% | 3.22 |
+| 2 | 2020-06-12 → 2021-09-15 | `bb_window=20, bb_k=2.0, trend_window=200` | — | 1.541 | +11.9% | -1.8% | 3.22 |
+| 3 | 2021-09-16 → 2022-12-20 | `bb_window=20, bb_k=2.0, trend_window=200` | — | -0.21 | +3.6% | -1.8% | 0.79 |
+| 4 | 2022-12-21 → 2024-03-25 | `bb_window=20, bb_k=2.0, trend_window=200` | — | 0.775 | +7.9% | -2.9% | 3.39 |
+| 5 | 2024-03-26 → 2025-06-30 | `bb_window=20, bb_k=2.0, trend_window=200` | — | 0.677 | +7.1% | -2.4% | 2.39 |
 
 ### gold_silver_ratio
 

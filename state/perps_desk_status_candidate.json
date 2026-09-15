@@ -1,0 +1,133 @@
+{
+ "ts": "2026-09-15T13:11:07+00:00",
+ "book": "candidate",
+ "adapter": "shadow",
+ "strategy": "blend_core_sleeve",
+ "universe": [
+  "btc",
+  "eth",
+  "xrp",
+  "silver",
+  "gold",
+  "sol",
+  "zec",
+  "near",
+  "hype",
+  "vvv",
+  "ada",
+  "sui",
+  "bch",
+  "ltc",
+  "doge",
+  "bnb",
+  "link",
+  "wld",
+  "kshib",
+  "aave"
+ ],
+ "profile": {
+  "bankroll_usd": 250.0,
+  "target_vol": 0.12,
+  "max_gross_leverage": 1.5,
+  "max_asset_weight": 0.75,
+  "min_liq_distance": 0.35,
+  "daily_loss_stop": 0.03,
+  "weekly_loss_stop": 0.06,
+  "dd_soft": 0.08,
+  "dd_kill": 0.15,
+  "max_order_notional_usd": 1000.0,
+  "max_orders_per_tick": 12,
+  "max_data_age_hours": 30.0,
+  "price_collar": 0.005,
+  "min_margin_ratio_headroom": 0.5,
+  "consecutive_loss_days_pause": 5
+ },
+ "bankroll0": 250,
+ "equity": 250.16,
+ "cash": 249.9,
+ "realized": 0.0,
+ "fees": 0.0935,
+ "funding": -0.0028,
+ "interest": 0.0012,
+ "peak_equity": 250.16,
+ "drawdown": 0.0,
+ "positions": [
+  {
+   "asset": "btc",
+   "ticker": "KXBTCPERP",
+   "contracts": 2.0,
+   "avg_price": 7.683,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 7.7012,
+   "weight": 0.0616
+  },
+  {
+   "asset": "eth",
+   "ticker": "KXETHPERP",
+   "contracts": 5.0,
+   "avg_price": 2.4729,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 2.4806,
+   "weight": 0.0496
+  },
+  {
+   "asset": "silver",
+   "ticker": "KXSILVERPERP",
+   "contracts": 2.0,
+   "avg_price": 6.3264,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 6.3672,
+   "weight": 0.0509
+  },
+  {
+   "asset": "gold",
+   "ticker": "KXGOLDPERP",
+   "contracts": 6.0,
+   "avg_price": 4.284,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 4.2874,
+   "weight": 0.1028
+  },
+  {
+   "asset": "near",
+   "ticker": "KXNEARPERP",
+   "contracts": 1.0,
+   "avg_price": 2.3702,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 2.4061,
+   "weight": 0.0096
+  },
+  {
+   "asset": "vvv",
+   "ticker": "KXVVVPERP",
+   "contracts": 1.0,
+   "avg_price": 2.1971,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 2.2511,
+   "weight": 0.009
+  },
+  {
+   "asset": "bch",
+   "ticker": "KXBCHPERP",
+   "contracts": -1.0,
+   "avg_price": 2.2128,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 2.2485,
+   "weight": -0.009
+  },
+  {
+   "asset": "bnb",
+   "ticker": "KXBNBPERP",
+   "contracts": 7.0,
+   "avg_price": 0.7185,
+   "opened": "2026-09-15T11:50:14+00:00",
+   "mark": 0.7214,
+   "weight": 0.0202
+  }
+ ],
+ "gross_leverage": 0.313,
+ "halted": "",
+ "kill_switch": false,
+ "n_ticks": 2,
+ "started": "2026-09-15T11:50:06+00:00"
+}

@@ -1,10 +1,21 @@
 {
  "updated": "2026-09-15T06:14:52+00:00",
  "files": [
+  "aave_1d",
+  "ada_1d",
+  "aux_dvol_btc",
+  "aux_dvol_eth",
+  "aux_macro",
+  "aux_premium_btc",
+  "aux_premium_eth",
+  "bch_1d",
+  "bnb_1d",
   "btc_1d",
   "btc_funding_binance",
   "btc_funding_kalshi",
   "btc_kalshi_1d",
+  "doge_1d",
+  "dot_1d",
   "eth_1d",
   "eth_funding_binance",
   "eth_funding_kalshi",
@@ -12,6 +23,12 @@
   "gold_1d",
   "gold_funding_kalshi",
   "gold_kalshi_1d",
+  "hbar_1d",
+  "hype_1d",
+  "kshib_1d",
+  "link_1d",
+  "ltc_1d",
+  "near_1d",
   "silver_1d",
   "silver_funding_kalshi",
   "silver_kalshi_1d",
@@ -19,9 +36,16 @@
   "sol_funding_binance",
   "sol_funding_kalshi",
   "sol_kalshi_1d",
+  "sui_1d",
+  "vvv_1d",
+  "wld_1d",
+  "xlm_1d",
   "xrp_1d",
   "xrp_funding_binance",
   "xrp_funding_kalshi",
-  "xrp_kalshi_1d"
- ]
+  "xrp_kalshi_1d",
+  "zec_1d"
+ ],
+ "daily_bars_updated": "2026-09-15T01:45:00+00:00",
+ "daily_bars_note": "all 21 Coinbase crypto proxies re-fetched in one run 2026-09-15 (fetch_coinbase_daily); gold/silver keep the Yahoo GC=F/SI=F pull from the 00:09 run, so their last bar is 2026-09-14"
 }

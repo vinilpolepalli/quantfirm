@@ -109,6 +109,22 @@ def kalshi_funding(rate: float, asset_class: str = "crypto") -> float:
 # ---------------------------------------------------------------- contracts
 @dataclass(frozen=True)
 class PerpSpec:
+    """One listed Kalshi perpetual future.
+
+    ``half_spread`` is HALF the top-of-book spread, (ask − bid) / 2 / mid, as a
+    fraction of notional. It was MEASURED from top-of-book on GET /margin/markets
+    on 2026-09-15 — one reading, one moment, not an average. This venue is three
+    months old (BTC/ETH/SOL/XRP funded from 2026-06-03, most of the tail from
+    2026-06-09 or later, ADA/BNB from 2026-08-31) and its alt books are thin:
+    fourteen of the twenty quoting markets trade under $10M a day and six under
+    $1.5M, with open interest in the hundreds of thousands. A book that thin
+    widens the moment size arrives and can requote by a factor overnight. Treat
+    this number as a point-in-time floor on the cost of a fill, never as a
+    promise, and re-read it before sizing anything outside btc/eth/gold/silver.
+    ``0.0`` means "not measured" (dot/hbar/xlm quote nothing at all) and makes
+    CostModel.side_cost fall back to its flat modelling spread.
+    """
+
     ticker: str            # Kalshi margin market ticker
     asset: str             # short name used in data files and state
     asset_class: str       # "crypto" | "metals"
@@ -117,7 +133,10 @@ class PerpSpec:
     maint_rate: float      # maintenance margin / notional at ~$1k notional
     index: str             # settlement/funding reference
     proxy: str             # long-history price proxy used by the backtester
-    live_since: str        # first funding row observed
+    live_since: str        # first funding row observed ("" = never funded)
+    half_spread: float = 0.0  # measured half-spread, fraction of notional (see docstring)
+    underlying_multiplier: Decimal = Decimal(1)  # venue field; 1000 for kSHIB, 1 elsewhere
+    quotes: bool = True       # False = listed but with no two-sided quote, no OI and no volume
 
     @property
     def initial_rate(self) -> float:
@@ -132,45 +151,240 @@ class PerpSpec:
     def funding_per_day(self) -> int:
         return len(FUNDING_TIMES_UTC[self.asset_class])
 
+    @property
+    def half_spread_bps(self) -> float:
+        return self.half_spread * 1e4
 
-# maint_rate = 1 / leverage_estimates["1000"] as published on 2026-09-14.
-# Leverage falls with notional (BTC 6.05x at $1k → 5.89x at $1M); a small
-# account sits on the $1k row. Live code re-reads the estimate every tick.
-SPECS: dict[str, PerpSpec] = {
-    "btc": PerpSpec("KXBTCPERP", "btc", "crypto", Decimal("0.0001"), Decimal("0.0001"),
-                    1 / 6.05, "CF Benchmarks BRTI (1s)", "BTC-USD", "2026-06-03"),
-    "eth": PerpSpec("KXETHPERP", "eth", "crypto", Decimal("0.001"), Decimal("0.0001"),
-                    1 / 4.66, "CF Benchmarks", "ETH-USD", "2026-06-03"),
-    "sol": PerpSpec("KXSOLPERP", "sol", "crypto", Decimal("0.1"), Decimal("0.0001"),
-                    1 / 3.02, "CF Benchmarks", "SOL-USD", "2026-06-03"),
-    "xrp": PerpSpec("KXXRPPERP", "xrp", "crypto", Decimal("1"), Decimal("0.0001"),
-                    1 / 2.79, "CF Benchmarks", "XRP-USD", "2026-06-03"),
-    "gold": PerpSpec("KXGOLDPERP", "gold", "metals", Decimal("0.001"), Decimal("0.0001"),
-                     1 / 15.26, "Pyth Metal.Index.GOLD/USD", "GC=F", "2026-09-11"),
-    "silver": PerpSpec("KXSILVERPERP", "silver", "metals", Decimal("0.1"), Decimal("0.0001"),
-                       1 / 7.79, "Pyth Metal.Index.SILVER/USD", "SI=F", "2026-09-11"),
-}
+    @property
+    def proxy_units_per_contract(self) -> float:
+        """Units of the PROXY asset in one contract.
 
-# Listed but not in the research universe (thin books, short histories, or
-# both). Leverage estimate at $1k notional, 2026-09-14, for the record.
-OTHER_LISTED_LEVERAGE = {
-    "KXDOGEPERP": 2.74, "KXHYPEPERP": 2.24, "KXLINKPERP": 3.56, "KXLTCPERP": 3.82,
-    "KXBCHPERP": 2.92, "KXZECPERP": 2.47, "KXNEARPERP": 3.08, "KXSUIPERP": 2.50,
-    "KXADAPERP": 3.05, "KXBNBPERP": 4.73, "KXAAVEPERP": 3.24, "KXVVVPERP": 1.75,
-    "KXWLDPERP": 1.69, "KXKSHIBPERP": 1.99,
-    # inactive on 2026-09-14
+        ``contract_size`` counts the contract's own underlying, which for every
+        market but one is the coin the proxy quotes. KXKSHIBPERP's underlying is
+        kSHIB, a thousand SHIB, and the venue says so in ``underlying_multiplier``
+        (1000 there, 1 everywhere else), so one contract is 1000 × 1000 =
+        1,000,000 SHIB. Verified against the venue's own marks on 2026-09-15:
+        0.0001 × 1 × $78,211 = $7.82 for BTC against a quote of 7.794, and
+        1000 × 1000 × $0.00000521 = $5.21 for kSHIB against a quote of 5.2117.
+        Multiplying by ``contract_size`` alone prices a kSHIB contract at half a
+        cent and makes it look infinitely divisible to a small account.
+        """
+        return float(self.contract_size) * float(self.underlying_multiplier)
+
+    def notional_per_contract(self, proxy_price: float) -> float:
+        """USD notional of ONE contract at a price quoted in ``proxy`` units."""
+        return self.proxy_units_per_contract * proxy_price
+
+
+# Leverage estimate at $1k notional, leverage_estimates["1000"] from
+# GET /margin/markets (2026-09-14 for the original six, re-read 2026-09-15 for
+# all 23 — unchanged). maint_rate = 1 / this, initial = 1.3 × maint; the rule
+# reproduces the six original specs to four decimals. Leverage falls with
+# notional (BTC 6.05x at $1k → 5.89x at $1M) and a small account sits on the
+# $1k row. Live code re-reads the estimate every tick. Each spec below repeats
+# the number as 1/x so the spec and this record can be checked against each
+# other (tests/test_perps_specs_broad.py does exactly that).
+LEVERAGE_AT_1K: dict[str, float] = {
+    "KXBTCPERP": 6.05, "KXETHPERP": 4.66, "KXXRPPERP": 2.79, "KXSILVERPERP": 7.79,
+    "KXGOLDPERP": 15.26, "KXSOLPERP": 3.02, "KXZECPERP": 2.47, "KXNEARPERP": 3.08,
+    "KXHYPEPERP": 2.24, "KXVVVPERP": 1.75, "KXADAPERP": 3.05, "KXSUIPERP": 2.50,
+    "KXBCHPERP": 2.92, "KXLTCPERP": 3.82, "KXDOGEPERP": 2.74, "KXBNBPERP": 4.73,
+    "KXLINKPERP": 3.56, "KXWLDPERP": 1.69, "KXKSHIBPERP": 1.99, "KXAAVEPERP": 3.24,
     "KXDOTPERP": 3.43, "KXHBARPERP": 2.51, "KXXLMPERP": 2.49,
 }
 
+# Earliest daily bar of each price proxy, probed 2026-09-15 (Coinbase spot for
+# crypto, Yahoo futures for metals). This is what decides BREADTH_UNIVERSE
+# below. Note bnb (2025-10-22) and hype (2026-02-05) begin AFTER the sealed
+# holdout starts on 2025-07-01: they have no research history at all, only
+# holdout history, and no DEV-window backtest can include them.
+PROXY_FIRST_BAR: dict[str, str] = {
+    "gold": "2000-08-30", "silver": "2000-08-30", "btc": "2015-07-20",
+    "eth": "2016-05-18", "ltc": "2016-08-17", "bch": "2017-12-20",
+    "xrp": "2019-02-26", "xlm": "2019-03-14", "link": "2019-06-27",
+    "zec": "2020-12-08", "aave": "2020-12-15", "ada": "2021-03-18",
+    "doge": "2021-06-03", "dot": "2021-06-16", "sol": "2021-06-17",
+    "kshib": "2021-09-09", "near": "2022-09-01", "hbar": "2022-10-13",
+    "sui": "2023-05-18", "vvv": "2025-01-28", "wld": "2025-04-30",
+    "bnb": "2025-10-22", "hype": "2026-02-05",
+}
+
+# All 23 listed perps. The first six rows are UNCHANGED in every number that
+# existed before (ticker, contract_size, tick, maint_rate, index, proxy,
+# live_since); only the measured half_spread is new, and for those four
+# researched assets it is below the flat modelling spread, so no cost changes.
+#
+# ``index``: BTC settles on CF Benchmarks BRTI and ETH/SOL/XRP on CF Benchmarks
+# per the help centre; metals on the Pyth metal indices. For the seventeen
+# tickers added on 2026-09-15 the API exposes only ``exchange_index`` (0 =
+# crypto, 1 = metals) and no provider name, so that is what the field records.
+# Do not upgrade those strings to a provider we have not verified.
+#
+# ``live_since`` is the first row of GET /margin/funding_rates/historical, read
+# 2026-09-15. dot, hbar and xlm returned ZERO funding rows ever — they are
+# listed and margin-able but have never funded, never traded, and quote nothing.
+#
+# kSHIB UNIT NOTE (the one place where the contract and the proxy disagree):
+# KXKSHIBPERP's title is "1K kSHIB" and it is the only market whose venue field
+# ``underlying_multiplier`` is not 1 — it is 1000. The contract's named
+# underlying is a kSHIB (= 1000 SHIB), so ``contract_size`` of 1000 counts
+# kSHIB, NOT the SHIB the proxy quotes: one contract is 1000 × 1000 =
+# 1,000,000 SHIB. notional_per_contract() therefore multiplies by
+# ``proxy_units_per_contract`` (1e6), not by contract_size: 1e6 × $0.00000521 =
+# $5.21, which is what the venue quoted on 2026-09-15 (bid 5.2026 / ask
+# 5.2101). Multiplying by contract_size alone gives half a cent and makes the
+# market look infinitely divisible to a small account. The trap to avoid is feeding this spec
+# a kSHIB-denominated price (a "KSHIB-USD" series does not exist anywhere) or
+# reading the venue's own per-contract mark as a per-coin price: either is a
+# 1000× error in notional, contracts and P&L. underlying_multiplier is carried
+# on the spec so that conversion is explicit rather than folklore.
+SPECS: dict[str, PerpSpec] = {
+    "btc": PerpSpec("KXBTCPERP", "btc", "crypto", Decimal("0.0001"), Decimal("0.0001"),
+                    1 / 6.05, "CF Benchmarks BRTI (1s)", "BTC-USD", "2026-06-03", 0.00002),
+    "eth": PerpSpec("KXETHPERP", "eth", "crypto", Decimal("0.001"), Decimal("0.0001"),
+                    1 / 4.66, "CF Benchmarks", "ETH-USD", "2026-06-03", 0.00004),
+    "sol": PerpSpec("KXSOLPERP", "sol", "crypto", Decimal("0.1"), Decimal("0.0001"),
+                    1 / 3.02, "CF Benchmarks", "SOL-USD", "2026-06-03", 0.00018),
+    "xrp": PerpSpec("KXXRPPERP", "xrp", "crypto", Decimal("1"), Decimal("0.0001"),
+                    1 / 2.79, "CF Benchmarks", "XRP-USD", "2026-06-03", 0.00018),
+    "gold": PerpSpec("KXGOLDPERP", "gold", "metals", Decimal("0.001"), Decimal("0.0001"),
+                     1 / 15.26, "Pyth Metal.Index.GOLD/USD", "GC=F", "2026-09-11", 0.00006),
+    "silver": PerpSpec("KXSILVERPERP", "silver", "metals", Decimal("0.1"), Decimal("0.0001"),
+                       1 / 7.79, "Pyth Metal.Index.SILVER/USD", "SI=F", "2026-09-11", 0.00015),
+    # --- added 2026-09-15: the rest of the listed board, by 24h notional volume
+    "zec": PerpSpec("KXZECPERP", "zec", "crypto", Decimal("0.01"), Decimal("0.0001"),
+                    1 / 2.47, "exchange_index 0", "ZEC-USD", "2026-06-24", 0.00076),
+    "near": PerpSpec("KXNEARPERP", "near", "crypto", Decimal("1"), Decimal("0.0001"),
+                     1 / 3.08, "exchange_index 0", "NEAR-USD", "2026-06-24", 0.00082),
+    "hype": PerpSpec("KXHYPEPERP", "hype", "crypto", Decimal("0.1"), Decimal("0.0001"),
+                     1 / 2.24, "exchange_index 0", "HYPE-USD", "2026-06-08", 0.00036),
+    "vvv": PerpSpec("KXVVVPERP", "vvv", "crypto", Decimal("0.1"), Decimal("0.0001"),
+                    1 / 1.75, "exchange_index 0", "VVV-USD", "2026-08-28", 0.00066),
+    "ada": PerpSpec("KXADAPERP", "ada", "crypto", Decimal("1"), Decimal("0.0001"),
+                    1 / 3.05, "exchange_index 0", "ADA-USD", "2026-08-31", 0.00048),
+    "sui": PerpSpec("KXSUIPERP", "sui", "crypto", Decimal("10"), Decimal("0.0001"),
+                    1 / 2.50, "exchange_index 0", "SUI-USD", "2026-06-09", 0.00067),
+    "bch": PerpSpec("KXBCHPERP", "bch", "crypto", Decimal("0.01"), Decimal("0.0001"),
+                    1 / 2.92, "exchange_index 0", "BCH-USD", "2026-06-09", 0.00038),
+    "ltc": PerpSpec("KXLTCPERP", "ltc", "crypto", Decimal("0.1"), Decimal("0.0001"),
+                    1 / 3.82, "exchange_index 0", "LTC-USD", "2026-06-09", 0.00026),
+    "doge": PerpSpec("KXDOGEPERP", "doge", "crypto", Decimal("100"), Decimal("0.0001"),
+                     1 / 2.74, "exchange_index 0", "DOGE-USD", "2026-06-09", 0.00035),
+    "bnb": PerpSpec("KXBNBPERP", "bnb", "crypto", Decimal("0.001"), Decimal("0.0001"),
+                    1 / 4.73, "exchange_index 0", "BNB-USD", "2026-08-31", 0.00049),
+    "link": PerpSpec("KXLINKPERP", "link", "crypto", Decimal("1"), Decimal("0.0001"),
+                     1 / 3.56, "exchange_index 0", "LINK-USD", "2026-06-09", 0.00097),
+    "wld": PerpSpec("KXWLDPERP", "wld", "crypto", Decimal("1"), Decimal("0.0001"),
+                    1 / 1.69, "exchange_index 0", "WLD-USD", "2026-08-29", 0.00091),
+    # contract_size is 1000 SHIB (= 1 kSHIB) and the proxy quotes SHIB — see the
+    # kSHIB UNIT NOTE above; underlying_multiplier 1000 is the venue's own field.
+    "kshib": PerpSpec("KXKSHIBPERP", "kshib", "crypto", Decimal("1000"), Decimal("0.0001"),
+                      1 / 1.99, "exchange_index 0", "SHIB-USD", "2026-06-09", 0.00063,
+                      Decimal("1000")),
+    "aave": PerpSpec("KXAAVEPERP", "aave", "crypto", Decimal("0.01"), Decimal("0.0001"),
+                     1 / 3.24, "exchange_index 0", "AAVE-USD", "2026-08-28", 0.00074),
+    # --- listed, margin-able, NOT tradable on 2026-09-15: status "inactive",
+    # zero open interest, zero 24h volume, no bid and no ask, no funding row
+    # ever. half_spread stays 0.0 because there is no spread to measure.
+    # quotes=False, because half_spread=0.0 means "not measured" and a sentinel
+    # for unknown must never resolve to "cheapest". Without the flag these three
+    # price at the flat 2.5 bps — the same as BTC and cheaper than LINK — and a
+    # book handed the full listed universe holds them happily.
+    "dot": PerpSpec("KXDOTPERP", "dot", "crypto", Decimal("10"), Decimal("0.0001"),
+                    1 / 3.43, "exchange_index 0", "DOT-USD", "", quotes=False),
+    "hbar": PerpSpec("KXHBARPERP", "hbar", "crypto", Decimal("100"), Decimal("0.0001"),
+                     1 / 2.51, "exchange_index 0", "HBAR-USD", "", quotes=False),
+    "xlm": PerpSpec("KXXLMPERP", "xlm", "crypto", Decimal("10"), Decimal("0.0001"),
+                    1 / 2.49, "exchange_index 0", "XLM-USD", "", quotes=False),
+}
+
+# Retained for the earlier write-ups, which quote it: the tickers that were
+# outside the research universe when the desk was built. Every one of them now
+# has a full spec above, so this is just the leverage record for those rows.
+OTHER_LISTED_LEVERAGE = {t: LEVERAGE_AT_1K[t] for t in (
+    "KXDOGEPERP", "KXHYPEPERP", "KXLINKPERP", "KXLTCPERP", "KXBCHPERP", "KXZECPERP",
+    "KXNEARPERP", "KXSUIPERP", "KXADAPERP", "KXBNBPERP", "KXAAVEPERP", "KXVVVPERP",
+    "KXWLDPERP", "KXKSHIBPERP",
+    # inactive on 2026-09-14 and still inactive on 2026-09-15
+    "KXDOTPERP", "KXHBARPERP", "KXXLMPERP")}
+
 TICKER_TO_ASSET = {s.ticker: a for a, s in SPECS.items()}
+
+# ------------------------------------------------------------------ universes
+# RESEARCH_UNIVERSE is FROZEN AT FOUR. Every published number on this desk —
+# the first tournament, the ten-family campaign, the one holdout opening — was
+# produced on btc/eth/gold/silver. Widening this tuple would silently make old
+# and new results incomparable. New work declares its own universe.
 RESEARCH_UNIVERSE = ("btc", "eth", "gold", "silver")
 EXTENDED_UNIVERSE = RESEARCH_UNIVERSE + ("sol", "xrp")
+
+# Everything Kalshi lists (23 markets, GET /margin/markets 2026-09-15).
+LISTED_UNIVERSE = tuple(SPECS)
+
+# TRADABLE_UNIVERSE — the 20 markets with a real two-sided quote on 2026-09-15,
+# ordered by 24h notional volume: btc and eth ($560M / $540M a day) down to
+# aave ($267k). Membership = LISTED minus dot, hbar and xlm, which are listed
+# and margin-able but had status "inactive", $0 open interest, $0 24h volume,
+# no bid, no ask and not one funding row in the venue's history. You cannot
+# enter or exit them, so nothing may size them, and the reason is liquidity,
+# not history: dot and xlm have years of Coinbase data.
+TRADABLE_UNIVERSE = (
+    "btc", "eth", "xrp", "silver", "gold", "sol", "zec", "near", "hype", "vvv",
+    "ada", "sui", "bch", "ltc", "doge", "bnb", "link", "wld", "kshib", "aave",
+)
+
+# BREADTH_UNIVERSE — the 14 tradable markets whose price proxy starts on or
+# before 2021-09-30, so a cross-sectional backtest beginning 2021-10 can rank
+# every one of them from its first day instead of growing its universe mid-run
+# (a survivorship-shaped trap). Members, with the proxy's first bar:
+#   gold 2000-08-30, silver 2000-08-30 (Yahoo GC=F / SI=F, decades of history),
+#   btc 2015-07-20, eth 2016-05-18, ltc 2016-08-17, bch 2017-12-20,
+#   xrp 2019-02-26, link 2019-06-27, zec 2020-12-08, aave 2020-12-15,
+#   ada 2021-03-18, doge 2021-06-03, sol 2021-06-17, kshib 2021-09-09.
+# Excluded though tradable: near (2022-09-01), sui (2023-05-18), vvv
+# (2025-01-28), wld (2025-04-30), bnb (2025-10-22), hype (2026-02-05). The last
+# two start AFTER the sealed holdout opens on 2025-07-01 and therefore have no
+# research history whatsoever. Twelve of the fourteen are crypto, which is what
+# makes a cross-sectional test meaningful for the first time: the old four were
+# two bets at 0.9 btc-eth correlation.
+BREADTH_UNIVERSE = (
+    "btc", "eth", "gold", "silver", "ltc", "bch", "xrp", "link", "zec", "aave",
+    "ada", "doge", "sol", "kshib",
+)
+BREADTH_PROXY_CUTOFF = "2021-09-30"
 
 
 # ------------------------------------------------------------ cost model
 @dataclass(frozen=True)
 class CostModel:
-    """Per-side cost as a fraction of notional: exchange fee + half-spread."""
+    """Per-side cost as a fraction of notional: exchange fee + half-spread.
+
+    ``half_spread`` here is the FLAT modelling assumption every published
+    result on this desk was produced with. ``side_cost(asset)`` refines it with
+    the per-market spread measured on 2026-09-15:
+
+        side_cost(asset) = fee_rate + max(half_spread, SPECS[asset].half_spread)
+
+    The max is what keeps the record comparable. btc, eth, gold and silver all
+    quote INSIDE the flat 2.5 bps (0.2 / 0.4 / 0.6 / 1.5 bps measured), so for
+    the four researched assets the taker and stress models return exactly the
+    per_side they always returned and every tournament and campaign number
+    still stands. The thin alts pay what they actually quote — link 9.7 bps,
+    near 8.2, zec 7.6, aave 7.4, sui 6.7, kshib 6.3 — which is the whole point:
+    a breadth strategy that trades the tail must be charged for the tail.
+
+    Three things stated rather than hidden:
+      * Nothing changes for existing callers. ``per_side`` is untouched and
+        backtest.py still uses it; a caller opts into per-asset costs by
+        passing an asset.
+      * An asset with no spec, or a spec whose half_spread is 0.0 because
+        nothing quotes (dot, hbar, xlm), falls back to the flat spread.
+      * MAKER_T0 sets half_spread to 0.0 by construction — resting at the touch
+        pays no spread — so the rule adds the measured spread to it for every
+        asset, btc included (5.0 bps → 5.2 bps). That is the rule as specified
+        and it only makes the maker bound less flattering; callers that want
+        the old maker number keep calling ``per_side``.
+    """
 
     name: str
     fee_rate: float
@@ -178,15 +392,38 @@ class CostModel:
 
     @property
     def per_side(self) -> float:
+        """Flat, asset-agnostic per-side cost. Unchanged, and the published
+        results depend on it — do not repoint this at side_cost()."""
         return self.fee_rate + self.half_spread
 
-    def round_trip(self) -> float:
-        return 2 * self.per_side
+    def side_cost(self, asset: str | None = None) -> float:
+        """Per-side cost for one asset; ``None`` reproduces ``per_side``.
+
+        A model whose flat half-spread is zero is a MAKER model: a resting order
+        crosses no spread by definition, on BTC or on the thinnest alt, so its
+        cost is the fee and nothing else. Composing it with a measured spread
+        would charge a patient order the price of an impatient one and, worse,
+        silently move a cost scenario that seven published family reports quote.
+        For a taker model the rule is max(flat, measured): the four researched
+        assets all quote inside the flat 2.5 bps and so pay exactly what they
+        always paid, while the thin alts pay their own spread.
+        """
+        if asset is None or self.half_spread == 0.0:
+            return self.per_side
+        spec = SPECS.get(asset)
+        spread = self.half_spread if spec is None else max(self.half_spread, spec.half_spread)
+        return self.fee_rate + spread
+
+    def round_trip(self, asset: str | None = None) -> float:
+        return 2 * self.side_cost(asset)
 
 
 # Observed top-of-book spreads 2026-09-14: BTC 5 bps, ETH 4 bps, gold 2 bps,
 # silver 3.5 bps, SOL 3 bps, XRP 4 bps. Half of that is 1–2.5 bps; the taker
-# model uses 2.5 bps on top of the tier-0 fee so it is not flattered.
+# model uses 2.5 bps on top of the tier-0 fee so it is not flattered. The
+# per-market half-spreads measured on 2026-09-15 live on PerpSpec.half_spread
+# and reach a backtest through side_cost(asset), which can only raise this
+# floor, never lower it.
 TAKER_T0 = CostModel("taker_t0", 0.0012, 0.00025)
 # Resting at the touch: no spread paid, 5 bps maker fee. Fill risk is NOT
 # modelled, so this is an upper bound on what patience can recover.
