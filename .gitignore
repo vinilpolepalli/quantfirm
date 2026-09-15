@@ -38,3 +38,4 @@ state/perps_loop.log
 state/perps_loop.pid
 research/kalshi_perps/tournament.log
 research/kalshi_perps/tournament.pid
+research/kalshi_perps/robust_*.log
