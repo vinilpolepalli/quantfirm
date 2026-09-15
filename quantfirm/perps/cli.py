@@ -23,6 +23,7 @@ import os
 import sys
 
 from . import data as D
+from . import specs as SPECS_MOD
 from .backtest import BacktestConfig, public, run_strategy, stress, walk_forward
 from .client import MarginClient, parse_market
 from .risk import PROFILES, kill_switch_tripped
@@ -39,9 +40,22 @@ def _out(obj) -> None:
     print(json.dumps(obj, indent=1, default=str))
 
 
+def _resolve_universe(spec):
+    """A comma list, or the name of a universe constant in specs (TRADABLE_UNIVERSE)."""
+    if not spec:
+        return None
+    named = getattr(SPECS_MOD, spec.upper(), None)
+    return tuple(named) if named else tuple(x for x in spec.split(",") if x)
+
+
 def _cfg(a) -> BacktestConfig:
+    # "auto" scales the band with the universe; a fixed 0.03 freezes any book
+    # of seven or more names, whose weight step is smaller than the band
+    band = a.band if a.band == "auto" else float(a.band)
+    n_assets = len(_resolve_universe(getattr(a, "universe", None)) or ())
     return BacktestConfig(cost=cost_by_name(a.cost), funding=a.funding,
-                          rebalance_every=a.every, rebalance_band=a.band)
+                          rebalance_every=a.every, rebalance_band=band,
+                          min_assets=1 if band == "auto" or n_assets > 4 else None)
 
 
 def _params(a) -> dict:
@@ -92,7 +106,7 @@ def cmd_update_data(a):
 def cmd_backtest(a):
     if a.split == "holdout" and not a.i_am_the_judge:
         sys.exit("holdout is sealed: use `holdout --i-am-the-judge`")
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     start, end = None, None
     if a.split == "dev":
         end = D.HOLDOUT_START
@@ -113,7 +127,7 @@ def cmd_backtest(a):
 
 
 def cmd_walkforward(a):
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     grid = json.loads(a.grid or "{}")
     for k, v in grid.items():
         grid[k] = [tuple(tuple(y) if isinstance(y, list) else y for y in x) if isinstance(x, list) else x for x in v]
@@ -129,18 +143,12 @@ def cmd_walkforward(a):
 
 def cmd_tournament(a):
     from .tournament import run_tournament, DEV_START, WARMUP_DAYS, N_FOLDS
-    from ..perps import specs as SP
-    def _universe(spec):
-        if spec is None:
-            return None
-        named = getattr(SP, spec.upper(), None)     # e.g. --universe BREADTH_UNIVERSE
-        return tuple(named) if named else tuple(spec.split(","))
-    out = run_tournament(universe=_universe(a.universe), cfg=_cfg(a),
+    out = run_tournament(universe=_resolve_universe(a.universe), cfg=_cfg(a),
                          dev_start=a.dev_start or DEV_START,
                          warmup_days=a.warmup or WARMUP_DAYS, n_folds=a.folds or N_FOLDS,
                          families=tuple(a.families.split(",")) if a.families else None,
                          tag=a.tag, version=a.version,
-                         reference_universe=_universe(a.reference_universe))
+                         reference_universe=_resolve_universe(a.reference_universe))
     _out({"ranked": out["ranked"], "pbo": out["pbo"],
           "reference": (out.get("reference") or {}).get("walk_forward", {}).get("oos_sharpe_concat"),
           "verdicts": {k: v["gates"] for k, v in out["verdicts"].items()}})
@@ -154,7 +162,7 @@ def cmd_holdout(a):
     marker = os.path.join(RESEARCH, f"holdout_{a.strategy}.json")
     if os.path.exists(marker) and not a.force:
         sys.exit(f"holdout already opened for {a.strategy}: {marker} (re-running is a new trial; --force to record it as one)")
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     cfg = _cfg(a)
     params = _params(a)
     r = run_strategy(panel, REGISTRY[a.strategy], params, cfg, start=D.HOLDOUT_START, end=None)
@@ -219,7 +227,7 @@ def _refuse_unless_live_armed(cfg: dict) -> None:
 def cmd_robust(a):
     """Adversarial checks on one configuration (dev only)."""
     from . import robust as RB
-    panel = D.load_panel(tuple(a.universe.split(",")))
+    panel = D.load_panel(_resolve_universe(a.universe))
     out = RB.full_report(panel, REGISTRY[a.strategy], _params(a), _cfg(a), start=a.start or "2018-01-01",
                          end=D.HOLDOUT_START, benchmark=a.benchmark, n_boot=a.n_boot, n_null=a.n_null)
     os.makedirs(RESEARCH, exist_ok=True)
@@ -269,7 +277,7 @@ def main(argv=None) -> None:
             sp.add_argument("--cost", default="taker_t0")
             sp.add_argument("--funding", default="kalshi", choices=["none", "kalshi", "proxy", "proxy_raw"])
             sp.add_argument("--every", type=int, default=7)
-            sp.add_argument("--band", type=float, default=0.03)
+            sp.add_argument("--band", default=0.03, help="float, or 'auto' to scale with the universe")
             sp.add_argument("--params", default="{}")
             sp.add_argument("--note", default="")
 
