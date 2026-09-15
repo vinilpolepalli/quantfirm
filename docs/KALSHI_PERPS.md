@@ -49,11 +49,14 @@ research and the tests say.
    Eighteen crypto names carry 2.51 effective independent bets against the
    four researched assets' 2.44, at a mean pairwise correlation of 0.589:
    fourteen extra coins buy seven hundredths of a bet. Eleven of seventeen
-   names lost money over 2021–25, so the passive wide book earns *less* per
-   unit of risk than the narrow one, 0.49 against 0.94. Ranking the
-   cross-section by trailing return produces no t-statistic above 0.52 at any
-   horizon, gross of costs, and adding a short side gives 0.86 at a 30-day
-   lookback and −0.03 at 90 days, which is noise across a parameter. §3c.
+   names lost money over 2021–25. Correctly sized, the passive wide book is
+   statistically indistinguishable from the narrow one — paired bootstrap
+   P(wide better) 0.30 from 2018 and 0.556 from 2021-10 — and earns a third
+   as much, 6.7% a year against 18.0%, because the alts' 26–59% maintenance
+   margin will not let them be held in size. Ranking the cross-section by
+   trailing return produces no t-statistic above 0.52 at any horizon, gross of
+   costs, and adding a short side gives 0.86 at a 30-day lookback and −0.03 at
+   90 days, which is noise across a parameter. §3c.
 5. **What does work is beta, sized by volatility, with a trend gate as
    drawdown insurance.** That is not alpha; it is a bet that BTC/ETH/gold/
    silver keep drifting up, made cheaply. Measured 2018–2025 with tier-0
@@ -244,7 +247,7 @@ was not spawned; the referee ran those robustness checks instead. That cut
 the campaign's breadth, not its verdict — the tournament, the deflated Sharpe
 and the overfitting test all ran over every registered configuration.
 
-## 3c. Breadth, and why twenty assets are worse than four
+## 3c. Breadth, and why twenty assets are the same bet as four
 
 Round 1's post-mortem blamed the universe: four assets at 0.9 correlation are
 two bets, not four, so nothing cross-sectional was testable and the
@@ -267,17 +270,35 @@ trade wearing different tickers.
 **The alts were a drag.** Over 2021-10 to 2025-07, eleven of seventeen names
 lost money. Gold returned 16.8% a year at a 1.09 Sharpe and XRP 101.6% at
 0.95; below them everything sits at 0.43 or worse, down to ADA at −36.6% a
-year and ZEC at −29.4%. An equal-risk book dilutes the two assets that worked
-with a dozen that did not, so the passive wide book earns less per unit of
-risk than the narrow one:
+year and ZEC at −29.4%.
 
-| universe | Sharpe | CAGR | max DD |
-|---|---:|---:|---:|
-| 4 researched (2018→) | **0.94** | 15.5% | −21.2% |
-| 14 breadth (2018→) | 0.60 | 9.0% | −25.8% |
-| 20 tradable (2018→) | 0.49 | 7.7% | −25.8% |
+**Correctly sized, the wide book is indistinguishable, and earns a third as
+much.** An earlier version of this section reported the wide book at Sharpe
+0.49 and called the gap economic; those runs used the narrow sizing path,
+whose 5% weight step rounds a twenty-asset book's weights to zero. With the
+wide sizing path the numbers are:
 
-Sharpe is scale-free, so that is not a sizing artefact.
+| window | universe | Sharpe | CAGR | max DD | excess vol |
+|---|---|---:|---:|---:|---:|
+| 2018-01 → | 4 researched | 0.940 | 15.45% | −21.15% | 12.68% |
+| | 20 tradable | 0.835 | 9.59% | −12.40% | 7.41% |
+| 2021-10 → | 4 researched | 1.161 | 18.04% | −15.55% | 12.12% |
+| | 20 tradable | 1.188 | 6.70% | −2.42% | 2.76% |
+
+A paired block bootstrap puts P(wide beats narrow) at 0.300 on the long window
+and 0.556 on the short one: the same bet, not a better one. The return gap is
+the story. The wide book realises 2.76% of volatility against a 12% target,
+because alt maintenance margin runs from 26% on LTC to 59% on WLD against
+gold's 6.6%, and the liquidation-distance rule caps each name by its own
+maintenance rate. The alts cannot be held in size on this venue at any
+sensible risk target, so most of the wide book sits in collateral at 3.25%.
+
+An independent analysis adds the finding that decides it: in a vol-matched
+replica the wide book's whole advantage is a rebalancing return — a
+daily-rebalanced equal-weight alt basket returned +26.6% while nine of eleven
+alts lost money and the average buy-and-hold was −12.7% — and substituting one
+dead-alt path for one of the eleven drops it below the narrow benchmark. That
+is precisely the quantity survivorship manufactures.
 
 **Nor is the cross-section worth trading.** Ranking every available name by
 trailing return and holding the top quartile against the bottom, gross of all

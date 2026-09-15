@@ -47,9 +47,15 @@ Every published four-asset number reproduces exactly across both fixes:
 **Breadth is an illusion on this venue, and the round was closed without
 registering a single family.** Eighteen crypto names carry 2.51 effective
 independent bets against the four researched assets' 2.44, at a mean pairwise
-correlation of 0.589. Eleven of seventeen names lost money over 2021-10 to
-2025-07, so the passive wide book earns less per unit of risk than the narrow
-one: Sharpe 0.49 over twenty assets against 0.94 over four. Cross-sectional
+correlation of 0.589; by the definition that maps to a long-only book's
+Sharpe, both books score 2.02 — a multiplier of exactly one. Eleven of
+seventeen names lost money over 2021-10 to 2025-07. Correctly sized, the
+passive wide book is statistically indistinguishable from the narrow one — a
+paired block bootstrap puts P(wide better) at 0.300 from 2018 and 0.556 from
+2021-10 — and earns a third as much, 6.7% a year against 18.0%, because alt
+maintenance margin of 26% to 59% will not let those names be held in size at
+any sensible risk target. What advantage the wide book appears to have is a
+rebalancing return that survivorship manufactures. Cross-sectional
 momentum produces no t-statistic above 0.52 at any formation or holding
 horizon, gross of costs. Time-series trend with a short side — the one thing
 four assets could never test — scores 0.86 at a 30-day lookback and −0.03 at

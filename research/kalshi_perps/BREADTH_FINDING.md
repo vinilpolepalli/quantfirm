@@ -1,31 +1,47 @@
 # Breadth is an illusion on this venue
 
 Referee measurement, 2026-09-15, after extending the desk to all 23 listed
-Kalshi perps. Window 2021-10-01 → 2025-07-01 (dev only; the holdout is
-sealed), daily log returns on the Coinbase and Yahoo proxies, availability
-judged on native bars so a delisted or not-yet-listed name contributes
-nothing.
+Kalshi perps. Dev window only; the holdout is sealed. Daily bars on the
+Coinbase and Yahoo proxies, availability judged on native bars so a delisted
+or not-yet-listed name contributes nothing.
 
-Round 1's diagnosis was that four assets at 0.9 correlation are two bets, not
-four, and that nothing cross-sectional was testable. That diagnosis was half
-right. The universe is now twenty tradable perps, and the measurement says
-the missing breadth was never there.
+> **Correction, same day.** The first version of this note reported the wide
+> passive book at Sharpe 0.49 against the narrow book's 0.94 and called the
+> gap economic. It was not: those runs called `vol_target` with its default
+> 5% weight step, which is the *narrow* sizing path. Twenty equal-risk weights
+> are about 0.007 of equity each, so the step rounded almost every alt to
+> zero and measured a metals book wearing a wide book's name. `strategies.py`
+> ships `BREADTH_SIZING` (pairwise covariance, 60-of-120 minimum, a step that
+> scales with the universe) for exactly this, and every number below uses it.
+> The conclusion survives the correction. The reason changed, and one claim —
+> that the wide book is much *worse* — did not survive and is withdrawn.
 
-## 1. Twenty names buy 0.07 of an extra bet
+## 1. Twenty names buy almost no extra bets
 
 | universe | effective independent bets |
 |---|---:|
 | the four researched assets (btc, eth, gold, silver) | 2.44 |
 | all 18 crypto names with usable history | 2.51 |
 
-Effective bets is the inverse Herfindahl of the correlation matrix's
+Effective bets here is the inverse Herfindahl of the correlation matrix's
 normalised eigenvalues. Mean pairwise correlation among the crypto names is
 0.589, median 0.592. Fourteen additional coins add seven hundredths of one
 independent bet, because they are all the same trade.
 
-## 2. The alts were a drag, not a diversifier
+An independent analyst working the same question used the other standard
+definition, the squared diversification ratio 1/(u'Cu), which is the variant
+that maps to a long-only book's Sharpe. It gives **2.02 for the four-asset
+book and 2.02 for the fourteen-asset book** — a Sharpe multiplier of exactly
+1.000 — and reports the mechanism precisely: equal-risk weighting collapses
+the metals' share of book variance from 48.7% to 6.0%, and that loss cancels
+the gain from dropping intra-crypto correlation from 0.83 to 0.59. A
+crypto-only twelve-name book scores 1.60, worse than the four-asset book,
+because dropping the metals destroys the only uncorrelated bloc the venue
+offers: crypto against gold correlates +0.044, against silver +0.098.
 
-Annualised, 2021-10 → 2025-07, on each name's own available history:
+## 2. The alts lost money
+
+Annualised, 2021-10 → 2025-07, each name on its own available history:
 
 | asset | ann. return | ann. vol | Sharpe | total |
 |---|---:|---:|---:|---:|
@@ -47,72 +63,59 @@ Annualised, 2021-10 → 2025-07, on each name's own available history:
 | ada | −36.6% | 88.1% | −0.42 | −74.6% |
 | vvv | −270.8% | 191.3% | −1.42 | −67.9% |
 
-Eleven of seventeen names lost money over the window. An equal-risk book
-dilutes the two assets that worked, gold and BTC, with a dozen that did not.
+Eleven of seventeen lost money. Gold and XRP are the only Sharpes above 0.43.
 
-## 3. So the passive wide book is worse, and by a lot
+## 3. Correctly sized, the wide book is indistinguishable — and earns a third as much
 
-`vol_target_hold` at a 12% volatility target, tier-0 taker costs with each
-asset's own measured half-spread, weekly check, 3% band:
+`vol_target_hold` at a 12% target, tier-0 taker costs with each asset's own
+measured half-spread, weekly check, 3% band, wide universes sized with
+`BREADTH_SIZING`. Every figure is what `backtest.run` printed.
 
-| window | universe | Sharpe | CAGR | max DD | turnover |
-|---|---|---:|---:|---:|---:|
-| 2018-01 → 2025-07 | 4 researched | **0.94** | 15.5% | −21.2% | 1.68 |
-| 2018-01 → 2025-07 | 14 breadth | 0.60 | 9.0% | −25.8% | 1.62 |
-| 2018-01 → 2025-07 | 20 tradable | 0.49 | 7.7% | −25.8% | 1.52 |
-| 2021-10 → 2025-07 | 4 researched | **1.16** | 18.0% | −15.6% | 1.84 |
-| 2021-10 → 2025-07 | 14 breadth | 0.74 | 6.8% | −3.8% | 1.07 |
-| 2021-10 → 2025-07 | 20 tradable | 0.76 | 5.8% | −2.5% | 0.80 |
+| window | universe | Sharpe | CAGR | max DD | excess vol | turnover |
+|---|---|---:|---:|---:|---:|---:|
+| 2018-01 → 2025-07 | 4 researched | 0.940 | 15.45% | −21.15% | 12.68% | 1.68 |
+| | 14 breadth | 0.746 | 7.79% | −9.04% | 5.94% | 0.57 |
+| | 20 tradable | 0.835 | 9.59% | −12.40% | 7.41% | 0.55 |
+| 2021-10 → 2025-07 | 4 researched | 1.161 | 18.04% | −15.55% | 12.12% | 1.84 |
+| | 14 breadth | 1.124 | 7.53% | −2.39% | 3.63% | 0.23 |
+| | 20 tradable | 1.188 | 6.70% | −2.42% | 2.76% | 0.16 |
 
-Sharpe is scale-free, so this is not a sizing artefact: the wide book earns a
-worse return per unit of risk. Note also how small the wide book becomes —
-turnover 0.8 and a 2.5% drawdown — because the alts' 80–110% volatilities and
-their 28–59% maintenance margin rates cap their weights hard. Most of the
-wide book is collateral earning 3.25%.
+Paired circular block bootstrap of the Sharpe difference, 2000 resamples, on
+the backtester's own excess-return series:
 
-## 4. What this kills, and what it leaves
+| window | comparison | difference | 90% band | P(wide > narrow) | corr |
+|---|---|---:|---|---:|---:|
+| 2018-01 → | 20 tradable vs 4 | −0.106 | [−0.475, +0.254] | 0.300 | 0.834 |
+| | 14 breadth vs 4 | −0.195 | [−0.483, +0.066] | 0.105 | 0.893 |
+| 2021-10 → | 20 tradable vs 4 | +0.026 | [−0.377, +0.421] | 0.556 | 0.877 |
+| | 14 breadth vs 4 | −0.038 | [−0.447, +0.365] | 0.449 | 0.880 |
 
-**Killed by measurement, not by assertion:**
+**The wide book is not better and not much worse. It is the same bet, and it
+cannot carry its risk budget.** Look at the excess volatility column: the wide
+book realises 2.76% against a 12% target while the narrow one realises 12.12%.
+That is not a bug in the sizing, it is the venue. Alt maintenance margin runs
+from 26% (LTC) to 59% (WLD) against gold's 6.6% and BTC's 16.5%, and the
+liquidation-distance rule caps each name by its own maintenance rate, so the
+alts simply cannot be held in size. A book that cannot reach its risk target
+earns 6.7% a year where the narrow book earns 18.0%, and most of its capital
+sits in collateral at 3.25%.
 
-* Diversified beta. Twenty names are 2.5 bets. There is no diversification
-  premium to collect here.
-* Any long-only cross-sectional tilt. Tilting toward alts tilts toward assets
-  that lost 20–40% a year in this sample.
-* The hypothesis this round was built on — that round 1 failed for want of
-  breadth. It failed because the desk's benchmark is genuinely hard to beat,
-  and breadth does not help.
+The independent analyst adds the finding that decides it. In their
+vol-matched replica the wide book's entire advantage is a *rebalancing
+return*: a daily-rebalanced equal-weight alt basket returned +26.6% while
+nine of eleven alts lost money and the average buy-and-hold was −12.7%. That
+quantity is exactly what survivorship manufactures, and substituting a single
+dead-alt path for one of the eleven drops the replica below the narrow
+benchmark.
 
-**Left standing, and worth exactly one careful test:** a *long/short*
-cross-sectional book. The dispersion is enormous, from +102% a year to −37%,
-and the losers were persistently weak rather than randomly weak. Two things
-make this specifically interesting on Kalshi rather than offshore:
+## 4. The cross-section carries nothing either
 
-* Kalshi's funding deadband zeroes almost every interval, so a short position
-  costs nothing to carry and the collateral still earns 3.25%. Offshore, a
-  short in a contango market receives funding but pays it in backwardation;
-  here the carry is simply absent in both directions.
-* Survivorship runs the *helpful* way for a short book. These twenty names are
-  the ones Kalshi lists today; the alts that died are not in the sample. A
-  short-biased backtest on survivors therefore understates what the short side
-  would have earned, which is the opposite of the usual bias and makes a
-  negative result trustworthy.
-
-Against it: the window is one regime, the post-2021 alt bear market, and 3.7
-years supports few honest folds. A long/short book fitted here is fitted to
-that regime, and the referee should weight it accordingly.
-
-## 5. The surviving idea does not survive a screen either
-
-Before spending a campaign on the long/short book — and before adding a dozen
-configurations to a registry that already raises everyone's deflated-Sharpe
-bar — the referee screened it directly. These screens are **exploratory**:
-they are raw return arithmetic, they touch no strategy registry and no trial
-registry, and nothing here is a result that could be promoted. They exist to
-decide where registered trials are worth spending.
+These screens are **exploratory**: raw return arithmetic, no strategy
+registry, no trial registry, nothing promotable. They exist to decide where
+registered trials are worth spending.
 
 **Cross-sectional momentum, gross of all costs.** Rank every available name by
-its trailing return, hold the top quartile against the bottom quartile,
-rebalance on the stated cycle, 2021-10 → 2025-07:
+trailing return, hold the top quartile against the bottom, 2021-10 → 2025-07:
 
 | formation | hold | rebalances | long-short, annualised | t | hit rate |
 |---:|---:|---:|---:|---:|---:|
@@ -125,14 +128,13 @@ rebalance on the stated cycle, 2021-10 → 2025-07:
 | 365d | 7d | 143 | −23.9% | −0.71 | 45% |
 | 365d | 30d | 33 | −28.7% | −0.90 | 52% |
 
-No t-statistic reaches 1. The sign flips with the formation horizon, hit rates
-sit at the coin flip, and this is *before* the 30–43 bps round trip a
-quartile book pays on the thin names. Cross-sectional momentum is not there.
+No t-statistic reaches 1, the sign flips with the formation horizon, hit rates
+sit at the coin flip, and this is before the 29–43 bps round trip a quartile
+book pays on the thin names.
 
 **Time-series trend with a short side**, the one thing four assets could never
-test, because in a universe of btc, eth, gold and silver there was nothing
-worth being short of. Equal-risk by trailing volatility, book scaled to 12%,
-gross of costs:
+test because there was nothing worth being short of. Equal-risk by trailing
+volatility, book scaled to 12%, gross of costs:
 
 | universe | lookback | long/short | short only | long only |
 |---|---:|---:|---:|---:|
@@ -146,23 +148,32 @@ gross of costs:
 | | 90d | −0.04 | −0.70 | 0.55 |
 | | 365d | 0.36 | −0.50 | 0.74 |
 
-Read the rows across, not down. A configuration that scores 0.86 at a 30-day
-lookback and −0.03 at 90 days has told you about noise, not about trend. The
-short side is negative at every long lookback in both universes: the alts fell,
-but they fell through violent rallies that whipsaw anything systematic. And
-every one of these Sharpes is **gross**, against a benchmark whose 0.94 to 1.16
-is **net**.
+Read across, not down. A configuration scoring 0.86 at 30 days and −0.03 at
+90 has told you about noise. The short side is negative at every long lookback
+in both universes: the alts fell, but through violent rallies that whipsaw
+anything systematic. All of these Sharpes are gross, against a benchmark whose
+0.94 is net.
 
-## 6. Verdict on round 2
+## 5. Verdict
 
-The premise was that round 1 failed for want of breadth. It is false in all
-four ways it could be tested: the wide universe adds 0.07 of an independent
-bet, its passive book is worse than the narrow one, its cross-section carries
-no momentum, and its short side does not pay. No wide-universe family was
-registered, because registering ten configurations that a free screen already
-shows to be empty would raise the deflated-Sharpe bar for every future idea
-and buy nothing.
+The premise of this round was that round 1 failed for want of breadth. It is
+false, in every way it can be tested:
 
-What that leaves is what round 1 left: vol-targeted long beta on the four
-liquid assets, behind a trend gate that halves the drawdown. That is a
-posture, not an edge, and it is the honest recommendation.
+* twenty names are two and a half bets, and by the definition that maps to a
+  long-only book's Sharpe, exactly as many as four names;
+* correctly sized, the wide passive book is statistically indistinguishable
+  from the narrow one and earns a third as much, because the venue's own
+  maintenance margin will not let the alts be held in size;
+* what advantage the wide book appears to have is a rebalancing return that
+  survivorship manufactures;
+* the cross-section carries no momentum, and adding a short side does not
+  change that.
+
+No wide-universe family was registered. Ten configurations that a free screen
+already shows to be empty would raise the deflated-Sharpe bar for every future
+idea and buy nothing.
+
+The practical consequence for the backlog: **more coins are not the missing
+diversifier.** Gold and silver are the only genuinely uncorrelated bloc the
+venue offers, and the thing worth waiting for is a perp in an asset class that
+is not crypto.
