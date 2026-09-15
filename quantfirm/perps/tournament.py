@@ -88,14 +88,30 @@ def n_registered_trials(trials: dict | None = None) -> int:
 
 
 def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestConfig(),
-                   out_dir: str = OUT_DIR, log=print) -> dict:
+                   out_dir: str = OUT_DIR, log=print, dev_start: str = DEV_START,
+                   warmup_days: int = WARMUP_DAYS, n_folds: int = N_FOLDS,
+                   families: tuple[str, ...] | None = None, tag: str | None = None,
+                   version: str | None = None,
+                   reference_universe: tuple[str, ...] | None = None) -> dict:
+    """Score every declared family against the benchmark on ``universe``.
+
+    ``families`` restricts the run to a subset (a second campaign on a wider
+    universe should not silently re-score families written for the first one).
+    ``reference_universe`` adds a second yardstick: the benchmark run on
+    another universe over the same folds, which is how a wide book is
+    compared against the narrow one the desk would otherwise hold.
+    ``tag`` suffixes the output files so one run never overwrites another.
+    """
     from .registry import count_unique as registry_count, record as registry_record
+    version = version or TOURNAMENT_VERSION
     panel = load_panel(universe)
     trials = collect_trials()
+    if families is not None:
+        trials = {k: v for k, v in trials.items() if k in families}
     n_declared = n_registered_trials(trials)
     # N for the deflated Sharpe = everything ever tried, not just this run's grid
     n_trials = max(n_declared, registry_count() + n_declared)
-    log(f"tournament {TOURNAMENT_VERSION}: universe={list(universe)} declared={n_declared} "
+    log(f"tournament {version}: universe={list(universe)} declared={n_declared} "
         f"registry_total={n_trials} cost={cfg.cost.name} funding={cfg.funding}")
     results: dict[str, dict] = {}
     oos_streams: dict[str, pd.Series] = {}
@@ -108,8 +124,8 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
         matrix[name] = r["_series"]["excess"]
         log(f"  control {name:<18} SR {r['net_sharpe']} CAGR {r['cagr']} MDD {r['max_drawdown']}")
     # benchmark OOS stream = its fixed-param fold report (nothing to select)
-    bench_wf = walk_forward(panel, REGISTRY[BENCHMARK], {}, cfg, grid=None, n_folds=N_FOLDS,
-                            warmup_days=WARMUP_DAYS, dev_start=DEV_START)
+    bench_wf = walk_forward(panel, REGISTRY[BENCHMARK], {}, cfg, grid=None, n_folds=n_folds,
+                            warmup_days=warmup_days, dev_start=dev_start)
     results[BENCHMARK]["walk_forward"] = {k: v for k, v in bench_wf.items() if not k.startswith("_")}
     oos_streams[BENCHMARK] = bench_wf["_oos_excess"]
 
@@ -119,8 +135,8 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
             log(f"  {fam}: not in registry, skipped")
             continue
         fn = REGISTRY[fam]
-        wf = walk_forward(panel, fn, spec["params"], cfg, grid=spec["grid"] or None, n_folds=N_FOLDS,
-                          warmup_days=WARMUP_DAYS, dev_start=DEV_START)
+        wf = walk_forward(panel, fn, spec["params"], cfg, grid=spec["grid"] or None, n_folds=n_folds,
+                          warmup_days=warmup_days, dev_start=dev_start)
         oos_streams[fam] = wf["_oos_excess"]
         st = {}
         for gp in _grid_points(spec["grid"]):
@@ -144,10 +160,23 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
 
     # 3. CSCV across every registered configuration + the benchmark
     M = pd.DataFrame(matrix).dropna(how="all")
-    M = M.loc[M.index >= pd.Timestamp("2018-01-01", tz="UTC")]
+    cscv_from = max(pd.Timestamp("2018-01-01", tz="UTC"),
+                    pd.Timestamp(dev_start, tz="UTC") + pd.Timedelta(days=warmup_days))
+    M = M.loc[M.index >= cscv_from]
     cand_cols = [c for c in M.columns if c.split(":")[0] in trials] + [BENCHMARK]
     pbo = cscv_pbo(M[cand_cols], n_blocks=8)
     trial_sr_std = float((M[cand_cols].mean() / M[cand_cols].std(ddof=1)).std(ddof=1))
+
+    # 3b. the narrow book the desk would otherwise hold, over the same folds
+    reference = None
+    if reference_universe and tuple(reference_universe) != tuple(universe):
+        ref_panel = load_panel(tuple(reference_universe))
+        ref_wf = walk_forward(ref_panel, REGISTRY[BENCHMARK], {}, cfg, grid=None, n_folds=n_folds,
+                              warmup_days=warmup_days, dev_start=dev_start)
+        reference = {"universe": list(reference_universe), "strategy": BENCHMARK,
+                     "walk_forward": {k: v for k, v in ref_wf.items() if not k.startswith("_")}}
+        log(f"  reference {BENCHMARK} on {list(reference_universe)}: "
+            f"OOS SR {ref_wf['oos_sharpe_concat']}")
 
     # 4. rank candidates on OOS Sharpe; DSR of the best against N
     bench_sr = bench_wf["oos_sharpe_concat"]
@@ -166,13 +195,16 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
             "dsr_ge_0.95": d["dsr"] >= 0.95,
             "pbo_le_0.10": (pbo.get("pbo") is not None and pbo["pbo"] <= 0.10),
         }
+        if reference is not None:
+            # a wide book must also beat the narrow one the desk would run instead
+            gates["beats_reference_oos"] = sr > reference["walk_forward"]["oos_sharpe_concat"]
         verdicts[fam] = {"oos_sharpe": sr, "dsr": d, "gates": gates,
                          "score": sr if all(gates.values()) else 0.0}
     out = {
-        "version": TOURNAMENT_VERSION,
+        "version": version,
         "ran_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "universe": list(universe),
-        "dev_window": [DEV_START, HOLDOUT_START], "warmup_days": WARMUP_DAYS, "n_folds": N_FOLDS,
+        "dev_window": [dev_start, HOLDOUT_START], "warmup_days": warmup_days, "n_folds": n_folds,
         "cost_model": cfg.cost.name, "funding_mode": cfg.funding,
         "rebalance": {"every_days": cfg.rebalance_every, "band": cfg.rebalance_band},
         "n_registered_trials": n_trials,
@@ -180,17 +212,19 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
         "trials": {k: {"params": v["params"], "grid": {kk: [str(x) for x in vv] for kk, vv in v["grid"].items()}}
                    for k, v in trials.items()},
         "benchmark": BENCHMARK, "benchmark_oos_sharpe": bench_sr,
+        "reference": reference,
         "pbo": pbo, "trial_sr_std_daily": round(trial_sr_std, 5),
         "ranked": ranked, "verdicts": verdicts,
         "results": results,
         "holdout": "SEALED — not read by this module",
     }
     os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, "tournament.json"), "w") as f:
+    stem = "tournament" + (f"_{tag}" if tag else "")
+    with open(os.path.join(out_dir, f"{stem}.json"), "w") as f:
         json.dump(out, f, indent=1, default=_json_default)
-    with open(os.path.join(out_dir, "tournament.md"), "w") as f:
+    with open(os.path.join(out_dir, f"{stem}.md"), "w") as f:
         f.write(render_md(out))
-    log(f"wrote {out_dir}/tournament.json and tournament.md")
+    log(f"wrote {out_dir}/{stem}.json and {stem}.md")
     return out
 
 
@@ -212,6 +246,12 @@ def render_md(out: dict) -> str:
              f"{out['n_folds']} folds). Cost `{out['cost_model']}`, funding `{out['funding_mode']}`, "
              f"rebalance every {out['rebalance']['every_days']}d with a {out['rebalance']['band']:.0%} band. "
              f"**{out['n_registered_trials']} registered trials.** Holdout: {out['holdout']}.\n")
+    if out.get("reference"):
+        rw = out["reference"]["walk_forward"]
+        L.append(f"Second yardstick: `{out['reference']['strategy']}` on {out['reference']['universe']} over the "
+                 f"same folds scores OOS Sharpe **{rw['oos_sharpe_concat']}** "
+                 f"(CAGR {rw['oos_cagr']:.1%}, max DD {rw['oos_max_drawdown']:.1%}). A wide book has to beat "
+                 f"the narrow one the desk would otherwise hold, not just its own passive version.\n")
     L.append("## Walk-forward (parameters selected in-sample per fold, scored out of sample)\n")
     L.append("| family | OOS Sharpe | OOS CAGR | OOS max DD | folds + | WFE | vs bench | stress SR | DSR | gates |")
     L.append("|---|---:|---:|---:|---:|---:|---:|---:|---:|---|")

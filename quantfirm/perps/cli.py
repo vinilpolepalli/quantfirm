@@ -128,9 +128,22 @@ def cmd_walkforward(a):
 
 
 def cmd_tournament(a):
-    from .tournament import run_tournament
-    out = run_tournament(universe=tuple(a.universe.split(",")), cfg=_cfg(a))
-    _out({"ranked": out["ranked"], "pbo": out["pbo"], "verdicts": {k: v["gates"] for k, v in out["verdicts"].items()}})
+    from .tournament import run_tournament, DEV_START, WARMUP_DAYS, N_FOLDS
+    from ..perps import specs as SP
+    def _universe(spec):
+        if spec is None:
+            return None
+        named = getattr(SP, spec.upper(), None)     # e.g. --universe BREADTH_UNIVERSE
+        return tuple(named) if named else tuple(spec.split(","))
+    out = run_tournament(universe=_universe(a.universe), cfg=_cfg(a),
+                         dev_start=a.dev_start or DEV_START,
+                         warmup_days=a.warmup or WARMUP_DAYS, n_folds=a.folds or N_FOLDS,
+                         families=tuple(a.families.split(",")) if a.families else None,
+                         tag=a.tag, version=a.version,
+                         reference_universe=_universe(a.reference_universe))
+    _out({"ranked": out["ranked"], "pbo": out["pbo"],
+          "reference": (out.get("reference") or {}).get("walk_forward", {}).get("oos_sharpe_concat"),
+          "verdicts": {k: v["gates"] for k, v in out["verdicts"].items()}})
 
 
 def cmd_holdout(a):
@@ -273,7 +286,14 @@ def main(argv=None) -> None:
     sp.add_argument("--strategy", required=True); sp.add_argument("--grid", default="{}")
     sp.add_argument("--folds", type=int, default=6); sp.add_argument("--warmup", type=int, default=550)
     sp.add_argument("--start", default=None); sp.set_defaults(fn=cmd_walkforward)
-    sp = sub.add_parser("tournament"); common(sp); sp.set_defaults(fn=cmd_tournament)
+    sp = sub.add_parser("tournament"); common(sp)
+    sp.add_argument("--dev-start"); sp.add_argument("--warmup", type=int); sp.add_argument("--folds", type=int)
+    sp.add_argument("--families", help="comma-separated subset of declared families")
+    sp.add_argument("--tag", help="suffix for the output files, so one run never overwrites another")
+    sp.add_argument("--version", help="tournament version string recorded in the output")
+    sp.add_argument("--reference-universe",
+                    help="a second yardstick: the benchmark on this universe over the same folds")
+    sp.set_defaults(fn=cmd_tournament)
     sp = sub.add_parser("holdout"); common(sp)
     sp.add_argument("--strategy", required=True); sp.add_argument("--i-am-the-judge", action="store_true")
     sp.add_argument("--force", action="store_true"); sp.set_defaults(fn=cmd_holdout)
