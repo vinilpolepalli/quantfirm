@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T04:17:22Z",
+ "ts": "2026-09-15T04:20:24Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,10 +15,10 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 324.12499999999955,
+  "shadow": 299.72499999999957,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 348.9504049999965
+  "live": 324.57220499999653
  },
  "realized": {
   "shadow": 74.12500000000006,
@@ -26,17 +26,66 @@
   "maker": 1.6499999999999968,
   "live": 99.61970499999963
  },
- "n_open": 0,
- "open": [],
+ "n_open": 6,
+ "open": [
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP150030-30",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP150030-30",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "silver",
+   "side": "no",
+   "count": 11,
+   "ticker": "KXSILVER15M-26SEP150030-30",
+   "fill_price": 0.8,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "silver",
+   "side": "no",
+   "count": 11,
+   "ticker": "KXSILVER15M-26SEP150030-30",
+   "fill_price": 0.8,
+   "adapter": "live"
+  },
+  {
+   "metal": "natgas",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXNATGAS15M-26SEP150030-30",
+   "fill_price": 0.77,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "natgas",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXNATGAS15M-26SEP150030-30",
+   "fill_price": 0.77,
+   "adapter": "live"
+  }
+ ],
  "n_settled": 1783,
- "updated": "2026-09-15T04:17:13Z",
+ "updated": "2026-09-15T04:20:24Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
- "poly_paper_n_open": 2,
- "poly_paper_cash": 318.22299999999944,
+ "poly_paper_n_open": 1,
+ "poly_paper_cash": 325.0629999999994,
  "div_paper_loop": "alive",
- "div_paper_n_open": 0,
- "div_paper_cash": 457.1769999999994,
+ "div_paper_n_open": 2,
+ "div_paper_cash": 421.76699999999937,
  "div_paper_realized": 207.1769999999999,
  "poly_paper": {
   "day": "2026-09-15",
@@ -46,9 +95,9 @@
    "hit": 0.853
   },
   "poly_paper": {
-   "n": 34,
-   "pnl": -25.13,
-   "hit": 0.618
+   "n": 36,
+   "pnl": -31.25,
+   "hit": 0.611
   },
   "poly_ahead": false,
   "ready": true
