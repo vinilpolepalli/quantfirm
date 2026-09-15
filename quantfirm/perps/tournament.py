@@ -62,6 +62,16 @@ CONTROLS = ("vol_target_hold", "buy_hold", "flat", "coin_flip")
 BENCHMARK = "vol_target_hold"
 
 
+def collect_trials() -> dict:
+    """Core trials plus every family module's TRIALS (agents register there)."""
+    from .strategies import family_trials, load_all
+    load_all()
+    merged = dict(TRIALS)
+    for k, v in family_trials().items():
+        merged[k] = {"params": dict(v.get("params") or {}), "grid": dict(v.get("grid") or {})}
+    return merged
+
+
 def _grid_points(grid: dict) -> list[dict]:
     import itertools
     if not grid:
@@ -70,16 +80,23 @@ def _grid_points(grid: dict) -> list[dict]:
     return [dict(zip(keys, v)) for v in itertools.product(*[grid[k] for k in keys])]
 
 
-def n_registered_trials() -> int:
-    return sum(len(_grid_points(t["grid"])) for t in TRIALS.values())
+def n_registered_trials(trials: dict | None = None) -> int:
+    """Configurations declared in the trial set. The registry may be larger:
+    every ad-hoc backtest an agent ran also counts (see registry.py)."""
+    trials = trials if trials is not None else collect_trials()
+    return sum(len(_grid_points(t["grid"])) for t in trials.values())
 
 
 def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestConfig(),
                    out_dir: str = OUT_DIR, log=print) -> dict:
+    from .registry import count_unique as registry_count, record as registry_record
     panel = load_panel(universe)
-    n_trials = n_registered_trials()
-    log(f"tournament {TOURNAMENT_VERSION}: universe={list(universe)} trials={n_trials} "
-        f"cost={cfg.cost.name} funding={cfg.funding}")
+    trials = collect_trials()
+    n_declared = n_registered_trials(trials)
+    # N for the deflated Sharpe = everything ever tried, not just this run's grid
+    n_trials = max(n_declared, registry_count() + n_declared)
+    log(f"tournament {TOURNAMENT_VERSION}: universe={list(universe)} declared={n_declared} "
+        f"registry_total={n_trials} cost={cfg.cost.name} funding={cfg.funding}")
     results: dict[str, dict] = {}
     oos_streams: dict[str, pd.Series] = {}
     matrix: dict[str, pd.Series] = {}
@@ -97,7 +114,10 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
     oos_streams[BENCHMARK] = bench_wf["_oos_excess"]
 
     # 2. candidates: walk-forward with selection + every grid point on dev for CSCV
-    for fam, spec in TRIALS.items():
+    for fam, spec in trials.items():
+        if fam not in REGISTRY:
+            log(f"  {fam}: not in registry, skipped")
+            continue
         fn = REGISTRY[fam]
         wf = walk_forward(panel, fn, spec["params"], cfg, grid=spec["grid"] or None, n_folds=N_FOLDS,
                           warmup_days=WARMUP_DAYS, dev_start=DEV_START)
@@ -109,6 +129,7 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
             r = run_strategy(panel, fn, params, cfg, start=None, end=HOLDOUT_START)
             matrix[key] = r["_series"]["excess"]
             st[key] = public(r)
+            registry_record(fam, params, "dev", public(r), source="tournament")
         # stress: the selected (last fold) params under 1.5× cost + proxy funding
         sel = wf["folds"][-1]["params"]
         stress_cfg = replace(cfg, cost=STRESS, funding="proxy")
@@ -124,14 +145,14 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
     # 3. CSCV across every registered configuration + the benchmark
     M = pd.DataFrame(matrix).dropna(how="all")
     M = M.loc[M.index >= pd.Timestamp("2018-01-01", tz="UTC")]
-    cand_cols = [c for c in M.columns if c.split(":")[0] in TRIALS] + [BENCHMARK]
+    cand_cols = [c for c in M.columns if c.split(":")[0] in trials] + [BENCHMARK]
     pbo = cscv_pbo(M[cand_cols], n_blocks=8)
     trial_sr_std = float((M[cand_cols].mean() / M[cand_cols].std(ddof=1)).std(ddof=1))
 
     # 4. rank candidates on OOS Sharpe; DSR of the best against N
     bench_sr = bench_wf["oos_sharpe_concat"]
-    ranked = sorted(((fam, results[fam]["walk_forward"]["oos_sharpe_concat"]) for fam in TRIALS),
-                    key=lambda kv: -kv[1])
+    ranked = sorted(((fam, results[fam]["walk_forward"]["oos_sharpe_concat"]) for fam in trials
+                     if fam in results), key=lambda kv: -kv[1])
     verdicts = {}
     for fam, sr in ranked:
         wf = results[fam]["walk_forward"]
@@ -155,8 +176,9 @@ def run_tournament(universe=RESEARCH_UNIVERSE, cfg: BacktestConfig = BacktestCon
         "cost_model": cfg.cost.name, "funding_mode": cfg.funding,
         "rebalance": {"every_days": cfg.rebalance_every, "band": cfg.rebalance_band},
         "n_registered_trials": n_trials,
+        "n_declared_this_run": n_declared,
         "trials": {k: {"params": v["params"], "grid": {kk: [str(x) for x in vv] for kk, vv in v["grid"].items()}}
-                   for k, v in TRIALS.items()},
+                   for k, v in trials.items()},
         "benchmark": BENCHMARK, "benchmark_oos_sharpe": bench_sr,
         "pbo": pbo, "trial_sr_std_daily": round(trial_sr_std, 5),
         "ranked": ranked, "verdicts": verdicts,

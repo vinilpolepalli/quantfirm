@@ -431,5 +431,50 @@ class TestPaperEngine(unittest.TestCase):
             eng.client.markets.assert_not_called()
 
 
+class TestRobustAndRegistry(unittest.TestCase):
+    def test_block_bootstrap_and_sharpe_diff(self):
+        from quantfirm.perps import robust as RB
+        rng = np.random.default_rng(0)
+        idx = pd.date_range("2020-01-01", periods=800, freq="D", tz="UTC")
+        good = pd.Series(rng.normal(0.001, 0.01, 800), index=idx)
+        bad = pd.Series(rng.normal(-0.001, 0.01, 800), index=idx)
+        bb = RB.block_bootstrap(good, n_boot=200)
+        self.assertLess(bb["sharpe_p5_25_50_75_95"][0], bb["sharpe_p5_25_50_75_95"][4])
+        self.assertLess(bb["p_sharpe_le_0"], 0.2)
+        d = RB.sharpe_difference(good, bad, n_boot=200)
+        self.assertGreater(d["p_a_gt_b"], 0.95)
+
+    def test_timing_null_is_centered_below_a_trend_strategy_or_equal_exposure(self):
+        from quantfirm.perps import robust as RB
+        panel = synthetic_panel(n=700, seed=2)
+        cfg = B.BacktestConfig(funding="none")
+        out = RB.timing_null(panel, S.vol_target_hold, {}, cfg, "2019-06-01", "2021-01-01", n_null=8, block=30)
+        self.assertEqual(out["n_null"], 8)
+        self.assertIn("percentile_of_real", out)
+
+    def test_perturbation_runs(self):
+        from quantfirm.perps import robust as RB
+        panel = synthetic_panel(n=700, seed=4)
+        cfg = B.BacktestConfig(funding="none")
+        out = RB.perturbation(panel, S.tsmom, {"target_vol": 0.12}, cfg, "2019-06-01", "2021-01-01")
+        self.assertGreater(out["n_perturbations"], 0)
+
+    def test_registry_append_and_count(self):
+        from quantfirm.perps import registry as REG
+        with tempfile.TemporaryDirectory() as d:
+            with mock.patch.object(REG, "PATH", os.path.join(d, "reg.jsonl")):
+                REG.record("x", {"a": 1}, "dev", {"net_sharpe": 1.0})
+                REG.record("x", {"a": 1}, "dev", {"net_sharpe": 1.1})   # same config twice → one unique
+                REG.record("x", {"a": 2}, "dev", {"net_sharpe": 0.5})
+                self.assertEqual(REG.count_unique("dev"), 2)
+                self.assertEqual(REG.summary()["rows"], 3)
+
+    def test_families_autoload(self):
+        reg = S.load_all()
+        self.assertIn("trend_long_only", reg)
+        from quantfirm.perps import families
+        self.assertIsInstance(families.load_all(), dict)
+
+
 if __name__ == "__main__":
     unittest.main()

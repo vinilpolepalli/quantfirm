@@ -300,3 +300,124 @@ def update_all(assets=None, kalshi: bool = True, funding: bool = True, log=print
     with open(_path("META.json"), "w") as f:
         json.dump(meta, f, indent=1)
     return meta
+
+
+# ------------------------------------------------------------ auxiliary series
+# Options-world and macro inputs for the research campaign. All keyless.
+#   dvol_btc / dvol_eth : Deribit DVOL implied-vol index (daily close, since 2021-03)
+#   macro               : VIX, DXY, US10Y yield, TIP ETF closes (Yahoo)
+#   premium_btc/eth     : Binance USDT-perp premium index vs spot, daily mean (basis gauge)
+AUX_FILES = {
+    "dvol_btc": "aux_dvol_btc.csv", "dvol_eth": "aux_dvol_eth.csv",
+    "macro": "aux_macro.csv", "premium_btc": "aux_premium_btc.csv", "premium_eth": "aux_premium_eth.csv",
+}
+
+
+def fetch_deribit_dvol(currency: str = "BTC", start: str = "2021-03-24") -> pd.DataFrame:
+    """Deribit DVOL index, daily candles, paged in ~300-day windows."""
+    t0 = int(pd.Timestamp(start, tz="UTC").timestamp() * 1000)
+    end = int(time.time() * 1000)
+    rows = []
+    while t0 < end:
+        t1 = min(t0 + 300 * 86400 * 1000, end)
+        r = _S.get("https://www.deribit.com/api/v2/public/get_volatility_index_data",
+                   params={"currency": currency, "start_timestamp": t0, "end_timestamp": t1,
+                           "resolution": 86400}, timeout=60)
+        r.raise_for_status()
+        data = (r.json().get("result") or {}).get("data") or []
+        rows += data
+        t0 = t1 + 1
+        time.sleep(0.2)
+    if not rows:
+        return pd.DataFrame(columns=["ts", "open", "high", "low", "close"])
+    df = pd.DataFrame(rows, columns=["t", "open", "high", "low", "close"])
+    df["ts"] = pd.to_datetime(df["t"], unit="ms", utc=True).dt.normalize()
+    return df.drop_duplicates("ts").sort_values("ts")[["ts", "open", "high", "low", "close"]]
+
+
+def fetch_macro() -> pd.DataFrame:
+    import yfinance as yf
+    cols = {}
+    for name, sym in (("vix", "^VIX"), ("dxy", "DX-Y.NYB"), ("us10y", "^TNX"), ("tip", "TIP")):
+        d = yf.download(sym, start="2010-01-01", interval="1d", progress=False, auto_adjust=False)
+        if d is None or len(d) == 0:
+            continue
+        if isinstance(d.columns, pd.MultiIndex):
+            d.columns = [c[0] for c in d.columns]
+        s = d["Close"]
+        s.index = pd.to_datetime(s.index, utc=True).normalize()
+        cols[name] = s
+        time.sleep(0.5)
+    df = pd.DataFrame(cols).sort_index()
+    df.index.name = "ts"
+    return df.reset_index()
+
+
+def fetch_binance_premium_daily(symbol: str, start_ym: tuple[int, int] = (2020, 1)) -> pd.DataFrame:
+    """Binance premiumIndexKlines 1d (perp premium over spot index), monthly zips."""
+    y, m = start_ym
+    now = dt.datetime.now(dt.timezone.utc)
+    frames = []
+    while (y, m) <= (now.year, now.month):
+        url = (f"https://data.binance.vision/data/futures/um/monthly/premiumIndexKlines/"
+               f"{symbol}/1d/{symbol}-1d-{y:04d}-{m:02d}.zip")
+        r = _S.get(url, timeout=60)
+        if r.status_code == 200:
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            raw = z.read(z.namelist()[0]).decode()
+            first = raw.splitlines()[0].split(",")[0].strip()
+            header = None if first.lstrip("-").isdigit() else 0
+            df = pd.read_csv(io.StringIO(raw), header=header)
+            df = df.iloc[:, :5]
+            df.columns = ["open_time", "open", "high", "low", "close"]
+            frames.append(df)
+        m += 1
+        if m == 13:
+            y, m = y + 1, 1
+    if not frames:
+        return pd.DataFrame(columns=["ts", "open", "high", "low", "close"])
+    df = pd.concat(frames, ignore_index=True)
+    t = df["open_time"].astype("int64")
+    t = t.where(t < 10**14, t // 1000)
+    df["ts"] = pd.to_datetime(t, unit="ms", utc=True).dt.normalize()
+    return df.drop_duplicates("ts").sort_values("ts")[["ts", "open", "high", "low", "close"]]
+
+
+def update_aux(log=print) -> dict:
+    written = {}
+    for cur in ("BTC", "ETH"):
+        try:
+            d = fetch_deribit_dvol(cur)
+            if len(d):
+                written[f"dvol_{cur.lower()}"] = _write_csv(d, AUX_FILES[f"dvol_{cur.lower()}"])
+                log(f"dvol {cur}: {len(d)} rows {d['ts'].iloc[0].date()} → {d['ts'].iloc[-1].date()}")
+        except Exception as e:  # noqa: BLE001
+            log(f"dvol {cur} failed: {e}")
+    try:
+        m = fetch_macro()
+        if len(m):
+            written["macro"] = _write_csv(m, AUX_FILES["macro"])
+            log(f"macro: {len(m)} rows, cols {list(m.columns)}")
+    except Exception as e:  # noqa: BLE001
+        log(f"macro failed: {e}")
+    for a, sym in (("btc", "BTCUSDT"), ("eth", "ETHUSDT")):
+        try:
+            p = fetch_binance_premium_daily(sym)
+            if len(p):
+                written[f"premium_{a}"] = _write_csv(p, AUX_FILES[f"premium_{a}"])
+                log(f"premium {a}: {len(p)} rows")
+        except Exception as e:  # noqa: BLE001
+            log(f"premium {a} failed: {e}")
+    return written
+
+
+def load_aux(name: str) -> pd.DataFrame:
+    """Auxiliary daily series indexed by UTC midnight; columns depend on the series."""
+    df = _read_csv(AUX_FILES[name])
+    if df is None:
+        raise FileNotFoundError(f"aux series {name} missing; run cli update-data --aux")
+    df["ts"] = pd.to_datetime(df["ts"], utc=True, format="ISO8601").dt.normalize()
+    df = df.drop_duplicates("ts").set_index("ts").sort_index()
+    for c in df.columns:
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    return df

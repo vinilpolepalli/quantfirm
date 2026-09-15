@@ -27,7 +27,9 @@ from .backtest import BacktestConfig, public, run_strategy, stress, walk_forward
 from .client import MarginClient, parse_market
 from .risk import PROFILES, kill_switch_tripped
 from .specs import RESEARCH_UNIVERSE, SPECS, cost_by_name
-from .strategies import REGISTRY
+from .strategies import REGISTRY, load_all
+
+load_all()
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RESEARCH = os.path.join(ROOT, "research", "kalshi_perps")
@@ -82,6 +84,8 @@ def cmd_funding(a):
 
 def cmd_update_data(a):
     meta = D.update_all(tuple(a.assets.split(",")) if a.assets else None)
+    if a.aux:
+        meta["aux"] = D.update_aux()
     _out(meta)
 
 
@@ -98,6 +102,8 @@ def cmd_backtest(a):
         start = a.start
     r = run_strategy(panel, REGISTRY[a.strategy], _params(a), _cfg(a), start=start, end=end)
     out = public(r)
+    from .registry import record
+    out["registry_key"] = record(a.strategy, _params(a), a.split, out, source="cli:backtest", note=a.note or "")
     if a.stress:
         out["stress"] = stress(panel, REGISTRY[a.strategy], _params(a), _cfg(a), start, end)
     if a.yearly:
@@ -113,6 +119,11 @@ def cmd_walkforward(a):
         grid[k] = [tuple(tuple(y) if isinstance(y, list) else y for y in x) if isinstance(x, list) else x for x in v]
     wf = walk_forward(panel, REGISTRY[a.strategy], _params(a), _cfg(a), grid=grid or None,
                       n_folds=a.folds, warmup_days=a.warmup, dev_start=a.start or "2016-06-01")
+    from .registry import record
+    for f in wf["folds"]:
+        record(a.strategy, f["params"], "dev", {"net_sharpe": f["oos_sharpe"], "max_drawdown": f["max_drawdown"],
+                                                  "ann_turnover": f["turnover"], "start": f["start"], "end": f["end"]},
+               source="cli:walkforward", note=a.note or "")
     _out({k: v for k, v in wf.items() if not k.startswith("_")})
 
 
@@ -192,6 +203,25 @@ def _refuse_unless_live_armed(cfg: dict) -> None:
         sys.exit("refusing live: state/KILL_SWITCH_PERPS present")
 
 
+def cmd_robust(a):
+    """Adversarial checks on one configuration (dev only)."""
+    from . import robust as RB
+    panel = D.load_panel(tuple(a.universe.split(",")))
+    out = RB.full_report(panel, REGISTRY[a.strategy], _params(a), _cfg(a), start=a.start or "2018-01-01",
+                         end=D.HOLDOUT_START, benchmark=a.benchmark, n_boot=a.n_boot, n_null=a.n_null)
+    os.makedirs(RESEARCH, exist_ok=True)
+    path = os.path.join(RESEARCH, f"robust_{a.strategy}.json")
+    with open(path, "w") as f:
+        json.dump(out, f, indent=1, default=str)
+    out["_written"] = path
+    _out(out)
+
+
+def cmd_registry(a):
+    from .registry import summary
+    _out(summary())
+
+
 def cmd_status(a):
     c = MarginClient("prod")
     st = c.exchange_status()
@@ -228,10 +258,12 @@ def main(argv=None) -> None:
             sp.add_argument("--every", type=int, default=7)
             sp.add_argument("--band", type=float, default=0.03)
             sp.add_argument("--params", default="{}")
+            sp.add_argument("--note", default="")
 
     sub.add_parser("markets").set_defaults(fn=cmd_markets)
     sp = sub.add_parser("funding"); sp.add_argument("--asset", default="btc"); sp.set_defaults(fn=cmd_funding)
-    sp = sub.add_parser("update-data"); sp.add_argument("--assets", default=""); sp.set_defaults(fn=cmd_update_data)
+    sp = sub.add_parser("update-data"); sp.add_argument("--assets", default="")
+    sp.add_argument("--aux", action="store_true"); sp.set_defaults(fn=cmd_update_data)
     sp = sub.add_parser("backtest"); common(sp)
     sp.add_argument("--strategy", required=True); sp.add_argument("--split", default="dev", choices=["dev", "holdout", "all"])
     sp.add_argument("--start", default=None); sp.add_argument("--stress", action="store_true")
@@ -255,6 +287,11 @@ def main(argv=None) -> None:
         sp.add_argument("--poll", type=float, default=3600.0)
         sp.add_argument("--verbose", action="store_true")
         sp.set_defaults(fn=fn)
+    sp = sub.add_parser("robust"); common(sp)
+    sp.add_argument("--strategy", required=True); sp.add_argument("--start", default=None)
+    sp.add_argument("--benchmark", default="vol_target_hold"); sp.add_argument("--n-boot", type=int, default=2000)
+    sp.add_argument("--n-null", type=int, default=200); sp.set_defaults(fn=cmd_robust)
+    sub.add_parser("registry").set_defaults(fn=cmd_registry)
     sub.add_parser("status").set_defaults(fn=cmd_status)
     a = p.parse_args(argv)
     a.fn(a)

@@ -316,4 +316,12 @@ def coin_flip(panel, target_vol: float = 0.12, hold: int = 21, seed: int = 7, **
 
 
 def load_all() -> dict:
+    """The core registry plus every module in quantfirm/perps/families/."""
+    from . import families
+    families.load_all()
     return REGISTRY
+
+
+def family_trials() -> dict:
+    from . import families
+    return families.load_all()
