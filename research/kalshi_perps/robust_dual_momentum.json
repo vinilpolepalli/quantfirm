@@ -1,0 +1,213 @@
+{
+ "strategy": "dual_momentum",
+ "params": {
+  "target_vol": 0.12,
+  "lookback": 182,
+  "top_share": 1.0
+ },
+ "window": [
+  "2018-01-01",
+  "2025-07-01"
+ ],
+ "cost_model": "taker_t0",
+ "funding_mode": "kalshi",
+ "base": {
+  "net_sharpe": 0.651,
+  "sharpe_total": 1.059,
+  "cagr": 0.0845,
+  "max_drawdown": -0.1246,
+  "total_return": 0.8379,
+  "ann_turnover": 2.4,
+  "fees_annual": 0.0035,
+  "funding_annual": 0.0,
+  "interest_annual": 0.0315,
+  "avg_gross_leverage": 0.188,
+  "max_gross_leverage": 0.751,
+  "n_liquidations": 0,
+  "n_days": 2738,
+  "years": 7.5,
+  "start": "2018-01-01",
+  "end": "2025-06-30",
+  "cost_model": "taker_t0",
+  "funding_mode": "kalshi",
+  "killed": false,
+  "worst_day": -0.0319,
+  "pct_positive_months": 0.633,
+  "pct_positive_quarters": 0.8
+ },
+ "benchmark": "vol_target_hold",
+ "benchmark_metrics": {
+  "net_sharpe": 0.94,
+  "sharpe_total": 1.197,
+  "cagr": 0.1545,
+  "max_drawdown": -0.2115,
+  "total_return": 1.9378,
+  "ann_turnover": 1.68,
+  "fees_annual": 0.0024,
+  "funding_annual": 0.0,
+  "interest_annual": 0.0298,
+  "avg_gross_leverage": 0.592,
+  "max_gross_leverage": 0.934,
+  "n_liquidations": 0,
+  "n_days": 2738,
+  "years": 7.5,
+  "start": "2018-01-01",
+  "end": "2025-06-30",
+  "cost_model": "taker_t0",
+  "funding_mode": "kalshi",
+  "killed": false,
+  "worst_day": -0.0651,
+  "pct_positive_months": 0.622,
+  "pct_positive_quarters": 0.733
+ },
+ "bootstrap": {
+  "n_boot": 500,
+  "block": 20,
+  "n_obs": 2738,
+  "sharpe_p5_25_50_75_95": [
+   -0.0418,
+   0.3991,
+   0.6554,
+   0.9251,
+   1.278
+  ],
+  "cagr_p5_25_50_75_95": [
+   0.0262,
+   0.0631,
+   0.0847,
+   0.1085,
+   0.1397
+  ],
+  "mdd_p5_25_50_75_95": [
+   -0.2211,
+   -0.1578,
+   -0.126,
+   -0.101,
+   -0.0702
+  ],
+  "p_sharpe_le_0": 0.062,
+  "p_cagr_le_0": 0.01
+ },
+ "perturbation": {
+  "base_sharpe": 0.651,
+  "n_perturbations": 10,
+  "min_sharpe": 0.469,
+  "median_sharpe": 0.641,
+  "max_sharpe": 0.788,
+  "collapse_ratio": 0.72,
+  "rows": [
+   {
+    "param": "target_vol",
+    "value": "0.09",
+    "net_sharpe": 0.788,
+    "cagr": 0.0858,
+    "max_drawdown": -0.0955
+   },
+   {
+    "param": "target_vol",
+    "value": "0.15",
+    "net_sharpe": 0.632,
+    "cagr": 0.092,
+    "max_drawdown": -0.1438
+   },
+   {
+    "param": "lookback",
+    "value": "136",
+    "net_sharpe": 0.469,
+    "cagr": 0.0689,
+    "max_drawdown": -0.1478
+   },
+   {
+    "param": "lookback",
+    "value": "228",
+    "net_sharpe": 0.554,
+    "cagr": 0.0766,
+    "max_drawdown": -0.1176
+   },
+   {
+    "param": "top_share",
+    "value": "0.75",
+    "net_sharpe": 0.758,
+    "cagr": 0.0967,
+    "max_drawdown": -0.1353
+   },
+   {
+    "param": "top_share",
+    "value": "1.25",
+    "net_sharpe": 0.651,
+    "cagr": 0.0845,
+    "max_drawdown": -0.1246
+   },
+   {
+    "param": "skip",
+    "value": "-1",
+    "net_sharpe": 0.651,
+    "cagr": 0.0845,
+    "max_drawdown": -0.1246
+   },
+   {
+    "param": "skip",
+    "value": "1",
+    "net_sharpe": 0.517,
+    "cagr": 0.0723,
+    "max_drawdown": -0.1371
+   },
+   {
+    "param": "hurdle_apy",
+    "value": "0.024375",
+    "net_sharpe": 0.628,
+    "cagr": 0.0826,
+    "max_drawdown": -0.1246
+   },
+   {
+    "param": "hurdle_apy",
+    "value": "0.040625",
+    "net_sharpe": 0.667,
+    "cagr": 0.0858,
+    "max_drawdown": -0.1234
+   }
+  ]
+ },
+ "regime": {
+  "btc_up_years": {
+   "n_days": 2008,
+   "sharpe": 0.835,
+   "ann_return": 0.1063
+  },
+  "btc_down_years": {
+   "n_days": 730,
+   "sharpe": -0.082,
+   "ann_return": 0.0267
+  },
+  "vol_calm": {
+   "n_days": 903,
+   "sharpe": 1.437
+  },
+  "vol_mid": {
+   "n_days": 902,
+   "sharpe": 0.376
+  },
+  "vol_turbulent": {
+   "n_days": 903,
+   "sharpe": 0.281
+  }
+ },
+ "timing_null": {
+  "real_sharpe": 0.651,
+  "n_null": 60,
+  "block_days": 30,
+  "null_sharpe_mean": 0.575,
+  "null_sharpe_p95": 0.98,
+  "percentile_of_real": 0.617,
+  "excess_over_null_mean": 0.076
+ },
+ "vs_benchmark": {
+  "sharpe_a": 0.651,
+  "sharpe_b": 0.94,
+  "diff": -0.289,
+  "diff_p5": -0.797,
+  "diff_p95": 0.201,
+  "p_a_gt_b": 0.148,
+  "corr": 0.683
+ }
+}

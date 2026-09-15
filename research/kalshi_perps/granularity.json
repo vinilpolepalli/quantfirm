@@ -1,0 +1,193 @@
+{
+ "window": "2018-01-01 \u2192 2025-06-30, taker tier 0, Kalshi funding, whole contracts at the stated bankroll (None = fractional)",
+ "rows": {
+  "trend_long_only@0.12": {
+   "250": {
+    "net_sharpe": 0.856,
+    "cagr": 0.1016,
+    "max_drawdown": -0.0937,
+    "ann_turnover": 3.69,
+    "fees_annual": 0.0054,
+    "avg_gross_leverage": 0.239,
+    "pct_positive_months": 0.678
+   },
+   "500": {
+    "net_sharpe": 0.859,
+    "cagr": 0.1024,
+    "max_drawdown": -0.0939,
+    "ann_turnover": 3.72,
+    "fees_annual": 0.0054,
+    "avg_gross_leverage": 0.242,
+    "pct_positive_months": 0.678
+   },
+   "1000": {
+    "net_sharpe": 0.856,
+    "cagr": 0.1023,
+    "max_drawdown": -0.0942,
+    "ann_turnover": 3.74,
+    "fees_annual": 0.0054,
+    "avg_gross_leverage": 0.243,
+    "pct_positive_months": 0.678
+   },
+   "2500": {
+    "net_sharpe": 0.91,
+    "cagr": 0.1068,
+    "max_drawdown": -0.0942,
+    "ann_turnover": 3.75,
+    "fees_annual": 0.0054,
+    "avg_gross_leverage": 0.244,
+    "pct_positive_months": 0.678
+   },
+   "None": {
+    "net_sharpe": 0.907,
+    "cagr": 0.1067,
+    "max_drawdown": -0.0943,
+    "ann_turnover": 3.76,
+    "fees_annual": 0.0055,
+    "avg_gross_leverage": 0.244,
+    "pct_positive_months": 0.678
+   }
+  },
+  "trend_long_only@0.18": {
+   "250": {
+    "net_sharpe": 0.89,
+    "cagr": 0.1333,
+    "max_drawdown": -0.1241,
+    "ann_turnover": 5.33,
+    "fees_annual": 0.0077,
+    "avg_gross_leverage": 0.359,
+    "pct_positive_months": 0.622
+   },
+   "500": {
+    "net_sharpe": 0.889,
+    "cagr": 0.1336,
+    "max_drawdown": -0.1242,
+    "ann_turnover": 5.35,
+    "fees_annual": 0.0078,
+    "avg_gross_leverage": 0.361,
+    "pct_positive_months": 0.622
+   },
+   "1000": {
+    "net_sharpe": 0.901,
+    "cagr": 0.1355,
+    "max_drawdown": -0.1244,
+    "ann_turnover": 5.37,
+    "fees_annual": 0.0078,
+    "avg_gross_leverage": 0.363,
+    "pct_positive_months": 0.633
+   },
+   "2500": {
+    "net_sharpe": 0.936,
+    "cagr": 0.1396,
+    "max_drawdown": -0.1246,
+    "ann_turnover": 5.37,
+    "fees_annual": 0.0078,
+    "avg_gross_leverage": 0.363,
+    "pct_positive_months": 0.622
+   },
+   "None": {
+    "net_sharpe": 0.926,
+    "cagr": 0.1386,
+    "max_drawdown": -0.1246,
+    "ann_turnover": 5.4,
+    "fees_annual": 0.0078,
+    "avg_gross_leverage": 0.363,
+    "pct_positive_months": 0.611
+   }
+  },
+  "vol_target_hold@0.12": {
+   "250": {
+    "net_sharpe": 0.905,
+    "cagr": 0.1492,
+    "max_drawdown": -0.2199,
+    "ann_turnover": 1.64,
+    "fees_annual": 0.0024,
+    "avg_gross_leverage": 0.585,
+    "pct_positive_months": 0.622
+   },
+   "500": {
+    "net_sharpe": 0.964,
+    "cagr": 0.1586,
+    "max_drawdown": -0.2202,
+    "ann_turnover": 1.67,
+    "fees_annual": 0.0024,
+    "avg_gross_leverage": 0.588,
+    "pct_positive_months": 0.622
+   },
+   "1000": {
+    "net_sharpe": 0.941,
+    "cagr": 0.1555,
+    "max_drawdown": -0.2224,
+    "ann_turnover": 1.67,
+    "fees_annual": 0.0024,
+    "avg_gross_leverage": 0.59,
+    "pct_positive_months": 0.622
+   },
+   "2500": {
+    "net_sharpe": 0.951,
+    "cagr": 0.1556,
+    "max_drawdown": -0.2111,
+    "ann_turnover": 1.68,
+    "fees_annual": 0.0024,
+    "avg_gross_leverage": 0.59,
+    "pct_positive_months": 0.622
+   },
+   "None": {
+    "net_sharpe": 0.94,
+    "cagr": 0.1545,
+    "max_drawdown": -0.2115,
+    "ann_turnover": 1.68,
+    "fees_annual": 0.0024,
+    "avg_gross_leverage": 0.592,
+    "pct_positive_months": 0.622
+   }
+  },
+  "vol_target_hold@0.08": {
+   "250": {
+    "net_sharpe": 1.075,
+    "cagr": 0.1326,
+    "max_drawdown": -0.145,
+    "ann_turnover": 1.15,
+    "fees_annual": 0.0017,
+    "avg_gross_leverage": 0.396,
+    "pct_positive_months": 0.644
+   },
+   "500": {
+    "net_sharpe": 1.071,
+    "cagr": 0.1323,
+    "max_drawdown": -0.1467,
+    "ann_turnover": 1.16,
+    "fees_annual": 0.0017,
+    "avg_gross_leverage": 0.397,
+    "pct_positive_months": 0.644
+   },
+   "1000": {
+    "net_sharpe": 1.055,
+    "cagr": 0.1319,
+    "max_drawdown": -0.1471,
+    "ann_turnover": 1.15,
+    "fees_annual": 0.0017,
+    "avg_gross_leverage": 0.4,
+    "pct_positive_months": 0.644
+   },
+   "2500": {
+    "net_sharpe": 1.07,
+    "cagr": 0.1337,
+    "max_drawdown": -0.1474,
+    "ann_turnover": 1.16,
+    "fees_annual": 0.0017,
+    "avg_gross_leverage": 0.402,
+    "pct_positive_months": 0.644
+   },
+   "None": {
+    "net_sharpe": 1.067,
+    "cagr": 0.1338,
+    "max_drawdown": -0.1476,
+    "ann_turnover": 1.16,
+    "fees_annual": 0.0017,
+    "avg_gross_leverage": 0.403,
+    "pct_positive_months": 0.644
+   }
+  }
+ }
+}

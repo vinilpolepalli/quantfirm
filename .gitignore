@@ -29,3 +29,13 @@ data/kalshi/candles_*.csv
 data/kalshi/markets_*.jsonl
 data/kalshi/yf_*_1m.csv
 
+
+# Perps desk: paper book and logs stay local; status + data snapshots are committed.
+state/perps_paper_state.json
+state/perps_paper_state.json.tmp
+state/perps_decisions.jsonl
+state/perps_loop.log
+state/perps_loop.pid
+research/kalshi_perps/tournament.log
+research/kalshi_perps/tournament.pid
+research/kalshi_perps/robust_*.log

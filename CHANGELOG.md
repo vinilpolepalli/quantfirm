@@ -6,6 +6,46 @@ moved and what evidence backs it.
 
 ---
 
+## 0.2.0 — 2026-09-15 — perps desk: research, shadow book, NO-GO for alpha
+
+### Added
+
+**A Kalshi perpetual-futures desk** (`quantfirm/perps/`, `docs/KALSHI_PERPS.md`)
+built against the `/margin` API: venue specs read from the public endpoints
+(20 contracts, maintenance rates, the 0.01% funding deadband, the 12/5 bps
+tier-0 fees from the CFTC filing), a keyless data layer (Coinbase spot and
+Yahoo futures as multi-year proxies, Kalshi's own candles and funding for the
+live period), a daily portfolio backtester that books fees, funding,
+collateral interest and intraday liquidation, walk-forward with in-sample
+parameter selection, CSCV probability of overfitting, deflated Sharpe, a
+pre-registered tournament, a risk policy with three rungs, a shadow / demo /
+live engine with a deterministic order path, a LangGraph loop, a supervisor
+script, a daily shadow workflow and 32 unit tests.
+
+### Verdict
+
+Thirteen registered trials on BTC/ETH/gold/silver, 2016–2025 dev window:
+**no candidate beats vol-scaled long-only out of sample** (benchmark OOS
+Sharpe 1.13 vs the best candidate, a long-only trend gate, 0.80; PBO 0.30;
+DSR 0.66). Long/short trend scores 0.4–0.5, the gold–silver ratio idea is
+negative, the coin-flip control loses. The trend gate halves the drawdown
+(−12.5% vs −18.4% OOS) at the cost of return. The holdout was opened once
+for the paper incumbent: +23.7% at −4.9% drawdown from 2025-07-01, against
+the benchmark's +27.1% at −11.6%.
+
+Funding carry is not a strategy on Kalshi: rates below 0.01% per interval
+round to zero and 55–97% of intervals are zero. Market making, cross-venue
+arbitrage and intraday mean reversion are excluded by the 24–29 bps
+round trip.
+
+### Not changed
+
+Nothing trades. `config/perps.json` has `live: false`; the engine refuses
+live without that flag, `KALSHI_LIVE=1`, a perps key and no
+`state/KILL_SWITCH_PERPS`. The promotion gate is in `docs/KALSHI_PERPS.md` §7.
+
+---
+
 ## 0.1.3 — 2026-08-09 — a fresh clone no longer arrives holding someone else's book
 
 ### Fixed
