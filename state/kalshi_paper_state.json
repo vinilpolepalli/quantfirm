@@ -1,10 +1,10 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 347.06299999999925,
+  "shadow": 325.24299999999926,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 362.23920499999633
+  "live": 354.51220499999636
  },
  "open": [
   {
@@ -132,6 +132,48 @@
    "adapter": "live",
    "tag": "favorite",
    "order_id": "01a0a461-3870-79f6-bd32-3f1dc7a808e8"
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP150530-30",
+   "metal": "natgas",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.76,
+   "fee": 0.13,
+   "fair": 0.24,
+   "entry_ts": 1789464375,
+   "close_ts": 1789464600,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP150530-30",
+   "metal": "natgas",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.76,
+   "fee": 0.127,
+   "fair": 0.24,
+   "entry_ts": 1789464375,
+   "close_ts": 1789464600,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a463-72c0-7630-be4b-19a41088a35d"
+  },
+  {
+   "ticker": "KXETH15M-26SEP150530-30",
+   "metal": "eth",
+   "side": "yes",
+   "count": 18,
+   "fill_price": 0.77,
+   "fee": 0.23,
+   "fair": 0.77,
+   "entry_ts": 1789464385,
+   "close_ts": 1789464600,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
   }
  ],
  "n_settled": 2049,
@@ -156,7 +198,7 @@
    "live": 311.53320499999677
   }
  },
- "updated": "2026-09-15T09:26:06Z",
+ "updated": "2026-09-15T09:27:25Z",
  "metals": [
   "gold",
   "silver",
