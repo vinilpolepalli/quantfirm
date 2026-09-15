@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T22:51:04Z",
+ "ts": "2026-09-15T22:57:41Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,10 +15,10 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 312.88199999999927,
+  "shadow": 282.9019999999993,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 367.95422499999586
+  "live": 338.0003249999959
  },
  "realized": {
   "shadow": 101.82199999999989,
@@ -26,7 +26,7 @@
   "maker": 1.6499999999999968,
   "live": 157.54162499999933
  },
- "n_open": 6,
+ "n_open": 14,
  "open": [
   {
    "metal": "btc",
@@ -75,10 +75,74 @@
    "ticker": "KXWTI15M-26SEP151900-00",
    "fill_price": 0.75,
    "adapter": "live"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP151900-00",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXGOLD15M-26SEP151900-00",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "silver",
+   "side": "yes",
+   "count": 10,
+   "ticker": "KXSILVER15M-26SEP151900-00",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "silver",
+   "side": "yes",
+   "count": 10,
+   "ticker": "KXSILVER15M-26SEP151900-00",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "copper",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXCOPPER15M-26SEP151900-00",
+   "fill_price": 0.77,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "copper",
+   "side": "no",
+   "count": 10,
+   "ticker": "KXCOPPER15M-26SEP151900-00",
+   "fill_price": 0.77,
+   "adapter": "live"
+  },
+  {
+   "metal": "natgas",
+   "side": "yes",
+   "count": 9,
+   "ticker": "KXNATGAS15M-26SEP151900-00",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "natgas",
+   "side": "yes",
+   "count": 9,
+   "ticker": "KXNATGAS15M-26SEP151900-00",
+   "fill_price": 0.75,
+   "adapter": "live"
   }
  ],
  "n_settled": 2789,
- "updated": "2026-09-15T22:51:03Z",
+ "updated": "2026-09-15T22:57:41Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
