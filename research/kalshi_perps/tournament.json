@@ -1,6 +1,6 @@
 {
- "version": "2026-09-15.1",
- "ran_at": "2026-09-15T00:28:30+00:00",
+ "version": "2026-09-15.2-campaign",
+ "ran_at": "2026-09-15T01:05:00+00:00",
  "universe": [
   "btc",
   "eth",
@@ -19,7 +19,8 @@
   "every_days": 7,
   "band": 0.03
  },
- "n_registered_trials": 13,
+ "n_registered_trials": 113,
+ "n_declared_this_run": 61,
  "trials": {
   "tsmom": {
    "params": {
@@ -78,22 +79,273 @@
     "target_vol": 0.08
    },
    "grid": {}
+  },
+  "allocator_blend": {
+   "params": {
+    "target_vol": 0.12
+   },
+   "grid": {
+    "blend": [
+     "('fixed', 0.3)",
+     "('fixed', 0.5)",
+     "('gate',)",
+     "('gate_inv',)",
+     "('riskparity', 60)"
+    ]
+   }
+  },
+  "basis_crowding": {
+   "params": {
+    "target_vol": 0.12
+   },
+   "grid": {
+    "variant": [
+     "derisk_q90_flat",
+     "derisk_q90_half",
+     "derisk_q80_half",
+     "capitulation",
+     "funding_mom_half",
+     "derisk_q90_half+capitulation"
+    ]
+   }
+  },
+  "crash_filter_beta": {
+   "params": {
+    "target_vol": 0.12
+   },
+   "grid": {
+    "variant": [
+     "d20_w60",
+     "d20_w120",
+     "d30_w60",
+     "d30_w120",
+     "d30_w60_spike",
+     "d30_w60_m12"
+    ]
+   }
+  },
+  "dual_momentum": {
+   "params": {
+    "target_vol": 0.12
+   },
+   "grid": {
+    "lookback": [
+     "182",
+     "365"
+    ],
+    "top_share": [
+     "0.7",
+     "1.0"
+    ]
+   }
+  },
+  "dual_momentum_skip": {
+   "params": {
+    "target_vol": 0.12,
+    "lookback": 365,
+    "skip": 30,
+    "top_share": 1.0
+   },
+   "grid": {}
+  },
+  "dual_momentum_6": {
+   "params": {
+    "target_vol": 0.12,
+    "lookback": 365,
+    "top_share": 0.7,
+    "crypto": [
+     "btc",
+     "eth",
+     "sol",
+     "xrp"
+    ]
+   },
+   "grid": {}
+  },
+  "macro_gold": {
+   "params": {
+    "target_vol": 0.12,
+    "lookback": 60,
+    "vix_window": 504,
+    "vix_pct": 0.9
+   },
+   "grid": {
+    "variant": [
+     "and",
+     "or",
+     "and_vix_haven",
+     "and_vix_cut",
+     "score"
+    ]
+   }
+  },
+  "rs_weekly_reversal": {
+   "params": {
+    "target_vol": 0.12,
+    "lookback": 5,
+    "tilt": 0.5
+   },
+   "grid": {}
+  },
+  "rs_weekend_half": {
+   "params": {
+    "target_vol": 0.12,
+    "weekend_weight": 0.5
+   },
+   "grid": {}
+  },
+  "rs_turn_of_month": {
+   "params": {
+    "target_vol": 0.12,
+    "off_weight": 0.5,
+    "last_days": 2,
+    "first_days": 3
+   },
+   "grid": {}
+  },
+  "rs_bollinger_mr": {
+   "params": {
+    "target_vol": 0.12,
+    "bb_window": 20,
+    "bb_k": 2.0,
+    "trend_window": 200
+   },
+   "grid": {}
+  },
+  "trend_v2_baz": {
+   "params": {
+    "target_vol": 0.12
+   },
+   "grid": {
+    "sizing": [
+     "ref",
+     "live"
+    ]
+   }
+  },
+  "trend_v2_tsmom": {
+   "params": {
+    "target_vol": 0.12,
+    "sizing": "ref"
+   },
+   "grid": {
+    "skip_months": [
+     "0",
+     "1"
+    ]
+   }
+  },
+  "trend_v2_tsmom_live": {
+   "params": {
+    "target_vol": 0.12
+   },
+   "grid": {}
+  },
+  "vrp_options": {
+   "params": {
+    "target_vol": 0.12
+   },
+   "grid": {
+    "mode": [
+     "vrp_high",
+     "vrp_low",
+     "vrp_tilt",
+     "vrp_raw",
+     "fear_dip",
+     "iv_size"
+    ]
+   }
+  },
+  "xsec_momentum": {
+   "params": {
+    "target_vol": 0.12,
+    "top_k": 2
+   },
+   "grid": {
+    "spec": [
+     "('top', 63, 0)",
+     "('top', 252, 21)",
+     "('ls', 63, 0)",
+     "('ls', 252, 21)",
+     "('rank', 126, 0)"
+    ]
+   }
   }
  },
  "benchmark": "vol_target_hold",
  "benchmark_oos_sharpe": 1.131,
  "pbo": {
-  "pbo": 0.3,
-  "n_trials": 14,
+  "pbo": 0.586,
+  "n_trials": 62,
   "n_combos": 70,
-  "degradation_slope": -0.532,
-  "mean_oos_sr_of_is_best_daily": 0.0328
+  "degradation_slope": -0.953,
+  "mean_oos_sr_of_is_best_daily": 0.0327
  },
- "trial_sr_std_daily": 0.0199,
+ "trial_sr_std_daily": 0.01541,
  "ranked": [
+  [
+   "basis_crowding",
+   1.1
+  ],
+  [
+   "vrp_options",
+   1.099
+  ],
+  [
+   "dual_momentum_skip",
+   1.047
+  ],
+  [
+   "trend_v2_tsmom",
+   1.031
+  ],
+  [
+   "rs_turn_of_month",
+   1.026
+  ],
+  [
+   "trend_v2_tsmom_live",
+   1.016
+  ],
+  [
+   "crash_filter_beta",
+   1.011
+  ],
+  [
+   "dual_momentum_6",
+   0.975
+  ],
+  [
+   "rs_weekend_half",
+   0.958
+  ],
+  [
+   "allocator_blend",
+   0.911
+  ],
+  [
+   "trend_v2_baz",
+   0.907
+  ],
+  [
+   "macro_gold",
+   0.881
+  ],
+  [
+   "xsec_momentum",
+   0.876
+  ],
+  [
+   "rs_weekly_reversal",
+   0.823
+  ],
   [
    "trend_long_only",
    0.798
+  ],
+  [
+   "dual_momentum",
+   0.706
   ],
   [
    "breakout",
@@ -112,21 +364,355 @@
    0.381
   ],
   [
+   "rs_bollinger_mr",
+   0.358
+  ],
+  [
    "gold_silver_ratio",
    -0.803
   ]
  ],
  "verdicts": {
+  "basis_crowding": {
+   "oos_sharpe": 1.1,
+   "dsr": {
+    "dsr": 0.8244,
+    "sr_daily": 0.0576,
+    "sr_annual": 1.1,
+    "skew": -0.32,
+    "kurtosis": 9.748,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "vrp_options": {
+   "oos_sharpe": 1.099,
+   "dsr": {
+    "dsr": 0.8226,
+    "sr_daily": 0.0575,
+    "sr_annual": 1.099,
+    "skew": -0.392,
+    "kurtosis": 10.859,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "dual_momentum_skip": {
+   "oos_sharpe": 1.047,
+   "dsr": {
+    "dsr": 0.784,
+    "sr_daily": 0.0548,
+    "sr_annual": 1.047,
+    "skew": -0.368,
+    "kurtosis": 14.631,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "trend_v2_tsmom": {
+   "oos_sharpe": 1.031,
+   "dsr": {
+    "dsr": 0.769,
+    "sr_daily": 0.054,
+    "sr_annual": 1.031,
+    "skew": -0.643,
+    "kurtosis": 16.74,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "rs_turn_of_month": {
+   "oos_sharpe": 1.026,
+   "dsr": {
+    "dsr": 0.7678,
+    "sr_daily": 0.0537,
+    "sr_annual": 1.026,
+    "skew": -0.216,
+    "kurtosis": 9.272,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "trend_v2_tsmom_live": {
+   "oos_sharpe": 1.016,
+   "dsr": {
+    "dsr": 0.7589,
+    "sr_daily": 0.0532,
+    "sr_annual": 1.016,
+    "skew": -0.365,
+    "kurtosis": 12.49,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "crash_filter_beta": {
+   "oos_sharpe": 1.011,
+   "dsr": {
+    "dsr": 0.7509,
+    "sr_daily": 0.0529,
+    "sr_annual": 1.011,
+    "skew": -0.95,
+    "kurtosis": 17.273,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "dual_momentum_6": {
+   "oos_sharpe": 0.975,
+   "dsr": {
+    "dsr": 0.7199,
+    "sr_daily": 0.051,
+    "sr_annual": 0.975,
+    "skew": -0.786,
+    "kurtosis": 19.521,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "rs_weekend_half": {
+   "oos_sharpe": 0.958,
+   "dsr": {
+    "dsr": 0.7076,
+    "sr_daily": 0.0501,
+    "sr_annual": 0.958,
+    "skew": -0.296,
+    "kurtosis": 8.831,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "allocator_blend": {
+   "oos_sharpe": 0.911,
+   "dsr": {
+    "dsr": 0.6608,
+    "sr_daily": 0.0477,
+    "sr_annual": 0.911,
+    "skew": -0.774,
+    "kurtosis": 12.834,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "trend_v2_baz": {
+   "oos_sharpe": 0.907,
+   "dsr": {
+    "dsr": 0.6546,
+    "sr_daily": 0.0475,
+    "sr_annual": 0.907,
+    "skew": -1.151,
+    "kurtosis": 20.744,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "macro_gold": {
+   "oos_sharpe": 0.881,
+   "dsr": {
+    "dsr": 0.6309,
+    "sr_daily": 0.0461,
+    "sr_annual": 0.881,
+    "skew": -0.656,
+    "kurtosis": 14.322,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "xsec_momentum": {
+   "oos_sharpe": 0.876,
+   "dsr": {
+    "dsr": 0.6275,
+    "sr_daily": 0.0459,
+    "sr_annual": 0.876,
+    "skew": -0.236,
+    "kurtosis": 8.8,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": false,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "rs_weekly_reversal": {
+   "oos_sharpe": 0.823,
+   "dsr": {
+    "dsr": 0.5708,
+    "sr_daily": 0.0431,
+    "sr_annual": 0.823,
+    "skew": -0.32,
+    "kurtosis": 14.05,
+    "n_obs": 2767,
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
   "trend_long_only": {
    "oos_sharpe": 0.798,
    "dsr": {
-    "dsr": 0.6577,
+    "dsr": 0.5435,
     "sr_daily": 0.0418,
     "sr_annual": 0.798,
     "skew": -0.784,
     "kurtosis": 14.107,
     "n_obs": 2767,
-    "n_trials": 13
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "dual_momentum": {
+   "oos_sharpe": 0.706,
+   "dsr": {
+    "dsr": 0.4443,
+    "sr_daily": 0.0369,
+    "sr_annual": 0.706,
+    "skew": -0.73,
+    "kurtosis": 13.409,
+    "n_obs": 2767,
+    "n_trials": 113
    },
    "gates": {
     "beats_benchmark_oos": false,
@@ -142,13 +728,13 @@
   "breakout": {
    "oos_sharpe": 0.464,
    "dsr": {
-    "dsr": 0.3084,
+    "dsr": 0.2117,
     "sr_daily": 0.0243,
     "sr_annual": 0.464,
     "skew": -0.55,
     "kurtosis": 11.038,
     "n_obs": 2767,
-    "n_trials": 13
+    "n_trials": 113
    },
    "gates": {
     "beats_benchmark_oos": false,
@@ -164,13 +750,13 @@
   "tsmom": {
    "oos_sharpe": 0.453,
    "dsr": {
-    "dsr": 0.2976,
+    "dsr": 0.2028,
     "sr_daily": 0.0237,
     "sr_annual": 0.453,
     "skew": -0.517,
     "kurtosis": 9.755,
     "n_obs": 2767,
-    "n_trials": 13
+    "n_trials": 113
    },
    "gates": {
     "beats_benchmark_oos": false,
@@ -186,13 +772,13 @@
   "ma_trend": {
    "oos_sharpe": 0.422,
    "dsr": {
-    "dsr": 0.2704,
+    "dsr": 0.1813,
     "sr_daily": 0.0221,
     "sr_annual": 0.422,
     "skew": -1.102,
     "kurtosis": 16.764,
     "n_obs": 2767,
-    "n_trials": 13
+    "n_trials": 113
    },
    "gates": {
     "beats_benchmark_oos": false,
@@ -208,13 +794,35 @@
   "trend_ensemble": {
    "oos_sharpe": 0.381,
    "dsr": {
-    "dsr": 0.2329,
+    "dsr": 0.1515,
     "sr_daily": 0.0199,
     "sr_annual": 0.381,
     "skew": -0.595,
     "kurtosis": 9.772,
     "n_obs": 2767,
-    "n_trials": 13
+    "n_trials": 113
+   },
+   "gates": {
+    "beats_benchmark_oos": false,
+    "folds_positive_ge_4": true,
+    "oos_mdd_le_25pct": true,
+    "no_liquidations": true,
+    "stress_positive": true,
+    "dsr_ge_0.95": false,
+    "pbo_le_0.10": false
+   },
+   "score": 0.0
+  },
+  "rs_bollinger_mr": {
+   "oos_sharpe": 0.358,
+   "dsr": {
+    "dsr": 0.1402,
+    "sr_daily": 0.0188,
+    "sr_annual": 0.358,
+    "skew": -1.503,
+    "kurtosis": 81.395,
+    "n_obs": 2767,
+    "n_trials": 113
    },
    "gates": {
     "beats_benchmark_oos": false,
@@ -236,7 +844,7 @@
     "skew": -0.079,
     "kurtosis": 26.599,
     "n_obs": 2767,
-    "n_trials": 13
+    "n_trials": 113
    },
    "gates": {
     "beats_benchmark_oos": false,
@@ -1657,6 +2265,3506 @@
     "pct_positive_quarters": 0.865
    },
    "oos_vs_benchmark": -1.934
+  },
+  "allocator_blend": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "allocator_blend",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.034,
+    "oos_sharpe_concat": 0.911,
+    "oos_sharpe_total": 1.253,
+    "oos_cagr": 0.1213,
+    "oos_max_drawdown": -0.155,
+    "folds_positive": 5,
+    "wfe": 0.63,
+    "n_trials_this_call": 30,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "blend": [
+        "fixed",
+        0.5
+       ]
+      },
+      "is_sharpe": 2.984,
+      "oos_sharpe": -0.016,
+      "oos_return": 0.0354,
+      "max_drawdown": -0.1217,
+      "turnover": 2.5,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "blend": [
+        "riskparity",
+        60
+       ]
+      },
+      "is_sharpe": 1.848,
+      "oos_sharpe": 0.818,
+      "oos_return": 0.1619,
+      "max_drawdown": -0.155,
+      "turnover": 3.01,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "blend": [
+        "riskparity",
+        60
+       ]
+      },
+      "is_sharpe": 1.592,
+      "oos_sharpe": 2.08,
+      "oos_return": 0.3783,
+      "max_drawdown": -0.079,
+      "turnover": 1.84,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "blend": [
+        "riskparity",
+        60
+       ]
+      },
+      "is_sharpe": 1.689,
+      "oos_sharpe": -0.643,
+      "oos_return": -0.0175,
+      "max_drawdown": -0.1085,
+      "turnover": 1.73,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "blend": [
+        "riskparity",
+        60
+       ]
+      },
+      "is_sharpe": 1.388,
+      "oos_sharpe": 1.366,
+      "oos_return": 0.2135,
+      "max_drawdown": -0.0563,
+      "turnover": 2.95,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "blend": [
+        "riskparity",
+        60
+       ]
+      },
+      "is_sharpe": 1.393,
+      "oos_sharpe": 1.25,
+      "oos_return": 0.2049,
+      "max_drawdown": -0.0539,
+      "turnover": 2.7,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "allocator_blend:blend=('fixed', 0.3)": {
+     "net_sharpe": 1.362,
+     "sharpe_total": 1.654,
+     "cagr": 0.195,
+     "max_drawdown": -0.1543,
+     "total_return": 4.0815,
+     "ann_turnover": 1.81,
+     "fees_annual": 0.0026,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0302,
+     "avg_gross_leverage": 0.51,
+     "max_gross_leverage": 0.916,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0552,
+     "pct_positive_months": 0.673,
+     "pct_positive_quarters": 0.784
+    },
+    "allocator_blend:blend=('fixed', 0.5)": {
+     "net_sharpe": 1.362,
+     "sharpe_total": 1.685,
+     "cagr": 0.1785,
+     "max_drawdown": -0.1343,
+     "total_return": 3.4763,
+     "ann_turnover": 2.04,
+     "fees_annual": 0.003,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0305,
+     "avg_gross_leverage": 0.436,
+     "max_gross_leverage": 0.906,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0506,
+     "pct_positive_months": 0.664,
+     "pct_positive_quarters": 0.757
+    },
+    "allocator_blend:blend=('gate',)": {
+     "net_sharpe": 1.3,
+     "sharpe_total": 1.614,
+     "cagr": 0.1755,
+     "max_drawdown": -0.1766,
+     "total_return": 3.3729,
+     "ann_turnover": 4.13,
+     "fees_annual": 0.006,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0305,
+     "avg_gross_leverage": 0.447,
+     "max_gross_leverage": 0.921,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0527,
+     "pct_positive_months": 0.664,
+     "pct_positive_quarters": 0.784
+    },
+    "allocator_blend:blend=('gate_inv',)": {
+     "net_sharpe": 1.254,
+     "sharpe_total": 1.569,
+     "cagr": 0.1692,
+     "max_drawdown": -0.1338,
+     "total_return": 3.1639,
+     "ann_turnover": 3.65,
+     "fees_annual": 0.0053,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0306,
+     "avg_gross_leverage": 0.423,
+     "max_gross_leverage": 0.968,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0438,
+     "pct_positive_months": 0.627,
+     "pct_positive_quarters": 0.757
+    },
+    "allocator_blend:blend=('riskparity', 60)": {
+     "net_sharpe": 1.378,
+     "sharpe_total": 1.718,
+     "cagr": 0.1729,
+     "max_drawdown": -0.1235,
+     "total_return": 3.2856,
+     "ann_turnover": 2.5,
+     "fees_annual": 0.0036,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0307,
+     "avg_gross_leverage": 0.389,
+     "max_gross_leverage": 0.904,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0409,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.254,
+    "sharpe_total": 1.594,
+    "cagr": 0.1592,
+    "max_drawdown": -0.1248,
+    "total_return": 2.8499,
+    "ann_turnover": 2.5,
+    "fees_annual": 0.0058,
+    "funding_annual": -0.0098,
+    "interest_annual": 0.0307,
+    "avg_gross_leverage": 0.389,
+    "max_gross_leverage": 0.904,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.041,
+    "pct_positive_months": 0.645,
+    "pct_positive_quarters": 0.757
+   },
+   "oos_vs_benchmark": -0.22
+  },
+  "basis_crowding": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "basis_crowding",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.311,
+    "oos_sharpe_concat": 1.1,
+    "oos_sharpe_total": 1.36,
+    "oos_cagr": 0.1758,
+    "oos_max_drawdown": -0.184,
+    "folds_positive": 5,
+    "wfe": 0.92,
+    "n_trials_this_call": 36,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "derisk_q90_flat"
+      },
+      "is_sharpe": 2.714,
+      "oos_sharpe": -0.161,
+      "oos_return": 0.0058,
+      "max_drawdown": -0.184,
+      "turnover": 2.61,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "derisk_q90_flat"
+      },
+      "is_sharpe": 1.451,
+      "oos_sharpe": 1.185,
+      "oos_return": 0.2786,
+      "max_drawdown": -0.1824,
+      "turnover": 2.39,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "derisk_q90_flat"
+      },
+      "is_sharpe": 1.398,
+      "oos_sharpe": 2.094,
+      "oos_return": 0.4055,
+      "max_drawdown": -0.0766,
+      "turnover": 2.01,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "capitulation"
+      },
+      "is_sharpe": 1.503,
+      "oos_sharpe": -0.312,
+      "oos_return": -0.0076,
+      "max_drawdown": -0.1519,
+      "turnover": 1.42,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "capitulation"
+      },
+      "is_sharpe": 1.166,
+      "oos_sharpe": 2.196,
+      "oos_return": 0.4703,
+      "max_drawdown": -0.0878,
+      "turnover": 2.67,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "capitulation"
+      },
+      "is_sharpe": 1.322,
+      "oos_sharpe": 1.437,
+      "oos_return": 0.2937,
+      "max_drawdown": -0.0823,
+      "turnover": 2.23,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "basis_crowding:variant=derisk_q90_flat": {
+     "net_sharpe": 1.294,
+     "sharpe_total": 1.553,
+     "cagr": 0.2056,
+     "max_drawdown": -0.1894,
+     "total_return": 4.5075,
+     "ann_turnover": 1.95,
+     "fees_annual": 0.0028,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.608,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.645,
+     "pct_positive_quarters": 0.757
+    },
+    "basis_crowding:variant=derisk_q90_half": {
+     "net_sharpe": 1.297,
+     "sharpe_total": 1.553,
+     "cagr": 0.2077,
+     "max_drawdown": -0.1894,
+     "total_return": 4.5964,
+     "ann_turnover": 1.86,
+     "fees_annual": 0.0027,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0297,
+     "avg_gross_leverage": 0.614,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.757
+    },
+    "basis_crowding:variant=derisk_q80_half": {
+     "net_sharpe": 1.273,
+     "sharpe_total": 1.531,
+     "cagr": 0.2025,
+     "max_drawdown": -0.1894,
+     "total_return": 4.3821,
+     "ann_turnover": 1.94,
+     "fees_annual": 0.0028,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0297,
+     "avg_gross_leverage": 0.611,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.73
+    },
+    "basis_crowding:variant=capitulation": {
+     "net_sharpe": 1.325,
+     "sharpe_total": 1.574,
+     "cagr": 0.2176,
+     "max_drawdown": -0.1894,
+     "total_return": 5.0278,
+     "ann_turnover": 1.87,
+     "fees_annual": 0.0027,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0297,
+     "avg_gross_leverage": 0.622,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    },
+    "basis_crowding:variant=funding_mom_half": {
+     "net_sharpe": 1.146,
+     "sharpe_total": 1.41,
+     "cagr": 0.1804,
+     "max_drawdown": -0.1894,
+     "total_return": 3.543,
+     "ann_turnover": 2.06,
+     "fees_annual": 0.003,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.603,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0688,
+     "pct_positive_months": 0.636,
+     "pct_positive_quarters": 0.703
+    },
+    "basis_crowding:variant=derisk_q90_half+capitulation": {
+     "net_sharpe": 1.284,
+     "sharpe_total": 1.54,
+     "cagr": 0.2056,
+     "max_drawdown": -0.1894,
+     "total_return": 4.5084,
+     "ann_turnover": 1.9,
+     "fees_annual": 0.0028,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0297,
+     "avg_gross_leverage": 0.615,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.224,
+    "sharpe_total": 1.473,
+    "cagr": 0.2018,
+    "max_drawdown": -0.1905,
+    "total_return": 4.354,
+    "ann_turnover": 1.87,
+    "fees_annual": 0.0043,
+    "funding_annual": -0.0112,
+    "interest_annual": 0.0297,
+    "avg_gross_leverage": 0.622,
+    "max_gross_leverage": 0.941,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0636,
+    "pct_positive_months": 0.645,
+    "pct_positive_quarters": 0.757
+   },
+   "oos_vs_benchmark": -0.031
+  },
+  "crash_filter_beta": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "crash_filter_beta",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.095,
+    "oos_sharpe_concat": 1.011,
+    "oos_sharpe_total": 1.308,
+    "oos_cagr": 0.1467,
+    "oos_max_drawdown": -0.1961,
+    "folds_positive": 5,
+    "wfe": 0.68,
+    "n_trials_this_call": 36,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "d30_w60_m12"
+      },
+      "is_sharpe": 2.796,
+      "oos_sharpe": 0.019,
+      "oos_return": 0.0386,
+      "max_drawdown": -0.1561,
+      "turnover": 3.06,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "d30_w120"
+      },
+      "is_sharpe": 1.841,
+      "oos_sharpe": 0.611,
+      "oos_return": 0.1422,
+      "max_drawdown": -0.1961,
+      "turnover": 2.68,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "d30_w60_m12"
+      },
+      "is_sharpe": 1.59,
+      "oos_sharpe": 2.033,
+      "oos_return": 0.3897,
+      "max_drawdown": -0.0625,
+      "turnover": 2.54,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "d30_w60_m12"
+      },
+      "is_sharpe": 1.631,
+      "oos_sharpe": -1.08,
+      "oos_return": -0.0575,
+      "max_drawdown": -0.1277,
+      "turnover": 2.16,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "d20_w60"
+      },
+      "is_sharpe": 1.324,
+      "oos_sharpe": 2.036,
+      "oos_return": 0.4249,
+      "max_drawdown": -0.0947,
+      "turnover": 2.79,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "variant": "d20_w60"
+      },
+      "is_sharpe": 1.457,
+      "oos_sharpe": 1.58,
+      "oos_return": 0.2753,
+      "max_drawdown": -0.0665,
+      "turnover": 2.5,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "crash_filter_beta:variant=d20_w60": {
+     "net_sharpe": 1.464,
+     "sharpe_total": 1.757,
+     "cagr": 0.2075,
+     "max_drawdown": -0.1422,
+     "total_return": 4.5882,
+     "ann_turnover": 2.28,
+     "fees_annual": 0.0033,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0301,
+     "avg_gross_leverage": 0.56,
+     "max_gross_leverage": 0.924,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0337,
+     "pct_positive_months": 0.645,
+     "pct_positive_quarters": 0.757
+    },
+    "crash_filter_beta:variant=d20_w120": {
+     "net_sharpe": 1.358,
+     "sharpe_total": 1.668,
+     "cagr": 0.1843,
+     "max_drawdown": -0.1407,
+     "total_return": 3.6835,
+     "ann_turnover": 2.11,
+     "fees_annual": 0.0031,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0303,
+     "avg_gross_leverage": 0.532,
+     "max_gross_leverage": 0.924,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0337,
+     "pct_positive_months": 0.645,
+     "pct_positive_quarters": 0.757
+    },
+    "crash_filter_beta:variant=d30_w60": {
+     "net_sharpe": 1.314,
+     "sharpe_total": 1.588,
+     "cagr": 0.1991,
+     "max_drawdown": -0.1735,
+     "total_return": 4.2424,
+     "ann_turnover": 2.08,
+     "fees_annual": 0.003,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0299,
+     "avg_gross_leverage": 0.59,
+     "max_gross_leverage": 0.93,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0492,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    },
+    "crash_filter_beta:variant=d30_w120": {
+     "net_sharpe": 1.377,
+     "sharpe_total": 1.663,
+     "cagr": 0.2002,
+     "max_drawdown": -0.1707,
+     "total_return": 4.2864,
+     "ann_turnover": 1.96,
+     "fees_annual": 0.0028,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0301,
+     "avg_gross_leverage": 0.569,
+     "max_gross_leverage": 0.93,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0491,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    },
+    "crash_filter_beta:variant=d30_w60_spike": {
+     "net_sharpe": 1.289,
+     "sharpe_total": 1.568,
+     "cagr": 0.1925,
+     "max_drawdown": -0.1735,
+     "total_return": 3.9859,
+     "ann_turnover": 2.17,
+     "fees_annual": 0.0032,
+     "funding_annual": 0.0,
+     "interest_annual": 0.03,
+     "avg_gross_leverage": 0.58,
+     "max_gross_leverage": 0.948,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0492,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    },
+    "crash_filter_beta:variant=d30_w60_m12": {
+     "net_sharpe": 1.343,
+     "sharpe_total": 1.646,
+     "cagr": 0.1867,
+     "max_drawdown": -0.1589,
+     "total_return": 3.7689,
+     "ann_turnover": 2.56,
+     "fees_annual": 0.0037,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0304,
+     "avg_gross_leverage": 0.498,
+     "max_gross_leverage": 0.915,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0402,
+     "pct_positive_months": 0.627,
+     "pct_positive_quarters": 0.811
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.355,
+    "sharpe_total": 1.648,
+    "cagr": 0.1933,
+    "max_drawdown": -0.144,
+    "total_return": 4.0154,
+    "ann_turnover": 2.28,
+    "fees_annual": 0.0052,
+    "funding_annual": -0.0101,
+    "interest_annual": 0.0301,
+    "avg_gross_leverage": 0.561,
+    "max_gross_leverage": 0.924,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0338,
+    "pct_positive_months": 0.645,
+    "pct_positive_quarters": 0.757
+   },
+   "oos_vs_benchmark": -0.12
+  },
+  "dual_momentum": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "dual_momentum",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 0.342,
+    "oos_sharpe_concat": 0.706,
+    "oos_sharpe_total": 1.105,
+    "oos_cagr": 0.0903,
+    "oos_max_drawdown": -0.0848,
+    "folds_positive": 5,
+    "wfe": 0.195,
+    "n_trials_this_call": 24,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 182,
+       "top_share": 1.0
+      },
+      "is_sharpe": 3.47,
+      "oos_sharpe": 0.568,
+      "oos_return": 0.0929,
+      "max_drawdown": -0.0584,
+      "turnover": 2.07,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 182,
+       "top_share": 1.0
+      },
+      "is_sharpe": 2.172,
+      "oos_sharpe": -0.519,
+      "oos_return": -0.0225,
+      "max_drawdown": -0.0848,
+      "turnover": 3.11,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 182,
+       "top_share": 1.0
+      },
+      "is_sharpe": 1.648,
+      "oos_sharpe": 2.843,
+      "oos_return": 0.4297,
+      "max_drawdown": -0.047,
+      "turnover": 1.08,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 182,
+       "top_share": 1.0
+      },
+      "is_sharpe": 1.869,
+      "oos_sharpe": -0.333,
+      "oos_return": 0.0135,
+      "max_drawdown": -0.0585,
+      "turnover": 1.72,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 182,
+       "top_share": 1.0
+      },
+      "is_sharpe": 1.579,
+      "oos_sharpe": 1.188,
+      "oos_return": 0.1845,
+      "max_drawdown": -0.0624,
+      "turnover": 3.98,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 182,
+       "top_share": 1.0
+      },
+      "is_sharpe": 1.519,
+      "oos_sharpe": 0.117,
+      "oos_return": 0.0502,
+      "max_drawdown": -0.0656,
+      "turnover": 1.96,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "dual_momentum:lookback=182,top_share=0.7": {
+     "net_sharpe": 1.332,
+     "sharpe_total": 1.699,
+     "cagr": 0.1576,
+     "max_drawdown": -0.0835,
+     "total_return": 2.802,
+     "ann_turnover": 3.08,
+     "fees_annual": 0.0045,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0312,
+     "avg_gross_leverage": 0.259,
+     "max_gross_leverage": 0.764,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0251,
+     "pct_positive_months": 0.691,
+     "pct_positive_quarters": 0.757
+    },
+    "dual_momentum:lookback=182,top_share=1.0": {
+     "net_sharpe": 1.314,
+     "sharpe_total": 1.715,
+     "cagr": 0.1451,
+     "max_drawdown": -0.0707,
+     "total_return": 2.4446,
+     "ann_turnover": 2.28,
+     "fees_annual": 0.0033,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0315,
+     "avg_gross_leverage": 0.172,
+     "max_gross_leverage": 0.764,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0255,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.703
+    },
+    "dual_momentum:lookback=365,top_share=0.7": {
+     "net_sharpe": 1.137,
+     "sharpe_total": 1.515,
+     "cagr": 0.135,
+     "max_drawdown": -0.1273,
+     "total_return": 2.1748,
+     "ann_turnover": 2.69,
+     "fees_annual": 0.0039,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0313,
+     "avg_gross_leverage": 0.233,
+     "max_gross_leverage": 0.719,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0604,
+     "pct_positive_months": 0.682,
+     "pct_positive_quarters": 0.73
+    },
+    "dual_momentum:lookback=365,top_share=1.0": {
+     "net_sharpe": 1.209,
+     "sharpe_total": 1.616,
+     "cagr": 0.134,
+     "max_drawdown": -0.0986,
+     "total_return": 2.1502,
+     "ann_turnover": 2.3,
+     "fees_annual": 0.0033,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0316,
+     "avg_gross_leverage": 0.141,
+     "max_gross_leverage": 0.719,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.055,
+     "pct_positive_months": 0.7,
+     "pct_positive_quarters": 0.703
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.172,
+    "sharpe_total": 1.574,
+    "cagr": 0.132,
+    "max_drawdown": -0.0783,
+    "total_return": 2.1005,
+    "ann_turnover": 2.29,
+    "fees_annual": 0.0053,
+    "funding_annual": -0.01,
+    "interest_annual": 0.0315,
+    "avg_gross_leverage": 0.172,
+    "max_gross_leverage": 0.765,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0255,
+    "pct_positive_months": 0.655,
+    "pct_positive_quarters": 0.676
+   },
+   "oos_vs_benchmark": -0.425
+  },
+  "dual_momentum_skip": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "dual_momentum_skip",
+    "fixed_params": true,
+    "n_folds": 6,
+    "oos_sharpe_median": 0.48,
+    "oos_sharpe_concat": 1.047,
+    "oos_sharpe_total": 1.452,
+    "oos_cagr": 0.1198,
+    "oos_max_drawdown": -0.0865,
+    "folds_positive": 6,
+    "wfe": null,
+    "n_trials_this_call": 1,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "skip": 30,
+       "top_share": 1.0
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.568,
+      "oos_return": 0.0944,
+      "max_drawdown": -0.0602,
+      "turnover": 0.74,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "skip": 30,
+       "top_share": 1.0
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.393,
+      "oos_return": 0.0807,
+      "max_drawdown": -0.0865,
+      "turnover": 4.45,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "skip": 30,
+       "top_share": 1.0
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 2.979,
+      "oos_return": 0.4594,
+      "max_drawdown": -0.047,
+      "turnover": 0.92,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "skip": 30,
+       "top_share": 1.0
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.288,
+      "oos_return": 0.0205,
+      "max_drawdown": -0.0585,
+      "turnover": 1.9,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "skip": 30,
+       "top_share": 1.0
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.804,
+      "oos_return": 0.2656,
+      "max_drawdown": -0.0565,
+      "turnover": 6.46,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "skip": 30,
+       "top_share": 1.0
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.18,
+      "oos_return": 0.0578,
+      "max_drawdown": -0.0841,
+      "turnover": 1.71,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "dual_momentum_skip": {
+     "net_sharpe": 1.157,
+     "sharpe_total": 1.57,
+     "cagr": 0.1279,
+     "max_drawdown": -0.0909,
+     "total_return": 1.9998,
+     "ann_turnover": 2.49,
+     "fees_annual": 0.0036,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0316,
+     "avg_gross_leverage": 0.142,
+     "max_gross_leverage": 0.661,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0471,
+     "pct_positive_months": 0.673,
+     "pct_positive_quarters": 0.676
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.008,
+    "sharpe_total": 1.421,
+    "cagr": 0.1148,
+    "max_drawdown": -0.101,
+    "total_return": 1.695,
+    "ann_turnover": 2.49,
+    "fees_annual": 0.0057,
+    "funding_annual": -0.01,
+    "interest_annual": 0.0316,
+    "avg_gross_leverage": 0.142,
+    "max_gross_leverage": 0.661,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0474,
+    "pct_positive_months": 0.664,
+    "pct_positive_quarters": 0.676
+   },
+   "oos_vs_benchmark": -0.084
+  },
+  "dual_momentum_6": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "dual_momentum_6",
+    "fixed_params": true,
+    "n_folds": 6,
+    "oos_sharpe_median": 0.71,
+    "oos_sharpe_concat": 0.975,
+    "oos_sharpe_total": 1.343,
+    "oos_cagr": 0.121,
+    "oos_max_drawdown": -0.1274,
+    "folds_positive": 6,
+    "wfe": null,
+    "n_trials_this_call": 1,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "top_share": 0.7,
+       "crypto": [
+        "btc",
+        "eth",
+        "sol",
+        "xrp"
+       ]
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.344,
+      "oos_return": 0.0732,
+      "max_drawdown": -0.0686,
+      "turnover": 2.32,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "top_share": 0.7,
+       "crypto": [
+        "btc",
+        "eth",
+        "sol",
+        "xrp"
+       ]
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.175,
+      "oos_return": 0.0114,
+      "max_drawdown": -0.1274,
+      "turnover": 4.09,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "top_share": 0.7,
+       "crypto": [
+        "btc",
+        "eth",
+        "sol",
+        "xrp"
+       ]
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 2.438,
+      "oos_return": 0.4116,
+      "max_drawdown": -0.0615,
+      "turnover": 1.76,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "top_share": 0.7,
+       "crypto": [
+        "btc",
+        "eth",
+        "sol",
+        "xrp"
+       ]
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.217,
+      "oos_return": 0.0255,
+      "max_drawdown": -0.0585,
+      "turnover": 1.77,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "top_share": 0.7,
+       "crypto": [
+        "btc",
+        "eth",
+        "sol",
+        "xrp"
+       ]
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.877,
+      "oos_return": 0.286,
+      "max_drawdown": -0.0465,
+      "turnover": 6.55,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 365,
+       "top_share": 0.7,
+       "crypto": [
+        "btc",
+        "eth",
+        "sol",
+        "xrp"
+       ]
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.075,
+      "oos_return": 0.1765,
+      "max_drawdown": -0.0657,
+      "turnover": 1.89,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "dual_momentum_6": {
+     "net_sharpe": 1.137,
+     "sharpe_total": 1.515,
+     "cagr": 0.135,
+     "max_drawdown": -0.1273,
+     "total_return": 2.1748,
+     "ann_turnover": 2.69,
+     "fees_annual": 0.0039,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0313,
+     "avg_gross_leverage": 0.233,
+     "max_gross_leverage": 0.719,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0604,
+     "pct_positive_months": 0.682,
+     "pct_positive_quarters": 0.73
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 0.988,
+    "sharpe_total": 1.365,
+    "cagr": 0.1207,
+    "max_drawdown": -0.1313,
+    "total_return": 1.8292,
+    "ann_turnover": 2.69,
+    "fees_annual": 0.0062,
+    "funding_annual": -0.0105,
+    "interest_annual": 0.0313,
+    "avg_gross_leverage": 0.233,
+    "max_gross_leverage": 0.719,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0609,
+    "pct_positive_months": 0.673,
+    "pct_positive_quarters": 0.703
+   },
+   "oos_vs_benchmark": -0.156
+  },
+  "macro_gold": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "macro_gold",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 0.833,
+    "oos_sharpe_concat": 0.881,
+    "oos_sharpe_total": 1.196,
+    "oos_cagr": 0.1251,
+    "oos_max_drawdown": -0.1629,
+    "folds_positive": 4,
+    "wfe": 0.558,
+    "n_trials_this_call": 30,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 60,
+       "vix_window": 504,
+       "vix_pct": 0.9,
+       "variant": "or"
+      },
+      "is_sharpe": 3.011,
+      "oos_sharpe": -0.319,
+      "oos_return": -0.0121,
+      "max_drawdown": -0.1629,
+      "turnover": 9.27,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 60,
+       "vix_window": 504,
+       "vix_pct": 0.9,
+       "variant": "and_vix_haven"
+      },
+      "is_sharpe": 1.564,
+      "oos_sharpe": 0.997,
+      "oos_return": 0.1932,
+      "max_drawdown": -0.1281,
+      "turnover": 8.9,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 60,
+       "vix_window": 504,
+       "vix_pct": 0.9,
+       "variant": "or"
+      },
+      "is_sharpe": 1.442,
+      "oos_sharpe": 2.095,
+      "oos_return": 0.4229,
+      "max_drawdown": -0.0735,
+      "turnover": 3.4,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 60,
+       "vix_window": 504,
+       "vix_pct": 0.9,
+       "variant": "and"
+      },
+      "is_sharpe": 1.545,
+      "oos_sharpe": -0.494,
+      "oos_return": -0.0014,
+      "max_drawdown": -0.0771,
+      "turnover": 0.26,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 60,
+       "vix_window": 504,
+       "vix_pct": 0.9,
+       "variant": "and"
+      },
+      "is_sharpe": 1.201,
+      "oos_sharpe": 1.733,
+      "oos_return": 0.3056,
+      "max_drawdown": -0.0514,
+      "turnover": 4.77,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 60,
+       "vix_window": 504,
+       "vix_pct": 0.9,
+       "variant": "and_vix_cut"
+      },
+      "is_sharpe": 1.28,
+      "oos_sharpe": 0.669,
+      "oos_return": 0.1176,
+      "max_drawdown": -0.0739,
+      "turnover": 3.45,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "macro_gold:variant=and": {
+     "net_sharpe": 1.221,
+     "sharpe_total": 1.533,
+     "cagr": 0.1668,
+     "max_drawdown": -0.1301,
+     "total_return": 3.0877,
+     "ann_turnover": 4.34,
+     "fees_annual": 0.0063,
+     "funding_annual": 0.0,
+     "interest_annual": 0.031,
+     "avg_gross_leverage": 0.272,
+     "max_gross_leverage": 0.937,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0481,
+     "pct_positive_months": 0.6,
+     "pct_positive_quarters": 0.703
+    },
+    "macro_gold:variant=or": {
+     "net_sharpe": 1.223,
+     "sharpe_total": 1.495,
+     "cagr": 0.1874,
+     "max_drawdown": -0.1805,
+     "total_return": 3.7962,
+     "ann_turnover": 4.55,
+     "fees_annual": 0.0066,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0303,
+     "avg_gross_leverage": 0.451,
+     "max_gross_leverage": 0.948,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.065,
+     "pct_positive_months": 0.609,
+     "pct_positive_quarters": 0.757
+    },
+    "macro_gold:variant=and_vix_haven": {
+     "net_sharpe": 1.201,
+     "sharpe_total": 1.505,
+     "cagr": 0.1675,
+     "max_drawdown": -0.1306,
+     "total_return": 3.108,
+     "ann_turnover": 5.02,
+     "fees_annual": 0.0073,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0309,
+     "avg_gross_leverage": 0.298,
+     "max_gross_leverage": 0.937,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0574,
+     "pct_positive_months": 0.582,
+     "pct_positive_quarters": 0.676
+    },
+    "macro_gold:variant=and_vix_cut": {
+     "net_sharpe": 1.207,
+     "sharpe_total": 1.523,
+     "cagr": 0.1635,
+     "max_drawdown": -0.1301,
+     "total_return": 2.9835,
+     "ann_turnover": 4.41,
+     "fees_annual": 0.0064,
+     "funding_annual": 0.0,
+     "interest_annual": 0.031,
+     "avg_gross_leverage": 0.265,
+     "max_gross_leverage": 0.937,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0477,
+     "pct_positive_months": 0.6,
+     "pct_positive_quarters": 0.703
+    },
+    "macro_gold:variant=score": {
+     "net_sharpe": 0.83,
+     "sharpe_total": 1.115,
+     "cagr": 0.1284,
+     "max_drawdown": -0.1674,
+     "total_return": 2.0112,
+     "ann_turnover": 7.92,
+     "fees_annual": 0.0115,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0303,
+     "avg_gross_leverage": 0.445,
+     "max_gross_leverage": 0.995,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0481,
+     "pct_positive_months": 0.6,
+     "pct_positive_quarters": 0.649
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.062,
+    "sharpe_total": 1.378,
+    "cagr": 0.1464,
+    "max_drawdown": -0.1317,
+    "total_return": 2.4798,
+    "ann_turnover": 4.4,
+    "fees_annual": 0.0101,
+    "funding_annual": -0.0116,
+    "interest_annual": 0.031,
+    "avg_gross_leverage": 0.266,
+    "max_gross_leverage": 0.938,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0481,
+    "pct_positive_months": 0.591,
+    "pct_positive_quarters": 0.676
+   },
+   "oos_vs_benchmark": -0.25
+  },
+  "rs_weekly_reversal": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "rs_weekly_reversal",
+    "fixed_params": true,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.288,
+    "oos_sharpe_concat": 0.823,
+    "oos_sharpe_total": 1.06,
+    "oos_cagr": 0.1453,
+    "oos_max_drawdown": -0.243,
+    "folds_positive": 4,
+    "wfe": null,
+    "n_trials_this_call": 1,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 5,
+       "tilt": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.263,
+      "oos_return": -0.0189,
+      "max_drawdown": -0.243,
+      "turnover": 22.91,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 5,
+       "tilt": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.118,
+      "oos_return": 0.2796,
+      "max_drawdown": -0.1682,
+      "turnover": 19.86,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 5,
+       "tilt": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 2.025,
+      "oos_return": 0.3806,
+      "max_drawdown": -0.0902,
+      "turnover": 12.58,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 5,
+       "tilt": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.674,
+      "oos_return": -0.0899,
+      "max_drawdown": -0.2189,
+      "turnover": 14.91,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 5,
+       "tilt": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.458,
+      "oos_return": 0.2987,
+      "max_drawdown": -0.0954,
+      "turnover": 16.43,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "lookback": 5,
+       "tilt": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.633,
+      "oos_return": 0.3656,
+      "max_drawdown": -0.0788,
+      "turnover": 14.75,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "rs_weekly_reversal": {
+     "net_sharpe": 0.844,
+     "sharpe_total": 1.083,
+     "cagr": 0.1478,
+     "max_drawdown": -0.2132,
+     "total_return": 2.5189,
+     "ann_turnover": 17.1,
+     "fees_annual": 0.0248,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.598,
+     "max_gross_leverage": 1.329,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0795,
+     "pct_positive_months": 0.645,
+     "pct_positive_quarters": 0.649
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 0.676,
+    "sharpe_total": 0.915,
+    "cagr": 0.1221,
+    "max_drawdown": -0.2243,
+    "total_return": 1.8607,
+    "ann_turnover": 17.1,
+    "fees_annual": 0.0393,
+    "funding_annual": -0.0083,
+    "interest_annual": 0.0298,
+    "avg_gross_leverage": 0.599,
+    "max_gross_leverage": 1.33,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0797,
+    "pct_positive_months": 0.636,
+    "pct_positive_quarters": 0.595
+   },
+   "oos_vs_benchmark": -0.308
+  },
+  "rs_weekend_half": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "rs_weekend_half",
+    "fixed_params": true,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.237,
+    "oos_sharpe_concat": 0.958,
+    "oos_sharpe_total": 1.232,
+    "oos_cagr": 0.1488,
+    "oos_max_drawdown": -0.184,
+    "folds_positive": 6,
+    "wfe": null,
+    "n_trials_this_call": 1,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "weekend_weight": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.161,
+      "oos_return": 0.0058,
+      "max_drawdown": -0.184,
+      "turnover": 2.61,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "weekend_weight": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.011,
+      "oos_return": 0.2136,
+      "max_drawdown": -0.1739,
+      "turnover": 2.51,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "weekend_weight": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.48,
+      "oos_return": 0.2375,
+      "max_drawdown": -0.0584,
+      "turnover": 1.93,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "weekend_weight": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.224,
+      "oos_return": 0.0025,
+      "max_drawdown": -0.1369,
+      "turnover": 1.22,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "weekend_weight": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 2.168,
+      "oos_return": 0.4593,
+      "max_drawdown": -0.0863,
+      "turnover": 2.59,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "weekend_weight": 0.5
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.463,
+      "oos_return": 0.2954,
+      "max_drawdown": -0.0819,
+      "turnover": 1.91,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "rs_weekend_half": {
+     "net_sharpe": 1.311,
+     "sharpe_total": 1.561,
+     "cagr": 0.2146,
+     "max_drawdown": -0.1894,
+     "total_return": 4.8967,
+     "ann_turnover": 1.82,
+     "fees_annual": 0.0026,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0297,
+     "avg_gross_leverage": 0.621,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.212,
+    "sharpe_total": 1.461,
+    "cagr": 0.1993,
+    "max_drawdown": -0.1905,
+    "total_return": 4.2501,
+    "ann_turnover": 1.82,
+    "fees_annual": 0.0042,
+    "funding_annual": -0.0112,
+    "interest_annual": 0.0297,
+    "avg_gross_leverage": 0.622,
+    "max_gross_leverage": 0.941,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0636,
+    "pct_positive_months": 0.645,
+    "pct_positive_quarters": 0.73
+   },
+   "oos_vs_benchmark": -0.173
+  },
+  "rs_turn_of_month": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "rs_turn_of_month",
+    "fixed_params": true,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.069,
+    "oos_sharpe_concat": 1.026,
+    "oos_sharpe_total": 1.331,
+    "oos_cagr": 0.1453,
+    "oos_max_drawdown": -0.1615,
+    "folds_positive": 4,
+    "wfe": null,
+    "n_trials_this_call": 1,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "off_weight": 0.5,
+       "last_days": 2,
+       "first_days": 3
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.321,
+      "oos_return": -0.0087,
+      "max_drawdown": -0.1615,
+      "turnover": 8.95,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "off_weight": 0.5,
+       "last_days": 2,
+       "first_days": 3
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.166,
+      "oos_return": 0.2307,
+      "max_drawdown": -0.1131,
+      "turnover": 6.08,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "off_weight": 0.5,
+       "last_days": 2,
+       "first_days": 3
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 2.501,
+      "oos_return": 0.4523,
+      "max_drawdown": -0.0613,
+      "turnover": 4.2,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "off_weight": 0.5,
+       "last_days": 2,
+       "first_days": 3
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.437,
+      "oos_return": -0.0122,
+      "max_drawdown": -0.1244,
+      "turnover": 5.83,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "off_weight": 0.5,
+       "last_days": 2,
+       "first_days": 3
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.945,
+      "oos_return": 0.3623,
+      "max_drawdown": -0.0833,
+      "turnover": 6.97,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "off_weight": 0.5,
+       "last_days": 2,
+       "first_days": 3
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.972,
+      "oos_return": 0.173,
+      "max_drawdown": -0.0765,
+      "turnover": 5.96,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "rs_turn_of_month": {
+     "net_sharpe": 1.374,
+     "sharpe_total": 1.664,
+     "cagr": 0.1972,
+     "max_drawdown": -0.1697,
+     "total_return": 4.1673,
+     "ann_turnover": 6.84,
+     "fees_annual": 0.0099,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0304,
+     "avg_gross_leverage": 0.435,
+     "max_gross_leverage": 0.942,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0564,
+     "pct_positive_months": 0.627,
+     "pct_positive_quarters": 0.757
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.219,
+    "sharpe_total": 1.508,
+    "cagr": 0.1769,
+    "max_drawdown": -0.1757,
+    "total_return": 3.423,
+    "ann_turnover": 6.84,
+    "fees_annual": 0.0157,
+    "funding_annual": -0.0116,
+    "interest_annual": 0.0303,
+    "avg_gross_leverage": 0.436,
+    "max_gross_leverage": 0.942,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0567,
+    "pct_positive_months": 0.618,
+    "pct_positive_quarters": 0.73
+   },
+   "oos_vs_benchmark": -0.105
+  },
+  "rs_bollinger_mr": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "rs_bollinger_mr",
+    "fixed_params": true,
+    "n_folds": 6,
+    "oos_sharpe_median": 0.234,
+    "oos_sharpe_concat": 0.358,
+    "oos_sharpe_total": 1.264,
+    "oos_cagr": 0.0456,
+    "oos_max_drawdown": -0.052,
+    "folds_positive": 6,
+    "wfe": null,
+    "n_trials_this_call": 1,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "bb_window": 20,
+       "bb_k": 2.0,
+       "trend_window": 200
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.549,
+      "oos_return": 0.0221,
+      "max_drawdown": -0.0274,
+      "turnover": 0.85,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "bb_window": 20,
+       "bb_k": 2.0,
+       "trend_window": 200
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.235,
+      "oos_return": 0.0239,
+      "max_drawdown": -0.052,
+      "turnover": 3.22,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "bb_window": 20,
+       "bb_k": 2.0,
+       "trend_window": 200
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.541,
+      "oos_return": 0.1193,
+      "max_drawdown": -0.0183,
+      "turnover": 3.22,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "bb_window": 20,
+       "bb_k": 2.0,
+       "trend_window": 200
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.21,
+      "oos_return": 0.036,
+      "max_drawdown": -0.0179,
+      "turnover": 0.79,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "bb_window": 20,
+       "bb_k": 2.0,
+       "trend_window": 200
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.775,
+      "oos_return": 0.079,
+      "max_drawdown": -0.0288,
+      "turnover": 3.39,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "bb_window": 20,
+       "bb_k": 2.0,
+       "trend_window": 200
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.677,
+      "oos_return": 0.0711,
+      "max_drawdown": -0.0238,
+      "turnover": 2.39,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "rs_bollinger_mr": {
+     "net_sharpe": 0.603,
+     "sharpe_total": 1.475,
+     "cagr": 0.0558,
+     "max_drawdown": -0.0482,
+     "total_return": 0.6411,
+     "ann_turnover": 2.51,
+     "fees_annual": 0.0036,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0322,
+     "avg_gross_leverage": 0.059,
+     "max_gross_leverage": 0.708,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0353,
+     "pct_positive_months": 0.882,
+     "pct_positive_quarters": 0.946
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 0.53,
+    "sharpe_total": 1.4,
+    "cagr": 0.0529,
+    "max_drawdown": -0.0486,
+    "total_return": 0.6012,
+    "ann_turnover": 2.51,
+    "fees_annual": 0.0058,
+    "funding_annual": -0.0006,
+    "interest_annual": 0.0322,
+    "avg_gross_leverage": 0.059,
+    "max_gross_leverage": 0.708,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0354,
+    "pct_positive_months": 0.882,
+    "pct_positive_quarters": 0.946
+   },
+   "oos_vs_benchmark": -0.773
+  },
+  "trend_v2_baz": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "trend_v2_baz",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.127,
+    "oos_sharpe_concat": 0.907,
+    "oos_sharpe_total": 1.391,
+    "oos_cagr": 0.0951,
+    "oos_max_drawdown": -0.1175,
+    "folds_positive": 6,
+    "wfe": 1.116,
+    "n_trials_this_call": 12,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref"
+      },
+      "is_sharpe": 1.328,
+      "oos_sharpe": 1.13,
+      "oos_return": 0.0936,
+      "max_drawdown": -0.0236,
+      "turnover": 1.93,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref"
+      },
+      "is_sharpe": 1.034,
+      "oos_sharpe": 0.289,
+      "oos_return": 0.0719,
+      "max_drawdown": -0.1175,
+      "turnover": 3.4,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref"
+      },
+      "is_sharpe": 0.875,
+      "oos_sharpe": 1.865,
+      "oos_return": 0.2368,
+      "max_drawdown": -0.0478,
+      "turnover": 2.04,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref"
+      },
+      "is_sharpe": 1.158,
+      "oos_sharpe": -0.392,
+      "oos_return": 0.0195,
+      "max_drawdown": -0.0353,
+      "turnover": 1.54,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref"
+      },
+      "is_sharpe": 0.951,
+      "oos_sharpe": 1.124,
+      "oos_return": 0.1548,
+      "max_drawdown": -0.0566,
+      "turnover": 3.38,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref"
+      },
+      "is_sharpe": 0.985,
+      "oos_sharpe": 1.427,
+      "oos_return": 0.1661,
+      "max_drawdown": -0.0444,
+      "turnover": 3.13,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "trend_v2_baz:sizing=ref": {
+     "net_sharpe": 0.975,
+     "sharpe_total": 1.481,
+     "cagr": 0.0975,
+     "max_drawdown": -0.0715,
+     "total_return": 1.3374,
+     "ann_turnover": 2.66,
+     "fees_annual": 0.0039,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0315,
+     "avg_gross_leverage": 0.224,
+     "max_gross_leverage": 0.713,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0307,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.838
+    },
+    "trend_v2_baz:sizing=live": {
+     "net_sharpe": 0.973,
+     "sharpe_total": 1.296,
+     "cagr": 0.1331,
+     "max_drawdown": -0.1117,
+     "total_return": 2.1287,
+     "ann_turnover": 4.52,
+     "fees_annual": 0.0066,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0308,
+     "avg_gross_leverage": 0.385,
+     "max_gross_leverage": 1.043,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0392,
+     "pct_positive_months": 0.636,
+     "pct_positive_quarters": 0.757
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 0.85,
+    "sharpe_total": 1.356,
+    "cagr": 0.0888,
+    "max_drawdown": -0.073,
+    "total_return": 1.1728,
+    "ann_turnover": 2.66,
+    "fees_annual": 0.0061,
+    "funding_annual": -0.0058,
+    "interest_annual": 0.0315,
+    "avg_gross_leverage": 0.224,
+    "max_gross_leverage": 0.713,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0308,
+    "pct_positive_months": 0.655,
+    "pct_positive_quarters": 0.784
+   },
+   "oos_vs_benchmark": -0.224
+  },
+  "trend_v2_tsmom": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "trend_v2_tsmom",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 0.833,
+    "oos_sharpe_concat": 1.031,
+    "oos_sharpe_total": 1.343,
+    "oos_cagr": 0.1435,
+    "oos_max_drawdown": -0.1838,
+    "folds_positive": 6,
+    "wfe": 0.743,
+    "n_trials_this_call": 12,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref",
+       "skip_months": 1
+      },
+      "is_sharpe": 2.006,
+      "oos_sharpe": 0.319,
+      "oos_return": 0.073,
+      "max_drawdown": -0.0989,
+      "turnover": 3.04,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref",
+       "skip_months": 1
+      },
+      "is_sharpe": 1.311,
+      "oos_sharpe": 0.295,
+      "oos_return": 0.0802,
+      "max_drawdown": -0.1838,
+      "turnover": 3.04,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref",
+       "skip_months": 1
+      },
+      "is_sharpe": 0.867,
+      "oos_sharpe": 2.301,
+      "oos_return": 0.4537,
+      "max_drawdown": -0.074,
+      "turnover": 2.45,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref",
+       "skip_months": 1
+      },
+      "is_sharpe": 1.147,
+      "oos_sharpe": -0.311,
+      "oos_return": 0.017,
+      "max_drawdown": -0.0638,
+      "turnover": 4.38,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref",
+       "skip_months": 1
+      },
+      "is_sharpe": 0.996,
+      "oos_sharpe": 1.556,
+      "oos_return": 0.279,
+      "max_drawdown": -0.0832,
+      "turnover": 3.38,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "sizing": "ref",
+       "skip_months": 1
+      },
+      "is_sharpe": 1.095,
+      "oos_sharpe": 1.346,
+      "oos_return": 0.2607,
+      "max_drawdown": -0.0818,
+      "turnover": 1.92,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "trend_v2_tsmom:skip_months=0": {
+     "net_sharpe": 1.035,
+     "sharpe_total": 1.342,
+     "cagr": 0.146,
+     "max_drawdown": -0.1945,
+     "total_return": 2.4685,
+     "ann_turnover": 3.34,
+     "fees_annual": 0.0048,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0307,
+     "avg_gross_leverage": 0.405,
+     "max_gross_leverage": 0.946,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0742,
+     "pct_positive_months": 0.645,
+     "pct_positive_quarters": 0.757
+    },
+    "trend_v2_tsmom:skip_months=1": {
+     "net_sharpe": 1.102,
+     "sharpe_total": 1.413,
+     "cagr": 0.1527,
+     "max_drawdown": -0.1945,
+     "total_return": 2.6588,
+     "ann_turnover": 3.32,
+     "fees_annual": 0.0048,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0307,
+     "avg_gross_leverage": 0.398,
+     "max_gross_leverage": 0.914,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0742,
+     "pct_positive_months": 0.636,
+     "pct_positive_quarters": 0.784
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 0.972,
+    "sharpe_total": 1.283,
+    "cagr": 0.1374,
+    "max_drawdown": -0.1965,
+    "total_return": 2.238,
+    "ann_turnover": 3.33,
+    "fees_annual": 0.0077,
+    "funding_annual": -0.0107,
+    "interest_annual": 0.0307,
+    "avg_gross_leverage": 0.399,
+    "max_gross_leverage": 0.918,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0747,
+    "pct_positive_months": 0.618,
+    "pct_positive_quarters": 0.784
+   },
+   "oos_vs_benchmark": -0.1
+  },
+  "trend_v2_tsmom_live": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "trend_v2_tsmom_live",
+    "fixed_params": true,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.27,
+    "oos_sharpe_concat": 1.016,
+    "oos_sharpe_total": 1.292,
+    "oos_cagr": 0.156,
+    "oos_max_drawdown": -0.1703,
+    "folds_positive": 5,
+    "wfe": null,
+    "n_trials_this_call": 1,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.154,
+      "oos_return": 0.016,
+      "max_drawdown": -0.1298,
+      "turnover": 5.55,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 0.995,
+      "oos_return": 0.2378,
+      "max_drawdown": -0.1703,
+      "turnover": 3.6,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 2.255,
+      "oos_return": 0.4533,
+      "max_drawdown": -0.0807,
+      "turnover": 3.32,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12
+      },
+      "is_sharpe": null,
+      "oos_sharpe": -0.82,
+      "oos_return": -0.0529,
+      "max_drawdown": -0.1309,
+      "turnover": 6.44,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.65,
+      "oos_return": 0.3154,
+      "max_drawdown": -0.0729,
+      "turnover": 6.51,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12
+      },
+      "is_sharpe": null,
+      "oos_sharpe": 1.544,
+      "oos_return": 0.3183,
+      "max_drawdown": -0.0819,
+      "turnover": 2.2,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "trend_v2_tsmom_live": {
+     "net_sharpe": 1.077,
+     "sharpe_total": 1.352,
+     "cagr": 0.1649,
+     "max_drawdown": -0.1944,
+     "total_return": 3.0268,
+     "ann_turnover": 4.8,
+     "fees_annual": 0.007,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0304,
+     "avg_gross_leverage": 0.474,
+     "max_gross_leverage": 1.004,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0742,
+     "pct_positive_months": 0.664,
+     "pct_positive_quarters": 0.703
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 0.947,
+    "sharpe_total": 1.222,
+    "cagr": 0.1473,
+    "max_drawdown": -0.1964,
+    "total_return": 2.5048,
+    "ann_turnover": 4.8,
+    "fees_annual": 0.011,
+    "funding_annual": -0.0114,
+    "interest_annual": 0.0304,
+    "avg_gross_leverage": 0.475,
+    "max_gross_leverage": 1.004,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0747,
+    "pct_positive_months": 0.664,
+    "pct_positive_quarters": 0.703
+   },
+   "oos_vs_benchmark": -0.115
+  },
+  "vrp_options": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "vrp_options",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 1.421,
+    "oos_sharpe_concat": 1.099,
+    "oos_sharpe_total": 1.369,
+    "oos_cagr": 0.1698,
+    "oos_max_drawdown": -0.184,
+    "folds_positive": 6,
+    "wfe": 0.997,
+    "n_trials_this_call": 36,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "mode": "vrp_high"
+      },
+      "is_sharpe": 2.714,
+      "oos_sharpe": -0.161,
+      "oos_return": 0.0058,
+      "max_drawdown": -0.184,
+      "turnover": 2.61,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "mode": "vrp_high"
+      },
+      "is_sharpe": 1.451,
+      "oos_sharpe": 1.185,
+      "oos_return": 0.2786,
+      "max_drawdown": -0.1824,
+      "turnover": 2.39,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "mode": "vrp_high"
+      },
+      "is_sharpe": 1.398,
+      "oos_sharpe": 2.338,
+      "oos_return": 0.4957,
+      "max_drawdown": -0.065,
+      "turnover": 1.99,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "mode": "vrp_high"
+      },
+      "is_sharpe": 1.544,
+      "oos_sharpe": -0.24,
+      "oos_return": 0.0057,
+      "max_drawdown": -0.1194,
+      "turnover": 2.25,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "mode": "vrp_high"
+      },
+      "is_sharpe": 1.246,
+      "oos_sharpe": 1.656,
+      "oos_return": 0.2856,
+      "max_drawdown": -0.0818,
+      "turnover": 3.78,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "mode": "iv_size"
+      },
+      "is_sharpe": 1.321,
+      "oos_sharpe": 1.687,
+      "oos_return": 0.3201,
+      "max_drawdown": -0.0594,
+      "turnover": 2.09,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "vrp_options:mode=vrp_high": {
+     "net_sharpe": 1.327,
+     "sharpe_total": 1.596,
+     "cagr": 0.2042,
+     "max_drawdown": -0.1894,
+     "total_return": 4.4508,
+     "ann_turnover": 2.31,
+     "fees_annual": 0.0033,
+     "funding_annual": 0.0,
+     "interest_annual": 0.03,
+     "avg_gross_leverage": 0.578,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.757
+    },
+    "vrp_options:mode=vrp_low": {
+     "net_sharpe": 1.279,
+     "sharpe_total": 1.553,
+     "cagr": 0.1939,
+     "max_drawdown": -0.1894,
+     "total_return": 4.0382,
+     "ann_turnover": 2.29,
+     "fees_annual": 0.0033,
+     "funding_annual": 0.0,
+     "interest_annual": 0.03,
+     "avg_gross_leverage": 0.578,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.757
+    },
+    "vrp_options:mode=vrp_tilt": {
+     "net_sharpe": 1.298,
+     "sharpe_total": 1.555,
+     "cagr": 0.2077,
+     "max_drawdown": -0.1894,
+     "total_return": 4.5963,
+     "ann_turnover": 2.01,
+     "fees_annual": 0.0029,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.609,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    },
+    "vrp_options:mode=vrp_raw": {
+     "net_sharpe": 1.292,
+     "sharpe_total": 1.548,
+     "cagr": 0.2067,
+     "max_drawdown": -0.1894,
+     "total_return": 4.5543,
+     "ann_turnover": 2.38,
+     "fees_annual": 0.0035,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.605,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.645,
+     "pct_positive_quarters": 0.784
+    },
+    "vrp_options:mode=fear_dip": {
+     "net_sharpe": 1.256,
+     "sharpe_total": 1.521,
+     "cagr": 0.1962,
+     "max_drawdown": -0.1894,
+     "total_return": 4.1279,
+     "ann_turnover": 1.78,
+     "fees_annual": 0.0026,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.599,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.757
+    },
+    "vrp_options:mode=iv_size": {
+     "net_sharpe": 1.343,
+     "sharpe_total": 1.601,
+     "cagr": 0.2141,
+     "max_drawdown": -0.1894,
+     "total_return": 4.8758,
+     "ann_turnover": 1.77,
+     "fees_annual": 0.0026,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0297,
+     "avg_gross_leverage": 0.612,
+     "max_gross_leverage": 0.941,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0633,
+     "pct_positive_months": 0.655,
+     "pct_positive_quarters": 0.784
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.246,
+    "sharpe_total": 1.503,
+    "cagr": 0.1996,
+    "max_drawdown": -0.1905,
+    "total_return": 4.2646,
+    "ann_turnover": 1.77,
+    "fees_annual": 0.0041,
+    "funding_annual": -0.0105,
+    "interest_annual": 0.0297,
+    "avg_gross_leverage": 0.613,
+    "max_gross_leverage": 0.941,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0636,
+    "pct_positive_months": 0.636,
+    "pct_positive_quarters": 0.703
+   },
+   "oos_vs_benchmark": -0.032
+  },
+  "xsec_momentum": {
+   "kind": "candidate",
+   "walk_forward": {
+    "strategy": "xsec_momentum",
+    "fixed_params": false,
+    "n_folds": 6,
+    "oos_sharpe_median": 0.966,
+    "oos_sharpe_concat": 0.876,
+    "oos_sharpe_total": 1.074,
+    "oos_cagr": 0.1769,
+    "oos_max_drawdown": -0.3068,
+    "folds_positive": 5,
+    "wfe": 0.528,
+    "n_trials_this_call": 30,
+    "folds": [
+     {
+      "fold": 0,
+      "start": "2017-12-03",
+      "end": "2019-03-08",
+      "params": {
+       "target_vol": 0.12,
+       "top_k": 2,
+       "spec": [
+        "top",
+        252,
+        21
+       ]
+      },
+      "is_sharpe": 3.282,
+      "oos_sharpe": 0.779,
+      "oos_return": 0.2011,
+      "max_drawdown": -0.1112,
+      "turnover": 3.9,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 1,
+      "start": "2019-03-09",
+      "end": "2020-06-11",
+      "params": {
+       "target_vol": 0.12,
+       "top_k": 2,
+       "spec": [
+        "top",
+        252,
+        21
+       ]
+      },
+      "is_sharpe": 2.17,
+      "oos_sharpe": 0.094,
+      "oos_return": 0.0418,
+      "max_drawdown": -0.2225,
+      "turnover": 11.95,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 2,
+      "start": "2020-06-12",
+      "end": "2021-09-15",
+      "params": {
+       "target_vol": 0.12,
+       "top_k": 2,
+       "spec": [
+        "top",
+        63,
+        0
+       ]
+      },
+      "is_sharpe": 1.738,
+      "oos_sharpe": 2.957,
+      "oos_return": 0.8789,
+      "max_drawdown": -0.0793,
+      "turnover": 6.5,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 3,
+      "start": "2021-09-16",
+      "end": "2022-12-20",
+      "params": {
+       "target_vol": 0.12,
+       "top_k": 2,
+       "spec": [
+        "top",
+        63,
+        0
+       ]
+      },
+      "is_sharpe": 1.922,
+      "oos_sharpe": -0.611,
+      "oos_return": -0.1031,
+      "max_drawdown": -0.2825,
+      "turnover": 9.91,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 4,
+      "start": "2022-12-21",
+      "end": "2024-03-25",
+      "params": {
+       "target_vol": 0.12,
+       "top_k": 2,
+       "spec": [
+        "top",
+        63,
+        0
+       ]
+      },
+      "is_sharpe": 1.445,
+      "oos_sharpe": 1.154,
+      "oos_return": 0.3077,
+      "max_drawdown": -0.2378,
+      "turnover": 9.38,
+      "n_liquidations": 0
+     },
+     {
+      "fold": 5,
+      "start": "2024-03-26",
+      "end": "2025-06-30",
+      "params": {
+       "target_vol": 0.12,
+       "top_k": 2,
+       "spec": [
+        "rank",
+        126,
+        0
+       ]
+      },
+      "is_sharpe": 1.423,
+      "oos_sharpe": 1.154,
+      "oos_return": 0.2465,
+      "max_drawdown": -0.0778,
+      "turnover": 5.24,
+      "n_liquidations": 0
+     }
+    ],
+    "cost_model": "taker_t0",
+    "funding_mode": "kalshi"
+   },
+   "dev_fixed": {
+    "xsec_momentum:spec=('top', 63, 0)": {
+     "net_sharpe": 1.341,
+     "sharpe_total": 1.532,
+     "cagr": 0.2788,
+     "max_drawdown": -0.3067,
+     "total_return": 8.4358,
+     "ann_turnover": 9.45,
+     "fees_annual": 0.0137,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.569,
+     "max_gross_leverage": 1.314,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0624,
+     "pct_positive_months": 0.618,
+     "pct_positive_quarters": 0.676
+    },
+    "xsec_momentum:spec=('top', 252, 21)": {
+     "net_sharpe": 1.343,
+     "sharpe_total": 1.542,
+     "cagr": 0.2693,
+     "max_drawdown": -0.2158,
+     "total_return": 7.8135,
+     "ann_turnover": 6.27,
+     "fees_annual": 0.0091,
+     "funding_annual": 0.0,
+     "interest_annual": 0.03,
+     "avg_gross_leverage": 0.493,
+     "max_gross_leverage": 1.358,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0669,
+     "pct_positive_months": 0.636,
+     "pct_positive_quarters": 0.703
+    },
+    "xsec_momentum:spec=('ls', 63, 0)": {
+     "net_sharpe": 0.609,
+     "sharpe_total": 0.919,
+     "cagr": 0.0949,
+     "max_drawdown": -0.1973,
+     "total_return": 1.2883,
+     "ann_turnover": 9.73,
+     "fees_annual": 0.0141,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0297,
+     "avg_gross_leverage": 0.614,
+     "max_gross_leverage": 0.995,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0315,
+     "pct_positive_months": 0.591,
+     "pct_positive_quarters": 0.595
+    },
+    "xsec_momentum:spec=('ls', 252, 21)": {
+     "net_sharpe": 0.384,
+     "sharpe_total": 0.695,
+     "cagr": 0.0694,
+     "max_drawdown": -0.257,
+     "total_return": 0.8447,
+     "ann_turnover": 6.07,
+     "fees_annual": 0.0088,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0299,
+     "avg_gross_leverage": 0.57,
+     "max_gross_leverage": 0.995,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0435,
+     "pct_positive_months": 0.618,
+     "pct_positive_quarters": 0.595
+    },
+    "xsec_momentum:spec=('rank', 126, 0)": {
+     "net_sharpe": 1.358,
+     "sharpe_total": 1.597,
+     "cagr": 0.2307,
+     "max_drawdown": -0.2061,
+     "total_return": 5.6467,
+     "ann_turnover": 4.72,
+     "fees_annual": 0.0069,
+     "funding_annual": 0.0,
+     "interest_annual": 0.0298,
+     "avg_gross_leverage": 0.604,
+     "max_gross_leverage": 1.145,
+     "n_liquidations": 0,
+     "n_days": 3331,
+     "years": 9.13,
+     "start": "2016-05-18",
+     "end": "2025-06-30",
+     "cost_model": "taker_t0",
+     "funding_mode": "kalshi",
+     "killed": false,
+     "worst_day": -0.0609,
+     "pct_positive_months": 0.618,
+     "pct_positive_quarters": 0.757
+    }
+   },
+   "stress_dev": {
+    "net_sharpe": 1.222,
+    "sharpe_total": 1.462,
+    "cagr": 0.208,
+    "max_drawdown": -0.208,
+    "total_return": 4.6082,
+    "ann_turnover": 4.75,
+    "fees_annual": 0.0109,
+    "funding_annual": -0.0138,
+    "interest_annual": 0.0298,
+    "avg_gross_leverage": 0.604,
+    "max_gross_leverage": 1.145,
+    "n_liquidations": 0,
+    "n_days": 3331,
+    "years": 9.13,
+    "start": "2016-05-18",
+    "end": "2025-06-30",
+    "cost_model": "stress_1p5x",
+    "funding_mode": "proxy",
+    "killed": false,
+    "worst_day": -0.0611,
+    "pct_positive_months": 0.609,
+    "pct_positive_quarters": 0.757
+   },
+   "oos_vs_benchmark": -0.255
   }
  },
  "holdout": "SEALED \u2014 not read by this module"

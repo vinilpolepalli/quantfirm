@@ -1,12 +1,6 @@
 {
  "strategy": "allocator_blend",
- "params": {
-  "target_vol": 0.12,
-  "blend": [
-   "riskparity",
-   60
-  ]
- },
+ "params": {},
  "window": [
   "2018-01-01",
   "2025-07-01"
@@ -14,17 +8,17 @@
  "cost_model": "taker_t0",
  "funding_mode": "kalshi",
  "base": {
-  "net_sharpe": 0.845,
-  "sharpe_total": 1.196,
-  "cagr": 0.1121,
-  "max_drawdown": -0.1388,
-  "total_return": 1.2182,
-  "ann_turnover": 2.36,
-  "fees_annual": 0.0034,
+  "net_sharpe": 0.892,
+  "sharpe_total": 1.22,
+  "cagr": 0.1228,
+  "max_drawdown": -0.1577,
+  "total_return": 1.3839,
+  "ann_turnover": 1.92,
+  "fees_annual": 0.0028,
   "funding_annual": 0.0,
-  "interest_annual": 0.0308,
-  "avg_gross_leverage": 0.372,
-  "max_gross_leverage": 0.921,
+  "interest_annual": 0.0306,
+  "avg_gross_leverage": 0.417,
+  "max_gross_leverage": 0.924,
   "n_liquidations": 0,
   "n_days": 2738,
   "years": 7.5,
@@ -33,9 +27,9 @@
   "cost_model": "taker_t0",
   "funding_mode": "kalshi",
   "killed": false,
-  "worst_day": -0.0407,
+  "worst_day": -0.0543,
   "pct_positive_months": 0.622,
-  "pct_positive_quarters": 0.767
+  "pct_positive_quarters": 0.7
  },
  "benchmark": "vol_target_hold",
  "benchmark_metrics": {
@@ -63,111 +57,111 @@
   "pct_positive_quarters": 0.733
  },
  "bootstrap": {
-  "n_boot": 500,
+  "n_boot": 300,
   "block": 20,
   "n_obs": 2738,
   "sharpe_p5_25_50_75_95": [
-   0.153,
-   0.5997,
-   0.8347,
-   1.1143,
-   1.4963
+   0.1422,
+   0.6611,
+   0.8681,
+   1.1651,
+   1.4945
   ],
   "cagr_p5_25_50_75_95": [
-   0.0438,
-   0.0876,
-   0.1103,
-   0.1382,
-   0.1764
+   0.0426,
+   0.0976,
+   0.1201,
+   0.1495,
+   0.1863
   ],
   "mdd_p5_25_50_75_95": [
-   -0.2279,
-   -0.1626,
-   -0.1312,
-   -0.1055,
-   -0.0868
+   -0.2445,
+   -0.1711,
+   -0.1451,
+   -0.117,
+   -0.0886
   ],
-  "p_sharpe_le_0": 0.022,
-  "p_cagr_le_0": 0.002
+  "p_sharpe_le_0": 0.0233,
+  "p_cagr_le_0": 0.0033
  },
  "perturbation": {
-  "base_sharpe": 0.845,
+  "base_sharpe": 0.892,
   "n_perturbations": 4,
-  "min_sharpe": 0.819,
-  "median_sharpe": 0.879,
-  "max_sharpe": 0.995,
-  "collapse_ratio": 0.969,
+  "min_sharpe": 0.859,
+  "median_sharpe": 0.946,
+  "max_sharpe": 1.122,
+  "collapse_ratio": 0.963,
   "rows": [
    {
     "param": "target_vol",
     "value": "0.09",
-    "net_sharpe": 0.995,
-    "cagr": 0.1067,
-    "max_drawdown": -0.1155
+    "net_sharpe": 1.122,
+    "cagr": 0.122,
+    "max_drawdown": -0.108
    },
    {
     "param": "target_vol",
     "value": "0.15",
-    "net_sharpe": 0.92,
-    "cagr": 0.1351,
-    "max_drawdown": -0.1504
+    "net_sharpe": 0.946,
+    "cagr": 0.1477,
+    "max_drawdown": -0.17
    },
    {
     "param": "blend",
-    "value": "('riskparity', 45)",
-    "net_sharpe": 0.819,
-    "cagr": 0.1095,
-    "max_drawdown": -0.1396
+    "value": "('fixed', 0.375)",
+    "net_sharpe": 0.946,
+    "cagr": 0.1359,
+    "max_drawdown": -0.1681
    },
    {
     "param": "blend",
-    "value": "('riskparity', 75)",
-    "net_sharpe": 0.837,
-    "cagr": 0.1114,
-    "max_drawdown": -0.1385
+    "value": "('fixed', 0.625)",
+    "net_sharpe": 0.859,
+    "cagr": 0.1134,
+    "max_drawdown": -0.1349
    }
   ]
  },
  "regime": {
   "btc_up_years": {
    "n_days": 2008,
-   "sharpe": 1.311,
-   "ann_return": 0.1702
+   "sharpe": 1.367,
+   "ann_return": 0.1866
   },
   "btc_down_years": {
    "n_days": 730,
-   "sharpe": -0.904,
-   "ann_return": -0.0335
+   "sharpe": -0.845,
+   "ann_return": -0.0356
   },
   "vol_calm": {
    "n_days": 903,
-   "sharpe": 1.637
+   "sharpe": 1.755
   },
   "vol_mid": {
    "n_days": 902,
-   "sharpe": 0.265
+   "sharpe": 0.406
   },
   "vol_turbulent": {
    "n_days": 903,
-   "sharpe": 0.811
+   "sharpe": 0.724
   }
  },
  "timing_null": {
-  "real_sharpe": 0.845,
-  "n_null": 60,
+  "real_sharpe": 0.892,
+  "n_null": 40,
   "block_days": 30,
-  "null_sharpe_mean": 0.787,
-  "null_sharpe_p95": 1.031,
-  "percentile_of_real": 0.583,
-  "excess_over_null_mean": 0.058
+  "null_sharpe_mean": 0.851,
+  "null_sharpe_p95": 1.096,
+  "percentile_of_real": 0.6,
+  "excess_over_null_mean": 0.041
  },
  "vs_benchmark": {
-  "sharpe_a": 0.844,
+  "sharpe_a": 0.892,
   "sharpe_b": 0.94,
-  "diff": -0.096,
-  "diff_p5": -0.324,
-  "diff_p95": 0.156,
-  "p_a_gt_b": 0.26,
-  "corr": 0.93
+  "diff": -0.048,
+  "diff_p5": -0.228,
+  "diff_p95": 0.151,
+  "p_a_gt_b": 0.36,
+  "corr": 0.959
  }
 }
