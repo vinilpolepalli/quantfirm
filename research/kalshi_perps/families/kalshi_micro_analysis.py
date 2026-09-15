@@ -167,6 +167,9 @@ def load_funding(ticker: str) -> pd.DataFrame:
     if os.path.exists(fp):
         df = pd.read_csv(fp, parse_dates=["ts"])
     else:
+        repo = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+        if repo not in sys.path:
+            sys.path.insert(0, repo)
         from quantfirm.perps.client import MarginClient
         time.sleep(0.6)                       # be gentle: <= 2 req/s across the run
         rows = MarginClient("prod").funding_history(ticker)
