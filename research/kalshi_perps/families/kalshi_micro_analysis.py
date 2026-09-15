@@ -349,6 +349,7 @@ def section_funding(ticker: str, j: pd.DataFrame, k_all: pd.DataFrame, fund: pd.
     # causal pre-funding rule: at F-1h, if basis > x short Kalshi (sell bid, buy ask at F); if < -x long.
     print("  causal pre-funding rule: position over the hour into funding, sign = -sign(basis at F-1h), |basis|>x")
     q = j.copy()
+    detail = None
     for x in (0.0, 2.0, 4.0):
         rows = []
         for F in rate.index:
@@ -363,11 +364,35 @@ def section_funding(ticker: str, j: pd.DataFrame, k_all: pd.DataFrame, fund: pd.
             qk = e["ask"] if side == -1 else e["bid"]
             gross_mid = side * math.log(e["mid"] / a["mid"]) * 1e4
             gross = side * math.log(qk / pk) * 1e4 - side * e["kfund"] * 1e4   # holds through F -> pays/receives
-            rows.append((gross_mid, gross, gross - ROUND_TRIP_FEES))
+            rows.append((gross_mid, gross, gross - ROUND_TRIP_FEES, side, side * math.log(e["B"] / a["B"]) * 1e4, F))
         if rows:
-            arr = np.array(rows)
+            arr = np.array([r[:5] for r in rows], dtype=float)
             m0, s0, n = mean_se(arr[:, 0]); m1, s1, _ = mean_se(arr[:, 1]); m2, s2, _ = mean_se(arr[:, 2])
             print(f"    |basis|>{x:.0f}: n={n}, mid-to-mid {m0:+.2f} (se {s0:.2f}), after spread+funding {m1:+.2f} (se {s1:.2f}), net of 24 bps fees {m2:+.2f} (se {s2:.2f})")
+            if x == 0.0:
+                detail = pd.DataFrame(rows, columns=["mid", "gross", "net", "side", "mid_binance", "F"]).set_index("F")
+    if detail is not None:
+        print("    diagnostics for |basis|>0 (is the pre-funding hour special, or is it noise?):")
+        for sd, nm in ((1, "long entries (Kalshi cheap at F-1h)"), (-1, "short entries (Kalshi rich at F-1h)")):
+            m, se, n = mean_se(detail.loc[detail["side"] == sd, "mid"])
+            print(f"      {nm}: n={n}, mid-to-mid {m:+.2f} (se {se:.2f})")
+        m, se, n = mean_se(detail["mid_binance"])
+        print(f"      same sign applied to the Binance return over that hour: {m:+.2f} (se {se:.2f}) n={n}")
+        for p, x in detail.groupby(detail.index.strftime("%Y-%m")):
+            m, se, n = mean_se(x["mid"])
+            print(f"      month {p}: n={n}, mid-to-mid {m:+.2f} (se {se:.2f})")
+        for h, nm in ((4, "04 UTC"), (12, "12 UTC"), (20, "20 UTC")):
+            x = detail[detail.index.hour == h]
+            m, se, n = mean_se(x["mid"])
+            print(f"      timestamp {nm}: n={n}, mid-to-mid {m:+.2f} (se {se:.2f})")
+        # control: the same rule (-sign(basis_t) x r_{t+1}) applied in every other hour of the day
+        ctrl = (-np.sign(q["basis"]) * q["ret"].shift(-1)).where(q["tradeable"] & q["tradeable"].shift(-1, fill_value=False))
+        nxt_hour = (q.index + H1).hour
+        is_pre = np.isin(nxt_hour, FUNDING_HOURS_UTC)
+        is_post = np.isin(nxt_hour, [h + 1 for h in FUNDING_HOURS_UTC])
+        for mask, nm in ((~is_pre & ~is_post, "all other hours"), (is_post, "post-funding hour"), (is_pre, "pre-funding hour (same as rule)")):
+            m, se, n = mean_se(ctrl[mask])
+            print(f"      control, -sign(basis_t) x r_(t+1) in {nm}: {m:+.2f} (se {se:.2f}) n={n}")
     print("  causal post-funding rule: at F (rate just published), sign = +1 if rate>0 else -1 if rate<0, hold one hour")
     rows = []
     for F in rate.index:
@@ -488,12 +513,12 @@ def section_spreads():
         rec = {"ticker": t, "n": len(k), "all_med": k["spread_bps"].median(),
                "all_vw": np.average(k["spread_bps"], weights=k["volume_usd"].clip(lower=1.0)),
                "share>10": (k["spread_bps"] > 10).mean(), "vol_usd_per_day_k": k["volume_usd"].sum() / max((k.index.max() - k.index.min()).total_seconds() / 86400, 1) / 1e3}
-        for p, x in k.groupby(k.index.to_period("M")):
+        for p, x in k.groupby(k.index.strftime("%Y-%m")):
             rec[f"{p}_med"] = x["spread_bps"].median()
             rec[f"{p}_vw"] = np.average(x["spread_bps"], weights=x["volume_usd"].clip(lower=1.0))
         rows.append(rec)
     tab = pd.DataFrame(rows).set_index("ticker")
-    months = [c[:-4] for c in tab.columns if c.endswith("_med") and c != "all_med"]
+    months = sorted(c[:-4] for c in tab.columns if c.endswith("_med") and c != "all_med")
     hdr = "  ticker        " + " ".join(f"{m}: med/vw " for m in months) + "| all med / vw | share>10bps | $vol/day k | n"
     print(hdr)
     for t, r in tab.sort_values("vol_usd_per_day_k", ascending=False).iterrows():
