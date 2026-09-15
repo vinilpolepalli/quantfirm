@@ -1,10 +1,10 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 335.89499999999947,
+  "shadow": 327.17499999999944,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 366.57080499999637
+  "live": 357.8588049999964
  },
  "open": [
   {
@@ -62,6 +62,34 @@
    "adapter": "live",
    "tag": "favorite",
    "order_id": "01a0a434-4888-759c-8e4a-8d7b7a58aed2"
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP150445-45",
+   "metal": "copper",
+   "side": "yes",
+   "count": 11,
+   "fill_price": 0.78,
+   "fee": 0.14,
+   "fair": 0.78,
+   "entry_ts": 1789461382,
+   "close_ts": 1789461900,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP150445-45",
+   "metal": "copper",
+   "side": "yes",
+   "count": 11,
+   "fill_price": 0.78,
+   "fee": 0.132,
+   "fair": 0.78,
+   "entry_ts": 1789461382,
+   "close_ts": 1789461900,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a435-c758-71dc-8a18-0ab1ae070ecb"
   }
  ],
  "n_settled": 2007,
@@ -86,7 +114,7 @@
    "live": 311.53320499999677
   }
  },
- "updated": "2026-09-15T08:36:13Z",
+ "updated": "2026-09-15T08:38:02Z",
  "metals": [
   "gold",
   "silver",
