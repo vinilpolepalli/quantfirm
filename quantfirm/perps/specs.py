@@ -136,6 +136,7 @@ class PerpSpec:
     live_since: str        # first funding row observed ("" = never funded)
     half_spread: float = 0.0  # measured half-spread, fraction of notional (see docstring)
     underlying_multiplier: Decimal = Decimal(1)  # venue field; 1000 for kSHIB, 1 elsewhere
+    quotes: bool = True       # False = listed but with no two-sided quote, no OI and no volume
 
     @property
     def initial_rate(self) -> float:
@@ -226,11 +227,13 @@ PROXY_FIRST_BAR: dict[str, str] = {
 # kSHIB UNIT NOTE (the one place where the contract and the proxy disagree):
 # KXKSHIBPERP's title is "1K kSHIB" and it is the only market whose venue field
 # ``underlying_multiplier`` is not 1 — it is 1000. The contract's named
-# underlying is a kSHIB (= 1000 SHIB); its ``contract_size`` of 1000 is already
-# denominated in SHIB, i.e. in the units the proxy SHIB-USD quotes. So
-# notional_per_contract() is the same plain contract_size × proxy_price as
-# everywhere else: 1000 × $0.0052 ≈ $5.21, which is what the venue quoted on
-# 2026-09-15 (bid 5.2026 / ask 5.2101). The trap to avoid is feeding this spec
+# underlying is a kSHIB (= 1000 SHIB), so ``contract_size`` of 1000 counts
+# kSHIB, NOT the SHIB the proxy quotes: one contract is 1000 × 1000 =
+# 1,000,000 SHIB. notional_per_contract() therefore multiplies by
+# ``proxy_units_per_contract`` (1e6), not by contract_size: 1e6 × $0.00000521 =
+# $5.21, which is what the venue quoted on 2026-09-15 (bid 5.2026 / ask
+# 5.2101). Multiplying by contract_size alone gives half a cent and makes the
+# market look infinitely divisible to a small account. The trap to avoid is feeding this spec
 # a kSHIB-denominated price (a "KSHIB-USD" series does not exist anywhere) or
 # reading the venue's own per-contract mark as a per-coin price: either is a
 # 1000× error in notional, contracts and P&L. underlying_multiplier is carried
@@ -283,12 +286,16 @@ SPECS: dict[str, PerpSpec] = {
     # --- listed, margin-able, NOT tradable on 2026-09-15: status "inactive",
     # zero open interest, zero 24h volume, no bid and no ask, no funding row
     # ever. half_spread stays 0.0 because there is no spread to measure.
+    # quotes=False, because half_spread=0.0 means "not measured" and a sentinel
+    # for unknown must never resolve to "cheapest". Without the flag these three
+    # price at the flat 2.5 bps — the same as BTC and cheaper than LINK — and a
+    # book handed the full listed universe holds them happily.
     "dot": PerpSpec("KXDOTPERP", "dot", "crypto", Decimal("10"), Decimal("0.0001"),
-                    1 / 3.43, "exchange_index 0", "DOT-USD", ""),
+                    1 / 3.43, "exchange_index 0", "DOT-USD", "", quotes=False),
     "hbar": PerpSpec("KXHBARPERP", "hbar", "crypto", Decimal("100"), Decimal("0.0001"),
-                     1 / 2.51, "exchange_index 0", "HBAR-USD", ""),
+                     1 / 2.51, "exchange_index 0", "HBAR-USD", "", quotes=False),
     "xlm": PerpSpec("KXXLMPERP", "xlm", "crypto", Decimal("10"), Decimal("0.0001"),
-                    1 / 2.49, "exchange_index 0", "XLM-USD", ""),
+                    1 / 2.49, "exchange_index 0", "XLM-USD", "", quotes=False),
 }
 
 # Retained for the earlier write-ups, which quote it: the tickers that were
@@ -390,8 +397,18 @@ class CostModel:
         return self.fee_rate + self.half_spread
 
     def side_cost(self, asset: str | None = None) -> float:
-        """Per-side cost for one asset; ``None`` reproduces ``per_side``."""
-        if asset is None:
+        """Per-side cost for one asset; ``None`` reproduces ``per_side``.
+
+        A model whose flat half-spread is zero is a MAKER model: a resting order
+        crosses no spread by definition, on BTC or on the thinnest alt, so its
+        cost is the fee and nothing else. Composing it with a measured spread
+        would charge a patient order the price of an impatient one and, worse,
+        silently move a cost scenario that seven published family reports quote.
+        For a taker model the rule is max(flat, measured): the four researched
+        assets all quote inside the flat 2.5 bps and so pay exactly what they
+        always paid, while the thin alts pay their own spread.
+        """
+        if asset is None or self.half_spread == 0.0:
             return self.per_side
         spec = SPECS.get(asset)
         spread = self.half_spread if spec is None else max(self.half_spread, spec.half_spread)

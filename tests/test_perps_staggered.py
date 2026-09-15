@@ -298,16 +298,44 @@ class TestRealDelisting(unittest.TestCase):
         r = B.run(panel, w, B.BacktestConfig(rebalance_every=7, min_assets=1, **NOFRILLS),
                   "2019-06-01", D.HOLDOUT_START)
         s = r["_series"]
-        off = pd.Timestamp("2021-01-27", tz="UTC")     # 7 days after the last bar
+        # The first no-bar day, NOT 7 days later. Anchoring the assertion past
+        # max_stale_days skipped the only interval where anything could go
+        # wrong: inside it `available` is still True, and the engine used to
+        # open positions in a market that printed no bar anywhere.
+        off = pd.Timestamp("2021-01-20", tz="UTC")
+        hard_off = pd.Timestamp("2021-01-27", tz="UTC")   # past the stale tolerance
         on = pd.Timestamp("2023-07-13", tz="UTC")
         gap = (s["weights"].index >= off) & (s["weights"].index < on)
-        self.assertTrue((s["weights"]["xrp"][gap] == 0).all())
+        hard = (s["weights"].index >= hard_off) & (s["weights"].index < on)
+        # no P&L anywhere in the hole, including the tolerated first week
         self.assertTrue((s["pnl_asset"]["xrp"][gap] == 0).all())
-        self.assertEqual(s["available"]["xrp"][gap].sum(), 0)
+        # nothing held once the tolerance lapses
+        self.assertTrue((s["weights"]["xrp"][hard] == 0).all())
+        self.assertEqual(s["available"]["xrp"][hard].sum(), 0)
         # the return on the day it comes back is btc's, not a 905-day price jump
         self.assertAlmostEqual(s["pnl_asset"]["xrp"].loc[on], 0.0, places=12)
         self.assertLess(abs(float(s["returns"].loc[on])), 0.25)
         self.assertEqual(r["n_liquidations"], 0)
+
+    def test_no_position_is_opened_on_a_day_the_market_printed_no_bar(self):
+        """The hazard the 7-day tolerance used to create.
+
+        A target that jumps from zero at the last live close would be executed
+        the next morning in a market that is not quoting, at a forward-filled
+        price, paying both sides of the spread. Availability may tolerate a
+        week of silence so a metals holiday does not flatten the book; opening
+        a position may not.
+        """
+        panel = D.load_panel(("btc", "xrp"))
+        idx = D.align(panel).index
+        w = pd.DataFrame({"btc": 0.6, "xrp": 0.0}, index=idx)
+        w.loc[w.index >= pd.Timestamp("2021-01-19", tz="UTC"), "xrp"] = 0.4
+        r = B.run(panel, w, B.BacktestConfig(rebalance_every=1, min_assets=1, **NOFRILLS),
+                  "2020-06-01", "2021-03-01")
+        s = r["_series"]
+        blackout = (s["weights"].index >= pd.Timestamp("2021-01-20", tz="UTC"))
+        self.assertTrue((s["weights"]["xrp"][blackout] == 0).all())
+        self.assertTrue((s["pnl_asset"]["xrp"][blackout] == 0).all())
 
 
 if __name__ == "__main__":

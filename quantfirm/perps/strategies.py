@@ -240,7 +240,16 @@ def cap_weights(w: pd.DataFrame, max_gross: float = 1.5, max_asset: float = 0.75
     """
     w = w.copy()
     for a in w.columns:
-        m = SPECS[a].maint_rate if a in SPECS else UNKNOWN_MAINT_RATE
+        spec = SPECS.get(a)
+        if spec is not None and not spec.quotes:
+            # listed, but with no bid, no ask, no open interest and no volume.
+            # Its half_spread of 0.0 reads as "not measured" and would otherwise
+            # price it at the flat modelling spread, i.e. as the cheapest market
+            # on the board. There is no size in which it can be traded, so the
+            # only honest cap is zero.
+            w[a] = 0.0
+            continue
+        m = spec.maint_rate if spec is not None else UNKNOWN_MAINT_RATE
         cap_long = min(max_asset, max_weight_for_distance(min_liq_distance, m, short=False))
         cap_short = min(max_asset, max_weight_for_distance(min_liq_distance, m, short=True))
         w[a] = w[a].clip(lower=-cap_short, upper=cap_long)
@@ -267,6 +276,23 @@ def resolve_step(step, n_assets: int) -> float:
             return 0.0
         return STEP_AT_FOUR * len(RESEARCH_UNIVERSE) / n_assets
     return step
+
+
+def resolve_band(band, n_assets: int) -> float:
+    """``"auto"`` → 0.6 × the weight step at ``n_assets``; anything else passes through.
+
+    The band exists so volatility drift alone does not trade; it only works if
+    ONE weight step is larger than it. ``resolve_step`` shrinks the step as the
+    universe grows, so a band fixed at the four-asset 0.03 silently freezes a
+    wide book: at twenty names the step is 0.01 and no single-step move ever
+    clears 3%. 0.6 × step is 0.03 at four names, which is the published value.
+    """
+    if isinstance(band, str):
+        if band != "auto":
+            raise ValueError(f"rebalance_band must be a number or 'auto', got {band!r}")
+        step = resolve_step("auto", n_assets)
+        return 0.6 * step
+    return band
 
 
 def vol_target(signal: pd.DataFrame, panel: dict[str, pd.DataFrame], target_vol: float,

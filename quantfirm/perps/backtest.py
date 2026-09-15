@@ -78,7 +78,7 @@ from ..metrics import cagr, deflated_sharpe, max_drawdown, sharpe
 from .data import (HOLDOUT_START, align, availability, daily_funding, load_funding_proxy,
                    load_kalshi_funding)
 from .specs import APPROVAL_COST, COLLATERAL_APY, SPECS, CostModel
-from .strategies import cap_weights
+from .strategies import cap_weights, resolve_band, UNKNOWN_MAINT_RATE
 
 DAYS = 365
 
@@ -88,7 +88,14 @@ class BacktestConfig:
     cost: CostModel = APPROVAL_COST
     funding: str = "kalshi"          # none | kalshi | proxy | proxy_raw
     interest_apy: float = COLLATERAL_APY
-    rebalance_band: float = 0.03     # trade when |target − held| > band; below the 0.05 weight step so one step trades
+    rebalance_band: float | str = 0.03   # trade when |target − held| > band
+    #   0.03 sits below the four-asset 0.05 weight step, so one step trades.
+    #   On a wide universe the step shrinks (strategies.resolve_step: 0.05×4/n,
+    #   so 0.01 at twenty names) and a fixed 0.03 band means ONE STEP NEVER
+    #   TRADES: the book holds whichever two or three names clear 3% and the
+    #   other seventeen are never held on any day. Pass "auto" for a band that
+    #   scales with the step (0.6 × the step at that universe size), which is
+    #   exactly 0.03 at four names and so leaves the narrow path untouched.
     rebalance_every: int = 7         # check the band every N days (weekly, a priori)
     max_gross: float = 1.5
     max_asset: float = 0.75
@@ -98,7 +105,13 @@ class BacktestConfig:
     ladder_kill: float | None = None # drawdown that flattens for good (None = off)
     bankroll_usd: float | None = None  # when set, trade WHOLE contracts for this bankroll (granularity)
     # --- staggered universe (see "Assets that list late" in the module docstring)
-    min_assets: int = 1              # start once this many assets are AVAILABLE, not when the last one lists
+    min_assets: int | None = None    # start once this many assets are AVAILABLE; None = all of them
+    #   None reproduces the pre-breadth rule (begin where every asset has a
+    #   price) and therefore every published fixed-window number. A wide
+    #   universe wants an explicit small number, otherwise the run begins at
+    #   the LAST listing — 2026-02 if hype is in the book. Defaulting this to 1
+    #   silently moved a four-asset start=None run from 2016-05 to 2000-08 and
+    #   changed every control in the tournament.
     max_stale_days: int = 7          # available = printed a native bar within this many days (metals weekends)
 
 
@@ -168,7 +181,8 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
     # ffilled price in `closes` is a flat line that must not be traded).
     avail = live_mask(panel, assets, closes.index, cfg)
     # start when `min_assets` of them quote — NOT when the last one lists
-    idx = closes.index[_first_live_row(avail, cfg.min_assets):]
+    need = len(assets) if cfg.min_assets is None else cfg.min_assets
+    idx = closes.index[_first_live_row(avail, need):]
     if start:
         idx = idx[idx >= pd.Timestamp(start, tz="UTC")]
     if end:
@@ -176,6 +190,24 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
     if len(idx) < 3:
         raise ValueError("not enough bars")
     A = avail.loc[idx].to_numpy()
+    # `avail` tolerates max_stale_days of silence so a metals holiday does not
+    # flatten the book. That tolerance must not extend to OPENING a position: on
+    # the first days of xrp's 2021 Coinbase blackout the engine would otherwise
+    # buy 42% of equity in a market that printed no bar anywhere, at a
+    # forward-filled price, pay both sides of the spread and re-test
+    # liquidation against a stale intraday low. `fresh` is a native bar today;
+    # exposure may be held or cut without one, never increased.
+    # Crypto only. A metals market that does not print on a US holiday is still
+    # tradable at the next session and its ffilled bar is a fair mark, so the
+    # rule would block a legitimate weekly rebalance; a 24/7 crypto market with
+    # no bar has no feed. Applied to metals this moves vol_target_hold from
+    # 1.311 to 1.308 for no gain in realism.
+    fresh = pd.DataFrame(
+        {a: (panel[a]["close"].reindex(idx).notna()
+             if SPECS.get(a) is not None and SPECS[a].asset_class == "crypto"
+             else pd.Series(True, index=idx))
+         for a in assets}, index=idx
+    ).reindex(columns=assets).fillna(False).to_numpy()
     C = _prices(closes[assets], idx)
     O = _prices(pd.concat({a: panel[a]["open"] for a in assets}, axis=1).reindex(closes.index).ffill(), idx)
     H = _prices(pd.concat({a: panel[a]["high"] for a in assets}, axis=1).reindex(closes.index).ffill(), idx)
@@ -186,7 +218,7 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
     W = cap_weights(targets.reindex(closes.index).ffill().fillna(0.0).loc[idx, assets].where(avail.loc[idx], 0.0),
                     cfg.max_gross, cfg.max_asset, cfg.min_liq_distance).to_numpy()
     F = funding_table({a: panel[a] for a in assets}, idx, cfg.funding).loc[idx, assets].to_numpy()
-    maint = np.array([SPECS[a].maint_rate for a in assets])
+    maint = np.array([SPECS[a].maint_rate if a in SPECS else UNKNOWN_MAINT_RATE for a in assets])
     im = maint * 1.3
     # units of the PROXY asset per contract — not contract_size, which counts the
     # contract's own underlying (kSHIB is a thousand SHIB; see PerpSpec)
@@ -195,6 +227,7 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
     # measured half-spread). A book trading LINK at 9.7 bps is not charged BTC's
     # 0.2. When every asset costs the same the scalar form is kept, so a
     # uniform-cost universe is arithmetically identical to the pre-breadth engine.
+    band = resolve_band(cfg.rebalance_band, len(assets))
     side = np.array([cfg.cost.side_cost(a) for a in assets])
     flat_side = float(side[0]) if bool(np.all(side == side[0])) else None
 
@@ -244,7 +277,13 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
             # quoting today, and must never re-open what step 0 just closed
             tgt = np.where(A[t], pending * scale, 0.0)
             cur_w = units * O[t] / E
-            trade = np.abs(tgt - cur_w) > cfg.rebalance_band
+            # no bar today → hold or reduce, never add
+            stale = ~fresh[t]
+            if stale.any():
+                keep_sign = np.sign(tgt) == np.sign(cur_w)
+                capped = np.where(keep_sign, np.sign(tgt) * np.minimum(np.abs(tgt), np.abs(cur_w)), 0.0)
+                tgt = np.where(stale & (np.abs(tgt) > np.abs(cur_w)), capped, tgt)
+            trade = np.abs(tgt - cur_w) > band
             if trade.any():
                 new_units = np.where(trade, tgt * E / O[t], units)
                 if cfg.bankroll_usd:
@@ -336,7 +375,11 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
         # reader should not have to re-derive that from the dates.
         "n_assets": int(k),
         "avg_n_available": round(float(A.sum(axis=1).mean()), 2),
-        "min_assets": int(cfg.min_assets),
+        # availability is not composition. A 20-name universe whose band never
+        # fires quotes 15 names and HOLDS two; the number that catches a wide
+        # book collapsing to a narrow one is this one, not the one above.
+        "avg_n_held": round(float((held_w != 0).sum(axis=1).mean()), 2),
+        "min_assets": int(need),
         "cost_model": cfg.cost.name, "funding_mode": cfg.funding,
         "killed": bool(killed),
         "worst_day": round(float(ret.min()), 4),
@@ -392,7 +435,8 @@ def walk_forward(panel, strategy, params: dict, cfg: BacktestConfig, grid: dict 
     # folds cannot start before the universe exists: same min_assets gate run()
     # applies. With the default min_assets=1 this is a no-op (every row of the
     # aligned index is some asset's own native bar), so fold edges are unchanged.
-    idx = idx[_first_live_row(live_mask(panel, list(closes.columns), idx, cfg), cfg.min_assets):]
+    need = len(closes.columns) if cfg.min_assets is None else cfg.min_assets
+    idx = idx[_first_live_row(live_mask(panel, list(closes.columns), idx, cfg), need):]
     idx = idx[idx < pd.Timestamp(dev_end, tz="UTC")]
     if dev_start:
         idx = idx[idx >= pd.Timestamp(dev_start, tz="UTC")]

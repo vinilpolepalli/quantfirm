@@ -200,14 +200,26 @@ class TestPerAssetCost(unittest.TestCase):
                 self.assertAlmostEqual(TAKER_T0.side_cost(a),
                                        0.0012 + max(0.00025, SPECS[a].half_spread), places=12)
 
-    def test_rule_is_exactly_fee_plus_max_of_the_two_spreads(self):
-        for c in (TAKER_T0, MAKER_T0, STRESS):
+    def test_taker_rule_is_fee_plus_max_of_the_two_spreads(self):
+        for c in (TAKER_T0, STRESS):
             for a in LISTED_UNIVERSE:
                 with self.subTest(cost=c.name, asset=a):
                     self.assertAlmostEqual(
                         c.side_cost(a), c.fee_rate + max(c.half_spread, SPECS[a].half_spread),
                         places=12)
                     self.assertGreaterEqual(c.side_cost(a), c.per_side)   # never cheaper
+
+    def test_a_maker_model_pays_no_spread_on_any_asset(self):
+        """A resting order crosses no spread, on BTC or on the thinnest alt.
+
+        Composing MAKER_T0 (flat half-spread 0.0) with a measured spread would
+        charge a patient order the price of an impatient one, and would move a
+        cost scenario that seven published family reports quote.
+        """
+        for a in LISTED_UNIVERSE:
+            with self.subTest(asset=a):
+                self.assertAlmostEqual(MAKER_T0.side_cost(a), MAKER_T0.fee_rate, places=12)
+                self.assertAlmostEqual(MAKER_T0.side_cost(a), MAKER_T0.per_side, places=12)
 
     def test_unknown_or_unmeasured_assets_fall_back_to_the_flat_spread(self):
         self.assertEqual(TAKER_T0.side_cost("no_such_asset"), TAKER_T0.per_side)
