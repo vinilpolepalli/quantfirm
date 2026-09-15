@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T13:05:53+00:00",
+ "ts": "2026-09-15T13:11:15+00:00",
  "book": "growth",
  "adapter": "shadow",
  "strategy": "blend_core_sleeve",
@@ -43,14 +43,14 @@
   "consecutive_loss_days_pause": 5
  },
  "bankroll0": 250,
- "equity": 249.82,
+ "equity": 249.68,
  "cash": 249.83,
  "realized": 0.0,
  "fees": 0.1749,
  "funding": 0.0,
- "interest": 0.0,
+ "interest": 0.0001,
  "peak_equity": 250.0,
- "drawdown": -0.0007,
+ "drawdown": -0.0013,
  "positions": [
   {
    "asset": "btc",
@@ -58,7 +58,7 @@
    "contracts": 4.0,
    "avg_price": 7.7055,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 7.7045,
+   "mark": 7.7013,
    "weight": 0.1234
   },
   {
@@ -67,8 +67,8 @@
    "contracts": 9.0,
    "avg_price": 2.4839,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.483,
-   "weight": 0.0895
+   "mark": 2.4806,
+   "weight": 0.0894
   },
   {
    "asset": "silver",
@@ -76,8 +76,8 @@
    "contracts": 3.0,
    "avg_price": 6.3805000000000005,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 6.3856,
-   "weight": 0.0767
+   "mark": 6.3671,
+   "weight": 0.0765
   },
   {
    "asset": "gold",
@@ -85,8 +85,8 @@
    "contracts": 6.0,
    "avg_price": 4.2916,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 4.2932,
-   "weight": 0.1031
+   "mark": 4.2875,
+   "weight": 0.103
   },
   {
    "asset": "near",
@@ -94,7 +94,7 @@
    "contracts": 3.0,
    "avg_price": 2.4023,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.4029,
+   "mark": 2.4028,
    "weight": 0.0289
   },
   {
@@ -103,7 +103,7 @@
    "contracts": 2.0,
    "avg_price": 2.2503,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.2469,
+   "mark": 2.2509,
    "weight": 0.018
   },
   {
@@ -112,8 +112,8 @@
    "contracts": -1.0,
    "avg_price": 7.138,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 7.132,
-   "weight": -0.0285
+   "mark": 7.1441,
+   "weight": -0.0286
   },
   {
    "asset": "bch",
@@ -121,7 +121,7 @@
    "contracts": -2.0,
    "avg_price": 2.2414,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.2431,
+   "mark": 2.2485,
    "weight": -0.018
   },
   {
@@ -130,7 +130,7 @@
    "contracts": -1.0,
    "avg_price": 8.3172,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 8.3173,
+   "mark": 8.3148,
    "weight": -0.0333
   },
   {
@@ -139,7 +139,7 @@
    "contracts": 15.0,
    "avg_price": 0.7221,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 0.7216,
+   "mark": 0.7214,
    "weight": 0.0433
   },
   {
@@ -148,13 +148,13 @@
    "contracts": -1.0,
    "avg_price": 5.1854,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 5.1885,
+   "mark": 5.1942,
    "weight": -0.0208
   }
  ],
  "gross_leverage": 0.583,
  "halted": "",
  "kill_switch": false,
- "n_ticks": 1,
+ "n_ticks": 2,
  "started": "2026-09-15T13:05:45+00:00"
 }

@@ -86,7 +86,7 @@ def _signed(x, pct=False) -> tuple[str, str]:
     return s, (GREEN if x > 0 else RED if x < 0 else MUTED)
 
 
-def build(books: list[dict], prev: dict) -> dict:
+def build(books: list[dict], prev: dict, note: str = "") -> dict:
     today = dt.datetime.now(dt.timezone.utc).strftime("%a %d %b %Y")
     total = sum(b.get("equity", 0) or 0 for b in books)
     start = sum(b.get("bankroll0", 0) or 0 for b in books)
@@ -139,6 +139,14 @@ def build(books: list[dict], prev: dict) -> dict:
     headline = (f"{_money(total)} across {len(books)} paper books, "
                 f"{tot_day_s + ' today' if tot_day is not None else 'first report'}")
 
+    banner_html = banner_text = ""
+    if note:
+        banner_html = (f'<tr><td style="padding:0 20px;">'
+                       f'<div style="margin:14px 0 0;padding:10px 12px;background:#fff8e1;'
+                       f'border:1px solid #f0d58c;border-radius:6px;color:#5c4400;font-size:13px;'
+                       f'line-height:1.5;">{html.escape(note)}</div></td></tr>')
+        banner_text = note + "\n\n"
+
     notes_html = ""
     if notes:
         items = "".join(f'<li style="margin:2px 0;">{html.escape(n)}</li>' for n in notes)
@@ -158,6 +166,7 @@ def build(books: list[dict], prev: dict) -> dict:
      <div style="color:{tot_day_c};font-size:15px;margin-top:8px;">{headline}</div>
      <div style="color:{MUTED};font-size:13px;margin-top:2px;">Since start {tot_since_s}</div>
    </td></tr>
+   {banner_html}
    <tr><td style="padding:14px 8px 0;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;border-collapse:collapse;">
      <tr style="color:{MUTED};font-size:11px;text-transform:uppercase;letter-spacing:.04em;">
@@ -185,7 +194,7 @@ def build(books: list[dict], prev: dict) -> dict:
 </table>
 </body></html>"""
 
-    text = (f"Kalshi perps paper books - {today}\n\n{headline}\n"
+    text = (f"Kalshi perps paper books - {today}\n\n{banner_text}{headline}\n"
             f"Since start {tot_since_s}\n\n" + "\n".join(text_rows) +
             ("\n\nChanges\n" + "\n".join("  - " + n for n in notes) if notes else "") +
             "\n\nPaper only: no orders, no money at risk, config live=false.\n")
@@ -200,11 +209,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--html-only", action="store_true")
     ap.add_argument("--no-record", action="store_true", help="do not append to the history file")
+    ap.add_argument("--note", default="", help="banner at the top, e.g. a warning or a test-send label")
     a = ap.parse_args()
     books = load_books()
     if not books:
         raise SystemExit("no book status files in state/ - run `cli paper` first")
-    out = build(books, previous())
+    out = build(books, previous(), note=a.note)
     if not a.no_record:
         append_history(books)
     print(out["html"] if a.html_only else json.dumps(out, indent=1))
