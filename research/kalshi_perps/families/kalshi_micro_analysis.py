@@ -207,7 +207,7 @@ def basis_stats(name: str, s: pd.Series):
           f"median {s.median():+.2f}, p5/p95 {s.quantile(.05):+.2f}/{s.quantile(.95):+.2f}, "
           f"share |b|>5: {(s.abs() > 5).mean():.3f}, |b|>10: {(s.abs() > 10).mean():.4f}")
     print(f"    autocorr lags 1/2/3/6/12/24: " + " ".join(f"{ac[L]:.3f}" for L in (1, 2, 3, 6, 12, 24))
-          + f"; AR(1) rho {rho_reg:.3f} (se {rho_se:.3f}) -> half-life {hl:.2f} h (2se band {hl_lo:.2f}-{hl_hi:.2f} h)")
+          + f"; AR(1) rho {rho_reg:.3f} (se {rho_se:.3f}) -> half-life {hl:.2f} h (2se band {min(hl_lo, hl_hi):.2f}-{max(hl_lo, hl_hi):.2f} h)")
 
 
 def simulate_basis(j: pd.DataFrame, k: float, sig_col: str = "basis", max_hold: int = 72,
@@ -288,7 +288,7 @@ def section_basis(ticker: str, j: pd.DataFrame):
     basis_stats("from 2026-07-01", s[s.index >= "2026-07-01"])
     basis_stats("vs Binance spot-implied (basis + Binance premium index)", j["basis_spot"])
     print("  by month: mean / std / n")
-    g = s.groupby(s.index.to_period("M"))
+    g = s.groupby(s.index.strftime("%Y-%m"))
     for p, x in g:
         x = x.dropna()
         if len(x) > 10:
