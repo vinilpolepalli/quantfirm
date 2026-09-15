@@ -1,10 +1,10 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 227.2779999999998,
+  "shadow": 211.9979999999998,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 255.26840499999673
+  "live": 240.00640499999673
  },
  "open": [
   {
@@ -146,6 +146,62 @@
    "adapter": "live",
    "tag": "crypto_fav",
    "order_id": "01a0a262-66e8-705d-80a2-294ae2e2ed57"
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP142015-15",
+   "metal": "copper",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.75,
+   "fee": 0.1,
+   "fair": 0.25,
+   "entry_ts": 1789430791,
+   "close_ts": 1789431300,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP142015-15",
+   "metal": "copper",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.75,
+   "fee": 0.0917,
+   "fair": 0.25,
+   "entry_ts": 1789430791,
+   "close_ts": 1789431300,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a262-ff40-7bce-8436-42ba082b55bd"
+  },
+  {
+   "ticker": "KXBTC15M-26SEP142015-15",
+   "metal": "btc",
+   "side": "no",
+   "count": 13,
+   "fill_price": 0.75,
+   "fee": 0.18,
+   "fair": 0.25,
+   "entry_ts": 1789430806,
+   "close_ts": 1789431300,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXBTC15M-26SEP142015-15",
+   "metal": "btc",
+   "side": "no",
+   "count": 13,
+   "fill_price": 0.75,
+   "fee": 0.1703,
+   "fair": 0.25,
+   "entry_ts": 1789430806,
+   "close_ts": 1789431300,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a0a263-3dc0-7bb8-8953-c20e66db54af"
   }
  ],
  "n_settled": 1567,
@@ -170,7 +226,7 @@
    "live": 311.53320499999677
   }
  },
- "updated": "2026-09-15T00:05:55Z",
+ "updated": "2026-09-15T00:07:21Z",
  "metals": [
   "gold",
   "silver",
