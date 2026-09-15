@@ -191,8 +191,8 @@ class TestFirstBarAgainstFiles(unittest.TestCase):
                          ["widget"])
 
     def test_alias_resolves_to_the_venue_ticker_name(self):
-        """KXKSHIBPERP's contract is 1000 SHIB; the file is kshib, but a caller
-        who types 'shib' must not get a FileNotFoundError."""
+        """KXKSHIBPERP's underlying is kSHIB, so the venue-ticker rule names the
+        file kshib; a caller who types 'shib' must not get a FileNotFoundError."""
         self._write("kshib", bars(daily("2021-09-09", "2021-09-20")))
         self.assertEqual(D.resolve_asset("shib"), "kshib")
         self.assertEqual(D.first_bar("shib"), D.first_bar("kshib"))
@@ -216,6 +216,16 @@ class TestUniverseWiring(unittest.TestCase):
         # funding stress symbols, where they exist, are Binance USDT perps
         self.assertTrue(set(D.BINANCE_FUNDING) <= set(D.COINBASE_PRODUCTS))
         self.assertTrue(all(s.endswith("USDT") for s in D.BINANCE_FUNDING.values()))
+
+    def test_specs_and_data_agree_on_names_and_proxies(self):
+        """specs.py declares each perp's proxy; this module fetches it. If those
+        two ever disagree the desk would silently research the wrong asset."""
+        from quantfirm.perps.specs import SPECS
+        self.assertEqual(set(SPECS), set(D.proxy_assets()))
+        for a, spec in SPECS.items():
+            wired = D.COINBASE_PRODUCTS.get(a) or D.YAHOO.get(a)
+            self.assertEqual(spec.proxy, wired, f"{a}: spec says {spec.proxy}, data fetches {wired}")
+            self.assertEqual(D.resolve_asset(spec.asset), a)
 
     def test_update_all_fetches_new_products_with_their_start_hint(self):
         """Wiring check, no network: update_all must route each asset to its
