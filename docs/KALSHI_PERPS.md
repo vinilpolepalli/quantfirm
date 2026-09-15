@@ -43,7 +43,18 @@ research and the tests say.
    overfitting 0.586 against a bar of 0.10. The coin-flip control loses
    money. §3 has the table; `research/kalshi_perps/CAMPAIGN_RESULTS.md` has
    the campaign.
-4. **What does work is beta, sized by volatility, with a trend gate as
+4. **More assets do not help, and that was measured, not assumed.** The
+   obvious objection to the first two rounds was that they tested only four
+   assets. Kalshi lists 23 perps, so the desk was extended to all of them.
+   Eighteen crypto names carry 2.51 effective independent bets against the
+   four researched assets' 2.44, at a mean pairwise correlation of 0.589:
+   fourteen extra coins buy seven hundredths of a bet. Eleven of seventeen
+   names lost money over 2021–25, so the passive wide book earns *less* per
+   unit of risk than the narrow one, 0.49 against 0.94. Ranking the
+   cross-section by trailing return produces no t-statistic above 0.52 at any
+   horizon, gross of costs, and adding a short side gives 0.86 at a 30-day
+   lookback and −0.03 at 90 days, which is noise across a parameter. §3c.
+5. **What does work is beta, sized by volatility, with a trend gate as
    drawdown insurance.** That is not alpha; it is a bet that BTC/ETH/gold/
    silver keep drifting up, made cheaply. Measured 2018–2025 with tier-0
    taker fees: vol-targeted long-only earned 13–20% a year with 15–32%
@@ -52,7 +63,7 @@ research and the tests say.
    cost of ~4 points of return. On the sealed holdout (2025-07-01 → today,
    opened once), the gated book made +23.7% at a −4.9% drawdown versus
    +27.1% at −11.6% for the ungated one.
-5. **"Consistent" means 61–72% positive months and about 77% positive
+6. **"Consistent" means 61–72% positive months and about 77% positive
    quarters, not every month.** "Considerable" at $250 is about $25 a year.
    The owner starts at $250 and scales. Whole-contract simulation at $250
    (`research/kalshi_perps/granularity.json`) costs the incumbent 0.05 of
@@ -472,12 +483,15 @@ checks it; removing it is an owner action by commit). Demo and live need
 ## 9. What would change the verdict
 
 * A candidate that beats vol-scaled long-only out of sample with DSR ≥ 0.95
-  and PBO ≤ 0.10 under the same cost model. The research desk's backlog:
-  cross-asset trend with more diversifiers once copper, US500 and WTI perps
-  list (a four-asset book with 0.9 BTC–ETH correlation is two bets, not
-  four); a funding-conditional overlay if Kalshi's BTC premium (+14.8%/yr in
-  September) persists above the deadband; gold-specific carry once the
-  metals funding history is months long, not days.
+  and PBO ≤ 0.10 under the same cost model. The backlog is now shorter than
+  it was, because §3c answered its biggest item: **more coins are not the
+  missing diversifier.** All 20 tradable crypto perps together are 2.5 bets,
+  so the thing worth waiting for is a perp in an asset class that is not
+  crypto — copper, US500 and WTI were on Kalshi's roadmap, and gold and
+  silver are already the only genuine diversifiers in the book. What is left:
+  a funding-conditional overlay if Kalshi's BTC premium (+14.8%/yr in
+  September) persists above the deadband; gold-specific carry once the metals
+  funding history is months long rather than days.
 * Kalshi's own history reaching a year, so the proxies can be replaced.
 * A fee tier below 12 bps (≥ $100k of 30-day volume, which the 15-minute
   desk's prediction volume also counts toward).

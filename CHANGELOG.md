@@ -6,6 +6,65 @@ moved and what evidence backs it.
 
 ---
 
+## 0.2.2 — 2026-09-15 — the whole perps universe, and the finding that it does not help
+
+### Added
+
+**The desk covers all 23 listed Kalshi perps.** Specs for every market with
+its own contract size, maintenance rate (6.6% on gold to 59% on WLD) and
+measured top-of-book half-spread; Coinbase spot proxies for all 21 crypto
+names, from LTC in 2016 to HYPE in 2026; a native-bar availability mask so a
+delisted or not-yet-listed asset contributes nothing rather than a
+forward-filled price; and per-asset trading costs, so a book trading LINK is
+charged 21.7 bps a side rather than BTC's 14.5.
+
+`quantfirm/perps/tournament.py` can now score one universe against another:
+`reference_universe` runs the benchmark on a second universe over the same
+folds and adds a `beats_reference_oos` gate, because a wide book has to beat
+the narrow book the desk would otherwise hold, not just its own passive
+version. Runs are tagged so one never overwrites another.
+
+### Fixed
+
+**The backtester could not simulate a universe whose members list at
+different times.** It started every run where the *last* asset had a price,
+so any wide universe silently began years late. Assets now enter and leave as
+they list and delist, with no phantom equity at either boundary.
+
+**A kSHIB contract was priced at half a cent instead of $5.21.** KXKSHIBPERP's
+underlying is kSHIB, a thousand SHIB, so one contract is 1,000,000 SHIB.
+Multiplying by contract size alone understated it a thousandfold and would
+have made SHIB look infinitely divisible to the $250 account this desk is
+sized for. Checked against the venue's own marks for BTC, DOGE, LINK and
+kSHIB.
+
+Every published four-asset number reproduces exactly across both fixes:
+`vol_target_hold` from 2018 is still Sharpe 0.94, CAGR 15.45%, drawdown
+−21.15%, turnover 1.68.
+
+### Verdict
+
+**Breadth is an illusion on this venue, and the round was closed without
+registering a single family.** Eighteen crypto names carry 2.51 effective
+independent bets against the four researched assets' 2.44, at a mean pairwise
+correlation of 0.589. Eleven of seventeen names lost money over 2021-10 to
+2025-07, so the passive wide book earns less per unit of risk than the narrow
+one: Sharpe 0.49 over twenty assets against 0.94 over four. Cross-sectional
+momentum produces no t-statistic above 0.52 at any formation or holding
+horizon, gross of costs. Time-series trend with a short side — the one thing
+four assets could never test — scores 0.86 at a 30-day lookback and −0.03 at
+90 days, which is noise across a parameter, not a signal.
+
+Ten configurations that a free screen already shows to be empty would raise
+the deflated-Sharpe bar for every future idea and buy nothing, so none was
+registered. `research/kalshi_perps/BREADTH_FINDING.md` has the measurement.
+
+The practical consequence for the backlog: more coins are not the missing
+diversifier. All twenty tradable crypto perps together are two and a half
+bets, so the only thing worth waiting for is a perp outside crypto.
+
+---
+
 ## 0.2.1 — 2026-09-15 — perps research campaign: twelve ideas, none passes
 
 ### Added
