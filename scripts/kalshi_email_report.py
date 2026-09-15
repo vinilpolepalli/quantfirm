@@ -82,7 +82,10 @@ def main() -> int:
     L.append("fills per week cannot be extrapolated from a good hour. Metals trade")
     L.append("24h on weekdays and close Fri 21:00Z to Sun 22:00Z.")
     L.append("")
-    L.append("Live dashboard: https://quantfirm-dashboard.vercel.app/kalshi.html")
+    # The Vercel page exists but has never deployed -- the free-tier creation
+    # cap rejected it, and that domain serves from main where the file is not.
+    # The artifact build is the URL that actually resolves.
+    L.append("Live dashboard: https://claude.ai/artifact/3KKbjgeKEBveR88KqS6Dbr")
     L.append("")
     L.append("A green stretch is not evidence: P(week > 0) exceeds 76% even under a")
     L.append("no-edge null. Four times this desk's own instrumentation produced a")
