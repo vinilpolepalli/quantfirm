@@ -88,9 +88,10 @@ def _signed(x, pct=False) -> tuple[str, str]:
 
 def build(books: list[dict], prev: dict, note: str = "") -> dict:
     today = dt.datetime.now(dt.timezone.utc).strftime("%a %d %b %Y")
-    total = sum(b.get("equity", 0) or 0 for b in books)
-    start = sum(b.get("bankroll0", 0) or 0 for b in books)
-    prev_total = sum((prev.get(b["_book"], {}) or {}).get("equity") or 0 for b in books) or None
+    # These are three ALTERNATIVE ways to run the SAME $250, run in parallel so
+    # they can be compared on identical prices. They are not a $750 portfolio,
+    # and summing their equities into a headline invites exactly that misread.
+    stake = max((b.get("bankroll0") or 0) for b in books) if books else 0
 
     rows, text_rows, notes = [], [], []
     for b in books:
@@ -133,11 +134,20 @@ def build(books: list[dict], prev: dict, note: str = "") -> dict:
                 bits.append("closed " + ", ".join(closed))
             notes.append(f"{name}: " + "; ".join(bits))
 
-    tot_day = (total - prev_total) if prev_total else None
-    tot_day_s, tot_day_c = _signed(tot_day)
-    tot_since_s, tot_since_c = _signed((total / start - 1) if start else None, pct=True)
-    headline = (f"{_money(total)} across {len(books)} paper books, "
-                f"{tot_day_s + ' today' if tot_day is not None else 'first report'}")
+    # rank by progress, so the headline is which approach is actually ahead
+    ranked = sorted(
+        ((b["_book"], (b.get("equity") / (b.get("bankroll0") or 1) - 1)
+          if isinstance(b.get("equity"), (int, float)) and b.get("bankroll0") else None)
+         for b in books),
+        key=lambda kv: (kv[1] is None, -(kv[1] or 0)))
+    best = ranked[0] if ranked and ranked[0][1] is not None else None
+    stake_s = f"${stake:,.0f}" if float(stake).is_integer() else _money(stake)
+    headline = (f"{len(books)} strategies, each running the same {stake_s}"
+                + (f" &middot; {best[0]} leads at {best[1]:+.2%}" if best else ""))
+    headline_text = (f"{len(books)} strategies, each running the same {stake_s}"
+                     + (f" - {best[0]} leads at {best[1]:+.2%}" if best else ""))
+    _, tot_day_c = _signed(best[1] if best else None)
+    tot_since_s = "  ".join(f"{n} {v:+.2%}" for n, v in ranked if v is not None) or DASH
 
     banner_html = banner_text = ""
     if note:
@@ -153,6 +163,7 @@ def build(books: list[dict], prev: dict, note: str = "") -> dict:
         notes_html = (f'<p style="margin:18px 0 6px;color:{INK};font-weight:600;">Changes</p>'
                       f'<ul style="margin:0;padding-left:20px;color:{INK};font-size:14px;">{items}</ul>')
 
+    money_stake = f"${stake:,.0f}" if float(stake).is_integer() else _money(stake)
     html_body = f"""<!doctype html>
 <html><body style="margin:0;padding:0;background:#f6f7f9;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f7f9;padding:24px 12px;">
@@ -164,7 +175,7 @@ def build(books: list[dict], prev: dict, note: str = "") -> dict:
      <div style="color:{MUTED};font-size:12px;letter-spacing:.06em;text-transform:uppercase;">Kalshi perps &middot; paper</div>
      <div style="color:{INK};font-size:20px;font-weight:600;margin-top:4px;">{today}</div>
      <div style="color:{tot_day_c};font-size:15px;margin-top:8px;">{headline}</div>
-     <div style="color:{MUTED};font-size:13px;margin-top:2px;">Since start {tot_since_s}</div>
+     <div style="color:{MUTED};font-size:13px;margin-top:2px;">Since start &middot; {tot_since_s}</div>
    </td></tr>
    {banner_html}
    <tr><td style="padding:14px 8px 0;">
@@ -184,7 +195,9 @@ def build(books: list[dict], prev: dict, note: str = "") -> dict:
      <p style="margin:10px 0 0;color:{MUTED};font-size:12px;line-height:1.5;">
        Paper only. No orders are sent and no money is at risk; the desk config has
        <code style="background:#f1f3f5;padding:1px 4px;border-radius:3px;">live: false</code>.
-       Each book starts from $250. The candidate and growth books blend the four-asset long book with a
+       Each book is a SEPARATE simulation of the same {money_stake} &mdash; three ways to run one stake,
+       compared on identical prices, not {money_stake} times three deployed at once.
+       The candidate and growth books blend the four-asset long book with a
        residual cross-sectional momentum sleeve; both beat the incumbent out of sample but FAIL the firm's
        deflated-Sharpe gate on a three-year window, which is why they are on paper rather than in production.
      </p>
@@ -194,14 +207,15 @@ def build(books: list[dict], prev: dict, note: str = "") -> dict:
 </table>
 </body></html>"""
 
-    text = (f"Kalshi perps paper books - {today}\n\n{banner_text}{headline}\n"
-            f"Since start {tot_since_s}\n\n" + "\n".join(text_rows) +
+    text = (f"Kalshi perps paper books - {today}\n\n{banner_text}{headline_text}\n"
+            f"Since start: {tot_since_s}\n\n" + "\n".join(text_rows) +
             ("\n\nChanges\n" + "\n".join("  - " + n for n in notes) if notes else "") +
             "\n\nPaper only: no orders, no money at risk, config live=false.\n")
 
-    sign = "+" if (tot_day or 0) >= 0 else ""
-    subject = (f"Perps paper {dt.datetime.now(dt.timezone.utc):%b %d}: {_money(total)}"
-               + (f" ({sign}{tot_day:.2f})" if tot_day is not None else " (first report)"))
+    short = {"incumbent": "inc", "candidate": "cand", "growth": "growth"}
+    parts = ", ".join(f"{short.get(n, n)} {v:+.1%}" for n, v in ranked if v is not None)
+    subject = (f"Perps paper {dt.datetime.now(dt.timezone.utc):%b %d}: "
+               + (parts or "no book data"))
     return {"subject": subject, "html": html_body, "text": text}
 
 
