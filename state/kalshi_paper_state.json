@@ -1,12 +1,181 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 349.52199999999937,
+  "shadow": 248.6819999999993,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 405.21742499999596
+  "live": 317.19362499999596
  },
- "open": [],
+ "open": [
+  {
+   "ticker": "KXWTI15M-26SEP152000-00",
+   "metal": "wti",
+   "side": "no",
+   "count": 35,
+   "fill_price": 0.908,
+   "fee": 0.21,
+   "fair": 0.09199999999999997,
+   "entry_ts": 1789516084,
+   "close_ts": 1789516800,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXWTI15M-26SEP152000-00",
+   "metal": "wti",
+   "side": "no",
+   "count": 35,
+   "fill_price": 0.89,
+   "fee": 0.238,
+   "fair": 0.09199999999999997,
+   "entry_ts": 1789516084,
+   "close_ts": 1789516800,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a778-7708-72a5-ab0c-9a8da895c5af"
+  },
+  {
+   "ticker": "KXSILVER15M-26SEP152000-00",
+   "metal": "silver",
+   "side": "no",
+   "count": 11,
+   "fill_price": 0.77,
+   "fee": 0.14,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789516200,
+   "close_ts": 1789516800,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXSILVER15M-26SEP152000-00",
+   "metal": "silver",
+   "side": "no",
+   "count": 11,
+   "fill_price": 0.76,
+   "fee": 0.1397,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789516200,
+   "close_ts": 1789516800,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a77a-3840-7583-a8cd-58107242e02c"
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP152000-00",
+   "metal": "natgas",
+   "side": "no",
+   "count": 25,
+   "fill_price": 0.88,
+   "fee": 0.1825,
+   "fair": 0.12,
+   "entry_ts": 1789516291,
+   "close_ts": 1789516800,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a77b-a388-7a48-bd12-0bf2c3390345"
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP152000-00",
+   "metal": "natgas",
+   "side": "no",
+   "count": 30,
+   "fill_price": 0.89,
+   "fee": 0.21,
+   "fair": 0.10999999999999999,
+   "entry_ts": 1789516294,
+   "close_ts": 1789516800,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP152000-00",
+   "metal": "copper",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.77,
+   "fee": 0.13,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789516375,
+   "close_ts": 1789516800,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXCOPPER15M-26SEP152000-00",
+   "metal": "copper",
+   "side": "no",
+   "count": 10,
+   "fill_price": 0.77,
+   "fee": 0.124,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789516375,
+   "close_ts": 1789516800,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a77c-eba8-7bde-9384-498f7b16977c"
+  },
+  {
+   "ticker": "KXETH15M-26SEP152000-00",
+   "metal": "eth",
+   "side": "no",
+   "count": 7,
+   "fill_price": 0.79,
+   "fee": 0.0812,
+   "fair": 0.20999999999999996,
+   "entry_ts": 1789516575,
+   "close_ts": 1789516800,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a0a77f-fcd0-746b-9bbf-675e9803bdf2"
+  },
+  {
+   "ticker": "KXETH15M-26SEP152000-00",
+   "metal": "eth",
+   "side": "no",
+   "count": 16,
+   "fill_price": 0.8,
+   "fee": 0.18,
+   "fair": 0.19999999999999996,
+   "entry_ts": 1789516578,
+   "close_ts": 1789516800,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXBTC15M-26SEP152000-00",
+   "metal": "btc",
+   "side": "no",
+   "count": 16,
+   "fill_price": 0.77,
+   "fee": 0.2,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789516605,
+   "close_ts": 1789516800,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXBTC15M-26SEP152000-00",
+   "metal": "btc",
+   "side": "no",
+   "count": 16,
+   "fill_price": 0.77,
+   "fee": 0.1984,
+   "fair": 0.22999999999999998,
+   "entry_ts": 1789516605,
+   "close_ts": 1789516800,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a0a780-6e18-709f-93c0-f982eb591293"
+  }
+ ],
  "n_settled": 2845,
  "realized": {
   "shadow": 99.52199999999986,
@@ -29,7 +198,7 @@
    "live": 311.53320499999677
   }
  },
- "updated": "2026-09-15T23:47:53Z",
+ "updated": "2026-09-15T23:57:38Z",
  "metals": [
   "gold",
   "silver",
@@ -40,5 +209,5 @@
   "eth"
  ],
  "strategy": "desk_book",
- "live": false
+ "live": true
 }
