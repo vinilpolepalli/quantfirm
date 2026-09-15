@@ -23,5 +23,10 @@
       ]
     }
   ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ."
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- .",
+  "git": {
+    "deploymentEnabled": {
+      "claude/kalshi-commodity-strategy-sr27jr": false
+    }
+  }
 }
