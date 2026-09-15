@@ -1,0 +1,55 @@
+name: kalshi-perps-shadow
+# Daily shadow tick for the perps desk: refresh the daily panel, run ONE
+# agent tick in shadow mode against the live public book, commit the desk
+# status. This is a research heartbeat, not the risk loop — GitHub cron can
+# be delayed or dropped, which is fine for a weekly-rebalance strategy in
+# paper and unacceptable for a live leveraged book (docs/KALSHI_PERPS.md §5).
+# No secrets are read; nothing here can send an order.
+
+on:
+  schedule:
+    - cron: '20 1 * * *'   # 01:20 UTC daily, after the crypto 00:00 UTC bar closes
+  workflow_dispatch: {}
+
+concurrency:
+  group: kalshi-perps-shadow
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Refresh data and tick the shadow book
+        run: |
+          set -euo pipefail
+          python -m quantfirm.perps.cli update-data
+          python -m quantfirm.perps.cli paper --adapter shadow --minutes 0.1 --poll 5
+          python -m unittest tests.test_perps -q
+      - name: Commit shadow heartbeat
+        run: |
+          set -euo pipefail
+          git config user.name "vinilpolepalli"
+          git config user.email "105608101+vinilpolepalli@users.noreply.github.com"
+          for f in state/perps_desk_status.json data/perps/META.json data/perps/*_kalshi_1d.csv.gz data/perps/*_funding_kalshi.csv.gz; do
+            if [ -f "$f" ]; then git add -f "$f"; fi
+          done
+          if git diff --cached --quiet; then echo "no state change"; exit 0; fi
+          git commit -m "perps: shadow tick $(date -u +%FT%H:%M)"
+          for i in 1 2 3 4; do
+            git push && exit 0
+            git pull --rebase || true
+            sleep $((i*2))
+          done
+          exit 1

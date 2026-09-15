@@ -1,0 +1,27 @@
+{
+ "updated": "2026-09-15T00:09:07+00:00",
+ "files": [
+  "btc_1d",
+  "btc_funding_binance",
+  "btc_funding_kalshi",
+  "btc_kalshi_1d",
+  "eth_1d",
+  "eth_funding_binance",
+  "eth_funding_kalshi",
+  "eth_kalshi_1d",
+  "gold_1d",
+  "gold_funding_kalshi",
+  "gold_kalshi_1d",
+  "silver_1d",
+  "silver_funding_kalshi",
+  "silver_kalshi_1d",
+  "sol_1d",
+  "sol_funding_binance",
+  "sol_funding_kalshi",
+  "sol_kalshi_1d",
+  "xrp_1d",
+  "xrp_funding_binance",
+  "xrp_funding_kalshi",
+  "xrp_kalshi_1d"
+ ]
+}

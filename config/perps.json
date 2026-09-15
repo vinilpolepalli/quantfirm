@@ -1,0 +1,21 @@
+{
+  "desk": "kalshi_perps",
+  "status": "RESEARCH + SHADOW",
+  "bankroll_usd": 250,
+  "strategy": "trend_long_only",
+  "params": {
+    "target_vol": 0.12
+  },
+  "profile": "balanced",
+  "universe": [
+    "btc",
+    "eth",
+    "gold",
+    "silver"
+  ],
+  "adapter": "shadow",
+  "live": false,
+  "rebalance_every_days": 7,
+  "rebalance_band": 0.03,
+  "note": "live stays false until a human flips it AFTER the promotion gate in docs/KALSHI_PERPS.md \u00a77 is met. Keys live in the environment (KALSHI_PERPS_KEY_ID / KALSHI_PERPS_PRIVATE_KEY[_PATH]), never here. The strategy named here is the paper incumbent, not an approval."
+}

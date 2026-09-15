@@ -1,0 +1,302 @@
+"""Daily bars and funding for the perps research pass.
+
+Kalshi perps are three months old (crypto since 2026-06-03, gold/silver since
+2026-09-10), so every multi-year number in this desk is measured on a PROXY
+and says so:
+
+  * crypto price  : Coinbase Exchange spot daily candles (BTC-USD 2015→,
+                    ETH-USD 2016→, SOL/XRP 2021→). Kalshi crypto perps settle
+                    and fund on the CF Benchmarks spot composite, so spot is
+                    the right proxy for the perp's price path; the live loop
+                    uses the same source, so backtest and production see the
+                    same series.
+  * metals price  : Yahoo front-month futures (GC=F, SI=F), daily. Kalshi's
+                    metals perps reference the Pyth spot index; at a daily
+                    horizon the futures/spot basis is a slow drift (≈ the
+                    interest rate), which is exactly what perp funding would
+                    charge — so it is booked, not ignored (see backtest).
+  * funding proxy : Binance USDT-perp 8h funding history (2020→) run through
+                    Kalshi's rounding/cap rule as a STRESS scenario. Kalshi's
+                    own funding (2026-06→) is ~zero for the reason specs.py
+                    explains, and is loaded as the base scenario.
+  * Kalshi native : /margin candlesticks (1m/60m/1d) + funding history for
+                    the live-period comparison.
+
+Splits follow the firm convention (quantfirm/backtest.py): DEV before
+2025-07-01, HOLDOUT from 2025-07-01, opened once by the judge.
+"""
+
+from __future__ import annotations
+
+import datetime as dt
+import gzip
+import io
+import json
+import os
+import time
+import zipfile
+
+import pandas as pd
+import requests
+
+from .specs import SPECS, kalshi_funding
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+DATA_DIR = os.environ.get("QF_PERPS_DATA", os.path.join(ROOT, "data", "perps"))
+
+HOLDOUT_START = "2025-07-01"
+DEV_START = "2016-01-01"
+
+COINBASE = "https://api.exchange.coinbase.com"
+COINBASE_PRODUCTS = {"btc": "BTC-USD", "eth": "ETH-USD", "sol": "SOL-USD", "xrp": "XRP-USD"}
+YAHOO = {"gold": "GC=F", "silver": "SI=F"}
+BINANCE_FUNDING = {"btc": "BTCUSDT", "eth": "ETHUSDT", "sol": "SOLUSDT", "xrp": "XRPUSDT"}
+
+_S = requests.Session()
+_S.headers["User-Agent"] = "quantfirm-perps/0.1"
+
+
+def _path(name: str) -> str:
+    return os.path.join(DATA_DIR, name)
+
+
+def _read_csv(name: str) -> pd.DataFrame | None:
+    for p in (_path(name + ".gz"), _path(name)):
+        if os.path.exists(p):
+            return pd.read_csv(p)
+    return None
+
+
+def _write_csv(df: pd.DataFrame, name: str) -> str:
+    os.makedirs(DATA_DIR, exist_ok=True)
+    p = _path(name + ".gz")
+    with gzip.open(p, "wt") as f:
+        df.to_csv(f, index=False)
+    return p
+
+
+# ------------------------------------------------------------------ loaders
+def load_daily(asset: str) -> pd.DataFrame:
+    """OHLCV indexed by UTC midnight timestamps; columns open/high/low/close/volume."""
+    df = _read_csv(f"{asset}_1d.csv")
+    if df is None:
+        raise FileNotFoundError(f"no daily bars for {asset} in {DATA_DIR}; run "
+                                f"python -m quantfirm.perps.cli update-data")
+    df["ts"] = pd.to_datetime(df["ts"], utc=True, format="ISO8601").dt.normalize()
+    df = df.drop_duplicates("ts").set_index("ts").sort_index()
+    for c in ("open", "high", "low", "close", "volume"):
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    df = df.dropna(subset=["close"])
+    return df[["open", "high", "low", "close", "volume"]]
+
+
+def load_panel(assets=None) -> dict[str, pd.DataFrame]:
+    assets = assets or tuple(SPECS)
+    return {a: load_daily(a) for a in assets}
+
+
+def load_funding_proxy(asset: str) -> pd.Series | None:
+    """Binance 8h funding as a Series indexed by funding time (UTC). None if absent."""
+    df = _read_csv(f"{asset}_funding_binance.csv")
+    if df is None:
+        return None
+    s = pd.Series(pd.to_numeric(df["rate"], errors="coerce").values,
+                  index=pd.to_datetime(df["ts"], utc=True, format="ISO8601"), name="rate").dropna()
+    return s.sort_index()
+
+
+def load_kalshi_funding(asset: str) -> pd.Series | None:
+    df = _read_csv(f"{asset}_funding_kalshi.csv")
+    if df is None:
+        return None
+    s = pd.Series(pd.to_numeric(df["rate"], errors="coerce").values,
+                  index=pd.to_datetime(df["ts"], utc=True, format="ISO8601"), name="rate").dropna()
+    return s.sort_index()
+
+
+def daily_funding(rates_8h: pd.Series | None, index: pd.DatetimeIndex,
+                  apply_kalshi_rule: bool = True, asset_class: str = "crypto") -> pd.Series:
+    """Sum of per-interval funding rates falling on each UTC day of ``index``.
+
+    A long position pays this fraction of notional per day when positive.
+    Days with no rows (pre-history, outages) are 0.
+    """
+    if rates_8h is None or len(rates_8h) == 0:
+        return pd.Series(0.0, index=index)
+    r = rates_8h.copy()
+    if apply_kalshi_rule:
+        r = r.map(lambda x: kalshi_funding(x, asset_class))
+    d = r.groupby(r.index.normalize()).sum()
+    return d.reindex(index).fillna(0.0)
+
+
+def split(df: pd.DataFrame, which: str) -> pd.DataFrame:
+    cutoff = pd.Timestamp(HOLDOUT_START, tz="UTC")
+    if which == "dev":
+        d = df.loc[DEV_START:]
+        return d[d.index < cutoff]
+    if which == "holdout":
+        return df[df.index >= cutoff]
+    if which == "all":
+        return df
+    raise ValueError("split must be dev|holdout|all")
+
+
+def align(panel: dict[str, pd.DataFrame], how: str = "outer") -> pd.DataFrame:
+    """Close prices as one wide frame (columns = assets), forward-filled over
+    metals holidays so a Saturday BTC bar does not orphan gold. Weekend metals
+    returns are therefore zero, which is what the venue would show too."""
+    closes = pd.concat({a: d["close"] for a, d in panel.items()}, axis=1)
+    return closes.sort_index().ffill()
+
+
+# ----------------------------------------------------------------- fetchers
+def fetch_coinbase_daily(product: str, start: str = "2015-01-01") -> pd.DataFrame:
+    """Coinbase Exchange public candles, 300 per call, paged backwards."""
+    end = dt.datetime.now(dt.timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    start_ts = pd.Timestamp(start, tz="UTC")
+    rows = []
+    cur_end = end + dt.timedelta(days=1)
+    while cur_end > start_ts:
+        cur_start = max(cur_end - dt.timedelta(days=299), start_ts.to_pydatetime())
+        r = _S.get(f"{COINBASE}/products/{product}/candles",
+                   params={"granularity": 86400, "start": cur_start.isoformat(),
+                           "end": cur_end.isoformat()}, timeout=60)
+        if r.status_code == 429:
+            time.sleep(2)
+            continue
+        r.raise_for_status()
+        data = r.json()
+        if not data:
+            cur_end = cur_start
+            if cur_start <= start_ts:
+                break
+            continue
+        rows += data
+        cur_end = cur_start
+        time.sleep(0.25)
+    if not rows:
+        return pd.DataFrame(columns=["ts", "open", "high", "low", "close", "volume"])
+    df = pd.DataFrame(rows, columns=["t", "low", "high", "open", "close", "volume"])
+    df["ts"] = pd.to_datetime(df["t"], unit="s", utc=True)
+    df = df.drop_duplicates("ts").sort_values("ts")
+    return df[["ts", "open", "high", "low", "close", "volume"]]
+
+
+def fetch_yahoo_daily(symbol: str, start: str = "2000-01-01") -> pd.DataFrame:
+    import yfinance as yf
+    d = yf.download(symbol, start=start, interval="1d", progress=False, auto_adjust=False)
+    if d is None or len(d) == 0:
+        return pd.DataFrame(columns=["ts", "open", "high", "low", "close", "volume"])
+    if isinstance(d.columns, pd.MultiIndex):
+        d.columns = [c[0] for c in d.columns]
+    d = d.rename(columns=str.lower)
+    d.index = pd.to_datetime(d.index, utc=True)
+    d.index.name = "ts"
+    d = d.reset_index()
+    return d[["ts", "open", "high", "low", "close", "volume"]]
+
+
+def fetch_binance_funding(symbol: str, start_ym: tuple[int, int] = (2020, 1)) -> pd.DataFrame:
+    """Monthly zips from data.binance.vision (no auth, not geo-blocked)."""
+    y, m = start_ym
+    now = dt.datetime.now(dt.timezone.utc)
+    frames = []
+    while (y, m) <= (now.year, now.month):
+        url = (f"https://data.binance.vision/data/futures/um/monthly/fundingRate/"
+               f"{symbol}/{symbol}-fundingRate-{y:04d}-{m:02d}.zip")
+        r = _S.get(url, timeout=60)
+        if r.status_code == 200:
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            raw = z.read(z.namelist()[0]).decode()
+            first = raw.splitlines()[0].split(",")[0].strip()
+            header = None if first.lstrip("-").isdigit() else 0
+            df = pd.read_csv(io.StringIO(raw), header=header)
+            if header is None:
+                df.columns = ["calc_time", "funding_interval_hours", "last_funding_rate"][:df.shape[1]]
+            df.columns = [c.strip() for c in df.columns]
+            frames.append(df)
+        m += 1
+        if m == 13:
+            y, m = y + 1, 1
+    if not frames:
+        return pd.DataFrame(columns=["ts", "rate"])
+    df = pd.concat(frames, ignore_index=True)
+    t = df["calc_time"].astype("int64")
+    t = t.where(t < 10**14, t // 1000)  # 2025+ dumps are microseconds
+    out = pd.DataFrame({"ts": pd.to_datetime(t, unit="ms", utc=True),
+                        "rate": pd.to_numeric(df["last_funding_rate"], errors="coerce")})
+    return out.dropna().drop_duplicates("ts").sort_values("ts")
+
+
+def fetch_kalshi_funding(ticker: str) -> pd.DataFrame:
+    from .client import MarginClient
+    rows = MarginClient("prod").funding_history(ticker)
+    if not rows:
+        return pd.DataFrame(columns=["ts", "rate", "mark"])
+    df = pd.DataFrame(rows)
+    return pd.DataFrame({"ts": pd.to_datetime(df["funding_time"], utc=True),
+                         "rate": pd.to_numeric(df["funding_rate"], errors="coerce"),
+                         "mark": pd.to_numeric(df["mark_price"], errors="coerce")}
+                        ).dropna(subset=["rate"]).sort_values("ts")
+
+
+def fetch_kalshi_candles(ticker: str, period: int = 1440, start_ts: int = 1780000000) -> pd.DataFrame:
+    from .client import MarginClient
+    c = MarginClient("prod").candlesticks(ticker, start_ts, int(time.time()), period)
+    rows = []
+    for x in c:
+        p = x.get("price") or {}
+        b = x.get("bid") or {}
+        a = x.get("ask") or {}
+        rows.append({"end_ts": x.get("end_period_ts"), "open": p.get("open"), "high": p.get("high"),
+                     "low": p.get("low"), "close": p.get("close"), "vwap": p.get("mean"),
+                     "bid_close": b.get("close"), "ask_close": a.get("close"),
+                     "volume": x.get("volume"), "volume_usd": x.get("volume_notional_value_dollars"),
+                     "oi": x.get("open_interest"), "oi_usd": x.get("open_interest_notional_value_dollars")})
+    df = pd.DataFrame(rows)
+    if len(df):
+        df["ts"] = pd.to_datetime(df["end_ts"].astype("int64"), unit="s", utc=True)
+    return df
+
+
+def update_all(assets=None, kalshi: bool = True, funding: bool = True, log=print) -> dict:
+    """Refresh every cached file. Idempotent; safe to run daily."""
+    assets = assets or tuple(SPECS)
+    written = {}
+    for a in assets:
+        if a in COINBASE_PRODUCTS:
+            df = fetch_coinbase_daily(COINBASE_PRODUCTS[a])
+        elif a in YAHOO:
+            df = fetch_yahoo_daily(YAHOO[a])
+        else:
+            continue
+        if len(df):
+            written[f"{a}_1d"] = _write_csv(df, f"{a}_1d.csv")
+            log(f"{a}: {len(df)} daily bars {df['ts'].iloc[0].date()} → {df['ts'].iloc[-1].date()}")
+        if funding and a in BINANCE_FUNDING:
+            try:
+                f = fetch_binance_funding(BINANCE_FUNDING[a])
+                if len(f):
+                    written[f"{a}_funding_binance"] = _write_csv(f, f"{a}_funding_binance.csv")
+                    log(f"{a}: {len(f)} binance funding rows")
+            except Exception as e:  # noqa: BLE001 — a proxy feed is not load-bearing
+                log(f"{a}: binance funding failed: {e}")
+        if kalshi:
+            spec = SPECS[a]
+            try:
+                kf = fetch_kalshi_funding(spec.ticker)
+                if len(kf):
+                    written[f"{a}_funding_kalshi"] = _write_csv(kf, f"{a}_funding_kalshi.csv")
+                kc = fetch_kalshi_candles(spec.ticker, 1440)
+                if len(kc):
+                    written[f"{a}_kalshi_1d"] = _write_csv(kc, f"{a}_kalshi_1d.csv")
+                log(f"{a}: kalshi funding {len(kf)} rows, daily candles {len(kc)}")
+            except Exception as e:  # noqa: BLE001
+                log(f"{a}: kalshi fetch failed: {e}")
+    meta = {"updated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+            "files": sorted(written)}
+    os.makedirs(DATA_DIR, exist_ok=True)
+    with open(_path("META.json"), "w") as f:
+        json.dump(meta, f, indent=1)
+    return meta

@@ -1,0 +1,71 @@
+{
+ "ts": "2026-09-15T00:28:33+00:00",
+ "adapter": "shadow",
+ "strategy": "trend_long_only",
+ "universe": [
+  "btc",
+  "eth",
+  "gold",
+  "silver"
+ ],
+ "profile": {
+  "bankroll_usd": 250.0,
+  "target_vol": 0.12,
+  "max_gross_leverage": 1.5,
+  "max_asset_weight": 0.75,
+  "min_liq_distance": 0.35,
+  "daily_loss_stop": 0.03,
+  "weekly_loss_stop": 0.06,
+  "dd_soft": 0.08,
+  "dd_kill": 0.15,
+  "max_order_notional_usd": 1000.0,
+  "max_orders_per_tick": 12,
+  "max_data_age_hours": 30.0,
+  "price_collar": 0.005,
+  "min_margin_ratio_headroom": 0.5,
+  "consecutive_loss_days_pause": 5
+ },
+ "bankroll0": 250,
+ "equity": 249.97,
+ "cash": 249.97,
+ "realized": 0.0,
+ "fees": 0.0317,
+ "funding": 0.0,
+ "interest": 0.0,
+ "peak_equity": 250.0,
+ "drawdown": -0.0001,
+ "positions": [
+  {
+   "asset": "btc",
+   "ticker": "KXBTCPERP",
+   "contracts": 1.0,
+   "avg_price": 7.7998,
+   "opened": "2026-09-15T00:28:33+00:00",
+   "mark": 7.801,
+   "weight": 0.0312
+  },
+  {
+   "asset": "eth",
+   "ticker": "KXETHPERP",
+   "contracts": 4.0,
+   "avg_price": 2.509,
+   "opened": "2026-09-15T00:28:33+00:00",
+   "mark": 2.5088,
+   "weight": 0.0401
+  },
+  {
+   "asset": "gold",
+   "ticker": "KXGOLDPERP",
+   "contracts": 2.0,
+   "avg_price": 4.2867,
+   "opened": "2026-09-15T00:28:33+00:00",
+   "mark": 4.2859,
+   "weight": 0.0343
+  }
+ ],
+ "gross_leverage": 0.106,
+ "halted": "",
+ "kill_switch": false,
+ "n_ticks": 1,
+ "started": "2026-09-15T00:28:32+00:00"
+}

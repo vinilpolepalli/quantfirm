@@ -17,6 +17,7 @@ Two desks:
 | **Equity** | Robinhood equities (cash account, fractional) | **LIVE** — $250, six-name momentum book |
 | Crypto | Robinhood Crypto API | disabled — tournament NO-GO stands (`docs/TOURNAMENT.md`) |
 | **Kalshi 15M** | Kalshi gold/silver/copper/WTI/natgas + BTC/ETH binaries | **LIVE canary 24/7** — $250 `desk_book` (commodities 8% ≥60¢ until close; BTC and ETH 4% each / ≥60¢ until close); see `docs/KALSHI_15M.md` |
+| **Kalshi perps** | Kalshi perpetual futures (BTC/ETH/gold/silver, `/margin` API) | **RESEARCH + SHADOW** — tournament verdict NO-GO for alpha; vol-targeted long-only with a trend gate runs in paper; see `docs/KALSHI_PERPS.md` |
 
 ## Map
 
@@ -29,8 +30,9 @@ Two desks:
 | Data refresh + revalidation | `.github/workflows/research.yml` | nightly |
 | Crypto execution engine (dormant) | `.github/workflows/trade.yml` → `quantfirm/live/engine.py` | hourly |
 | Kalshi 15M paper desk | `scripts/kalshi_paper_loop.sh` + `.github/workflows/kalshi.yml` | 24/7 (minute 5 of each window + 2s poll) |
+| Kalshi perps shadow desk | `scripts/perps_loop.sh` + `.github/workflows/perps.yml` | hourly tick, weekly rebalance, daily shadow heartbeat |
 | The books | `state/equity_state.json`, `state/equity_trade_log.csv`, `state/kalshi_desk_status.json` | every run |
-| Kill switches | `state/KILL_SWITCH_EQ`, `state/KILL_SWITCH`, `state/KILL_SWITCH_KALSHI` | honored by every run |
+| Kill switches | `state/KILL_SWITCH_EQ`, `state/KILL_SWITCH`, `state/KILL_SWITCH_KALSHI`, `state/KILL_SWITCH_PERPS` | honored by every run |
 | Dashboard + reports | `dashboard/` (Vercel, auto-deploys on state commits) | every trading day |
 
 ## Docs
@@ -43,6 +45,7 @@ Two desks:
 - `docs/TOURNAMENT.md` / `docs/RESEARCH.md` — crypto desk verdict and findings
 - `docs/RUNBOOK.md` — go-live checklist, kill switch, incident playbook
 - `docs/KALSHI.md` / `docs/KALSHI_15M.md` — 15-minute Kalshi desk (live canary + **setup**)
+- `docs/KALSHI_PERPS.md` — perpetual-futures desk: venue dossier, evidence, tournament verdict, agent roster, risk policy, rollout gate
 - `docs/PROCESS.md` — build log (how agents built this)
 
 ## Quick start (backtesting only — no credentials needed)
@@ -53,6 +56,8 @@ python -m quantfirm.equities.cli list
 python -m quantfirm.equities.cli walkforward --strategy xsec_refined --split dev
 python tests/test_backtest.py
 python -m unittest tests.test_kalshi -q
+python -m unittest tests.test_perps -q
+python -m quantfirm.perps.cli markets          # live perps table, no key needed
 ```
 
 Kalshi 15-minute binaries (gold/silver/copper/WTI/natgas/BTC/ETH) also need
