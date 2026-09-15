@@ -16,8 +16,13 @@ research and the tests say.
 1. **Kalshi perps are real, regulated and cheap to hold.** Twenty contracts
    (BTC, ETH, 16 alts, gold, silver), CFTC-approved, cleared, 24/7, BTC
    spread under 1 bp, up to ~4.7x entry leverage on BTC and ~11.7x on gold.
-   Funding is almost always exactly zero (rates under 0.01% per interval
-   round to zero; 55–97% of all intervals since June have been zero), idle
+   Funding was almost always exactly zero and **is no longer**, at least on
+   BTC: across the whole history 55% of intervals are zero, but over the last
+   90 only 24% are, and the non-zero ones are consistently positive at a
+   median 0.0149% per interval, which is **+16.3% a year paid BY longs** if it
+   persists. ETH is still 89% zero and slightly negative. §1a has the
+   measurement. This is the exact condition §9 named as something that would
+   change the verdict, and it arrived. Idle
    margin earns about 3.25% APY, and there are server-side stops. The costs
    that matter are the exchange fees: 12 bps taker / 5 bps maker at tier 0,
    charged on notional, on open and on close.
@@ -125,6 +130,45 @@ long can never be liquidated (price would have to reach zero), at 2x a 40%
 adverse move liquidates BTC, and every published number on retail perps
 says anything above ~2x is a coin flip over a quarter. The risk policy caps
 gross leverage at 1.0–2.0x by rung.
+
+## 1a. Funding went live on BTC, and the desk noticed
+
+Measured 2026-09-15 from Kalshi's own `funding_rates/historical`, which is what
+both the backtester and the paper engine read:
+
+| market | intervals | zero, all history | zero, last 90 | non-zero median | annualised if persistent |
+|---|---:|---:|---:|---:|---:|
+| BTC | 311 | 55.0% | **24.4%** | +0.0149% | **+16.3%, paid by longs** |
+| ETH | 311 | 87.1% | 88.9% | −0.0129% | −13.6%, received by longs |
+| gold | 4 | 50.0% | — | +0.0316% | too little history to read |
+| silver | 4 | 75.0% | — | +0.0292% | too little history to read |
+
+BTC's last eight intervals read 0, +0.0118%, +0.0143%, +0.0173%, +0.0149%,
++0.0147%, 0, 0. That is not noise around a deadband; that is a market paying
+carry most of the time.
+
+**What it changes.** The claim that holding is free on this venue, which is a
+large part of why the book rebalances weekly rather than daily (§3e), is now
+half wrong: holding BTC long costs roughly 16% a year at these rates, while
+holding ETH long still pays. It does not change the cadence conclusion —
+trading more often would add cost without removing this one — but it does mean
+a long BTC book's forward expectation is worse than the dev-window backtests
+assumed, since Kalshi funding did not exist before 2026-06 and those runs
+booked zero.
+
+**What it does not change.** The desk already stress-tests against real funding:
+the `proxy` scenario applies Binance's funding through Kalshi's deadband, and
+the residual-momentum blend survives it at Sharpe 1.532 against the core's
+1.154 (§3d). So the case was tested before it arrived, and the sleeve's
+advantage widened rather than narrowed under it.
+
+**What it opens.** §9 listed a funding-conditional overlay as one of the few
+things that would be worth a new registered trial if Kalshi's own funding
+persisted above the deadband. It now has for three months on BTC. That is a
+genuine research opening, and the first one the desk has had since the campaign
+closed. It is NOT taken here: one instrument with ninety intervals is a thin
+basis, and the honest move is to let `scripts/perps_watch.py` keep measuring it
+weekly until there is enough history to pre-register a test against.
 
 ## 2. What the evidence rules out, and why
 
@@ -406,9 +450,12 @@ venue's own arithmetic, and the instrument is the reason.
 
 **On Kalshi, holding is free and trading is not.** Offshore perps pay funding
 three times a day, which is a standing reason to manage a position actively.
-Kalshi's deadband rounds any rate under 0.01% per interval to zero, and 55–97%
-of all intervals since June have been exactly zero, so a position costs nothing
-to carry and idle collateral earns about 3.25%. Meanwhile every trade costs 12
+Kalshi's deadband rounds any rate under 0.01% per interval to zero. That was
+true of 55–97% of intervals across the venue's whole history, and it is
+**no longer true of BTC**: over the last 90 intervals only 24% were zero and
+the rest were positive, which longs pay (§1a). Carry is therefore not free on
+BTC any more, though it remains so on ETH, and idle collateral still earns
+about 3.25%. Meanwhile every trade costs 12
 bps of fee plus the spread: about 24 bps round trip on BTC and 43 on LINK. The
 venue therefore pays you to sit still and charges you to move, which is the
 opposite of the instrument's reputation.
