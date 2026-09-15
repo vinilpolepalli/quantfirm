@@ -48,20 +48,72 @@ def load_books() -> list[dict]:
     return sorted(books, key=lambda b: (order.get(b["_book"], 9), b["_book"]))
 
 
-def previous() -> dict:
-    """Yesterday's snapshot per book, or {} on the first run."""
+def _rows() -> list[dict]:
     if not os.path.exists(HISTORY):
-        return {}
-    rows = []
+        return []
+    out = []
     with open(HISTORY) as f:
         for line in f:
             line = line.strip()
             if line:
                 try:
-                    rows.append(json.loads(line))
+                    out.append(json.loads(line))
                 except json.JSONDecodeError:
                     continue
-    return rows[-1].get("books", {}) if rows else {}
+    return out
+
+
+def previous(same_day_ok: bool = False) -> dict:
+    """The snapshot to compare against, or {} on the first run.
+
+    For the daily report this is the last row from an EARLIER UTC DATE, not
+    simply the last row. Intraday alert runs append rows too, and comparing
+    against one of those would turn the day-over-day column into a
+    four-hours-over-four-hours column without saying so. ``same_day_ok`` is what
+    the intraday alert passes, because there "since the last check" is the
+    question it is actually asking.
+    """
+    rows = _rows()
+    if not rows:
+        return {}
+    if same_day_ok:
+        return rows[-1].get("books", {})
+    today = dt.datetime.now(dt.timezone.utc).date().isoformat()
+    for row in reversed(rows):
+        if str(row.get("ts", ""))[:10] < today:
+            return row.get("books", {})
+    return {}
+
+
+def material_change(books: list[dict], prev: dict, dd_alert: float) -> list[str]:
+    """What would make a person want an email before tomorrow morning.
+
+    A rebalance that actually traded, a book halting, a kill switch, or a
+    drawdown past the alert threshold. Price drift is not on the list: these
+    books trade about once a week and hold a position for roughly six, so an
+    equity that moved a few cents is not news.
+    """
+    reasons = []
+    for b in books:
+        name = b["_book"]
+        p = prev.get(name, {}) or {}
+        was, now = set(p.get("assets") or []), set(x["asset"] for x in b.get("positions", []))
+        if p and was != now:
+            opened, closed = sorted(now - was), sorted(was - now)
+            bits = []
+            if opened:
+                bits.append("opened " + ", ".join(opened))
+            if closed:
+                bits.append("closed " + ", ".join(closed))
+            reasons.append(f"{name} traded: " + "; ".join(bits))
+        if b.get("halted"):
+            reasons.append(f"{name} is HALTED: {b['halted']}")
+        if b.get("kill_switch"):
+            reasons.append(f"{name}: kill switch tripped")
+        dd = b.get("drawdown")
+        if isinstance(dd, (int, float)) and dd <= -abs(dd_alert):
+            reasons.append(f"{name} drawdown {dd:.2%}, past the {abs(dd_alert):.0%} alert line")
+    return reasons
 
 
 def append_history(books: list[dict]) -> None:
@@ -224,11 +276,24 @@ def main() -> None:
     ap.add_argument("--html-only", action="store_true")
     ap.add_argument("--no-record", action="store_true", help="do not append to the history file")
     ap.add_argument("--note", default="", help="banner at the top, e.g. a warning or a test-send label")
+    ap.add_argument("--only-if-changed", action="store_true",
+                    help="print nothing and exit 3 unless a book traded, halted, tripped its kill "
+                         "switch or breached --dd-alert; for intraday alert runs")
+    ap.add_argument("--dd-alert", type=float, default=0.05,
+                    help="drawdown that counts as material for --only-if-changed (default 5%%)")
     a = ap.parse_args()
     books = load_books()
     if not books:
         raise SystemExit("no book status files in state/ - run `cli paper` first")
-    out = build(books, previous(), note=a.note)
+    note = a.note
+    if a.only_if_changed:
+        reasons = material_change(books, previous(same_day_ok=True), a.dd_alert)
+        if not reasons:
+            if not a.no_record:
+                append_history(books)
+            raise SystemExit(3)          # nothing happened; the caller sends nothing
+        note = note or ("Alert: " + "; ".join(reasons))
+    out = build(books, previous(same_day_ok=a.only_if_changed), note=note)
     if not a.no_record:
         append_history(books)
     print(out["html"] if a.html_only else json.dumps(out, indent=1))
