@@ -35,19 +35,22 @@ jobs:
         run: |
           set -euo pipefail
           python -m quantfirm.perps.cli update-data
-          # two books, side by side on the same live prices: the incumbent
-          # (trend_long_only, four assets) and the candidate
-          # (blend_core_sleeve, twenty). Ticking only the first would leave the
-          # candidate frozen at whatever its last manual tick left behind.
+          # three books, side by side on the same live prices: incumbent
+          # (trend_long_only, four assets), candidate (blend_core_sleeve at a
+          # 12% vol target) and growth (the same blend at 18% and a 40%
+          # sleeve). Every book needs its own tick — one left out is frozen at
+          # whatever its last manual run left behind, and a frozen book quietly
+          # stops being a fair comparison against the ones still moving.
           python -m quantfirm.perps.cli paper --adapter shadow --minutes 0.1 --poll 5
           python -m quantfirm.perps.cli paper --book candidate --adapter shadow --minutes 0.1 --poll 5
+          python -m quantfirm.perps.cli paper --book growth --adapter shadow --minutes 0.1 --poll 5
           python -m unittest discover -s tests -p 'test_perps*.py' -q
       - name: Commit shadow heartbeat
         run: |
           set -euo pipefail
           git config user.name "vinilpolepalli"
           git config user.email "105608101+vinilpolepalli@users.noreply.github.com"
-          for f in state/perps_desk_status.json state/perps_desk_status_candidate.json data/perps/META.json data/perps/*_kalshi_1d.csv.gz data/perps/*_funding_kalshi.csv.gz; do
+          for f in state/perps_desk_status*.json state/perps_report_history.jsonl data/perps/META.json data/perps/*_kalshi_1d.csv.gz data/perps/*_funding_kalshi.csv.gz; do
             if [ -f "$f" ]; then git add -f "$f"; fi
           done
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi
