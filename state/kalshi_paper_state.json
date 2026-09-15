@@ -1,24 +1,53 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 304.2549999999996,
+  "shadow": 301.53499999999957,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 332.59180499999655
+  "live": 330.6506049999965
  },
- "open": [],
- "n_settled": 1809,
+ "open": [
+  {
+   "ticker": "KXWTI15M-26SEP150115-15",
+   "metal": "wti",
+   "side": "no",
+   "count": 13,
+   "fill_price": 0.82,
+   "fee": 0.14,
+   "fair": 0.17999999999999994,
+   "entry_ts": 1789448581,
+   "close_ts": 1789449300,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
+  },
+  {
+   "ticker": "KXWTI15M-26SEP150115-15",
+   "metal": "wti",
+   "side": "no",
+   "count": 13,
+   "fill_price": 0.8200000000000001,
+   "fee": 0.1339,
+   "fair": 0.17999999999999994,
+   "entry_ts": 1789448581,
+   "close_ts": 1789449300,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a372-7370-7a5c-bf5d-74af9b3a2fe0"
+  }
+ ],
+ "n_settled": 1823,
  "realized": {
-  "shadow": 54.25500000000006,
+  "shadow": 62.335000000000065,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 83.26110499999963
+  "live": 92.11380499999962
  },
  "fees": {
-  "shadow": 136.7900000000002,
+  "shadow": 137.78000000000023,
   "demo": 0.0,
   "maker": 0.0,
-  "live": 123.6728949999999
+  "live": 124.6601949999999
  },
  "started": "2026-09-12T00:46:58Z",
  "day_stop": {
@@ -29,7 +58,7 @@
    "live": 311.53320499999677
   }
  },
- "updated": "2026-09-15T04:47:49Z",
+ "updated": "2026-09-15T05:04:27Z",
  "metals": [
   "gold",
   "silver",
@@ -40,5 +69,5 @@
   "eth"
  ],
  "strategy": "desk_book",
- "live": false
+ "live": true
 }
