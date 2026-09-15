@@ -10,6 +10,9 @@ priv_b64.txt
 config/account.local.json
 state/kalshi_paper_decisions.jsonl
 state/perps_decisions.jsonl
+
+# artifact fragment (regenerate: gen_kalshi_dashboard.py --artifact)
+dashboard/kalshi.artifact.html
 state/kalshi_paper_state.json
 state/kalshi_paper_loop.log
 

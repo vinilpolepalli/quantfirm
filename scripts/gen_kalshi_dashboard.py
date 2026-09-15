@@ -292,7 +292,34 @@ def render() -> str:
     return "".join(parts)
 
 
+GFONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
+          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+          'family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700'
+          '&display=swap">')
+
+
+def render_fragment() -> str:
+    """Body-only build for the claude.ai Artifact publisher, which supplies its
+    own document skeleton. Local woff2 files cannot be referenced from there,
+    but the Artifact CSP does admit Google Fonts -- and both faces are on it --
+    so the house typography survives rather than dropping to the system stack.
+    """
+    full = render()
+    body = full[full.index("<body>") + len("<body>"):full.rindex("</body>")]
+    css = theme.page_css(None) + EXTRA_CSS
+    return (f'<title>Kalshi 15m Metals</title>{GFONTS}'
+            f'<style>{css}</style>{body}')
+
+
 def main() -> int:
+    if "--artifact" in sys.argv:
+        out = os.path.join(os.path.dirname(OUT), "kalshi.artifact.html")
+        html = render_fragment()
+        with open(out, "w") as f:
+            f.write(html)
+        print(f"wrote {out} ({len(html):,} bytes)")
+        return 0
     html = render()
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w") as f:
