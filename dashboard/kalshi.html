@@ -1,0 +1,277 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><meta name="color-scheme" content="light dark"><title>quantfirm — kalshi 15m metals</title><style>
+@font-face { font-family:"Instrument Serif"; src:url("fonts/instrument-serif-400.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"JetBrains Mono"; src:url("fonts/jetbrains-mono-400.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"JetBrains Mono"; src:url("fonts/jetbrains-mono-500.woff2") format("woff2");
+  font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:"JetBrains Mono"; src:url("fonts/jetbrains-mono-700.woff2") format("woff2");
+  font-weight:700; font-style:normal; font-display:swap; }
+
+:root {
+
+  --page:      oklch(0.977 0.007 92);
+  --card:      oklch(1 0 0);
+  --sunk:      oklch(0.955 0.008 92);
+  --ink-1:     oklch(0.245 0.018 250);
+  --ink-2:     oklch(0.395 0.016 250);
+  --ink-3:     oklch(0.480 0.014 250);
+  --rule:      oklch(0.895 0.008 250);
+  --rule-soft: oklch(0.935 0.006 250);
+  --accent:    oklch(0.545 0.125 58);
+  --accent-w:  oklch(0.925 0.038 70);
+  --gain:      oklch(0.505 0.125 156);
+  --gain-w:    oklch(0.930 0.045 156);
+  --loss:      oklch(0.520 0.170 27);
+  --loss-w:    oklch(0.930 0.050 27);
+  --warn:      oklch(0.600 0.125 76);
+
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --s7:48px; --s8:72px;
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --ease-out:cubic-bezier(.22,.61,.36,1);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page:      oklch(0.168 0.012 250);
+  --card:      oklch(0.212 0.014 250);
+  --sunk:      oklch(0.188 0.013 250);
+  --ink-1:     oklch(0.930 0.008 250);
+  --ink-2:     oklch(0.775 0.012 250);
+  --ink-3:     oklch(0.605 0.015 250);
+  --rule:      oklch(0.310 0.016 250);
+  --rule-soft: oklch(0.258 0.014 250);
+  --accent:    oklch(0.790 0.115 68);
+  --accent-w:  oklch(0.268 0.030 68);
+  --gain:      oklch(0.760 0.135 157);
+  --gain-w:    oklch(0.310 0.055 157);
+  --loss:      oklch(0.688 0.155 25);
+  --loss-w:    oklch(0.300 0.058 25);
+  --warn:      oklch(0.790 0.115 80);
+} }
+:root[data-theme="dark"] {
+  --page:      oklch(0.168 0.012 250);
+  --card:      oklch(0.212 0.014 250);
+  --sunk:      oklch(0.188 0.013 250);
+  --ink-1:     oklch(0.930 0.008 250);
+  --ink-2:     oklch(0.775 0.012 250);
+  --ink-3:     oklch(0.605 0.015 250);
+  --rule:      oklch(0.310 0.016 250);
+  --rule-soft: oklch(0.258 0.014 250);
+  --accent:    oklch(0.790 0.115 68);
+  --accent-w:  oklch(0.268 0.030 68);
+  --gain:      oklch(0.760 0.135 157);
+  --gain-w:    oklch(0.310 0.055 157);
+  --loss:      oklch(0.688 0.155 25);
+  --loss-w:    oklch(0.300 0.058 25);
+  --warn:      oklch(0.790 0.115 80);
+}
+:root[data-theme="light"] {
+  --page:      oklch(0.977 0.007 92);
+  --card:      oklch(1 0 0);
+  --sunk:      oklch(0.955 0.008 92);
+  --ink-1:     oklch(0.245 0.018 250);
+  --ink-2:     oklch(0.395 0.016 250);
+  --ink-3:     oklch(0.480 0.014 250);
+  --rule:      oklch(0.895 0.008 250);
+  --rule-soft: oklch(0.935 0.006 250);
+  --accent:    oklch(0.545 0.125 58);
+  --accent-w:  oklch(0.925 0.038 70);
+  --gain:      oklch(0.505 0.125 156);
+  --gain-w:    oklch(0.930 0.045 156);
+  --loss:      oklch(0.520 0.170 27);
+  --loss-w:    oklch(0.930 0.050 27);
+  --warn:      oklch(0.600 0.125 76);
+}
+@media print { :root {
+  --page:#fff; --card:#fff; --sunk:#fff;
+  --ink-1:#14181c; --ink-2:#4a5157; --ink-3:#6b7278;
+  --rule:#c6cbd0; --rule-soft:#e2e6e9;
+  --accent:oklch(0.480 0.125 58);  --accent-w:oklch(0.900 0.040 70);
+  --gain:oklch(0.470 0.125 156);   --gain-w:oklch(0.915 0.048 156);
+  --loss:oklch(0.480 0.170 27);    --loss-w:oklch(0.915 0.052 27);
+  --warn:oklch(0.560 0.125 76);
+} }
+
+*,*::before,*::after { box-sizing:border-box; }
+html,body { overflow-x:clip; }
+body {
+  margin:0; background:var(--page); color:var(--ink-1);
+  font:400 14px/1.55 var(--mono);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.wrap { max-width:860px; margin:0 auto; padding:var(--s6) var(--s4) var(--s8); }
+
+/* ---- masthead ---------------------------------------------------------- */
+.mast { display:flex; align-items:flex-end; justify-content:space-between;
+  gap:var(--s4); flex-wrap:wrap; }
+.mast .name { font:400 34px/1 var(--display); letter-spacing:.005em;
+  margin:0; color:var(--ink-1); }
+.mast .name em { font-style:normal; color:var(--accent); }
+.mast .meta { font-size:11px; color:var(--ink-3); letter-spacing:.06em;
+  text-transform:uppercase; display:flex; gap:var(--s3); align-items:center;
+  flex-wrap:wrap; }
+.rule { height:1px; background:var(--ink-1); margin:var(--s3) 0 var(--s2); }
+.rule.thin { background:var(--rule); }
+.kicker { font-size:10.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-3); }
+
+a { color:var(--ink-2); text-decoration:none;
+  border-bottom:1px solid var(--rule); padding-bottom:1px;
+  transition:color .16s var(--ease-out), border-color .16s var(--ease-out); }
+a:hover { color:var(--accent); border-bottom-color:var(--accent); }
+a:active { color:var(--accent); opacity:.75; }
+a:focus-visible { outline:2px solid var(--accent); outline-offset:3px;
+  border-radius:2px; border-bottom-color:transparent; }
+
+/* ---- hero -------------------------------------------------------------- */
+.hero { margin:var(--s6) 0 var(--s5); }
+.hero .fig { font:700 clamp(46px,10vw,76px)/1 var(--mono);
+  letter-spacing:-.045em; display:block; margin:var(--s2) 0 var(--s4); }
+.deltas { display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; }
+.pill { display:inline-flex; align-items:center; gap:var(--s2);
+  font-size:12.5px; font-weight:500; padding:5px 11px 5px 9px;
+  border-radius:999px; white-space:nowrap; }
+.pill .arw { font-size:10px; line-height:1; }
+.pill.up   { background:var(--gain-w); color:var(--gain); }
+.pill.down { background:var(--loss-w); color:var(--loss); }
+.pill .per { color:inherit; opacity:.72; }
+.hero .line { margin-top:var(--s4); font-size:12.5px; color:var(--ink-2); }
+.hero .line b { color:var(--ink-1); font-weight:500; }
+
+/* ---- drawdown meter ---------------------------------------------------- */
+.meter { margin-top:var(--s5); max-width:520px; }
+.meter .track { height:6px; border-radius:999px; background:var(--accent-w);
+  position:relative; overflow:hidden; }
+.meter .fill { position:absolute; inset:0 auto 0 0; border-radius:999px; }
+.meter .cap { display:flex; justify-content:space-between; gap:var(--s3);
+  font-size:11px; color:var(--ink-3); margin-top:var(--s2);
+  letter-spacing:.04em; }
+.meter .cap b { color:var(--ink-2); font-weight:500; }
+
+/* ---- stat tiles -------------------------------------------------------- */
+.tiles { display:grid; gap:var(--s3); margin-top:var(--s5);
+  grid-template-columns:repeat(3,minmax(0,1fr)); }
+@media (max-width:560px) { .tiles { grid-template-columns:minmax(0,1fr); } }
+.tile { background:var(--sunk); border:1px solid var(--rule-soft);
+  border-radius:var(--r-sm); padding:var(--s3) var(--s4) var(--s4); }
+.tile .l { font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); }
+.tile .v { font:500 24px/1.15 var(--mono); letter-spacing:-.03em;
+  margin-top:var(--s2); }
+.tile .s { font-size:11px; color:var(--ink-3); margin-top:var(--s1); }
+.tile .v.up { color:var(--gain); } .tile .v.down { color:var(--loss); }
+
+/* ---- layout ------------------------------------------------------------ */
+.grid { display:grid; gap:var(--s4); margin-top:var(--s6);
+  grid-template-columns:repeat(2,minmax(0,1fr)); }
+.grid .full { grid-column:1 / -1; }
+@media (max-width:720px) { .grid { grid-template-columns:minmax(0,1fr); } }
+
+.card { background:var(--card); border:1px solid var(--rule-soft);
+  border-radius:var(--r-md); padding:var(--s5) var(--s5) var(--s4); }
+.card > h2 { font:400 17px/1.2 var(--display); margin:0 0 var(--s4);
+  color:var(--ink-1); letter-spacing:.01em; }
+.card > h2 .n { font:500 10.5px/1 var(--mono); color:var(--ink-3);
+  letter-spacing:.16em; text-transform:uppercase; margin-left:var(--s2);
+  vertical-align:.28em; }
+
+/* ---- tables ------------------------------------------------------------ */
+.scroll { overflow-x:auto; margin:0 calc(var(--s5) * -1); padding:0 var(--s5); }
+table { width:100%; border-collapse:collapse; font-size:13px;
+  font-variant-numeric:tabular-nums; }
+th { text-align:left; font-weight:500; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); padding:0 var(--s3) var(--s2) 0;
+  white-space:nowrap; }
+td { padding:var(--s2) var(--s3) var(--s2) 0; border-top:1px solid var(--rule-soft);
+  white-space:nowrap; }
+th.n, td.n { text-align:right; padding-right:0; }
+tr:last-child td { padding-bottom:0; }
+.sym { font-weight:700; letter-spacing:.01em; }
+.muted td { color:var(--ink-3); }
+.side-buy  { color:var(--gain); font-weight:500; }
+.side-sell { color:var(--loss); font-weight:500; }
+.empty { color:var(--ink-3); text-align:center; padding:var(--s5) 0;
+  white-space:normal; }
+
+/* ---- chart ------------------------------------------------------------- */
+.chart { display:block; width:100%; height:auto; overflow:visible; }
+.chart .axis   { stroke:var(--rule); stroke-width:1; }
+.chart .basis  { stroke:var(--ink-3); stroke-width:1; }
+.chart .lbl    { fill:var(--ink-3); font:400 10px var(--mono); letter-spacing:.04em; }
+.chart .val    { fill:var(--ink-1); font:500 11.5px var(--mono); }
+.chart .series { fill:none; stroke:var(--accent); stroke-width:2;
+  stroke-linejoin:round; stroke-linecap:round; }
+.chart .wash   { fill:var(--accent); opacity:.10; }
+.chart .dot    { fill:var(--accent); stroke:var(--card); stroke-width:2; }
+.chart .hit    { fill:transparent; }
+.chart .hit:hover + .peek, .chart .hit:focus-visible + .peek { opacity:1; }
+.chart .peek   { opacity:0; transition:opacity .12s var(--ease-out); }
+.chart .peek circle { fill:var(--accent); stroke:var(--card); stroke-width:2; }
+.chart .hit:focus-visible { outline:none; }
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration:.01ms !important; animation-duration:.01ms !important; }
+}
+
+details.table-twin { margin-top:var(--s4); }
+details.table-twin summary { font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); cursor:pointer;
+  list-style:none; display:inline-block; border-bottom:1px solid var(--rule);
+  padding-bottom:2px; }
+details.table-twin summary::-webkit-details-marker { display:none; }
+details.table-twin summary:hover { color:var(--accent); border-color:var(--accent); }
+details.table-twin summary:focus-visible { outline:2px solid var(--accent);
+  outline-offset:3px; }
+details.table-twin table { margin-top:var(--s3); }
+
+/* ---- desk chips -------------------------------------------------------- */
+.chips { display:flex; flex-wrap:wrap; gap:var(--s2); }
+.chip { display:inline-flex; align-items:center; gap:var(--s2); font-size:12px;
+  border:1px solid var(--rule); border-radius:999px; padding:5px 12px 5px 10px;
+  color:var(--ink-2); }
+.chip b { color:var(--ink-1); font-weight:500; }
+.dot-i { width:7px; height:7px; border-radius:50%; flex:none; }
+.dot-i.live { background:var(--gain);
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--gain) 20%, transparent); }
+.dot-i.halt { background:var(--loss); }
+.dot-i.idle { background:var(--ink-3); }
+
+/* ---- notes / footer ---------------------------------------------------- */
+ul.notes { margin:0; padding-left:1.15em; font-size:13px; color:var(--ink-2); }
+ul.notes li { margin-bottom:var(--s1); }
+ul.notes li::marker { color:var(--ink-3); }
+footer { margin-top:var(--s7); padding-top:var(--s4);
+  border-top:1px solid var(--rule); font-size:11.5px; line-height:1.7;
+  color:var(--ink-3); max-width:68ch; }
+footer b { color:var(--ink-2); font-weight:500; }
+@media print { .card { border-color:var(--rule); break-inside:avoid; }
+  .wrap { padding:0; max-width:none; } a { border-bottom:none; } }
+
+.verdict { border:1px solid var(--rule); border-left:3px solid var(--warn);
+  border-radius:var(--r-md); background:var(--sunk);
+  padding:var(--s4) var(--s5); margin:var(--s6) 0 0; }
+.verdict h2 { font:400 17px/1.2 var(--display); margin:0 0 var(--s2);
+  color:var(--ink-1); }
+.verdict p { margin:0 0 var(--s3); font-size:12.5px; color:var(--ink-2);
+  max-width:66ch; }
+.verdict p:last-child { margin-bottom:0; }
+.verdict b { color:var(--ink-1); font-weight:500; }
+.spark { display:block; width:100%; height:48px; margin:var(--s3) 0 0; }
+.tstrip { display:flex; flex-wrap:wrap; gap:4px; margin-top:var(--s3); }
+.tcell { font:500 10.5px/1 var(--mono); padding:4px 6px; border-radius:4px;
+  background:var(--sunk); color:var(--ink-3); border:1px solid var(--rule-soft); }
+.tcell.up { color:var(--gain); } .tcell.down { color:var(--loss); }
+.bookhead { display:flex; align-items:baseline; justify-content:space-between;
+  gap:var(--s3); }
+.bookhead .fig { font:700 28px/1 var(--mono); letter-spacing:-.03em; }
+.bookhead .fig.up { color:var(--gain); } .bookhead .fig.down { color:var(--loss); }
+.kv { display:grid; grid-template-columns:1fr auto; gap:var(--s2) var(--s4);
+  font-size:12px; margin-top:var(--s4); }
+.kv dt { color:var(--ink-3); } .kv dd { margin:0; color:var(--ink-1);
+  font-variant-numeric:tabular-nums; }
+.status { display:inline-flex; align-items:center; gap:6px; }
+.status .dot { width:7px; height:7px; border-radius:999px; background:var(--ink-3); }
+.status.live .dot { background:var(--gain); }
+.status.down .dot { background:var(--loss); }
+</style></head><body><div class="wrap"><header class="mast"><h1 class="name">kalshi <em>15m metals</em></h1><div class="meta"><span>paper · no real money</span><span>2026-09-15 17:36 UTC</span></div></header><div class="rule"></div><section class="hero"><div class="kicker">combined paper equity — $1,000 start</div><span class="fig">$1,306.54</span><div class="deltas"><span class="pill up"><span class="arw">▲</span>+$306.54 <span class="per">+30.65% since inception</span></span></div><p class="line">Two books against live Kalshi data: a <b>maker</b> leg resting quotes and a <b>shadow taker</b> leg crossing the spread. Neither has a demonstrated edge — see below.</p></section><div class="verdict"><h2>What this number does and does not mean</h2><p>The measurement that actually tests the strategy is not the P&amp;L, it is the <b>t-statistic</b> — currently <b>+0.52</b> on the maker book against a bar of 3.0. Every public print on this venue had a real resting maker on the other side, so the tape <i>is</i> the population of achievable maker fills at perfect queue priority. Measured there across 134 settled markets, clustered one observation per market: <b>+1.01¢/contract, t = 1.55</b>. At half that sample it read t = 1.98, so more data made the effect <i>weaker</i>, and the favourite/underdog split flipped sign outright. That is noise, not a small real edge.</p><p>Four times on this desk our own instrumentation produced a spectacular number that evaporated under scrutiny (+103.7%, +944%, t=+23.3, and a concurrency bug that was silently deleting filled positions). The P&amp;L above is real bookkeeping on paper trades; it is <b>not</b> evidence of edge, and a green stretch never was — P(week &gt; 0) exceeds 76% even under a no-edge null.</p></div><div class="grid"><div class="card"><div class="bookhead"><h2 style="margin:0">maker book</h2><span class="fig up">+$135.14</span></div><div class="kicker" style="margin-top:6px">rests quotes, pays no Kalshi fee</div><svg class="spark" viewBox="0 0 280 48" width="280" height="48" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="42.1" x2="280" y2="42.1" stroke="var(--rule)" stroke-dasharray="3 3" stroke-width="1"/><polyline points="0.0,16.5 56.0,0.0 112.0,26.0 168.0,24.6 224.0,48.0 280.0,0.9" fill="none" stroke="var(--gain)" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round"/></svg><dl class="kv"><dt>settled fills</dt><dd>186</dd><dt>today</dt><dd class="up">+$154.40</dd><dt>hit rate</dt><dd>0.699</dd><dt>break-even hit rate</dt><dd>0.679</dd><dt>slack over break-even</dt><dd>+0.020</dd><dt>avg win / avg loss</dt><dd>$11.83 / $25.05</dd><dt>t-stat</dt><dd>+0.52</dd></dl></div><div class="card"><div class="bookhead"><h2 style="margin:0">shadow taker book</h2><span class="fig up">+$171.40</span></div><div class="kicker" style="margin-top:6px">crosses the spread, pays taker fee</div><svg class="spark" viewBox="0 0 280 48" width="280" height="48" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="48.0" x2="280" y2="48.0" stroke="var(--rule)" stroke-dasharray="3 3" stroke-width="1"/><polyline points="0.0,26.7 56.0,41.7 112.0,38.9 168.0,36.8 224.0,36.0 280.0,0.0" fill="none" stroke="var(--gain)" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round"/></svg><dl class="kv"><dt>settled fills</dt><dd>94</dd><dt>today</dt><dd class="up">+$128.71</dd><dt>hit rate</dt><dd>0.734</dd><dt>break-even hit rate</dt><dd>0.687</dd><dt>slack over break-even</dt><dd>+0.047</dd><dt>avg win / avg loss</dt><dd>$12.18 / $26.77</dd><dt>t-stat</dt><dd>+0.96</dd></dl></div></div><div class="grid"><div class="card full"><h2>t-stat trajectory <span class="n">maker book, per check-in</span></h2><div class="kicker">needs +3.00 to clear the significance gate; it has wandered in both directions and crossed zero</div><div class="tstrip"><span class="tcell up">+0.15</span><span class="tcell up">+0.22</span><span class="tcell up">+0.25</span><span class="tcell up">+0.30</span><span class="tcell up">+0.33</span><span class="tcell up">+0.38</span><span class="tcell up">+0.26</span><span class="tcell up">+0.34</span><span class="tcell up">+0.43</span><span class="tcell up">+0.51</span><span class="tcell up">+0.61</span><span class="tcell up">+0.60</span></div></div></div><div class="grid"><div class="card full"><h2>evidence base <span class="n">public tape</span></h2><dl class="kv"><dt>trade prints recorded</dt><dd>258,040</dd><dt>distinct 15-minute markets</dt><dd>147</dd><dt>engine duty cycle</dt><dd>~10–20%</dd><dt>metals trading hours</dt><dd>24h weekdays, closed Fri 21:00Z → Sun 22:00Z</dd></dl><p style="font-size:12px;color:var(--ink-2);margin:var(--s4) 0 0;max-width:66ch">The tape is the raw material for the queue-free measurement quoted above. The duty cycle matters: this desk is not running continuously, so fills per week cannot be extrapolated from an hour.</p></div></div><div class="rule thin" style="margin-top:var(--s7)"></div><p style="font-size:11px;color:var(--ink-3);margin-top:var(--s3)">Regenerated by the hourly desk check-in · <a href="index.html">the book</a> · <a href="options.html">options</a></p></div></body></html>

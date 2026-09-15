@@ -127,7 +127,7 @@ def main() -> None:
 <header>
   <div class="mast">
     <h1 class="name">Quant<em>firm</em></h1>
-    <div class="meta"><a href="reports/">daily reports ↗</a><span>{now}</span></div>
+    <div class="meta"><a href="kalshi.html">kalshi 15m ↗</a><a href="reports/">daily reports ↗</a><span>{now}</span></div>
   </div>
   <div class="rule"></div>
   <div class="kicker">The book · agent-operated systematic equity</div>

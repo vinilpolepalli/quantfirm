@@ -168,7 +168,14 @@ def main():
            + (f"maker {mk['pnl']:+.2f} n={mk['n']} t={mk['t']:.2f}" if mk else "no fills")
            + "\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
            + "\nClaude-Session: https://claude.ai/code/session_01QEzLS4u6E7dCgjXtCZdfGQ")
-    sh("git add -A state/ research/ 2>/dev/null")
+    # Regenerate the public desk page so it never lags the numbers reported
+    # here. It is committed alongside state, and because it lives under
+    # dashboard/ this is the one commit shape that legitimately earns a Vercel
+    # build (see the ignoreCommand note above).
+    g = sh("python3 scripts/gen_kalshi_dashboard.py")
+    status.append("dashboard" if g.returncode == 0 else "DASHBOARD FAILED")
+
+    sh("git add -A state/ research/ dashboard/kalshi.html 2>/dev/null")
     c = sh(f"git commit -q -m {shlex.quote(msg)}")
     if c.returncode == 0:
         pushed = sh("git push -q")
