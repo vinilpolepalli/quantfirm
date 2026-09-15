@@ -46,19 +46,35 @@ research and the tests say.
 4. **More assets do not help, and that was measured, not assumed.** The
    obvious objection to the first two rounds was that they tested only four
    assets. Kalshi lists 23 perps, so the desk was extended to all of them.
-   Eighteen crypto names carry 2.51 effective independent bets against the
-   four researched assets' 2.44, at a mean pairwise correlation of 0.589:
-   fourteen extra coins buy seven hundredths of a bet. Eleven of seventeen
-   names lost money over 2021–25. Correctly sized, the passive wide book is
-   statistically indistinguishable from the narrow one — paired bootstrap
-   P(wide better) 0.30 from 2018 and 0.556 from 2021-10 — and earns a third
-   as much, 6.7% a year against 18.0%, because the alts' 26–59% maintenance
-   margin will not let them be held in size. Ranking the cross-section by
+   By the measure that maps to a long-only book's Sharpe, sixteen names carry
+   1.98 effective independent bets against the four researched assets' 2.03 —
+   slightly fewer, not more, at a mean pairwise crypto correlation of 0.594.
+   Ten of those sixteen lost money over 2021–25. Correctly sized and actually
+   held, the passive wide book earns 12.0% a year against 18.0% at the same
+   risk and the same drawdown, with a paired bootstrap putting P(wide better)
+   at 0.142. Ranking the cross-section by
    trailing return produces no t-statistic above 0.52 at any horizon, gross of
    costs, and adding a short side gives 0.86 at a 30-day lookback and −0.03 at
    90 days, which is noise across a parameter. §3c.
-5. **What does work is beta, sized by volatility, with a trend gate as
-   drawdown insurance.** That is not alpha; it is a bet that BTC/ETH/gold/
+5. **One thing did finally beat the book, and it is a sleeve, not a
+   replacement.** Everything above failed for the same reason: every candidate
+   was the long book in a hat, correlated 0.68 to 0.996 with the thing it was
+   meant to beat, and an overlay that correlated cannot raise portfolio Sharpe
+   however it scores. Strip each coin's beta to the crypto market before
+   ranking the cross-section and the sort stops being directional: residual
+   correlation among the names averages −0.08 where the raw correlation
+   averages 0.594. That sleeve is **−0.156 correlated** with the long book, and
+   blended at 30% it takes the book out-of-sample from Sharpe 1.255 to **1.694
+   at the same 15.2% return**, with volatility down from 12.3% to 9.0% and
+   drawdown from −10.1% to −8.6%. It survives 1.5× fees and proxy funding, and
+   its timing-null percentile is 0.983, meaning the returns come from when it
+   holds its positions rather than from the exposure it carries. It still
+   **fails** the deflated-Sharpe gate at 0.695 against 0.95, because 1,119
+   out-of-sample days need a Sharpe of 2.33 to clear that bar and the names did
+   not exist before 2021-10. So it goes to paper beside the incumbent, not into
+   production. §3d.
+6. **What is deployable today is beta, sized by volatility, with a trend gate
+   as drawdown insurance.** That is not alpha; it is a bet that BTC/ETH/gold/
    silver keep drifting up, made cheaply. Measured 2018–2025 with tier-0
    taker fees: vol-targeted long-only earned 13–20% a year with 15–32%
    drawdowns and lost money in 2018 and 2022; the same book behind a trend
@@ -66,7 +82,7 @@ research and the tests say.
    cost of ~4 points of return. On the sealed holdout (2025-07-01 → today,
    opened once), the gated book made +23.7% at a −4.9% drawdown versus
    +27.1% at −11.6% for the ungated one.
-6. **"Consistent" means 61–72% positive months and about 77% positive
+7. **"Consistent" means 61–72% positive months and about 77% positive
    quarters, not every month.** "Considerable" at $250 is about $25 a year.
    The owner starts at $250 and scales. Whole-contract simulation at $250
    (`research/kalshi_perps/granularity.json`) costs the incumbent 0.05 of
@@ -119,7 +135,7 @@ gross leverage at 1.0–2.0x by rung.
 | Cross-venue funding/basis arb | **out** | needs an offshore short a US retail account cannot hold; 95% forced exits in the one large-sample study; two taker fees exceed the spread |
 | Market making / fast mean reversion | **out** | no rebates below 0.5% of venue maker volume; adverse selection; GSR quotes these books |
 | Intraday / multi-hour signals, grid bots | **out** | 20 round trips a month at 12 bps and 2x is a 115%/yr fee hurdle |
-| Long-tail alt perps | **tested, out** | measured: 18 crypto names carry 2.51 effective independent bets against the four researched assets' 2.44; 11 of 17 lost money 2021–25; the passive wide book scores 0.49 against 0.94 (§3c) |
+| Long-tail alt perps | **tested, out** | measured: sixteen names carry 1.98 effective bets against four assets' 2.03; ten of sixteen lost money 2021–25; the wide book earns 12.0% a year against 18.0% at the same risk (§3c) |
 | Perp basis / funding as a crowding gauge | **tested, out** | OOS Sharpe 1.100 vs 1.131; 0.996 correlated with the passive book; the BIS crash-after-high-carry pattern does not reproduce at a daily horizon on six episodes |
 | Options-implied variance risk premium (Deribit DVOL) | **tested, out** | OOS 1.099; the tilt is the passive book with 0.29/yr more turnover, lower CAGR and a deeper drawdown |
 | Dual momentum, absolute + relative | **tested, out** | OOS 1.047 with the skip month; real timing content (null percentile 0.93) but it trails the passive book and collapses to 0.40 at a 274-day lookback |
@@ -321,6 +337,66 @@ simulate any of the 20 tradable perps with each one's own spread and
 maintenance rate, which is what any future idea on this venue will need. And
 the answer to "would more assets have helped?" is now measured rather than
 assumed.
+
+## 3d. The one thing that worked: a sleeve, not a replacement
+
+Round 2's screens killed raw cross-sectional momentum at every formation from
+30 to 365 days. That turned out to be the right answer to the wrong question.
+On a universe whose first principal component is two thirds of the variance, a
+raw return sort **is a beta sort** — it buys the high-beta alts after the
+market rises — which is why round 1's version correlated 0.745 with the long
+book. And the horizons screened were the ones the literature reports dead:
+Borri, Liu, Tsyvinski & Wu (2026) find crypto cross-sectional momentum at a
+**two-week** formation with a weekly hold, and report 12-week and 24-week
+momentum insignificant.
+
+Strip each name's beta to the equal-weight crypto market, rank the residual
+over 14 days, go long the top three and short the bottom three, inverse-vol
+within each leg, seven overlapping weekly tranches. Two grid points were
+registered before the first run and the lookback was not swept.
+
+| | out-of-sample, 2021-10 → 2025-06 |
+|---|---|
+| sleeve standalone Sharpe | 1.028, 4/4 folds positive |
+| correlation to the long book | **−0.156** |
+| core book (4 assets, vol-targeted long) | Sharpe 1.255, 15.37% return, −10.12% drawdown |
+| **core + 30% sleeve** | **Sharpe 1.694, 15.22% return, −8.64% drawdown** |
+| P(blend beats core), paired bootstrap | 0.947 |
+| under 1.5× fees and proxy funding | blend 1.532 against core 1.154 |
+| timing-null percentile | **0.983** (null mean −0.368) |
+
+The same return at three quarters of the volatility. Every blend weight from
+20% to 60% beats the core, so the result does not balance on the weight. The
+fold detail shows the mechanism plainly: the sleeve scored 1.252 in the fold
+where the long book earned 0.092, and the long book scored 1.872 in the fold
+where the sleeve faded to 0.669. They fail at different times, which is the
+entire point of a sleeve and is what nothing in round 1 offered.
+
+**It fails the gauntlet anyway, and that is recorded rather than argued away.**
+The deflated Sharpe is 0.695 against a bar of 0.95: at 82 registered
+configurations a 1,119-day out-of-sample stream needs an annual Sharpe of 2.33,
+and the blend measures 1.694. That is a window-length failure — most of these
+coins had not listed before 2021-10 — and it cannot be fixed except by waiting.
+
+It also fails `beats_benchmark_oos` as that gate is written, because the gate
+compares a candidate's *standalone* Sharpe (1.028) against the benchmark's
+(1.255). That is the right comparison for an overlay 0.9-correlated with the
+long book, which is what every round-1 candidate was, and the wrong one for a
+sleeve at −0.156: a 1.03-Sharpe sleeve that lifts the book to 1.694 and cuts
+its drawdown is worth more than a 1.10-Sharpe overlay that is 0.996-correlated
+with the thing it is supposed to improve. **The gauntlet needs a
+portfolio-level gate** — blended Sharpe against the benchmark, with the
+candidate's correlation to the long book reported as a headline number rather
+than a robustness footnote. That is a protocol change, recorded here as one.
+
+Reservations, in full: three years and four folds is one regime; the effect is
+well published and therefore likely crowded; turnover runs 13 to 19 a year on
+names whose round trip is 29 to 43 basis points; the twenty names are the set
+Kalshi lists today, so survivorship is present in both legs; and nothing in
+the data picks 30% over 40% as the weight. At $250 the sleeve is implementable
+— about $12 of notional per leg against contracts costing $0.21 to $11.57 —
+but quantisation dominates, and the trustworthy numbers are the large-bankroll
+ones. `research/kalshi_perps/families/xsmom_residual.md` has the detail.
 
 ## 4. The agents (who does what, and what none of them may do)
 

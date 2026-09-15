@@ -6,6 +6,75 @@ moved and what evidence backs it.
 
 ---
 
+## 0.2.3 — 2026-09-15 — a sleeve that improves the book, and four defects that nearly hid it
+
+### Added
+
+**`xsmom_residual`: market-residual cross-sectional momentum, registered as a
+sleeve rather than a replacement.** Two rounds and twenty-two trials had found
+nothing because every candidate was the long book in a hat, correlated 0.68 to
+0.996 with the thing it was meant to beat. On a universe whose first principal
+component is two thirds of the variance, a raw cross-sectional return sort IS a
+beta sort. Strip each name's beta to the equal-weight crypto market first and
+the residual correlation among names averages −0.08 where the raw correlation
+averages 0.594.
+
+Out of sample, 2021-10 to 2025-06, four folds: sleeve Sharpe 1.028 with 4/4
+folds positive, correlation to the long book **−0.156**. Blended at 30% the
+book goes from Sharpe 1.255 to **1.694 at the same 15.2% return**, volatility
+12.25% to 8.99%, drawdown −10.12% to −8.64%. Paired bootstrap P(blend beats
+core) 0.947, and every weight from 20% to 60% beats the core. Under 1.5× fees
+and Binance proxy funding the blend scores 1.532 against the core's 1.154 — the
+advantage widens under stress. Timing-null percentile 0.983 against a null mean
+of −0.368, the strongest of either round.
+
+**It is not promoted.** The deflated Sharpe is 0.695 against a bar of 0.95:
+1,119 out-of-sample days at 82 registered configurations need an annual Sharpe
+of 2.33. That is a window-length failure, since most of the coins had not
+listed before 2021-10, and it cannot be fixed except by waiting. It goes to
+paper beside the incumbent.
+
+**A protocol finding worth more than the family.** `beats_benchmark_oos`
+compares a candidate's standalone Sharpe to the benchmark's. That is right for
+an overlay 0.9-correlated with the long book and wrong for a sleeve at −0.156,
+where the blend is the object and the standalone number is nearly meaningless.
+The gauntlet needs a portfolio-level gate, and every family should report its
+correlation to the long book as a headline number.
+
+### Fixed
+
+Four defects found by adversarial verification of the breadth engine, two of
+which had already reached published numbers:
+
+- **`run(start=None)` began in 2000 instead of 2016.** `min_assets` defaulted to
+  1, so the window started where ANY asset quoted. The tournament calls
+  `run_strategy(start=None)` for every control, dev grid point and stress run,
+  so the published control table and 87 tournament entries were produced by a
+  call whose window had silently moved. `min_assets` now defaults to all assets.
+- **The wide book was never held.** `rebalance_band` was fixed at 0.03 while the
+  wide weight step is 0.05×4/n, so for any universe past six names one step
+  never cleared the band: twenty markets quoted and 2.51 were held. The band now
+  scales with the step, and `avg_n_held` sits beside `avg_n_available`.
+- **Maker orders were charged a spread.** A model with no flat spread is a maker
+  model and pays the fee alone.
+- **Positions were opened in markets that printed no bar.** Exposure in a 24/7
+  market may now be held or cut without a bar today, never increased.
+
+Also: the three listed-but-unquoted markets are capped at zero weight rather
+than priced as the cheapest on the board, and the kSHIB note no longer teaches
+the arithmetic the code was fixed to reject.
+
+### Corrected
+
+`BREADTH_FINDING.md` reported the wide passive book at Sharpe 0.49 and called
+the gap economic. Both the sizing path and the rebalance band were wrong. The
+corrected comparison, with both books holding their names at target volatility:
+the wide book earns 12.0% a year against the narrow book's 18.0% at the same
+risk, P(wide better) 0.142. The verdict did not change; the magnitude did,
+twice, and the file keeps the correction note rather than quietly restating.
+
+---
+
 ## 0.2.2 — 2026-09-15 — the whole perps universe, and the finding that it does not help
 
 ### Added
