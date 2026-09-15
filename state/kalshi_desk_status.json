@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T23:40:36Z",
+ "ts": "2026-09-15T23:40:57Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -142,7 +142,7 @@
   }
  ],
  "n_settled": 2831,
- "updated": "2026-09-15T23:40:35Z",
+ "updated": "2026-09-15T23:40:57Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
