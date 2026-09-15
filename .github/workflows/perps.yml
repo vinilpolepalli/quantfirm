@@ -35,14 +35,19 @@ jobs:
         run: |
           set -euo pipefail
           python -m quantfirm.perps.cli update-data
+          # two books, side by side on the same live prices: the incumbent
+          # (trend_long_only, four assets) and the candidate
+          # (blend_core_sleeve, twenty). Ticking only the first would leave the
+          # candidate frozen at whatever its last manual tick left behind.
           python -m quantfirm.perps.cli paper --adapter shadow --minutes 0.1 --poll 5
-          python -m unittest tests.test_perps -q
+          python -m quantfirm.perps.cli paper --book candidate --adapter shadow --minutes 0.1 --poll 5
+          python -m unittest discover -s tests -p 'test_perps*.py' -q
       - name: Commit shadow heartbeat
         run: |
           set -euo pipefail
           git config user.name "vinilpolepalli"
           git config user.email "105608101+vinilpolepalli@users.noreply.github.com"
-          for f in state/perps_desk_status.json data/perps/META.json data/perps/*_kalshi_1d.csv.gz data/perps/*_funding_kalshi.csv.gz; do
+          for f in state/perps_desk_status.json state/perps_desk_status_candidate.json data/perps/META.json data/perps/*_kalshi_1d.csv.gz data/perps/*_funding_kalshi.csv.gz; do
             if [ -f "$f" ]; then git add -f "$f"; fi
           done
           if git diff --cached --quiet; then echo "no state change"; exit 0; fi

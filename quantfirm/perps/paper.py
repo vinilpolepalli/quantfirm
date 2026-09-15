@@ -39,7 +39,7 @@ from . import data as D
 from .client import KalshiApiError, MarginClient, PerpQuote, banded_price, inside_band
 from .risk import PROFILES, KILL_SWITCH, PerpsRiskPolicy, check_pre_trade, kill_switch_tripped, ladder_scale, trip_kill_switch
 from .specs import COLLATERAL_APY, SPECS, TAKER_T0, PerpSpec, fee_rates
-from .strategies import REGISTRY, cap_weights
+from .strategies import REGISTRY, resolve_band, cap_weights
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 STATE_DIR = os.path.join(ROOT, "state")
@@ -107,7 +107,8 @@ def _now_iso() -> str:
 class PaperEngine:
     def __init__(self, strategy: str, params: dict | None = None, policy: PerpsRiskPolicy | None = None,
                  adapter: str = "shadow", bankroll: float = 250.0, universe=("btc", "eth", "gold", "silver"),
-                 client: MarginClient | None = None, state_path: str = STATE_PATH,
+                 client: MarginClient | None = None, state_path: str | None = None,
+                 book: str | None = None,
                  rebalance_every_days: int = 7, band: float = 0.03, slack_ticks: int = 20,
                  stop_distance: float = 0.20, log=None):
         assert adapter in ("shadow", "demo", "live")
@@ -118,9 +119,24 @@ class PaperEngine:
         self.adapter = adapter
         self.universe = tuple(universe)
         self.client = client or MarginClient("demo" if adapter == "demo" else "prod")
-        self.state_path = state_path
+        # One engine per BOOK. `book=None` keeps the legacy unsuffixed paths, so
+        # the incumbent's state, status and decision history carry on unbroken;
+        # a named book gets its own three files and cannot touch them. Two books
+        # running side by side is how the promotion gate in docs/KALSHI_PERPS.md
+        # compares a candidate against the incumbent on the same live prices.
+        self.book_name = book
+        suffix = f"_{book}" if book else ""
+        self.state_path = state_path or os.path.join(STATE_DIR, f"perps_paper_state{suffix}.json")
+        self.status_path = os.path.join(STATE_DIR, f"perps_desk_status{suffix}.json")
+        self.decisions_path = os.path.join(STATE_DIR, f"perps_decisions{suffix}.jsonl")
         self.rebalance_every_days = rebalance_every_days
-        self.band = band
+        # The band stops volatility drift from trading, and only works if ONE
+        # weight step is bigger than it. On a wide book the step scales down
+        # (0.05 x 4/n) while a fixed 0.03 does not, so most legs never clear it:
+        # a 20-name blend wanting 1-2% per alt would hold only its four core
+        # legs and quietly stop being the strategy it claims to be. "auto"
+        # scales the band with the universe and is exactly 0.03 at four names.
+        self.band = resolve_band(band, len(self.universe))
         self.slack_ticks = slack_ticks
         self.stop_distance = stop_distance
         self.log = log or (lambda *a: None)
@@ -151,7 +167,7 @@ class PaperEngine:
     def decision(self, kind: str, **kw) -> None:
         rec = {"ts": _now_iso(), "kind": kind, "adapter": self.adapter, **kw}
         os.makedirs(STATE_DIR, exist_ok=True)
-        with open(DECISIONS_PATH, "a") as f:
+        with open(self.decisions_path, "a") as f:
             f.write(json.dumps(rec, default=str) + "\n")
         self.log(f"[{rec['ts']}] {kind} {kw}")
 
@@ -476,7 +492,8 @@ def write_status(engine: PaperEngine) -> dict:
     b = engine.book
     eq = engine.equity()
     status = {
-        "ts": _now_iso(), "adapter": engine.adapter, "strategy": engine.strategy_name,
+        "ts": _now_iso(), "book": engine.book_name or "incumbent",
+        "adapter": engine.adapter, "strategy": engine.strategy_name,
         "universe": list(engine.universe), "profile": asdict(engine.policy),
         "bankroll0": b.bankroll0, "equity": round(eq, 2), "cash": round(b.cash, 2),
         "realized": round(b.realized, 2), "fees": round(b.fees, 4), "funding": round(b.funding, 4),
@@ -489,6 +506,6 @@ def write_status(engine: PaperEngine) -> dict:
         "started": b.started,
     }
     os.makedirs(STATE_DIR, exist_ok=True)
-    with open(STATUS_PATH, "w") as f:
+    with open(engine.status_path, "w") as f:
         json.dump(status, f, indent=1)
     return status

@@ -1,5 +1,6 @@
 {
- "ts": "2026-09-15T06:14:59+00:00",
+ "ts": "2026-09-15T11:47:56+00:00",
+ "book": "incumbent",
  "adapter": "shadow",
  "strategy": "trend_long_only",
  "universe": [
@@ -26,46 +27,46 @@
   "consecutive_loss_days_pause": 5
  },
  "bankroll0": 250,
- "equity": 249.96,
- "cash": 249.97,
+ "equity": 249.72,
+ "cash": 249.98,
  "realized": 0.0,
- "fees": 0.0346,
+ "fees": 0.0317,
  "funding": 0.0,
- "interest": 0.0,
+ "interest": 0.0103,
  "peak_equity": 250.0,
- "drawdown": -0.0002,
+ "drawdown": -0.0011,
  "positions": [
   {
    "asset": "btc",
    "ticker": "KXBTCPERP",
    "contracts": 1.0,
-   "avg_price": 7.7571,
-   "opened": "2026-09-15T06:14:53+00:00",
-   "mark": 7.7576,
-   "weight": 0.031
+   "avg_price": 7.7998,
+   "opened": "2026-09-15T00:28:33+00:00",
+   "mark": 7.6873,
+   "weight": 0.0308
   },
   {
    "asset": "eth",
    "ticker": "KXETHPERP",
-   "contracts": 5.0,
-   "avg_price": 2.4956,
-   "opened": "2026-09-15T06:14:53+00:00",
-   "mark": 2.4955,
-   "weight": 0.0499
+   "contracts": 4.0,
+   "avg_price": 2.509,
+   "opened": "2026-09-15T00:28:33+00:00",
+   "mark": 2.4736,
+   "weight": 0.0396
   },
   {
    "asset": "gold",
    "ticker": "KXGOLDPERP",
    "contracts": 2.0,
-   "avg_price": 4.2901,
-   "opened": "2026-09-15T06:14:53+00:00",
-   "mark": 4.2885,
+   "avg_price": 4.2867,
+   "opened": "2026-09-15T00:28:33+00:00",
+   "mark": 4.2844,
    "weight": 0.0343
   }
  ],
- "gross_leverage": 0.115,
+ "gross_leverage": 0.105,
  "halted": "",
  "kill_switch": false,
  "n_ticks": 2,
- "started": "2026-09-15T06:14:53+00:00"
+ "started": "2026-09-15T00:28:32+00:00"
 }

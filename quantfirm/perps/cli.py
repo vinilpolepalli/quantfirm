@@ -43,7 +43,7 @@ def _out(obj) -> None:
 def _resolve_universe(spec):
     """A comma list, or the name of a universe constant in specs (TRADABLE_UNIVERSE)."""
     if not spec:
-        return None
+        return tuple(RESEARCH_UNIVERSE)
     named = getattr(SPECS_MOD, spec.upper(), None)
     return tuple(named) if named else tuple(x for x in spec.split(",") if x)
 
@@ -183,10 +183,18 @@ def cmd_holdout(a):
 def cmd_paper(a):
     from .paper import PaperEngine, write_status
     cfg = json.load(open(os.path.join(ROOT, "config", "perps.json"))) if os.path.exists(os.path.join(ROOT, "config", "perps.json")) else {}
-    eng = PaperEngine(a.strategy or cfg.get("strategy", "trend_long_only"), _params(a) or cfg.get("params", {}),
-                      PROFILES[a.profile or cfg.get("profile", "balanced")], adapter=a.adapter,
-                      bankroll=a.bankroll or cfg.get("bankroll_usd", 250.0),
-                      universe=tuple((a.universe or ",".join(cfg.get("universe", RESEARCH_UNIVERSE))).split(",")),
+    books = cfg.get("books") or {}
+    bk = books.get(a.book, {}) if a.book else {}
+    uni = a.universe or bk.get("universe") or cfg.get("universe", RESEARCH_UNIVERSE)
+    eng = PaperEngine(a.strategy or bk.get("strategy") or cfg.get("strategy", "trend_long_only"),
+                      _params(a) or bk.get("params") or cfg.get("params", {}),
+                      PROFILES[a.profile or bk.get("profile") or cfg.get("profile", "balanced")],
+                      adapter=a.adapter,
+                      bankroll=a.bankroll or bk.get("bankroll_usd") or cfg.get("bankroll_usd", 250.0),
+                      universe=tuple(uni if isinstance(uni, (list, tuple)) else uni.split(",")),
+                      book=a.book, band=bk.get("rebalance_band", cfg.get("rebalance_band", 0.03)),
+                      rebalance_every_days=bk.get("rebalance_every_days",
+                                                  cfg.get("rebalance_every_days", 7)),
                       log=print if a.verbose else None)
     if a.adapter == "live":
         _refuse_unless_live_armed(cfg)
@@ -207,10 +215,18 @@ def cmd_agent(a):
     cfg = json.load(open(os.path.join(ROOT, "config", "perps.json"))) if os.path.exists(os.path.join(ROOT, "config", "perps.json")) else {}
     if a.adapter == "live":
         _refuse_unless_live_armed(cfg)
-    eng = PaperEngine(a.strategy or cfg.get("strategy", "trend_long_only"), _params(a) or cfg.get("params", {}),
-                      PROFILES[a.profile or cfg.get("profile", "balanced")], adapter=a.adapter,
-                      bankroll=a.bankroll or cfg.get("bankroll_usd", 250.0),
-                      universe=tuple((a.universe or ",".join(cfg.get("universe", RESEARCH_UNIVERSE))).split(",")),
+    books = cfg.get("books") or {}
+    bk = books.get(a.book, {}) if a.book else {}
+    uni = a.universe or bk.get("universe") or cfg.get("universe", RESEARCH_UNIVERSE)
+    eng = PaperEngine(a.strategy or bk.get("strategy") or cfg.get("strategy", "trend_long_only"),
+                      _params(a) or bk.get("params") or cfg.get("params", {}),
+                      PROFILES[a.profile or bk.get("profile") or cfg.get("profile", "balanced")],
+                      adapter=a.adapter,
+                      bankroll=a.bankroll or bk.get("bankroll_usd") or cfg.get("bankroll_usd", 250.0),
+                      universe=tuple(uni if isinstance(uni, (list, tuple)) else uni.split(",")),
+                      book=a.book, band=bk.get("rebalance_band", cfg.get("rebalance_band", 0.03)),
+                      rebalance_every_days=bk.get("rebalance_every_days",
+                                                  cfg.get("rebalance_every_days", 7)),
                       log=print if a.verbose else None)
     run_agent(eng, a.minutes, poll_s=a.poll)
 
@@ -272,7 +288,11 @@ def main(argv=None) -> None:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def common(sp, research=True):
-        sp.add_argument("--universe", default=",".join(RESEARCH_UNIVERSE))
+        # default None, NOT the research four: an explicit flag has to be
+        # distinguishable from "not given", or a book config could never
+        # supply its own universe. _resolve_universe falls back to the
+        # research four, so every existing command behaves as before.
+        sp.add_argument("--universe", default=None)
         if research:
             sp.add_argument("--cost", default="taker_t0")
             sp.add_argument("--funding", default="kalshi", choices=["none", "kalshi", "proxy", "proxy_raw"])
@@ -314,6 +334,8 @@ def main(argv=None) -> None:
         sp.add_argument("--minutes", type=float, default=1.0)
         sp.add_argument("--poll", type=float, default=3600.0)
         sp.add_argument("--verbose", action="store_true")
+        sp.add_argument("--book", default=None,
+                        help="named book from config/perps.json books{}; omit for the incumbent")
         sp.set_defaults(fn=fn)
     sp = sub.add_parser("robust"); common(sp)
     sp.add_argument("--strategy", required=True); sp.add_argument("--start", default=None)
