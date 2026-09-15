@@ -63,8 +63,11 @@ COINBASE = "https://api.exchange.coinbase.com"
 # One Coinbase spot product per listed Kalshi crypto perp. Keys are the asset
 # short names, which follow the venue's own ticker (KX<ASSET>PERP → <asset>);
 # that rule reproduces every pre-existing name, including "kshib" for
-# KXKSHIBPERP, whose contract is 1000 SHIB. Ordered by Kalshi 24h notional
-# volume on 2026-09-15 so the table doubles as the liquidity ranking.
+# KXKSHIBPERP. Its underlying is kSHIB — title "1K kSHIB", contract_size 1000
+# and underlying_multiplier 1000, so one contract is 1,000,000 SHIB (~$5.21 on
+# 2026-09-15) and SHIB-USD spot is still the right price path. Ordered by
+# Kalshi 24h notional volume on 2026-09-15, so the table doubles as the
+# liquidity ranking the next campaign has to respect.
 COINBASE_PRODUCTS = {
     "btc": "BTC-USD", "eth": "ETH-USD", "xrp": "XRP-USD", "sol": "SOL-USD",
     "zec": "ZEC-USD", "near": "NEAR-USD", "hype": "HYPE-USD", "vvv": "VVV-USD",
