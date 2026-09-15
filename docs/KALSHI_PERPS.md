@@ -18,10 +18,11 @@ research and the tests say.
    spread under 1 bp, up to ~4.7x entry leverage on BTC and ~11.7x on gold.
    Funding was almost always exactly zero and **is no longer**, at least on
    BTC: across the whole history 55% of intervals are zero, but over the last
-   90 only 24% are, and the non-zero ones are consistently positive at a
-   median 0.0149% per interval, which is **+16.3% a year paid BY longs** if it
-   persists. ETH is still 89% zero and slightly negative. §1a has the
-   measurement. This is the exact condition §9 named as something that would
+   90 only 24% are, and the non-zero ones are consistently positive. Averaged
+   over every interval, zeros included — which is what holding through them
+   costs — that is **+14.3% a year paid BY longs** if it persists. ETH is still
+   89% zero, and pays longs only 1.5% a year once its zeros are counted in.
+   §1a has the measurement and a correction to an earlier version of it. This is the exact condition §9 named as something that would
    change the verdict, and it arrived. Idle
    margin earns about 3.25% APY, and there are server-side stops. The costs
    that matter are the exchange fees: 12 bps taker / 5 bps maker at tier 0,
@@ -136,12 +137,23 @@ gross leverage at 1.0–2.0x by rung.
 Measured 2026-09-15 from Kalshi's own `funding_rates/historical`, which is what
 both the backtester and the paper engine read:
 
-| market | intervals | zero, all history | zero, last 90 | non-zero median | annualised if persistent |
-|---|---:|---:|---:|---:|---:|
-| BTC | 311 | 55.0% | **24.4%** | +0.0149% | **+16.3%, paid by longs** |
-| ETH | 311 | 87.1% | 88.9% | −0.0129% | −13.6%, received by longs |
-| gold | 4 | 50.0% | — | +0.0316% | too little history to read |
-| silver | 4 | 75.0% | — | +0.0292% | too little history to read |
+| market | intervals | zero, all history | zero, last 90 | median when non-zero | **cost of holding** | cost when it charges |
+|---|---:|---:|---:|---:|---:|---:|
+| BTC | 311 | 55.0% | **24.4%** | +0.0162% | **+14.3%/yr, paid by longs** | +17.8%/yr |
+| ETH | 311 | 87.1% | 88.9% | −0.0118% | −1.5%/yr, received by longs | −13.0%/yr |
+| gold | 4 | 50.0% | — | +0.0316% | too little history to read | — |
+| silver | 4 | 75.0% | — | +0.0292% | too little history to read | — |
+
+> **Correction, 2026-09-15.** The first version of this table gave BTC as
+> +16.3%/yr and ETH as −13.6%/yr. Both were wrong in the same way: they
+> annualised the median of the *charging* intervals and labelled it the cost of
+> holding. A holder sits through the zero intervals too, so the cost of holding
+> is the mean over **every** interval, zeros included. The two differ by the
+> reciprocal of the live share, which is trivial on a market that always charges
+> and an order of magnitude on one that rarely does. The error was largest
+> exactly where it mattered most: it said a long ETH book is paid 13.6% a year
+> when it is in fact paid 1.5%. Both conventions are now reported side by side,
+> and `tests/test_perps_watch.py` pins the distinction.
 
 BTC's last eight intervals read 0, +0.0118%, +0.0143%, +0.0173%, +0.0149%,
 +0.0147%, 0, 0. That is not noise around a deadband; that is a market paying
@@ -149,12 +161,12 @@ carry most of the time.
 
 **What it changes.** The claim that holding is free on this venue, which is a
 large part of why the book rebalances weekly rather than daily (§3e), is now
-half wrong: holding BTC long costs roughly 16% a year at these rates, while
-holding ETH long still pays. It does not change the cadence conclusion —
-trading more often would add cost without removing this one — but it does mean
-a long BTC book's forward expectation is worse than the dev-window backtests
-assumed, since Kalshi funding did not exist before 2026-06 and those runs
-booked zero.
+half wrong: holding BTC long costs about 14% a year at these rates, while
+holding ETH long still pays, though only just. It does not change the cadence
+conclusion — trading more often would add cost without removing this one — but
+it does mean a long BTC book's forward expectation is worse than the dev-window
+backtests assumed, since Kalshi funding did not exist before 2026-06 and those
+runs booked zero.
 
 **What it does not change.** The desk already stress-tests against real funding:
 the `proxy` scenario applies Binance's funding through Kalshi's deadband, and
@@ -168,7 +180,9 @@ persisted above the deadband. It now has for three months on BTC. That is a
 genuine research opening, and the first one the desk has had since the campaign
 closed. It is NOT taken here: one instrument with ninety intervals is a thin
 basis, and the honest move is to let `scripts/perps_watch.py` keep measuring it
-weekly until there is enough history to pre-register a test against.
+weekly until there is enough history to pre-register a test against. The watch
+reports a **change**, not a state, so this finding is emailed once and then
+lives here; the next email about funding means the picture moved again.
 
 ## 2. What the evidence rules out, and why
 
@@ -453,8 +467,9 @@ three times a day, which is a standing reason to manage a position actively.
 Kalshi's deadband rounds any rate under 0.01% per interval to zero. That was
 true of 55–97% of intervals across the venue's whole history, and it is
 **no longer true of BTC**: over the last 90 intervals only 24% were zero and
-the rest were positive, which longs pay (§1a). Carry is therefore not free on
-BTC any more, though it remains so on ETH, and idle collateral still earns
+the rest were positive, which longs pay — about 14% a year once the remaining
+zeros are averaged in (§1a). Carry is therefore not free on BTC any more,
+though it is still close to free on ETH, and idle collateral still earns
 about 3.25%. Meanwhile every trade costs 12
 bps of fee plus the spread: about 24 bps round trip on BTC and 43 on LINK. The
 venue therefore pays you to sit still and charges you to move, which is the

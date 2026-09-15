@@ -1,0 +1,19 @@
+{
+ "funding": {
+  "btc": {
+   "annualised": 0.1426,
+   "annualised_when_live": 0.1778,
+   "intervals": 90,
+   "median_nonzero": 0.000162,
+   "zero_share": 0.244
+  },
+  "eth": {
+   "annualised": -0.0151,
+   "annualised_when_live": -0.1296,
+   "intervals": 90,
+   "median_nonzero": -0.000118,
+   "zero_share": 0.889
+  }
+ },
+ "reported_listings": []
+}
