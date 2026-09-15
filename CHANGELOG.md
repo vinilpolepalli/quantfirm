@@ -6,6 +6,54 @@ moved and what evidence backs it.
 
 ---
 
+## 0.2.1 — 2026-09-15 — perps research campaign: twelve ideas, none passes
+
+### Added
+
+**A ten-agent research campaign on the perps desk** under a written protocol
+(`research/kalshi_perps/CAMPAIGN.md`): each agent took one strategy family,
+declared its hypothesis, mechanism, external evidence and a grid of at most
+six configurations before the first backtest, ran on the DEV window only, and
+reported what the tools printed. Families: perp basis and funding as a
+crowding gauge, the Deribit DVOL variance risk premium, dual momentum,
+cross-sectional momentum, turn-of-month and weekend seasonality, weekly
+reversal, Bollinger mean reversion, a macro-gated metals sleeve, a drawdown
+and volatility crash filter, EWMA trend strength, a meta-allocator, and
+Kalshi-native intraday microstructure. Code in `quantfirm/perps/families/`,
+reports in `research/kalshi_perps/families/`, referee write-up in
+`research/kalshi_perps/CAMPAIGN_RESULTS.md`.
+
+### Verdict
+
+**No family passes; the sealed holdout was not opened.** Twenty-two
+walk-forward trials: the best, a perp-basis crowding gauge, scores
+out-of-sample Sharpe 1.100 against the passive control's 1.131 and is
+0.996-correlated with it. Best deflated Sharpe 0.824 against a bar of 0.95 at
+113 registered trials; CSCV probability of backtest overfitting 0.586 across
+62 configurations against a bar of 0.10. Every gate-style overlay has a
+0.13–0.36 probability of beating the control on a paired block bootstrap: it
+gives back more in missed rallies than it saves in the 2018 and 2022 bear
+legs. No Kalshi-native intraday effect clears twice the round-trip cost.
+
+The paper incumbent (`trend_long_only`, 12% vol target) is unchanged, and so
+is the conclusion from 0.2.0: what the desk runs is vol-targeted long beta
+behind a trend gate, which is a posture, not an edge.
+
+### Honest caveat
+
+Seven of the ten designer agents were terminated mid-run by the account's
+monthly spend limit. `trend_v2` and `allocator_blend` have code and registry
+rows but no designer report, and the planned adversarial round was not
+spawned; the referee ran those four robustness checks itself. The truncation
+cut the campaign's breadth, not its verdict — the tournament, deflated Sharpe
+and overfitting test ran over every registered configuration.
+
+### Not changed
+
+Nothing trades. `config/perps.json` still has `live: false`.
+
+---
+
 ## 0.2.0 — 2026-09-15 — perps desk: research, shadow book, NO-GO for alpha
 
 ### Added

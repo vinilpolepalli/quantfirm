@@ -28,14 +28,21 @@ research and the tests say.
    published results lost or churned fees away (four of six frontier models
    lost 31–63% in 17 days in the only public perps contest). The agents'
    job is research, review and supervision. Code decides and executes.
-3. **The firm's own gauntlet returned NO-GO for alpha.** Thirteen
-   pre-registered trend/momentum configurations on BTC/ETH/gold/silver,
-   2016–2025, honest walk-forward with in-sample parameter selection: the
-   best candidate (a long-only trend gate) scored out-of-sample Sharpe
-   0.80 against 1.13 for the control it had to beat (vol-scaled long-only).
-   Probability of backtest overfitting across the trial set 0.30 (bar 0.10);
-   deflated Sharpe 0.66 (bar 0.95). Long/short trend scored 0.4–0.5. The
-   gold–silver ratio idea is negative. The coin-flip control loses money.
+3. **The firm's own gauntlet returned NO-GO for alpha, twice.** First
+   thirteen pre-registered trend/momentum configurations, then a campaign in
+   which ten agents each gave one strategy family its best shot: perp basis
+   and funding as a crowding gauge, the options-implied variance risk
+   premium, dual momentum, cross-sectional momentum, turn-of-month and
+   weekend seasonality, weekly reversal, a macro-gated metals sleeve, a
+   crash filter, EWMA trend strength, a meta-allocator, and Kalshi-native
+   intraday microstructure. Twenty-two walk-forward trials on
+   BTC/ETH/gold/silver, 2016–2025, with in-sample parameter selection per
+   fold. **None beat the control.** Best was 1.100 against the control's
+   1.131, and it is 0.996-correlated with the control. Deflated Sharpe 0.824
+   against a bar of 0.95 at 113 registered trials; probability of backtest
+   overfitting 0.586 against a bar of 0.10. The coin-flip control loses
+   money. §3 has the table; `research/kalshi_perps/CAMPAIGN_RESULTS.md` has
+   the campaign.
 4. **What does work is beta, sized by volatility, with a trend gate as
    drawdown insurance.** That is not alpha; it is a bet that BTC/ETH/gold/
    silver keep drifting up, made cheaply. Measured 2018–2025 with tier-0
@@ -99,6 +106,14 @@ gross leverage at 1.0–2.0x by rung.
 | Market making / fast mean reversion | **out** | no rebates below 0.5% of venue maker volume; adverse selection; GSR quotes these books |
 | Intraday / multi-hour signals, grid bots | **out** | 20 round trips a month at 12 bps and 2x is a 115%/yr fee hurdle |
 | Long-tail alt perps | **out** | 6–19 bps spreads, thin books, negative funding drift, rule changes mid-position |
+| Perp basis / funding as a crowding gauge | **tested, out** | OOS Sharpe 1.100 vs 1.131; 0.996 correlated with the passive book; the BIS crash-after-high-carry pattern does not reproduce at a daily horizon on six episodes |
+| Options-implied variance risk premium (Deribit DVOL) | **tested, out** | OOS 1.099; the tilt is the passive book with 0.29/yr more turnover, lower CAGR and a deeper drawdown |
+| Dual momentum, absolute + relative | **tested, out** | OOS 1.047 with the skip month; real timing content (null percentile 0.93) but it trails the passive book and collapses to 0.40 at a 274-day lookback |
+| Turn-of-month / weekend seasonality | **tested, out** | OOS 1.026 and 0.958; fees are 24–63% of the gap to the control |
+| Cross-sectional momentum on four assets | **tested, out** | OOS 0.154 long/short, 0.578 long-only; four correlated assets are not a cross-section |
+| Macro-gated metals (DXY, real yields, VIX) | **tested, out** | OOS 0.881; the metals sleeve alone earned less than the 3.25% collateral yield |
+| Drawdown / vol crash filter | **tested, out** | OOS 1.011; the configuration that works was chosen with hindsight, and the walk-forward picked the ones that ride the 2022 legs |
+| Kalshi-native intraday microstructure | **tested, out** | no effect above 2× round-trip cost across ~30 cells; largest gross effect 6.8 bps against a 49 bps hurdle |
 | Gold–silver ratio mean reversion | **tested, out** | OOS Sharpe −0.80 here; no verifiable evidence elsewhere; double fees |
 | Long/short trend on majors | **tested, weak** | OOS Sharpe 0.4–0.5, 3–5 of 6 folds positive; the short side has not paid on these assets |
 | Slow trend gate on a vol-targeted long book | **tested, the incumbent** | OOS Sharpe 0.80, 6/6 folds positive, drawdown halved vs beta; does not beat beta on Sharpe |
@@ -158,6 +173,65 @@ rose about 30%: the gate held its BTC exposure near zero from March 2026 and
 the book flat-lined at +0.0 to +0.3% a month while the ungated book gave
 back more. That is exactly the shape the evidence review predicted
 ("drawdown mitigation, not monthly consistency") and it is one sample.
+
+## 3b. The campaign (ten agents, one family each)
+
+The first tournament tested one idea — trend — in several dresses. The
+campaign tested twelve ideas. Ten agents each took one strategy family under
+a written protocol (`research/kalshi_perps/CAMPAIGN.md`): state the
+hypothesis, the mechanism and the external evidence, declare a grid of at
+most six configurations **before** the first backtest, run on the DEV window
+only, and report the numbers the tools printed including the bad folds. Every
+run appends to an append-only trial registry, so each new idea raises the
+deflated-Sharpe bar for every other idea. The referee ran the joint
+tournament, the overfitting tests and the robustness checks; nobody promoted
+their own work.
+
+| rank | family | the idea | OOS Sharpe | folds + | DSR |
+|---:|---|---|---:|---:|---:|
+| — | `vol_target_hold` | the control: passive, equal-risk, vol-targeted long book | **1.131** | 6/6 | — |
+| 1 | `basis_crowding` | cut the majors when perp basis and funding say longs are crowded | 1.100 | 5/6 | 0.824 |
+| 2 | `vrp_options` | scale crypto by the Deribit DVOL variance risk premium | 1.099 | 6/6 | 0.823 |
+| 3 | `dual_momentum_skip` | 12-1 month absolute momentum per bloc, relative tilt | 1.047 | 6/6 | 0.784 |
+| 4 | `trend_v2_tsmom` | 12-month trend sign at a monthly cadence | 1.031 | 6/6 | 0.769 |
+| 5 | `rs_turn_of_month` | half weight over month-end | 1.026 | 4/6 | 0.768 |
+| 7 | `crash_filter_beta` | cut on drawdown-from-high and volatility spikes | 1.011 | 5/6 | 0.751 |
+| 10 | `allocator_blend` | meta-allocator over the control and the incumbent | 0.911 | 5/6 | 0.661 |
+| 12 | `macro_gold` | metals sleeve gated on the dollar and real yields | 0.881 | 4/6 | 0.631 |
+| 13 | `xsec_momentum` | cross-sectional momentum on four assets | 0.876 | 5/6 | 0.628 |
+| 15 | `trend_long_only` | the incumbent | 0.798 | 6/6 | 0.544 |
+| 21 | `rs_bollinger_mr` | Bollinger mean reversion | 0.358 | 6/6 | 0.140 |
+
+Twenty-two trials in all; the full table is in
+`research/kalshi_perps/CAMPAIGN_RESULTS.md`. **Nothing passed.** The bar was
+a deflated Sharpe of 0.95 against 113 registered trials and a probability of
+backtest overfitting of 0.10; the best trial reached 0.824 and the PBO across
+all 62 walk-forward configurations was 0.586.
+
+Three things the campaign settled, which are worth more than another
+backtest:
+
+* **Every gate gives back more than it saves.** On a paired block bootstrap
+  against the control, every overlay — trend, dual momentum, macro, crash
+  filter, basis — has a probability between 0.13 and 0.36 of being the better
+  book. They miss more of the rallies than they save in the 2018 and 2022
+  bear legs.
+* **Overlays that read a new series add no information at a daily horizon.**
+  Options-implied volatility, perp basis, funding, the dollar, real yields,
+  the VIX: each tilt comes out either 0.87–0.996 correlated with the control
+  or worse than it.
+* **Multiple testing is now the binding constraint.** The registry holds 79
+  distinct configurations in 225 rows. On this history a candidate needs an
+  out-of-sample Sharpe near 1.4 to clear the deflated-Sharpe bar, while the
+  expected best of 113 null trials is about 0.76. The honest consequence: the
+  desk should run few, well-motivated tests, not many.
+
+One caveat on how this campaign ran: seven of the ten agents were terminated
+mid-run when the account hit its monthly spend limit. Two families have code
+and registry rows but no written report, and the planned adversarial round
+was not spawned; the referee ran those robustness checks instead. That cut
+the campaign's breadth, not its verdict — the tournament, the deflated Sharpe
+and the overfitting test all ran over every registered configuration.
 
 ## 4. The agents (who does what, and what none of them may do)
 
