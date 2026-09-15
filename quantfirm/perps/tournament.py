@@ -44,7 +44,7 @@ WARMUP_DAYS = 550          # folds begin ~2018-01
 N_FOLDS = 6
 
 # ---- frozen trial registry (edit = new tournament, bump the version) ----
-TOURNAMENT_VERSION = "2026-09-15.1"
+TOURNAMENT_VERSION = "2026-09-15.2-campaign"
 TRIALS: dict[str, dict] = {
     # family: {"params": fixed, "grid": {param: [values]}}
     "tsmom": {"params": {"target_vol": 0.12},
