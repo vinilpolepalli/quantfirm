@@ -263,6 +263,41 @@ which is ~17 hours of uninterrupted 24h tape on both metals, or a few days at
 this environment's duty cycle (`docs/HANDOFF.md` §2b). That is reachable, and
 accumulating tape is now the highest-value thing the desk does.
 
+**Re-run at 134 markets (2026-09-15): the effect got WEAKER, and the side
+split reversed sign.** The tape reached the 135-market target I had projected,
+and the answer is the opposite of convergence:
+
+| bucket | n=59 | n=134 |
+| :--- | ---: | ---: |
+| all passive fills | +1.86c, t=1.98 | **+1.01c, t=1.55** |
+| maker long the underdog | +1.20c, t=+0.38 | **−2.70c, t=−1.28** |
+| maker long the favorite | −0.02c, t=−0.01 | **+2.47c, t=+1.14** |
+| gold | +0.73c, t=0.62 | +0.69c, t=0.86 |
+| silver | +3.21c, t=2.16 | +1.32c, t=1.29 |
+
+For a real effect of fixed size, t grows as sqrt(n); 2.3x the markets should
+have taken t=1.98 to roughly 3.0. Instead t FELL to 1.55, the point estimate
+halved, and the favorite/underdog signs swapped outright. That is what noise
+does, not what a small real edge does. Silver, the one bucket that flirted
+with significance at n=59 (t=2.16), decayed to 1.29 — exactly the fate of a
+post-hoc subgroup picked from two.
+
+**The "markets for t=3" column is a projection, not a plan, and I quoted it as
+a plan.** It answers "if this point estimate is exactly right, how much data
+until it clears the bar" — which is only meaningful when the estimate is
+signal. Across roughly ten check-ins I reported "~135 markets and we will
+know", treating a conditional extrapolation as a countdown. The column now
+reads 504 for the same claim, and it will keep moving, because it is tracking
+noise. Do not schedule work against it.
+
+**What this leaves.** Granting a maker perfect queue priority, across 134
+settled gold/silver markets, there is no measurable edge and no stable
+direction to the edge that isn't there. Combined with 3b (the shadow fill
+model is an upper bound), 3c (quotes rest ~5s, so the maker thesis was never
+actually tested) and the null-model control in 4, the honest summary of this
+venue is: nothing found, and the search has now been run at a sample size
+where a modest real effect would have shown itself.
+
 **The methodological trap, because it nearly took me.** Counted per *print*,
 the same rows say the underdog maker earns +6.92c/contract at **t = +23.3**
 and the favorite maker bleeds −3.73c at **t = −13.0** — a spectacular,
