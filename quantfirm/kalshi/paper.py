@@ -117,8 +117,42 @@ class PaperState:
         self.d = d
         self.open: list[PaperPosition] = [PaperPosition(**p) for p in d.get("open", [])]
 
-    def save(self):
-        self.d["open"] = [asdict(p) for p in self.open]
+    @staticmethod
+    def _pos_key(p: dict) -> tuple:
+        return (str(p.get("adapter")), str(p.get("ticker")), str(p.get("side")),
+                str(p.get("count")), f'{float(p.get("fill_price", 0)):.4f}')
+
+    def save(self, settled_keys: set | None = None):
+        """Persist, UNIONING open positions with whatever is already on disk.
+
+        A plain wholesale rewrite is last-writer-wins across processes, which
+        does not merely drift `cash` -- it DELETES another engine's open
+        positions. Observed on the metals desk 2026-09-15: one engine filled
+        gold NO 35 @0.79 and silver NO 32 @0.81, exited before the close, and
+        the other engine's next save erased both. Neither settled; neither
+        reached the trade log. The recorded P&L was missing positions outright,
+        so n, hit rate and t were computed on an incomplete sample.
+
+        Unioning is well defined for `open` (a set of positions) in a way it is
+        not for `cash`. A position that has already SETTLED must not be
+        resurrected, so the caller passes the keys it settled, sourced from the
+        idempotent trade log.
+        """
+        mine = [asdict(p) for p in self.open]
+        merged = {self._pos_key(p): p for p in mine}
+        try:
+            with open(self.path) as f:
+                on_disk = json.load(f).get("open", [])
+        except (FileNotFoundError, ValueError):
+            on_disk = []
+        for p in on_disk:
+            k = self._pos_key(p)
+            if k not in merged:
+                merged[k] = p
+        if settled_keys:
+            for k in settled_keys:
+                merged.pop(k, None)
+        self.d["open"] = list(merged.values())
         self.d["updated"] = _now_iso()
         tmp = self.path + ".tmp"
         with open(tmp, "w") as f:
@@ -279,22 +313,56 @@ class PaperEngine:
         return m
 
     # ------------------------------------------------------------- daily stop
+    BOOKS = ("shadow", "maker", "live")
+
     def _entries_allowed(self) -> dict:
-        """Per-book daily loss stop, mirroring the backtest gate. The day
-        baseline is PERSISTED in state (review finding: an in-memory baseline
-        re-arms from depleted equity on every restart, defeating the stop)."""
+        """Per-book daily loss stop, DERIVED from the settled-trade log.
+
+        It used to read `state["cash"]` and persist a day baseline taken from
+        it. That is unsafe whenever two engines can be live at once, because
+        `PaperState` loads the whole state at startup and `save()` rewrites it
+        wholesale: atomic per write, but LAST WRITER WINS across processes, so
+        one engine's settlements silently overwrite the other's.
+
+        Observed on the metals desk 2026-09-14: cash drifted $38.96 below the
+        trade log, the 00:00 UTC baseline was captured from the drifted figure,
+        and a real -9.38% day read as -10.08% against it. The stop fired ~0.6pp
+        early and halted a book for three hours. The same code path guards the
+        `live` book here, so the failure mode is a real-money risk control
+        firing on a number that does not match the fills.
+
+        The trade log does not have the problem: `append_trade_log` is
+        idempotent and append-only, so it holds every engine's settlements
+        exactly once. Deriving the gate from it makes the stop deterministic
+        and recomputable from history, and removes the persisted baseline along
+        with the old worry that a restart re-arms it from depleted equity --
+        there is nothing left to re-arm.
+
+        `state["cash"]` is still last-writer-wins. It feeds Kelly sizing, where
+        drifting low means sizing small. Do NOT build a new risk control on it.
+        """
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        eq = {}
-        for book in ("shadow", "maker", "live"):
-            eq[book] = self.state.d["cash"][book] + sum(
-                p.count * p.fill_price for p in self.state.open
-                if p.adapter == book)
-        day = self.state.d.setdefault("day_stop", {})
-        if day.get("date") != today:
-            day.clear()
-            day.update({"date": today, "start": dict(eq)})
-        lim = 1.0 - self.params.daily_stop_frac
-        return {b: eq[b] >= lim * day["start"].get(b, eq[b]) for b in eq}
+        before = {b: 0.0 for b in self.BOOKS}
+        todays = {b: 0.0 for b in self.BOOKS}
+        try:
+            with open(self.log_path, newline="") as f:
+                for r in csv.DictReader(f):
+                    b = r.get("adapter")
+                    if b not in before:
+                        continue
+                    try:
+                        pnl = float(r["pnl"])
+                    except (KeyError, TypeError, ValueError):
+                        continue
+                    if (r.get("settled_at") or "")[:10] < today:
+                        before[b] += pnl
+                    else:
+                        todays[b] += pnl
+        except FileNotFoundError:
+            pass  # no history yet -> nothing can have been lost today
+        b0 = self.state.d.get("bankroll0", 500.0)
+        frac = self.params.daily_stop_frac
+        return {b: todays[b] >= -frac * (b0 + before[b]) for b in self.BOOKS}
 
     # ------------------------------------------------------------- maker leg
     def _maker_tick(self, metal: str, tkr: str, now: float, fair: float,
@@ -666,6 +734,19 @@ class PaperEngine:
         self.state.open = still
         return notes
 
+    def _settled_keys(self) -> set:
+        """Positions already settled, keyed as PaperState._pos_key. The trade
+        log is the idempotent source of truth, so anything recorded there must
+        never be resurrected by the open-position union in save()."""
+        keys = set()
+        try:
+            with open(self.log_path, newline="") as f:
+                for r in csv.DictReader(f):
+                    keys.add(PaperState._pos_key(r))
+        except FileNotFoundError:
+            pass
+        return keys
+
     def _persist_tape(self, ticker: str):
         """Append new public prints so maker fills can be replayed offline.
 
@@ -732,9 +813,9 @@ class PaperEngine:
                 print(f"[{_now_iso()}] tick error: {e}", flush=True)
             n += 1
             if n % 30 == 0:
-                self.state.save()
+                self.state.save(self._settled_keys())
             time.sleep(max(0.0, poll_s - (time.time() - t0)))
-        self.state.save()
+        self.state.save(self._settled_keys())
         print(f"paper engine done: cash={self.state.d['cash']} "
               f"realized={self.state.d['realized']} open={len(self.state.open)}",
               flush=True)
