@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T07:20:51Z",
+ "ts": "2026-09-15T07:23:44Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,10 +15,10 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 250.40499999999943,
+  "shadow": 244.29499999999942,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 278.7289049999962
+  "live": 272.6241049999962
  },
  "realized": {
   "shadow": 78.65500000000006,
@@ -26,7 +26,7 @@
   "maker": 1.6499999999999968,
   "live": 107.63480499999953
  },
- "n_open": 10,
+ "n_open": 12,
  "open": [
   {
    "metal": "wti",
@@ -107,10 +107,26 @@
    "ticker": "KXSILVER15M-26SEP150330-30",
    "fill_price": 0.85,
    "adapter": "live"
+  },
+  {
+   "metal": "natgas",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXNATGAS15M-26SEP150330-30",
+   "fill_price": 0.75,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "natgas",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXNATGAS15M-26SEP150330-30",
+   "fill_price": 0.75,
+   "adapter": "live"
   }
  ],
  "n_settled": 1945,
- "updated": "2026-09-15T07:20:50Z",
+ "updated": "2026-09-15T07:23:44Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
