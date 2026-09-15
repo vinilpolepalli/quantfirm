@@ -47,11 +47,14 @@ research and the tests say.
    +27.1% at −11.6% for the ungated one.
 5. **"Consistent" means 61–72% positive months and about 77% positive
    quarters, not every month.** "Considerable" at $250 is about $25 a year.
-   The design is scale-invariant to a few thousand dollars; below ~$1,000
-   contract granularity makes the weights lumpy (a 5% BTC target is one
-   $7.80 contract on a $250 book). Nothing here is a promise: the histories
-   are proxies (Coinbase spot, Yahoo futures) because Kalshi's own perps are
-   three months old and its gold/silver perps five days old.
+   The owner starts at $250 and scales. Whole-contract simulation at $250
+   (`research/kalshi_perps/granularity.json`) costs the incumbent 0.05 of
+   Sharpe and half a point of CAGR against fractional sizing, with identical
+   drawdowns, because ETH, gold and silver contracts are $2–6 each; only BTC
+   (~$8) is lumpy. So $250 works as a canary size; the scaling ladder is in
+   §7. Nothing here is a promise: the histories are proxies (Coinbase spot,
+   Yahoo futures) because Kalshi's own perps are three months old and its
+   gold/silver perps five days old.
 
 The plan therefore has two parts: a **research process** that keeps trying
 to find an edge under the same gauntlet (and keeps saying no until one
@@ -233,20 +236,39 @@ Everything else is common: max order $1,000 notional, ±0.5% price collar,
 12 orders per tick, 30-hour data age, margin ratio ≤ 0.5. All of it is
 config, changed only by a reviewed commit.
 
-## 6. Economics at your size
+## 6. Economics at your size (starting at $250)
+
+Whole-contract simulation, 2018-01 → 2025-06, tier-0 taker, Kalshi funding
+(`research/kalshi_perps/granularity.json`; "fractional" is the idealised
+sizing every other table in this document uses):
+
+| book | $250 | $500 | $1,000 | $2,500 | fractional |
+|---|---|---|---|---|---|
+| trend gate 12% (balanced): Sharpe / CAGR / max DD | 0.86 / 10.2% / −9.4% | 0.86 / 10.2% / −9.4% | 0.86 / 10.2% / −9.4% | 0.91 / 10.7% / −9.4% | 0.91 / 10.7% / −9.4% |
+| trend gate 18% (growth) | 0.89 / 13.3% / −12.4% | 0.89 / 13.4% / −12.4% | 0.90 / 13.6% / −12.4% | 0.94 / 14.0% / −12.5% | 0.93 / 13.9% / −12.5% |
+| beta 12% (no gate) | 0.91 / 14.9% / −22.0% | 0.96 / 15.9% / −22.0% | 0.94 / 15.6% / −22.2% | 0.95 / 15.6% / −21.1% | 0.94 / 15.4% / −21.1% |
+| beta 8% (no gate) | 1.08 / 13.3% / −14.5% | 1.07 / 13.2% / −14.7% | 1.06 / 13.2% / −14.7% | 1.07 / 13.4% / −14.7% | 1.07 / 13.4% / −14.8% |
+
+Granularity is not the constraint at $250. What $250 does mean:
 
 | bankroll | balanced rung, expected/yr | typical drawdown | contracts held | note |
 |---|---|---|---|---|
-| $250 | ~$27 | −$23 | 1–8 | weights are lumpy; a 5% BTC target is one contract |
-| $1,000 | ~$107 | −$94 | 5–30 | smallest size where the weights are representable |
-| $2,500 | ~$270 | −$235 | 12–75 | sensible minimum; fees ~$14/yr |
-| $10,000 | ~$1,070 | −$940 | 50–300 | still inside the $5k default per-market limit |
+| $250 | ~$25 | −$23 | 2–10 | BTC rounds to 1–3 contracts; ETH/gold/silver are fine |
+| $1,000 | ~$100 | −$94 | 8–40 | |
+| $2,500 | ~$255 | −$235 | 20–100 | fees ~$14/yr |
+| $10,000 | ~$1,020 | −$940 | 80–400 | still inside the $5k default per-market limit |
 
-Expected = the dev CAGR; drawdown = the dev max drawdown. Both are
-backtests on proxies. A 12 bps taker book trading four times a year per
-asset spends about half a percent of equity on fees; funding is zero most
-days; the 3.25% on idle collateral is the floor if the gate is fully out.
-The kalshi_prime fee table for retail was not published; tier 0 is assumed.
+Expected = the $250-row CAGR from the table above; drawdown = its max
+drawdown. Both are backtests on proxies. A 12 bps taker book trading four
+times a year per asset spends about half a percent of equity on fees;
+funding is zero most days; the 3.25% on idle collateral is the floor if the
+gate is fully out (third parties report a $250 minimum average balance for
+that interest, so a $250 account may earn none of it while positions are
+open). The kalshi_prime fee table for retail was not published; tier 0 is
+assumed. One BTC contract is ~3% of a $250 book, so at this size the
+5% weight step in `vol_target` and the 3% rebalance band are the effective
+granularity, and the engine will sometimes hold zero BTC when the target is
+one contract's worth.
 
 ## 7. Promotion gate (PAPER → CANARY → PRODUCTION)
 
@@ -272,6 +294,23 @@ and the owner's explicit go at each step.
    rung after any kill trip; retire the strategy if the trailing 12-month
    OOS Sharpe is below 0.3 or the ladder trips twice in a year; no rung
    above growth exists.
+
+**Scaling ladder (owner starts at $250).** Capital is added only in steps,
+only after a clean period, never into a drawdown, and the rung does not
+change with the size:
+
+| step | bankroll | condition to move up |
+|---|---|---|
+| canary | $250 | steps 1–3 above passed |
+| 2 | $1,000 | 8 clean weeks at $250: no ladder trip, no reconciliation or data incident, attribution within the backtest's 5th–95th percentile band |
+| 3 | $2,500 | 8 clean weeks at $1,000 and equity above its 8-week-ago level |
+| 4 | $5,000+ | 12 clean weeks at $2,500; check `GET /margin/notional_risk_limit` before exceeding $5k notional in any market |
+
+Each step is at most 4× the previous one; a step is skipped, not repeated,
+if the drawdown ladder is past its soft line; removing capital is always
+allowed. Volume tiers help on the way up: $100k of 30-day notional (about
+$3.3k a day) drops taker fees from 12 to 10 bps, and the 15-minute desk's
+prediction volume counts toward the same tier.
 
 A profitable shadow month is not a go-live. The gauntlet's verdict on alpha
 stands until a candidate passes all seven gates; funding the gated-beta

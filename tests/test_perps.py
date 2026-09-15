@@ -431,6 +431,27 @@ class TestPaperEngine(unittest.TestCase):
             eng.client.markets.assert_not_called()
 
 
+class TestGranularity(unittest.TestCase):
+    def test_whole_contracts_only(self):
+        panel = synthetic_panel(n=300, seed=8)
+        closes = S.align(panel)
+        t = pd.DataFrame(0.0, index=closes.index, columns=list(panel))
+        t["btc"] = 0.10
+        cfg = B.BacktestConfig(funding="none", interest_apy=0.0, bankroll_usd=250.0, rebalance_band=0.0, rebalance_every=1)
+        r = B.run(panel, t, cfg)
+        w = r["_series"]["weights"]["btc"]
+        # synthetic btc price ~100 → a 0.0001 BTC contract is ~$0.01; $25 target ≈ 2500 contracts, so
+        # notional is quantised to multiples of one contract: check notional/contract_size is integral
+        px = closes["btc"]
+        contracts = (w * 250.0 / (px * float(SPECS["btc"].contract_size))).round(6)
+        self.assertTrue((contracts.dropna() % 1 < 1e-6).all() or (1 - contracts.dropna() % 1 < 1e-6).all())
+        # and a target smaller than one contract trades nothing
+        t2 = t * 0.0
+        t2["btc"] = 0.00001
+        r2 = B.run(panel, t2, cfg)
+        self.assertEqual(float(r2["_series"]["weights"]["btc"].abs().max()), 0.0)
+
+
 class TestRobustAndRegistry(unittest.TestCase):
     def test_block_bootstrap_and_sharpe_diff(self):
         from quantfirm.perps import robust as RB

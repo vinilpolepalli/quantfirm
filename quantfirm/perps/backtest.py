@@ -53,6 +53,7 @@ class BacktestConfig:
     liq_penalty: float = 0.02        # of notional closed by force
     ladder_soft: float | None = None # drawdown from peak that halves sizing (None = off)
     ladder_kill: float | None = None # drawdown that flattens for good (None = off)
+    bankroll_usd: float | None = None  # when set, trade WHOLE contracts for this bankroll (granularity)
 
 
 def funding_table(panel: dict[str, pd.DataFrame], index: pd.DatetimeIndex, mode: str) -> pd.DataFrame:
@@ -95,6 +96,7 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
     F = funding_table({a: panel[a] for a in assets}, idx, cfg.funding).loc[idx, assets].to_numpy()
     maint = np.array([SPECS[a].maint_rate for a in assets])
     im = maint * 1.3
+    csize = np.array([float(SPECS[a].contract_size) if a in SPECS else 0.0 for a in assets])
     n, k = C.shape
 
     equity = np.ones(n)
@@ -127,6 +129,14 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
             trade = np.abs(tgt - cur_w) > cfg.rebalance_band
             if trade.any():
                 new_units = np.where(trade, tgt * E / O[t], units)
+                if cfg.bankroll_usd:
+                    # whole contracts: notional per contract = contract_size × price (proxy price is
+                    # the asset's USD price, so a BTC contract is 0.0001 × price). units are in
+                    # equity-normalised "$1 of price" terms: units × price = notional / equity₀.
+                    per_contract = csize * O[t]                      # $ per contract
+                    n_c = np.floor(np.abs(tgt) * E * cfg.bankroll_usd / np.where(per_contract > 0, per_contract, np.inf))
+                    quant = np.sign(tgt) * n_c * per_contract / (cfg.bankroll_usd * O[t])
+                    new_units = np.where(trade, quant, units)
                 d_notional = np.abs(new_units - units) * O[t]
                 turnover[t] = d_notional.sum() / E
                 fees[t] = d_notional.sum() * cfg.cost.per_side
