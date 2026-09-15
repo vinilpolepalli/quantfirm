@@ -438,3 +438,71 @@ class TestDailyStopFromTradeLog(unittest.TestCase):
             b.state.d["cash"]["maker"] = 1000.0     # b's state raced ahead
             self.assertEqual(a._entries_allowed()["maker"],
                              b._entries_allowed()["maker"])
+
+
+class TestOpenPositionsSurviveConcurrentSave(unittest.TestCase):
+    """Pins the 2026-09-15 position loss. Two engines run at once and each holds
+    the whole state in memory; a wholesale rewrite deleted the other engine's
+    open positions. The foreground engine filled gold NO 35 @0.79 and silver NO
+    32 @0.81 on KX*15M-26SEP150715, exited before the close, and the background
+    engine's next save erased both -- neither settled, neither was logged."""
+
+    @staticmethod
+    def _pos(**kw):
+        from quantfirm.kalshi.paper import PaperPosition
+        base = dict(ticker="KXGOLD15M-X", metal="gold", side="no", count=35,
+                    fill_price=0.79, fee=0.0, fair=0.16, entry_ts=1, close_ts=2,
+                    adapter="maker", tag="maker")
+        base.update(kw)
+        return PaperPosition(**base)
+
+    def test_second_engine_does_not_erase_the_first(self):
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "state.json")
+            a = PaperState(path)                       # foreground engine
+            a.open = [self._pos(), self._pos(ticker="KXSILVER15M-X",
+                                             metal="silver", count=32,
+                                             fill_price=0.81)]
+            a.save()
+            b = PaperState(path)                       # background engine
+            self.assertEqual(len(b.open), 2)
+            b.open = [self._pos(ticker="KXSILVER15M-Y", count=53,
+                                fill_price=0.52)]      # only its own position
+            b.save()
+            after = PaperState(path)
+            tickers = sorted(p.ticker for p in after.open)
+            self.assertEqual(len(after.open), 3,
+                             "a concurrent save must not drop the other engine's fills")
+            self.assertIn("KXGOLD15M-X", tickers)
+            self.assertIn("KXSILVER15M-X", tickers)
+
+    def test_settled_positions_are_not_resurrected(self):
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "state.json")
+            a = PaperState(path)
+            a.open = [self._pos()]
+            a.save()
+            b = PaperState(path)
+            b.open = []                                # b settled it
+            b.save(settled_keys={PaperState._pos_key(asdict_compat(self._pos()))})
+            self.assertEqual(PaperState(path).open, [],
+                             "a settled position must not come back via the union")
+
+    def test_identical_positions_do_not_duplicate(self):
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "state.json")
+            a = PaperState(path)
+            a.open = [self._pos()]
+            a.save()
+            b = PaperState(path)
+            b.open = [self._pos()]                     # same fill, both engines
+            b.save()
+            self.assertEqual(len(PaperState(path).open), 1)
+
+
+def asdict_compat(p):
+    from dataclasses import asdict
+    return asdict(p)

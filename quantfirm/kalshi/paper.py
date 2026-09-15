@@ -72,8 +72,48 @@ class PaperState:
         self.d = d
         self.open: list[PaperPosition] = [PaperPosition(**p) for p in d.get("open", [])]
 
-    def save(self):
-        self.d["open"] = [asdict(p) for p in self.open]
+    @staticmethod
+    def _pos_key(p: dict) -> tuple:
+        return (str(p.get("adapter")), str(p.get("ticker")), str(p.get("side")),
+                str(p.get("count")), f'{float(p.get("fill_price", 0)):.4f}')
+
+    def save(self, settled_keys: set | None = None):
+        """Persist, UNIONING open positions with whatever is already on disk.
+
+        Two engines run at once by design (docs/HANDOFF.md 2c) and each holds
+        the whole state in memory. A plain wholesale rewrite is last-writer-
+        wins, which does not merely drift `cash` -- it DELETES the other
+        engine's open positions. Observed 2026-09-15: the foreground engine
+        filled gold NO 35 @0.79 and silver NO 32 @0.81 on KX*15M-26SEP150715,
+        exited at 11:14 before the 11:15 close, and the background engine's
+        next save erased both. Neither ever settled; neither appears in the
+        trade log. The recorded P&L was silently missing two positions.
+
+        Unioning is well defined for `open` (it is a set of positions) in a way
+        it is not for `cash`. A position that has already SETTLED must not be
+        resurrected by the union, so the caller passes the keys it just
+        settled, and the trade log -- the idempotent source of truth -- is
+        consulted for everything settled earlier.
+
+        `cash` is still last-writer-wins. That is open problem 10, and it only
+        feeds Kelly sizing. Losing positions was the part that corrupted the
+        record.
+        """
+        mine = [asdict(p) for p in self.open]
+        merged = {self._pos_key(p): p for p in mine}
+        try:
+            with open(self.path) as f:
+                on_disk = json.load(f).get("open", [])
+        except (FileNotFoundError, ValueError):
+            on_disk = []
+        for p in on_disk:
+            k = self._pos_key(p)
+            if k not in merged:
+                merged[k] = p
+        if settled_keys:
+            for k in settled_keys:
+                merged.pop(k, None)
+        self.d["open"] = list(merged.values())
         self.d["updated"] = _now_iso()
         tmp = self.path + ".tmp"
         with open(tmp, "w") as f:
@@ -631,6 +671,19 @@ class PaperEngine:
         self.state.open = still
         return notes
 
+    def _settled_keys(self) -> set:
+        """Positions already settled, keyed as PaperState._pos_key. The trade
+        log is the idempotent source of truth, so a position recorded there
+        must never be resurrected by the open-position union in save()."""
+        keys = set()
+        try:
+            with open(self.log_path, newline="") as f:
+                for r in csv.DictReader(f):
+                    keys.add(PaperState._pos_key(r))
+        except FileNotFoundError:
+            pass
+        return keys
+
     def _log_decision(self, ts, metal, tkr, s, k, sigma, bid, ask, close_ts, intent):
         from .fair import fair_yes
         rec = {"ts": ts, "metal": metal, "ticker": tkr, "s": s, "k": k,
@@ -662,9 +715,9 @@ class PaperEngine:
                 print(f"[{_now_iso()}] tick error: {e}", flush=True)
             n += 1
             if n % 30 == 0:
-                self.state.save()
+                self.state.save(self._settled_keys())
             time.sleep(max(0.0, poll_s - (time.time() - t0)))
-        self.state.save()
+        self.state.save(self._settled_keys())
         print(f"paper engine done: cash={self.state.d['cash']} "
               f"realized={self.state.d['realized']} open={len(self.state.open)}",
               flush=True)
