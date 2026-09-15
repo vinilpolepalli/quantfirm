@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T05:20:01Z",
+ "ts": "2026-09-15T05:21:47Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,12 +13,12 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "supervisor: alive",
+ "supervisor": "alive",
  "cash": {
-  "shadow": 275.97499999999957,
+  "shadow": 251.92499999999956,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 305.4636049999965
+  "live": 281.43230499999646
  },
  "realized": {
   "shadow": 33.99500000000007,
@@ -26,7 +26,7 @@
   "maker": 1.6499999999999968,
   "live": 64.1489049999996
  },
- "n_open": 2,
+ "n_open": 8,
  "open": [
   {
    "metal": "silver",
@@ -43,17 +43,65 @@
    "ticker": "KXSILVER15M-26SEP150130-30",
    "fill_price": 0.79,
    "adapter": "live"
+  },
+  {
+   "metal": "eth",
+   "side": "yes",
+   "count": 15,
+   "ticker": "KXETH15M-26SEP150130-30",
+   "fill_price": 0.76,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "eth",
+   "side": "yes",
+   "count": 15,
+   "ticker": "KXETH15M-26SEP150130-30",
+   "fill_price": 0.76,
+   "adapter": "live"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXGOLD15M-26SEP150130-30",
+   "fill_price": 0.76,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "gold",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXGOLD15M-26SEP150130-30",
+   "fill_price": 0.76,
+   "adapter": "live"
+  },
+  {
+   "metal": "natgas",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXNATGAS15M-26SEP150130-30",
+   "fill_price": 0.77,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "natgas",
+   "side": "no",
+   "count": 8,
+   "ticker": "KXNATGAS15M-26SEP150130-30",
+   "fill_price": 0.77,
+   "adapter": "live"
   }
  ],
  "n_settled": 1837,
- "updated": "2026-09-15T05:20:01Z",
+ "updated": "2026-09-15T05:21:47Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
  "poly_paper_cash": 308.4229999999995,
  "div_paper_loop": "alive",
- "div_paper_n_open": 1,
- "div_paper_cash": 413.8159999999993,
+ "div_paper_n_open": 2,
+ "div_paper_cash": 397.78599999999926,
  "div_paper_realized": 181.03599999999994,
  "poly_paper": {
   "day": "2026-09-15",
