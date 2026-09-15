@@ -188,7 +188,9 @@ def run(panel: dict[str, pd.DataFrame], targets: pd.DataFrame, cfg: BacktestConf
     F = funding_table({a: panel[a] for a in assets}, idx, cfg.funding).loc[idx, assets].to_numpy()
     maint = np.array([SPECS[a].maint_rate for a in assets])
     im = maint * 1.3
-    csize = np.array([float(SPECS[a].contract_size) if a in SPECS else 0.0 for a in assets])
+    # units of the PROXY asset per contract — not contract_size, which counts the
+    # contract's own underlying (kSHIB is a thousand SHIB; see PerpSpec)
+    csize = np.array([SPECS[a].proxy_units_per_contract if a in SPECS else 0.0 for a in assets])
     # per-asset cost per side: fee + max(flat modelling spread, that market's
     # measured half-spread). A book trading LINK at 9.7 bps is not charged BTC's
     # 0.2. When every asset costs the same the scalar form is kept, so a

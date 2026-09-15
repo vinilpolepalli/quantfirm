@@ -144,13 +144,13 @@ class TestKshibUnits(unittest.TestCase):
     def test_contract_is_a_thousand_shib_priced_off_shib_usd(self):
         k = SPECS["kshib"]
         self.assertEqual(k.ticker, "KXKSHIBPERP")
-        self.assertEqual(k.contract_size, Decimal("1000"))   # 1000 SHIB = 1 kSHIB
+        self.assertEqual(k.contract_size, Decimal("1000"))   # 1000 kSHIB per contract
         self.assertEqual(k.proxy, "SHIB-USD")                # priced per ONE shib
-        self.assertEqual(k.underlying_multiplier, Decimal("1000"))
-        # contract_size is already in proxy units, so notional is a plain
-        # multiply and reproduces the venue's quote of 5.2026/5.2101 on
-        # 2026-09-15 at a SHIB price of $0.0052101.
-        self.assertAlmostEqual(k.notional_per_contract(0.0052101), 5.2101, places=6)
+        self.assertEqual(k.underlying_multiplier, Decimal("1000"))   # 1 kSHIB = 1000 SHIB
+        # so one contract is 1,000,000 SHIB, which at the 2026-09-15 SHIB price
+        # of $0.00000521 reproduces the venue's own quote of 5.2117.
+        self.assertEqual(k.proxy_units_per_contract, 1_000_000.0)
+        self.assertAlmostEqual(k.notional_per_contract(0.00000521), 5.21, places=4)
 
     def test_every_other_market_has_multiplier_one(self):
         for a, s in SPECS.items():
@@ -160,9 +160,9 @@ class TestKshibUnits(unittest.TestCase):
     def test_naive_per_coin_notional_is_a_thousand_times_wrong(self):
         """The trap: treating the venue's per-contract mark as a coin price."""
         k = SPECS["kshib"]
-        shib = 0.0052101
+        shib = 0.00000521
         self.assertAlmostEqual(k.notional_per_contract(shib)
-                               / (float(k.underlying_multiplier) * shib), 1.0, places=9)
+                               / (float(k.contract_size) * shib), 1000.0, places=6)
         # and one contract is worth a normal few dollars, like every other market
         self.assertTrue(1.0 < k.notional_per_contract(shib) < 20.0)
 

@@ -154,14 +154,25 @@ class PerpSpec:
     def half_spread_bps(self) -> float:
         return self.half_spread * 1e4
 
-    def notional_per_contract(self, proxy_price: float) -> float:
-        """USD notional of ONE contract at a price quoted in ``proxy`` units.
+    @property
+    def proxy_units_per_contract(self) -> float:
+        """Units of the PROXY asset in one contract.
 
-        ``contract_size`` is denominated in the same unit the proxy quotes, so
-        this is a plain multiply for every market — kSHIB included. See the
-        kSHIB note under SPECS for why that is not obvious.
+        ``contract_size`` counts the contract's own underlying, which for every
+        market but one is the coin the proxy quotes. KXKSHIBPERP's underlying is
+        kSHIB, a thousand SHIB, and the venue says so in ``underlying_multiplier``
+        (1000 there, 1 everywhere else), so one contract is 1000 × 1000 =
+        1,000,000 SHIB. Verified against the venue's own marks on 2026-09-15:
+        0.0001 × 1 × $78,211 = $7.82 for BTC against a quote of 7.794, and
+        1000 × 1000 × $0.00000521 = $5.21 for kSHIB against a quote of 5.2117.
+        Multiplying by ``contract_size`` alone prices a kSHIB contract at half a
+        cent and makes it look infinitely divisible to a small account.
         """
-        return float(self.contract_size) * proxy_price
+        return float(self.contract_size) * float(self.underlying_multiplier)
+
+    def notional_per_contract(self, proxy_price: float) -> float:
+        """USD notional of ONE contract at a price quoted in ``proxy`` units."""
+        return self.proxy_units_per_contract * proxy_price
 
 
 # Leverage estimate at $1k notional, leverage_estimates["1000"] from
