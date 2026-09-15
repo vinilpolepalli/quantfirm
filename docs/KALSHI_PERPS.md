@@ -105,7 +105,7 @@ gross leverage at 1.0–2.0x by rung.
 | Cross-venue funding/basis arb | **out** | needs an offshore short a US retail account cannot hold; 95% forced exits in the one large-sample study; two taker fees exceed the spread |
 | Market making / fast mean reversion | **out** | no rebates below 0.5% of venue maker volume; adverse selection; GSR quotes these books |
 | Intraday / multi-hour signals, grid bots | **out** | 20 round trips a month at 12 bps and 2x is a 115%/yr fee hurdle |
-| Long-tail alt perps | **out** | 6–19 bps spreads, thin books, negative funding drift, rule changes mid-position |
+| Long-tail alt perps | **tested, out** | measured: 18 crypto names carry 2.51 effective independent bets against the four researched assets' 2.44; 11 of 17 lost money 2021–25; the passive wide book scores 0.49 against 0.94 (§3c) |
 | Perp basis / funding as a crowding gauge | **tested, out** | OOS Sharpe 1.100 vs 1.131; 0.996 correlated with the passive book; the BIS crash-after-high-carry pattern does not reproduce at a daily horizon on six episodes |
 | Options-implied variance risk premium (Deribit DVOL) | **tested, out** | OOS 1.099; the tilt is the passive book with 0.29/yr more turnover, lower CAGR and a deeper drawdown |
 | Dual momentum, absolute + relative | **tested, out** | OOS 1.047 with the skip month; real timing content (null percentile 0.93) but it trails the passive book and collapses to 0.40 at a 274-day lookback |
@@ -232,6 +232,63 @@ and registry rows but no written report, and the planned adversarial round
 was not spawned; the referee ran those robustness checks instead. That cut
 the campaign's breadth, not its verdict — the tournament, the deflated Sharpe
 and the overfitting test all ran over every registered configuration.
+
+## 3c. Breadth, and why twenty assets are worse than four
+
+Round 1's post-mortem blamed the universe: four assets at 0.9 correlation are
+two bets, not four, so nothing cross-sectional was testable and the
+cross-sectional family duly scored 0.154. Kalshi lists 23 perps and every one
+has a spot proxy going back years, so the desk was extended to all of them —
+specs, data, per-asset spreads, and a backtester that holds each asset only
+while it is actually listed. Then the premise was measured, and it is false.
+
+**Twenty names are 2.5 bets.**
+
+| universe | effective independent bets |
+|---|---:|
+| btc, eth, gold, silver | 2.44 |
+| all 18 crypto names with usable history | 2.51 |
+
+Mean pairwise correlation among the crypto names is 0.589. Fourteen extra
+coins buy seven hundredths of one independent bet, because they are the same
+trade wearing different tickers.
+
+**The alts were a drag.** Over 2021-10 to 2025-07, eleven of seventeen names
+lost money. Gold returned 16.8% a year at a 1.09 Sharpe and XRP 101.6% at
+0.95; below them everything sits at 0.43 or worse, down to ADA at −36.6% a
+year and ZEC at −29.4%. An equal-risk book dilutes the two assets that worked
+with a dozen that did not, so the passive wide book earns less per unit of
+risk than the narrow one:
+
+| universe | Sharpe | CAGR | max DD |
+|---|---:|---:|---:|
+| 4 researched (2018→) | **0.94** | 15.5% | −21.2% |
+| 14 breadth (2018→) | 0.60 | 9.0% | −25.8% |
+| 20 tradable (2018→) | 0.49 | 7.7% | −25.8% |
+
+Sharpe is scale-free, so that is not a sizing artefact.
+
+**Nor is the cross-section worth trading.** Ranking every available name by
+trailing return and holding the top quartile against the bottom, gross of all
+costs, produces no t-statistic above 0.52 at any formation or holding horizon,
+with the sign flipping between horizons and hit rates at the coin flip.
+Time-series trend with a short side — the one thing four assets could never
+test, because there was nothing worth shorting — scores 0.86 at a 30-day
+lookback and −0.03 at 90 days in the same universe. That is noise across a
+parameter, not a signal, and the short side is negative at every long lookback
+because the alts fell through rallies that whipsaw anything systematic. All of
+these numbers are gross, against a benchmark whose 0.94 is net.
+
+So no wide-universe family was registered. Ten configurations that a free
+screen already shows to be empty would raise the deflated-Sharpe bar for every
+future idea and buy nothing. The full measurement is in
+`research/kalshi_perps/BREADTH_FINDING.md`.
+
+The infrastructure was still worth building: the desk can now price, size and
+simulate any of the 20 tradable perps with each one's own spread and
+maintenance rate, which is what any future idea on this venue will need. And
+the answer to "would more assets have helped?" is now measured rather than
+assumed.
 
 ## 4. The agents (who does what, and what none of them may do)
 
