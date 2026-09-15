@@ -1,0 +1,227 @@
+{
+ "strategy": "crash_filter_beta",
+ "params": {
+  "target_vol": 0.12,
+  "exit_depth": 0.2,
+  "high_window": 60
+ },
+ "window": [
+  "2018-01-01",
+  "2025-07-01"
+ ],
+ "cost_model": "taker_t0",
+ "funding_mode": "kalshi",
+ "base": {
+  "net_sharpe": 1.169,
+  "sharpe_total": 1.472,
+  "cagr": 0.1643,
+  "max_drawdown": -0.139,
+  "total_return": 2.1294,
+  "ann_turnover": 2.07,
+  "fees_annual": 0.003,
+  "funding_annual": 0.0,
+  "interest_annual": 0.0302,
+  "avg_gross_leverage": 0.535,
+  "max_gross_leverage": 0.896,
+  "n_liquidations": 0,
+  "n_days": 2738,
+  "years": 7.5,
+  "start": "2018-01-01",
+  "end": "2025-06-30",
+  "cost_model": "taker_t0",
+  "funding_mode": "kalshi",
+  "killed": false,
+  "worst_day": -0.04,
+  "pct_positive_months": 0.611,
+  "pct_positive_quarters": 0.733
+ },
+ "benchmark": "vol_target_hold",
+ "benchmark_metrics": {
+  "net_sharpe": 0.94,
+  "sharpe_total": 1.197,
+  "cagr": 0.1545,
+  "max_drawdown": -0.2115,
+  "total_return": 1.9378,
+  "ann_turnover": 1.68,
+  "fees_annual": 0.0024,
+  "funding_annual": 0.0,
+  "interest_annual": 0.0298,
+  "avg_gross_leverage": 0.592,
+  "max_gross_leverage": 0.934,
+  "n_liquidations": 0,
+  "n_days": 2738,
+  "years": 7.5,
+  "start": "2018-01-01",
+  "end": "2025-06-30",
+  "cost_model": "taker_t0",
+  "funding_mode": "kalshi",
+  "killed": false,
+  "worst_day": -0.0651,
+  "pct_positive_months": 0.622,
+  "pct_positive_quarters": 0.733
+ },
+ "bootstrap": {
+  "n_boot": 500,
+  "block": 20,
+  "n_obs": 2738,
+  "sharpe_p5_25_50_75_95": [
+   0.4613,
+   0.9308,
+   1.1592,
+   1.4127,
+   1.7711
+  ],
+  "cagr_p5_25_50_75_95": [
+   0.0783,
+   0.1351,
+   0.1632,
+   0.1955,
+   0.2414
+  ],
+  "mdd_p5_25_50_75_95": [
+   -0.2211,
+   -0.1637,
+   -0.1326,
+   -0.1121,
+   -0.0909
+  ],
+  "p_sharpe_le_0": 0.0,
+  "p_cagr_le_0": 0.0
+ },
+ "perturbation": {
+  "base_sharpe": 1.169,
+  "n_perturbations": 12,
+  "min_sharpe": 1.031,
+  "median_sharpe": 1.131,
+  "max_sharpe": 1.191,
+  "collapse_ratio": 0.882,
+  "rows": [
+   {
+    "param": "target_vol",
+    "value": "0.09",
+    "net_sharpe": 1.175,
+    "cagr": 0.1374,
+    "max_drawdown": -0.1015
+   },
+   {
+    "param": "target_vol",
+    "value": "0.15",
+    "net_sharpe": 1.141,
+    "cagr": 0.1898,
+    "max_drawdown": -0.1651
+   },
+   {
+    "param": "exit_depth",
+    "value": "0.15000000000000002",
+    "net_sharpe": 1.031,
+    "cagr": 0.1389,
+    "max_drawdown": -0.1293
+   },
+   {
+    "param": "exit_depth",
+    "value": "0.25",
+    "net_sharpe": 1.047,
+    "cagr": 0.1554,
+    "max_drawdown": -0.1758
+   },
+   {
+    "param": "high_window",
+    "value": "45",
+    "net_sharpe": 1.082,
+    "cagr": 0.1564,
+    "max_drawdown": -0.139
+   },
+   {
+    "param": "high_window",
+    "value": "75",
+    "net_sharpe": 1.085,
+    "cagr": 0.1512,
+    "max_drawdown": -0.1382
+   },
+   {
+    "param": "reenter_depth",
+    "value": "0.037500000000000006",
+    "net_sharpe": 1.191,
+    "cagr": 0.1663,
+    "max_drawdown": -0.139
+   },
+   {
+    "param": "reenter_depth",
+    "value": "0.0625",
+    "net_sharpe": 1.12,
+    "cagr": 0.1586,
+    "max_drawdown": -0.1427
+   },
+   {
+    "param": "min_flat",
+    "value": "8",
+    "net_sharpe": 1.169,
+    "cagr": 0.1643,
+    "max_drawdown": -0.139
+   },
+   {
+    "param": "min_flat",
+    "value": "12",
+    "net_sharpe": 1.164,
+    "cagr": 0.1636,
+    "max_drawdown": -0.139
+   },
+   {
+    "param": "reenter_mom_lb",
+    "value": "22",
+    "net_sharpe": 1.115,
+    "cagr": 0.158,
+    "max_drawdown": -0.1445
+   },
+   {
+    "param": "reenter_mom_lb",
+    "value": "38",
+    "net_sharpe": 1.169,
+    "cagr": 0.1643,
+    "max_drawdown": -0.139
+   }
+  ]
+ },
+ "regime": {
+  "btc_up_years": {
+   "n_days": 2008,
+   "sharpe": 1.605,
+   "ann_return": 0.2342
+  },
+  "btc_down_years": {
+   "n_days": 730,
+   "sharpe": -0.458,
+   "ann_return": -0.0083
+  },
+  "vol_calm": {
+   "n_days": 903,
+   "sharpe": 2.035
+  },
+  "vol_mid": {
+   "n_days": 902,
+   "sharpe": 0.724
+  },
+  "vol_turbulent": {
+   "n_days": 903,
+   "sharpe": 0.719
+  }
+ },
+ "timing_null": {
+  "real_sharpe": 1.169,
+  "n_null": 60,
+  "block_days": 30,
+  "null_sharpe_mean": 0.742,
+  "null_sharpe_p95": 1.01,
+  "percentile_of_real": 1.0,
+  "excess_over_null_mean": 0.427
+ },
+ "vs_benchmark": {
+  "sharpe_a": 1.169,
+  "sharpe_b": 0.94,
+  "diff": 0.228,
+  "diff_p5": -0.075,
+  "diff_p95": 0.537,
+  "p_a_gt_b": 0.908,
+  "corr": 0.898
+ }
+}
