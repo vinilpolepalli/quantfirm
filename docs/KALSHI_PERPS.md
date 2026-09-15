@@ -398,6 +398,55 @@ the data picks 30% over 40% as the weight. At $250 the sleeve is implementable
 but quantisation dominates, and the trustworthy numbers are the large-bankroll
 ones. `research/kalshi_perps/families/xsmom_residual.md` has the detail.
 
+## 3e. Why the book trades weekly
+
+A reasonable question, since a perpetual future sounds like an instrument you
+watch minute by minute. The cadence was chosen before any results, on the
+venue's own arithmetic, and the instrument is the reason.
+
+**On Kalshi, holding is free and trading is not.** Offshore perps pay funding
+three times a day, which is a standing reason to manage a position actively.
+Kalshi's deadband rounds any rate under 0.01% per interval to zero, and 55–97%
+of all intervals since June have been exactly zero, so a position costs nothing
+to carry and idle collateral earns about 3.25%. Meanwhile every trade costs 12
+bps of fee plus the spread: about 24 bps round trip on BTC and 43 on LINK. The
+venue therefore pays you to sit still and charges you to move, which is the
+opposite of the instrument's reputation.
+
+**The signals are slow.** The sleeve ranks a 14-day residual; the trend gate
+reads multi-month moves. Neither carries information that decays in hours, so
+rebalancing faster re-expresses the same view at full cost.
+
+Measured out of sample, 2021-10 → 2025-06, the 30% blend by cadence:
+
+| rebalance | blend Sharpe | ann. return | max DD | sleeve alone | turnover |
+|---|---:|---:|---:|---:|---:|
+| daily | 1.625 | 14.44% | −8.59% | 0.730 | 18.6 |
+| every 2 days | 1.675 | 14.91% | −8.64% | 0.834 | 17.9 |
+| every 3 days | 1.611 | 14.37% | −8.53% | 0.773 | 17.3 |
+| **weekly** | **1.694** | **15.22%** | −8.64% | 1.028 | 15.7 |
+| fortnightly | 1.507 | 13.80% | −8.36% | 0.646 | 13.8 |
+| monthly | 1.298 | 11.54% | −8.95% | 0.180 | 9.7 |
+
+Read this as a shape, not a ranking. Everything from daily to weekly sits in a
+band of 1.61 to 1.69, and the surface is not monotone — three days scores below
+two. That is noise across a parameter. What the data does say clearly is that
+past a fortnight the edge decays, sharply by a month, because a 14-day signal
+held for thirty days is mostly stale.
+
+**Weekly is therefore not a tuned optimum and must not be treated as one.**
+It was picked a priori on cost grounds, it lands in the flat region, and the
+measurement does not contradict it. Switching to whichever cadence topped this
+table would be exactly the in-sample selection the whole gauntlet exists to
+prevent, so nothing was changed on the strength of it. These six runs were
+diagnostics executed directly rather than through the CLI, so they added no
+rows to the trial registry and no deflated-Sharpe burden to future ideas.
+
+One consequence worth knowing: the sleeve runs seven overlapping weekly
+tranches, so roughly a seventh of it comes up for review each day even though
+any single position is held about six weeks. The book's median gap between
+trading days is exactly 7 and its median holding period is 42 days.
+
 ## 4. The agents (who does what, and what none of them may do)
 
 Deterministic code makes every buy and sell. The language models research,
