@@ -9,6 +9,7 @@ priv_b64.txt
 .env*
 config/account.local.json
 state/kalshi_paper_decisions.jsonl
+state/perps_decisions.jsonl
 state/kalshi_paper_state.json
 state/kalshi_paper_loop.log
 
