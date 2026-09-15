@@ -50,6 +50,39 @@
       "profile": "balanced",
       "note": "70% the four-asset long book + 30% the residual cross-sectional momentum sleeve. Out of sample 2021-10 to 2025-06 this scored Sharpe 1.694 against the incumbent core's 1.255 at the same 15.2% return, with drawdown -10.12% to -8.64% and P(blend beats core) 0.947. It FAILS the deflated-Sharpe gate at 0.695 against 0.95 because 1,119 out-of-sample days need 2.33, so it is a paper book only. See research/kalshi_perps/families/xsmom_residual.md. The band is 'auto' (0.6 x the weight step at 20 names = 0.006): a fixed 3% band would leave this book holding only its four core legs.",
       "rebalance_band": "auto"
+    },
+    "growth": {
+      "strategy": "blend_core_sleeve",
+      "params": {
+        "target_vol": 0.18,
+        "sleeve_weight": 0.4
+      },
+      "universe": [
+        "btc",
+        "eth",
+        "xrp",
+        "silver",
+        "gold",
+        "sol",
+        "zec",
+        "near",
+        "hype",
+        "vvv",
+        "ada",
+        "sui",
+        "bch",
+        "ltc",
+        "doge",
+        "bnb",
+        "link",
+        "wld",
+        "kshib",
+        "aave"
+      ],
+      "bankroll_usd": 250,
+      "profile": "growth",
+      "rebalance_band": "auto",
+      "note": "The owner said risk is acceptable, so this is the same blend with the dial turned up: an 18% volatility target and a 40% sleeve. Out of sample 2021-10 to 2025-06 that scored 21.96% a year at 12.76% realised volatility and a -13.14% drawdown, Sharpe 1.721 \u2014 about the same risk as the plain core book at a 12% target, for half again the return. P(better than its own core) 0.869. It carries EVERY caveat of the 12% version and multiplies them: one regime, a well-published and likely crowded effect, and a failed deflated-Sharpe gate. Raising the target scales the loss too if the edge is not real."
     }
   }
 }

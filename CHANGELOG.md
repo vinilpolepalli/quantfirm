@@ -6,6 +6,49 @@ moved and what evidence backs it.
 
 ---
 
+## 0.2.4 — 2026-09-15 — three paper books, and a daily report the owner actually reads
+
+### Added
+
+**A third paper book, `growth`, because the owner said risk is acceptable.** Same
+blend, dial turned up: an 18% volatility target and a 40% sleeve. Measured out of
+sample 2021-10 to 2025-06 before it was started, not after:
+
+| config | return | volatility | max drawdown | Sharpe |
+|---|---:|---:|---:|---:|
+| core only, 12% target | 15.37% | 12.25% | −10.12% | 1.255 |
+| blend, 12% target, 30% sleeve | 15.22% | 8.99% | −8.64% | 1.694 |
+| blend, 18% target, 40% sleeve | 21.96% | 12.76% | −13.14% | 1.721 |
+| blend, 24% target, 40% sleeve | 27.22% | 16.44% | −16.51% | 1.655 |
+
+The 18% blend carries about the same realised risk as the plain core book at a
+12% target and earns half again as much. The sleeve weight optimum is 40% at
+every volatility level, so the dial that matters is the target, not the mix.
+P(better than its own core) 0.869. Every caveat of the 12% version applies and
+scales with it: one regime, a well-published and likely crowded effect, and a
+failed deflated-Sharpe gate. Raising the target multiplies the loss too if the
+edge is not real.
+
+**A daily email report** (`scripts/perps_daily_report.py`). Reads every book's
+status, compares against yesterday's snapshot in
+`state/perps_report_history.jsonl`, and prints JSON with `subject`, `html` and
+`text`. The HTML is inline-styled and table-based because email clients strip
+`<style>` blocks; Markdown is deliberately not used, since an email client
+renders HTML and a raw asterisk is not a bullet. A daily routine at 02:00 UTC
+ticks the books, runs the script and sends the mail.
+
+### Fixed
+
+**The paper engine's rebalance band was fixed at 0.03** while a twenty-name book
+wants 1–2% per leg, so a wide book held only its four core legs and was quietly
+the incumbent at 70% size. The band now scales with the universe and is still
+exactly 0.03 at four names. **The CLI's `--universe` defaulted to the research
+four** rather than to nothing, so it was indistinguishable from "not given" and
+overrode a book's own universe; it defaults to None now and resolves to the
+research four, leaving every published number byte-identical.
+
+---
+
 ## 0.2.3 — 2026-09-15 — a sleeve that improves the book, and four defects that nearly hid it
 
 ### Added
