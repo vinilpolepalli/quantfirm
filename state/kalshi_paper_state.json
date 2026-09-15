@@ -1,10 +1,10 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 237.16799999999975,
+  "shadow": 226.61799999999974,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 270.7224049999967
+  "live": 260.1768049999967
  },
  "open": [
   {
@@ -104,6 +104,34 @@
    "adapter": "live",
    "tag": "favorite",
    "order_id": "01a0a28e-a320-7215-90e4-e057544b791d"
+  },
+  {
+   "ticker": "KXETH15M-26SEP142100-00",
+   "metal": "eth",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.8,
+   "fee": 0.15,
+   "fair": 0.8,
+   "entry_ts": 1789433756,
+   "close_ts": 1789434000,
+   "adapter": "shadow",
+   "tag": "crypto_fav",
+   "order_id": null
+  },
+  {
+   "ticker": "KXETH15M-26SEP142100-00",
+   "metal": "eth",
+   "side": "yes",
+   "count": 13,
+   "fill_price": 0.8,
+   "fee": 0.1456,
+   "fair": 0.8,
+   "entry_ts": 1789433756,
+   "close_ts": 1789434000,
+   "adapter": "live",
+   "tag": "crypto_fav",
+   "order_id": "01a0a290-4518-7a91-9dce-83aeaa9fecaa"
   }
  ],
  "n_settled": 1608,
@@ -128,7 +156,7 @@
    "live": 311.53320499999677
   }
  },
- "updated": "2026-09-15T00:55:56Z",
+ "updated": "2026-09-15T00:56:25Z",
  "metals": [
   "gold",
   "silver",
