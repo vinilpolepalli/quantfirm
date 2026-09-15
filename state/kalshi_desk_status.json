@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T05:04:29Z",
+ "ts": "2026-09-15T05:20:01Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -13,54 +13,54 @@
  "bankroll": 250.0,
  "live": true,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "supervisor: alive",
  "cash": {
-  "shadow": 301.53499999999957,
+  "shadow": 275.97499999999957,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 330.6506049999965
+  "live": 305.4636049999965
  },
  "realized": {
-  "shadow": 62.335000000000065,
+  "shadow": 33.99500000000007,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 92.11380499999962
+  "live": 64.1489049999996
  },
  "n_open": 2,
  "open": [
   {
-   "metal": "wti",
+   "metal": "silver",
    "side": "no",
-   "count": 13,
-   "ticker": "KXWTI15M-26SEP150115-15",
-   "fill_price": 0.82,
+   "count": 10,
+   "ticker": "KXSILVER15M-26SEP150130-30",
+   "fill_price": 0.79,
    "adapter": "shadow"
   },
   {
-   "metal": "wti",
+   "metal": "silver",
    "side": "no",
-   "count": 13,
-   "ticker": "KXWTI15M-26SEP150115-15",
-   "fill_price": 0.8200000000000001,
+   "count": 10,
+   "ticker": "KXSILVER15M-26SEP150130-30",
+   "fill_price": 0.79,
    "adapter": "live"
   }
  ],
- "n_settled": 1823,
- "updated": "2026-09-15T05:04:27Z",
+ "n_settled": 1837,
+ "updated": "2026-09-15T05:20:01Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
  "poly_paper_cash": 308.4229999999995,
  "div_paper_loop": "alive",
  "div_paper_n_open": 1,
- "div_paper_cash": 421.20599999999934,
- "div_paper_realized": 188.21599999999992,
+ "div_paper_cash": 413.8159999999993,
+ "div_paper_realized": 181.03599999999994,
  "poly_paper": {
   "day": "2026-09-15",
   "live_crypto": {
-   "n": 40,
-   "pnl": 16.46,
-   "hit": 0.825
+   "n": 42,
+   "pnl": -8.83,
+   "hit": 0.786
   },
   "poly_paper": {
    "n": 40,
