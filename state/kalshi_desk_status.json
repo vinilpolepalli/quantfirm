@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T14:17:14Z",
+ "ts": "2026-09-15T14:32:04Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -11,9 +11,9 @@
   "eth"
  ],
  "bankroll": 250.0,
- "live": true,
+ "live": false,
  "kill_switch": false,
- "supervisor": "alive",
+ "supervisor": "down",
  "cash": {
   "shadow": 261.31599999999935,
   "demo": 250.0,
@@ -29,15 +29,15 @@
  "n_open": 0,
  "open": [],
  "n_settled": 2321,
- "updated": "2026-09-15T14:17:14Z",
+ "updated": "2026-09-15T14:32:04Z",
  "started": "2026-09-12T00:46:58Z",
- "poly_paper_loop": "alive",
+ "poly_paper_loop": "down",
  "poly_paper_n_open": 0,
- "poly_paper_cash": 308.4229999999995,
- "div_paper_loop": "alive",
+ "poly_paper_cash": null,
+ "div_paper_loop": "down",
  "div_paper_n_open": 0,
- "div_paper_cash": 347.29599999999925,
- "div_paper_realized": 97.29599999999988,
+ "div_paper_cash": null,
+ "div_paper_realized": null,
  "poly_paper": {
   "day": "2026-09-15",
   "live_crypto": {

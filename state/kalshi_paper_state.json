@@ -29,7 +29,7 @@
    "live": 311.53320499999677
   }
  },
- "updated": "2026-09-15T14:17:14Z",
+ "updated": "2026-09-15T14:32:04Z",
  "metals": [
   "gold",
   "silver",
@@ -40,5 +40,5 @@
   "eth"
  ],
  "strategy": "desk_book",
- "live": true
+ "live": false
 }
