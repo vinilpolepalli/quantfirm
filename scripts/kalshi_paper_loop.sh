@@ -89,7 +89,12 @@ while true; do
     age=$(( now - mtime ))
     if [ "$age" -gt "$STALE_S" ]; then
       log "WATCHDOG: no decision for ${age}s -> killing engine pid $engine_pid"
-      kill -9 "$engine_pid" 2>/dev/null
+      # SIGKILL on `timeout` does not reap its python child; the orphan
+      # keeps --live and a new session then double-clips the same window.
+      for c in $(pgrep -P "$engine_pid" 2>/dev/null); do
+        kill -9 "$c" 2>/dev/null || true
+      done
+      kill -9 "$engine_pid" 2>/dev/null || true
       break
     fi
   done

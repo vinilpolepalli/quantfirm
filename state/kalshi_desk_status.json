@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-15T01:21:04Z",
+ "ts": "2026-09-15T07:09:14Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -15,121 +15,121 @@
  "kill_switch": false,
  "supervisor": "alive",
  "cash": {
-  "shadow": 237.41599999999968,
+  "shadow": 265.81499999999943,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 262.5772049999967
+  "live": 293.6772049999962
  },
  "realized": {
-  "shadow": 54.84800000000001,
+  "shadow": 60.94500000000005,
   "demo": 0.0,
   "maker": 1.6499999999999968,
-  "live": 80.35200499999966
+  "live": 89.45580499999954
  },
  "n_open": 10,
  "open": [
   {
-   "metal": "btc",
-   "side": "yes",
-   "count": 17,
-   "ticker": "KXBTC15M-26SEP142130-30",
-   "fill_price": 0.75,
-   "adapter": "shadow"
-  },
-  {
-   "metal": "btc",
-   "side": "yes",
-   "count": 17,
-   "ticker": "KXBTC15M-26SEP142130-30",
-   "fill_price": 0.75,
-   "adapter": "live"
-  },
-  {
    "metal": "copper",
-   "side": "yes",
+   "side": "no",
    "count": 9,
-   "ticker": "KXCOPPER15M-26SEP142130-30",
+   "ticker": "KXCOPPER15M-26SEP150315-15",
    "fill_price": 0.75,
    "adapter": "shadow"
   },
   {
    "metal": "copper",
-   "side": "yes",
+   "side": "no",
    "count": 9,
-   "ticker": "KXCOPPER15M-26SEP142130-30",
+   "ticker": "KXCOPPER15M-26SEP150315-15",
    "fill_price": 0.75,
    "adapter": "live"
   },
   {
-   "metal": "wti",
-   "side": "yes",
-   "count": 9,
-   "ticker": "KXWTI15M-26SEP142130-30",
-   "fill_price": 0.77,
+   "metal": "eth",
+   "side": "no",
+   "count": 17,
+   "ticker": "KXETH15M-26SEP150315-15",
+   "fill_price": 0.75,
    "adapter": "shadow"
   },
   {
-   "metal": "wti",
-   "side": "yes",
+   "metal": "eth",
+   "side": "no",
+   "count": 17,
+   "ticker": "KXETH15M-26SEP150315-15",
+   "fill_price": 0.75,
+   "adapter": "live"
+  },
+  {
+   "metal": "silver",
+   "side": "no",
    "count": 9,
-   "ticker": "KXWTI15M-26SEP142130-30",
+   "ticker": "KXSILVER15M-26SEP150315-15",
+   "fill_price": 0.76,
+   "adapter": "shadow"
+  },
+  {
+   "metal": "silver",
+   "side": "no",
+   "count": 9,
+   "ticker": "KXSILVER15M-26SEP150315-15",
    "fill_price": 0.76,
    "adapter": "live"
   },
   {
    "metal": "gold",
-   "side": "yes",
-   "count": 22,
-   "ticker": "KXGOLD15M-26SEP142130-30",
-   "fill_price": 0.83,
+   "side": "no",
+   "count": 9,
+   "ticker": "KXGOLD15M-26SEP150315-15",
+   "fill_price": 0.75,
    "adapter": "shadow"
   },
   {
    "metal": "gold",
-   "side": "yes",
-   "count": 22,
-   "ticker": "KXGOLD15M-26SEP142130-30",
-   "fill_price": 0.82,
+   "side": "no",
+   "count": 9,
+   "ticker": "KXGOLD15M-26SEP150315-15",
+   "fill_price": 0.75,
    "adapter": "live"
   },
   {
-   "metal": "silver",
-   "side": "yes",
-   "count": 24,
-   "ticker": "KXSILVER15M-26SEP142130-30",
-   "fill_price": 0.913,
+   "metal": "btc",
+   "side": "no",
+   "count": 15,
+   "ticker": "KXBTC15M-26SEP150315-15",
+   "fill_price": 0.75,
    "adapter": "shadow"
   },
   {
-   "metal": "silver",
-   "side": "yes",
-   "count": 24,
-   "ticker": "KXSILVER15M-26SEP142130-30",
-   "fill_price": 0.913,
+   "metal": "btc",
+   "side": "no",
+   "count": 15,
+   "ticker": "KXBTC15M-26SEP150315-15",
+   "fill_price": 0.75,
    "adapter": "live"
   }
  ],
- "n_settled": 1633,
- "updated": "2026-09-15T01:21:03Z",
+ "n_settled": 1931,
+ "updated": "2026-09-15T07:09:12Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
- "poly_paper_n_open": 2,
- "poly_paper_cash": 323.28299999999945,
+ "poly_paper_n_open": 0,
+ "poly_paper_cash": 308.4229999999995,
  "div_paper_loop": "alive",
  "div_paper_n_open": 3,
- "div_paper_cash": 352.4369999999994,
- "div_paper_realized": 147.66699999999997,
+ "div_paper_cash": 332.3859999999993,
+ "div_paper_realized": 124.36599999999989,
  "poly_paper": {
   "day": "2026-09-15",
   "live_crypto": {
-   "n": 12,
-   "pnl": 23.56,
-   "hit": 0.917
+   "n": 56,
+   "pnl": -5.82,
+   "hit": 0.786
   },
   "poly_paper": {
-   "n": 10,
-   "pnl": -13.84,
-   "hit": 0.6
+   "n": 40,
+   "pnl": -61.05,
+   "hit": 0.575
   },
   "poly_ahead": false,
   "ready": true
