@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-16T12:57:05+00:00",
+ "ts": "2026-09-16T15:19:40+00:00",
  "book": "candidate",
  "adapter": "shadow",
  "strategy": "blend_core_sleeve",
@@ -43,14 +43,14 @@
   "consecutive_loss_days_pause": 5
  },
  "bankroll0": 250,
- "equity": 250.25,
+ "equity": 249.92,
  "cash": 249.92,
  "realized": 0.0,
  "fees": 0.0935,
  "funding": -0.01,
  "interest": 0.0218,
  "peak_equity": 250.25,
- "drawdown": 0.0,
+ "drawdown": -0.0013,
  "positions": [
   {
    "asset": "btc",
@@ -58,8 +58,8 @@
    "contracts": 2.0,
    "avg_price": 7.683,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 7.5941,
-   "weight": 0.0607
+   "mark": null,
+   "weight": 0.0615
   },
   {
    "asset": "eth",
@@ -67,8 +67,8 @@
    "contracts": 5.0,
    "avg_price": 2.4729,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 2.4047,
-   "weight": 0.048
+   "mark": null,
+   "weight": 0.0495
   },
   {
    "asset": "silver",
@@ -76,8 +76,8 @@
    "contracts": 2.0,
    "avg_price": 6.3264,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 6.4693,
-   "weight": 0.0517
+   "mark": null,
+   "weight": 0.0506
   },
   {
    "asset": "gold",
@@ -85,8 +85,8 @@
    "contracts": 6.0,
    "avg_price": 4.284,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 4.3484,
-   "weight": 0.1043
+   "mark": null,
+   "weight": 0.1028
   },
   {
    "asset": "near",
@@ -94,8 +94,8 @@
    "contracts": 1.0,
    "avg_price": 2.3702,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 2.4739,
-   "weight": 0.0099
+   "mark": null,
+   "weight": 0.0095
   },
   {
    "asset": "vvv",
@@ -103,8 +103,8 @@
    "contracts": 1.0,
    "avg_price": 2.1971,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 2.278,
-   "weight": 0.0091
+   "mark": null,
+   "weight": 0.0088
   },
   {
    "asset": "bch",
@@ -112,8 +112,8 @@
    "contracts": -1.0,
    "avg_price": 2.2128,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 2.1805,
-   "weight": -0.0087
+   "mark": null,
+   "weight": -0.0089
   },
   {
    "asset": "bnb",
@@ -121,13 +121,13 @@
    "contracts": 7.0,
    "avg_price": 0.7185,
    "opened": "2026-09-15T11:50:14+00:00",
-   "mark": 0.7124,
-   "weight": 0.0199
+   "mark": null,
+   "weight": 0.0201
   }
  ],
  "gross_leverage": 0.312,
- "halted": "",
- "kill_switch": false,
- "n_ticks": 9,
+ "halted": "kill_switch",
+ "kill_switch": true,
+ "n_ticks": 11,
  "started": "2026-09-15T11:50:06+00:00"
 }

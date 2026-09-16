@@ -132,6 +132,40 @@ adverse move liquidates BTC, and every published number on retail perps
 says anything above ~2x is a coin flip over a quarter. The risk policy caps
 gross leverage at 1.0–2.0x by rung.
 
+## 0. HALTED — 2026-09-16
+
+The owner asked to halt perps on 2026-09-16 and the desk is stopped. This is
+not a risk event: nothing was ever live, `live` was already `false`, and no
+money was at risk at any point.
+
+Four independent stops, so that removing any one of them does not silently
+restart the desk:
+
+| layer | state |
+|---|---|
+| `state/KILL_SWITCH_PERPS` | present — the engine reads it every tick and refuses to trade |
+| `config/perps.json` | `status: HALTED`, `live: false` |
+| `.github/workflows/perps.yml` | daily `schedule:` commented out; `workflow_dispatch` kept for manual inspection |
+| routines (daily digest, 4-hourly alert, weekly watch) | all three disabled |
+
+**The paper positions are frozen, not liquidated.** A halt stops new trading; it
+does not close what is open, and on a paper book there is nothing to close. The
+books stopped here:
+
+| book | equity | legs |
+|---|---:|---:|
+| incumbent | $249.75 | 1 (eth) |
+| candidate | $249.92 | 8 |
+| growth | $249.83 | 11 |
+
+All three within a quarter of a percent of their $250 start after two days,
+which means nothing in either direction — two days is not a result.
+
+**To restart**, all four have to be undone: delete `state/KILL_SWITCH_PERPS`,
+set `status` back in `config/perps.json`, uncomment the workflow schedule, and
+re-enable the routines. None of that promotes anything to live; the promotion
+gate in §7 is unchanged and was never met.
+
 ## 1a. Funding went live on BTC, and the desk noticed
 
 Measured 2026-09-15 from Kalshi's own `funding_rates/historical`, which is what
