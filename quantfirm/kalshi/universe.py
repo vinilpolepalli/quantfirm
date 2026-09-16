@@ -81,16 +81,23 @@ CRYPTO_LIVE = ("btc", "eth")
 CRYPTO_PAPER = ("doge", "xrp", "near")
 CRYPTO_OVERLAY = CRYPTO_LIVE + tuple(SERIES_CRYPTO_EXTRA.values())
 
+# Five commodity 15m names. Live entries (including BTC/ETH) sit when
+# none of these have an open window — weekend Sat ~04:00Z→Mon ~03:15Z
+# and Thu 07:00–09:00Z maintenance. Treat the API as truth, not a clock.
+COMMODITY_ASSETS = ("gold", "silver", "copper", "wti", "natgas")
+
 # Live book: five commodities + BTC + ETH. Each name is its own clip.
-PAPER_ASSETS = ("gold", "silver", "copper", "wti", "natgas") + CRYPTO_LIVE
+PAPER_ASSETS = COMMODITY_ASSETS + CRYPTO_LIVE
 
 # Live canary on the 24/7 supervisor. Whole book waits the first 3
 # minutes of each 15m window. Commodities: 8% FLB ≥75¢ after that (no
 # Poly 15m book). BTC and ETH: 4% / ≥75¢ after the wait, sit if
 # Polymarket's 15m favorite disagrees. All seven names can clip in the
-# same window (no one-slot gold/silver or WTI/natgas gate). Sit out
-# 60–74¢, longshots, fee-eat (99¢ last ticks), and live IOC dust
-# under 4 lots. Risky mixes stay registered as yolo_* / nuke_lock
+# same window (no one-slot gold/silver or WTI/natgas gate) while
+# commodity 15m series are open. When those series are dark, live sits
+# the whole book (BTC/ETH included). Poly/div paper keep running.
+# Sit out 60–74¢, longshots, fee-eat (99¢ last ticks), and live IOC
+# dust under 4 lots. Risky mixes stay registered as yolo_* / nuke_lock
 # and off this loop.
 PAPER_STRATEGY = "desk_book"
 
