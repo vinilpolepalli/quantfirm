@@ -1,58 +1,59 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 16.8395,
- "ticks": 5,
+ "accrued": 21.6221,
+ "ticks": 6,
  "positions": [
-  {
-   "ticker": "KXAAAGASDMN-26SEP17-4.2750",
-   "capital": 51.4,
-   "size": 51.9,
-   "share": 0.013,
-   "rate_per_hour": 0.1063,
-   "excluded": false,
-   "accrued": 3.0556,
-   "ends": "2026-09-17T03:59:00Z"
-  },
   {
    "ticker": "KXAAAGASDSC-26SEP17-4.1050",
    "capital": 51.4,
-   "size": 73.4,
-   "share": 0.0901,
-   "rate_per_hour": 0.7384,
+   "size": 79.1,
+   "share": 0.11,
+   "rate_per_hour": 0.9009,
    "excluded": false,
-   "accrued": 4.5096,
+   "accrued": 5.7291,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDTN-26SEP17-4.0700",
    "capital": 51.4,
-   "size": 183.6,
-   "share": 0.2397,
-   "rate_per_hour": 2.1565,
+   "size": 119.5,
+   "share": 0.2238,
+   "rate_per_hour": 2.0132,
    "excluded": false,
-   "accrued": 6.3252,
+   "accrued": 9.0504,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDCO-26SEP17-4.2650",
    "capital": 51.4,
-   "size": 63.5,
-   "share": 0.0504,
-   "rate_per_hour": 0.4128,
+   "size": 61.9,
+   "share": 0.0756,
+   "rate_per_hour": 0.619,
    "excluded": false,
-   "accrued": 1.451,
+   "accrued": 2.2889,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
-   "ticker": "KXTEMPMIAH-26SEP1617-T87.99",
+   "ticker": "KXAAAGASDIL-26SEP17-4.8100",
    "capital": 51.4,
-   "size": 58.4,
-   "share": 0.0692,
-   "rate_per_hour": 7.1766,
+   "size": 109.4,
+   "share": 0.2038,
+   "rate_per_hour": 2.8643,
    "excluded": false,
    "accrued": 0.0,
-   "ends": "2026-09-16T21:00:00Z",
-   "opened": "2026-09-16T20:25:33.773842+00:00"
+   "ends": "2026-09-17T03:59:00Z",
+   "opened": "2026-09-16T21:46:46.955768+00:00"
+  },
+  {
+   "ticker": "KX30YMORTW-26SEP17-T6.94",
+   "capital": 51.4,
+   "size": 244.8,
+   "share": 0.5222,
+   "rate_per_hour": 2.0494,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-17T15:59:00Z",
+   "opened": "2026-09-16T21:46:46.955768+00:00"
   }
  ],
  "history": [
@@ -90,11 +91,18 @@
    "total": 16.8395,
    "held": 5,
    "interval_h": 2.646
+  },
+  {
+   "t": "2026-09-16T21:46:46.955768+00:00",
+   "earned": 4.7826,
+   "total": 21.6221,
+   "held": 5,
+   "interval_h": 1.354
   }
  ],
- "last_tick": "2026-09-16T20:25:33.773842+00:00",
+ "last_tick": "2026-09-16T21:46:46.955768+00:00",
  "capital": 257.0,
  "last_email": "2026-09-16T16:18:35.072722+00:00",
  "verdict": "INSUFFICIENT",
- "verdict_reason": "4.2h of data, need 48h - early ticks over-read badly"
+ "verdict_reason": "5.5h of data, need 48h - early ticks over-read badly"
 }
