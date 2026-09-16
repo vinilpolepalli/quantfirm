@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Paper-only DOGE/XRP/NEAR 15m sleeve (Kalshi).
+# SAT: check-in will not restart this loop. Owner is on live desk_book.
 #
 # Same overlay as live crypto: wait 3 min, ≥75¢ favorite, 4% of $250.
 # SOL/HYPE/BNB/ZEC 15m are red or one-week flips and are not in this sleeve.
