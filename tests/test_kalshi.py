@@ -17,8 +17,8 @@ from quantfirm.kalshi.strategies import (crypto_fav, desk_book, favorite_blind,
                                          late_lock, model_fav, one_pct,
                                          poly_book, poly_confirm, registry)
 from quantfirm.kalshi.strategy import Params, decide
-from quantfirm.kalshi.universe import (BANKROLL, LIVE_SERIES, PAPER_ASSETS,
-                                         PAPER_STRATEGY, SERIES,
+from quantfirm.kalshi.universe import (BANKROLL, COMMODITY_ASSETS, LIVE_SERIES,
+                                         PAPER_ASSETS, PAPER_STRATEGY, SERIES,
                                          CRYPTO_LIVE, CRYPTO_PAPER)
 
 
@@ -626,11 +626,20 @@ class TestNewStrategies(unittest.TestCase):
         self.assertEqual(sig.parameters["metals"].default, PAPER_ASSETS)
 
     def test_open_count_follows_paper_assets(self):
-        from quantfirm.kalshi.runtime import count_open_markets
-        src = inspect.getsource(count_open_markets)
+        from quantfirm.kalshi.runtime import (count_open_markets,
+                                             probe_open_markets)
+        src = (inspect.getsource(count_open_markets)
+               + inspect.getsource(probe_open_markets))
         self.assertIn("PAPER_ASSETS", src)
         self.assertIn("LIVE_SERIES", src)
         self.assertNotIn("for series in SERIES:", src)
+
+    def test_commodity_assets_are_the_five_names(self):
+        self.assertEqual(COMMODITY_ASSETS,
+                         ("gold", "silver", "copper", "wti", "natgas"))
+        self.assertEqual(PAPER_ASSETS, COMMODITY_ASSETS + ("btc", "eth"))
+        self.assertNotIn("btc", COMMODITY_ASSETS)
+        self.assertNotIn("eth", COMMODITY_ASSETS)
 
 
 class TestDiversifyAndHalt(unittest.TestCase):
@@ -1207,6 +1216,99 @@ class TestCashoutReplay(unittest.TestCase):
             body = f.read()
         self.assertNotIn("maybe_bank_sweep", body)
         self.assertNotIn("run_sweep", body)
+
+    def test_live_tick_sits_when_commodities_dark(self):
+        from quantfirm.kalshi.paper import PaperEngine
+        from quantfirm.kalshi.strategy import Params
+        with tempfile.TemporaryDirectory() as tmp:
+            eng = PaperEngine(
+                params=Params(macro_blackout_et=()),
+                state_path=os.path.join(tmp, "s.json"),
+                log_path=os.path.join(tmp, "t.csv"),
+                decisions_path=os.path.join(tmp, "d.jsonl"),
+                metals=("gold", "btc"),
+                use_demo=False, maker=False)
+            eng.use_live = True
+            settled = {"n": 0}
+
+            def fake_settle():
+                settled["n"] += 1
+                return ["SETTLE leftover"]
+
+            eng.settle_due = fake_settle
+            with mock.patch("quantfirm.kalshi.runtime.live_commodity_dark",
+                            return_value=True):
+                notes = eng.tick()
+            self.assertTrue(any("commodity" in n and "dark" in n for n in notes))
+            self.assertIn("SETTLE leftover", notes)
+            self.assertEqual(settled["n"], 1)
+            with open(eng.decisions_path) as f:
+                rec = json.loads(f.readline())
+            self.assertEqual(rec["sit"], "commodity_dark")
+            with mock.patch("quantfirm.kalshi.runtime.live_commodity_dark",
+                            return_value=True):
+                notes2 = eng.tick()
+            self.assertFalse(any("commodity" in n and "dark" in n for n in notes2))
+            self.assertEqual(settled["n"], 2)
+            src = inspect.getsource(PaperEngine.tick)
+            self.assertIn("use_live", src)
+            self.assertIn("live_commodity_dark", src)
+            self.assertIn("settle_due", src)
+
+
+class TestCommodityHours(unittest.TestCase):
+    def _fake(self, open_series=(), boom=False):
+        class Fake:
+            def open_market_for_series(self, series):
+                if boom:
+                    raise RuntimeError("flake")
+                if series in open_series:
+                    return {"ticker": series + "-X"}
+                return None
+        return Fake()
+
+    def test_count_open_markets_live_ignores_crypto(self):
+        from quantfirm.kalshi.runtime import count_open_markets
+        fake = self._fake(open_series=("KXBTC15M", "KXETH15M"))
+        self.assertEqual(count_open_markets(fake, assets=PAPER_ASSETS), 2)
+        self.assertEqual(count_open_markets(fake, assets=COMMODITY_ASSETS), 0)
+
+    def test_count_open_markets_commodities_when_gold_open(self):
+        from quantfirm.kalshi.runtime import count_open_markets
+        fake = self._fake(open_series=("KXGOLD15M", "KXBTC15M"))
+        self.assertEqual(count_open_markets(fake, assets=COMMODITY_ASSETS), 1)
+        self.assertEqual(count_open_markets(fake, assets=PAPER_ASSETS), 2)
+
+    def test_open_count_universe_follows_live_env(self):
+        from quantfirm.kalshi.runtime import open_count_universe
+        old = os.environ.get("KALSHI_LIVE")
+        try:
+            os.environ["KALSHI_LIVE"] = "1"
+            self.assertEqual(open_count_universe(), COMMODITY_ASSETS)
+            os.environ["KALSHI_LIVE"] = "0"
+            self.assertEqual(open_count_universe(), PAPER_ASSETS)
+            os.environ.pop("KALSHI_LIVE", None)
+            self.assertEqual(open_count_universe(), PAPER_ASSETS)
+        finally:
+            if old is None:
+                os.environ.pop("KALSHI_LIVE", None)
+            else:
+                os.environ["KALSHI_LIVE"] = old
+
+    def test_live_commodity_dark_when_none_open(self):
+        from quantfirm.kalshi.runtime import live_commodity_dark
+        self.assertTrue(live_commodity_dark(self._fake()))
+        self.assertFalse(live_commodity_dark(
+            self._fake(open_series=("KXGOLD15M",))))
+        # Crypto-only is still dark for live. BTC/ETH stay on paper sleeves.
+        self.assertTrue(live_commodity_dark(
+            self._fake(open_series=("KXBTC15M", "KXETH15M"))))
+
+    def test_live_commodity_dark_fail_open_on_total_flake(self):
+        from quantfirm.kalshi.runtime import live_commodity_dark, probe_open_markets
+        fake = self._fake(boom=True)
+        self.assertEqual(probe_open_markets(fake, assets=COMMODITY_ASSETS), (0, 0))
+        self.assertFalse(live_commodity_dark(fake))
 
 
 class TestBankSweep(unittest.TestCase):

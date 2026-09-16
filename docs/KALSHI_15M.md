@@ -163,8 +163,12 @@ tournament, and it wires the live paper engine to the settlement feed.
 | `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | **live, 4%** |
 | `KXETH15M` | ETH | CF Benchmarks 60s average | large | **live, 4%** |
 
-Hours: commodity 15M books **close Sat ~04:00Z and reopen Mon ~03:15Z**.
-BTC/ETH stay open. Treat the API as truth. Fees unchanged: quadratic
+Hours: commodity 15M books **close Sat ~04:00Z and reopen Mon ~03:15Z**,
+and go dark **Thu 07:00–09:00Z** (exchange maintenance). BTC/ETH stay
+open on Kalshi. Treat the API as truth. **Live `desk_book` sits the
+whole book (BTC/ETH included)** when no commodity 15m window is open;
+the next live session starts when gold/silver/copper/wti/natgas print
+again. Poly/div paper sleeves keep running. Fees unchanged: quadratic
 taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
 Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.

@@ -12,7 +12,7 @@ import subprocess
 from datetime import datetime, timezone
 
 from .halt import kill_switch_tripped
-from .universe import BANKROLL, PAPER_ASSETS, PAPER_STRATEGY
+from .universe import BANKROLL, COMMODITY_ASSETS, PAPER_ASSETS, PAPER_STRATEGY
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PIDFILE = os.path.join(REPO, "state", "kalshi_paper_loop.pid")
@@ -72,8 +72,9 @@ def ensure_supervisor() -> str:
     os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
     os.chmod(LOOP, 0o755)
     env = os.environ.copy()
-    # Registered live book. Do not inherit a stale METALS/STRATEGY from a
-    # previous commodities-only session (that sat out weekend BTC).
+    # Registered live book. Do not inherit a stale METALS/STRATEGY.
+    # METALS stays the seven names; live entries sit separately when
+    # commodity 15m series are dark.
     env["METALS"] = ",".join(PAPER_ASSETS)
     env["STRATEGY"] = PAPER_STRATEGY
     env.setdefault("BANKROLL", str(int(BANKROLL)))
@@ -173,27 +174,70 @@ def ensure_div_paper() -> str:
     return "div_paper: WAS DEAD -> restarted (paper only, no live)"
 
 
-def count_open_markets(client=None) -> int:
-    """How many paper-book 15m series have an open window right now.
+def _live_env_on() -> bool:
+    return os.environ.get("KALSHI_LIVE", "0") in ("1", "true", "TRUE", "yes")
 
-    Counts PAPER_ASSETS (commodities + BTC + ETH). Weekend: gold/WTI
-    close Sat 04:00Z; crypto stays open and is enough to start a session.
+
+def open_count_universe() -> tuple[str, ...]:
+    """Which 15m names `open-count` should probe.
+
+    Live supervisor inherits KALSHI_LIVE=1, so a crypto-only weekend
+    (or Thu maintenance) does not start a live session. Poly/div force
+    KALSHI_LIVE=0 and still see BTC/ETH.
+    """
+    return COMMODITY_ASSETS if _live_env_on() else PAPER_ASSETS
+
+
+def probe_open_markets(client=None, assets=None) -> tuple[int, int]:
+    """(open_windows, successful_probes) over `assets`.
+
+    Default assets=PAPER_ASSETS (commodities + BTC + ETH). A probe that
+    throws is not successful — live sit fail-opens when probed==0.
     """
     from .client import KalshiClient
     from .universe import LIVE_SERIES, PAPER_ASSETS
+    names = PAPER_ASSETS if assets is None else tuple(assets)
     inv = {asset: ticker for ticker, asset in LIVE_SERIES.items()}
     c = client or KalshiClient("prod")
     n = 0
-    for asset in PAPER_ASSETS:
+    probed = 0
+    for asset in names:
         series = inv.get(asset)
         if not series:
             continue
         try:
-            if c.open_market_for_series(series):
-                n += 1
+            m = c.open_market_for_series(series)
+            probed += 1
         except Exception:
             continue
-    return n
+        if m:
+            n += 1
+    return n, probed
+
+
+def count_open_markets(client=None, assets=None) -> int:
+    """How many of `assets` 15m series have an open window right now.
+
+    Default PAPER_ASSETS (commodities + BTC + ETH). Live `open-count`
+    passes COMMODITY_ASSETS so weekend BTC/ETH is not enough to start
+    a live session. Poly/div keep the default.
+    """
+    from .universe import PAPER_ASSETS
+    names = PAPER_ASSETS if assets is None else tuple(assets)
+    return probe_open_markets(client=client, assets=names)[0]
+
+
+def live_commodity_dark(client=None) -> bool:
+    """True iff commodity 15m series are observably dark.
+
+    Fail-open: if every probe threw, return False so live does not sit
+    on a total API flake (same idea as supervisor open-count fail →
+    start anyway).
+    """
+    n, probed = probe_open_markets(client=client, assets=COMMODITY_ASSETS)
+    if probed == 0:
+        return False
+    return n == 0
 
 
 def write_desk_status(supervisor: str | None = None,
