@@ -41,22 +41,36 @@ PIDFILE = os.path.join(REPO, "state", "kalshi_paper_loop.pid")
 
 
 def supervisor_alive() -> bool:
-    """Check the PID file, not pgrep.
+    """Check the PID file, and verify the PID is REALLY our supervisor.
 
-    Regression: `pgrep -f kalshi_paper_loop.sh` also matches the /bin/sh that
-    is running that very pgrep, so it ALWAYS returned True and this check-in
-    reported "supervisor: alive" for a supervisor that had been dead for an
-    hour. Verify a real, live PID instead."""
+    Two false positives have bitten this check, in opposite ways:
+
+    1. `pgrep -f kalshi_paper_loop.sh` also matched the /bin/sh running that
+       very pgrep, so it ALWAYS returned True and the check-in reported
+       "supervisor: alive" for a supervisor dead for an hour.
+    2. Reading the pidfile and probing with `os.kill(pid, 0)` fixed that, but
+       a bare liveness probe cannot tell "my supervisor" from "some unrelated
+       process that inherited this PID". The container recycles and hands out
+       low PIDs again: on 2026-09-16 13:05:28 the check-in read pid 370 from a
+       stale pidfile, the probe succeeded against whatever now held 370, and
+       it reported "alive" — ten seconds later the keepalive found the desk
+       dead and restarted it. An hourly check-in that skips the restart on a
+       stale PID leaves the desk down for the whole hour.
+
+    So: confirm the process exists AND that its cmdline is the loop script.
+    Reading /proc also sidesteps `os.kill` raising EPERM for a live process
+    owned by another user, which the old code mapped to "dead"."""
     try:
         with open(PIDFILE) as f:
             pid = int(f.read().strip())
     except (OSError, ValueError):
         return False
     try:
-        os.kill(pid, 0)          # signal 0 = liveness probe, no effect
-        return True
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            cmdline = f.read().replace(b"\0", b" ").decode("utf-8", "replace")
     except OSError:
-        return False
+        return False             # no such process
+    return "kalshi_paper_loop.sh" in cmdline
 
 
 def ensure_supervisor() -> str:

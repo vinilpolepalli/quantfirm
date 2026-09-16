@@ -3,6 +3,7 @@ import csv
 import json
 import math
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -623,6 +624,64 @@ class TestCashRebuiltFromTradeLog(unittest.TestCase):
                 json.dump({"bankroll0": 500.0, "cash": {"maker": 123.0},
                            "open": []}, f)
             self.assertAlmostEqual(PaperState(sp).d["cash"]["maker"], 123.0)
+
+
+class TestSupervisorLiveness(unittest.TestCase):
+    """A bare `os.kill(pid, 0)` cannot tell OUR supervisor from an unrelated
+    process that inherited the PID. The container recycles and reissues low
+    PIDs, so a stale pidfile read as "alive" on 2026-09-16 13:05:28 and the
+    check-in skipped the restart; the keepalive found the desk dead seconds
+    later. A check-in that skips the restart loses the whole hour."""
+
+    @staticmethod
+    def _mod():
+        import importlib.util
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        spec = importlib.util.spec_from_file_location(
+            "ck", os.path.join(root, "scripts", "kalshi_desk_checkin.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def _probe(self, contents):
+        mod = self._mod()
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "pid")
+            with open(path, "w") as f:
+                f.write(contents)
+            mod.PIDFILE = path
+            return mod.supervisor_alive()
+
+    def test_live_but_unrelated_pid_is_not_our_supervisor(self):
+        # pid 1 always exists and is never the loop script
+        self.assertFalse(self._probe("1\n"))
+
+    def test_dead_pid(self):
+        self.assertFalse(self._probe("999999\n"))
+
+    def test_unparseable_pidfile(self):
+        self.assertFalse(self._probe("garbage\n"))
+
+    def test_missing_pidfile(self):
+        mod = self._mod()
+        with tempfile.TemporaryDirectory() as d:
+            mod.PIDFILE = os.path.join(d, "absent")
+            self.assertFalse(mod.supervisor_alive())
+
+    def test_matching_cmdline_is_alive(self):
+        mod = self._mod()
+        proc = subprocess.Popen(["bash", "-c",
+                                 "exec -a kalshi_paper_loop.sh sleep 30"])
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                path = os.path.join(d, "pid")
+                with open(path, "w") as f:
+                    f.write(f"{proc.pid}\n")
+                mod.PIDFILE = path
+                self.assertTrue(mod.supervisor_alive())
+        finally:
+            proc.kill()
+            proc.wait()
 
 
 def asdict_compat(p):

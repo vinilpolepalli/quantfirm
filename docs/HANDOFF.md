@@ -123,6 +123,31 @@ touch the supervisor, keep them passing. There is one known artifact of
 overlapping engines in the data: a double-entry on `KXGOLD15M-26SEP111115-15`
 (2026-09-11 15:16Z, two maker fills at 0.58 and 0.57, $21.25 total).
 
+### Supervisor liveness: two false positives, opposite directions (2026-09-16)
+
+`supervisor_alive()` decides whether the hourly check-in restarts the desk, so
+a false "alive" costs an entire hour of trading. It has now been wrong twice,
+each time in the opposite direction:
+
+| check | failure |
+| :--- | :--- |
+| `pgrep -f kalshi_paper_loop.sh` | matched the `/bin/sh` running that very pgrep, so it ALWAYS returned True — reported "alive" for a supervisor dead an hour |
+| pidfile + `os.kill(pid, 0)` | proves *a* process holds that PID, not that it is ours. The container recycles and reissues low PIDs |
+
+The second one fired at **13:05:28**: the check-in read a stale pid 370, the
+probe succeeded against whatever now held 370, and it printed
+`supervisor: alive`. Ten seconds later the keepalive's own check found the desk
+dead and restarted it. Had the keepalive not re-checked, the desk would have
+sat down until 14:05.
+
+The check now reads `/proc/<pid>/cmdline` and requires `kalshi_paper_loop.sh`
+in it. That also sidesteps `os.kill` raising EPERM for a live process owned by
+another user, which the previous code mapped to "dead".
+`TestSupervisorLiveness` pins all four cases.
+
+The generalisable bit: **"the process exists" and "my process is running" are
+different questions**, and a PID alone can only answer the first.
+
 ## 2b. Duty cycle — this environment cannot run the desk continuously
 
 Measured 2026-09-13, markets open: **10% uptime.** The engine ran 22:06-22:10,
