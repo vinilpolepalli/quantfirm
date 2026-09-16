@@ -488,3 +488,5 @@ cannot support the claim.
 * 2026-09-16T05:07Z (auto check-in). Maker +10.93 (4 fills, 3/4 won). Taker +55.66 (3). **Cumulative maker +219.12 (214 fills, hit 0.706 vs break-even 0.678, cushion +2.76pp, t=0.79).** t-history: 0.36 → 0.34 → 0.54 → 0.67 → 0.76 → 0.79.
 
 * 2026-09-16T05:16Z (auto check-in). Maker -7.31 (5 fills, 3/5 won). Taker -99.13 (3). **Cumulative maker +211.81 (219 fills, hit 0.703 vs break-even 0.678, cushion +2.52pp, t=0.72).** t-history: 0.34 → 0.54 → 0.67 → 0.76 → 0.79 → 0.72.
+
+* 2026-09-16T07:05Z (auto check-in). Maker -25.30 (2 fills, 1/2 won). Taker +9.06 (1). **Cumulative maker +186.51 (221 fills, hit 0.701 vs break-even 0.679, cushion +2.19pp, t=0.59).** t-history: 0.67 → 0.76 → 0.79 → 0.72 → 0.67 → 0.59.
