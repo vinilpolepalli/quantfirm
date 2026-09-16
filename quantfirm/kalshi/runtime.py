@@ -101,34 +101,68 @@ def poly_paper_alive() -> bool:
         return False
 
 
-def ensure_poly_paper() -> str:
-    """Paper-only Poly vs Kalshi sleeve. Never live."""
-    if kill_switch_tripped():
-        if poly_paper_alive():
-            return "poly_paper: alive (kill switch — not restarting)"
-        return "poly_paper: down (kill switch — not restarting)"
-    if poly_paper_alive():
-        return "poly_paper: alive"
-    if not os.path.isfile(POLY_LOOP):
-        return "poly_paper: missing loop script"
-    os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
+def _pidfile_pid(path: str) -> int | None:
     try:
-        os.chmod(POLY_LOOP, 0o755)
-        env = os.environ.copy()
-        env["KALSHI_LIVE"] = "0"
-        env["STRATEGY"] = "poly_book"
-        env["METALS"] = "btc,eth"
-        env.setdefault("BANKROLL", str(int(BANKROLL)))
-        env.setdefault("SESSION_MIN", "110")
-        log_path = os.path.join(REPO, "state", "kalshi_poly_paper_loop.log")
-        log_f = open(log_path, "a")
-        subprocess.Popen(
-            ["/bin/bash", POLY_LOOP],
-            cwd=REPO, start_new_session=True, env=env,
-            stdout=log_f, stderr=subprocess.STDOUT)
-    except Exception as e:
-        return f"poly_paper: failed ({e})"
-    return "poly_paper: WAS DEAD -> restarted (paper only, no live)"
+        with open(path) as f:
+            return int(f.read().strip())
+    except (OSError, ValueError):
+        return None
+
+
+def _cmdline(pid: int) -> str:
+    try:
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            return f.read().replace(b"\0", b" ").decode(errors="replace")
+    except OSError:
+        return ""
+
+
+def _kill_tree(pid: int) -> None:
+    """SIGKILL pid and descendants. Targeted PIDs only — never pkill -f."""
+    try:
+        kids = subprocess.run(
+            ["pgrep", "-P", str(pid)], capture_output=True, text=True)
+        for line in kids.stdout.split():
+            try:
+                _kill_tree(int(line))
+            except ValueError:
+                pass
+    except Exception:
+        pass
+    try:
+        os.kill(pid, 9)
+    except OSError:
+        pass
+
+
+def _stop_named_supervisor(pidfile: str, expect: str) -> bool:
+    """Stop one paper-sleeve bash loop if the pidfile matches `expect`.
+
+    Refuses to kill the live desk (`kalshi_paper_loop.sh`).
+    """
+    pid = _pidfile_pid(pidfile)
+    if pid is None:
+        return False
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    cmd = _cmdline(pid)
+    if expect not in cmd:
+        return False
+    _kill_tree(pid)
+    return True
+
+
+def ensure_poly_paper() -> str:
+    """Poly paper sleeve is sat. Owner is on live desk_book only.
+
+    Check-in still calls this so a stray loop is stopped, never restarted.
+    """
+    if poly_paper_alive() and _stop_named_supervisor(
+            POLY_PIDFILE, "kalshi_poly_paper_loop"):
+        return "poly_paper: stopped (owner sat paper; not restarting)"
+    return "poly_paper: off (not restarting)"
 
 
 def div_paper_alive() -> bool:
@@ -145,33 +179,11 @@ def div_paper_alive() -> bool:
 
 
 def ensure_div_paper() -> str:
-    """Paper-only DOGE/XRP/NEAR 15m sleeve. Never live."""
-    if kill_switch_tripped():
-        if div_paper_alive():
-            return "div_paper: alive (kill switch — not restarting)"
-        return "div_paper: down (kill switch — not restarting)"
-    if div_paper_alive():
-        return "div_paper: alive"
-    if not os.path.isfile(DIV_LOOP):
-        return "div_paper: missing loop script"
-    os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
-    try:
-        os.chmod(DIV_LOOP, 0o755)
-        env = os.environ.copy()
-        env["KALSHI_LIVE"] = "0"
-        env["STRATEGY"] = "desk_book"
-        env["METALS"] = "doge,xrp,near"
-        env.setdefault("BANKROLL", str(int(BANKROLL)))
-        env.setdefault("SESSION_MIN", "110")
-        log_path = os.path.join(REPO, "state", "kalshi_div_paper_loop.log")
-        log_f = open(log_path, "a")
-        subprocess.Popen(
-            ["/bin/bash", DIV_LOOP],
-            cwd=REPO, start_new_session=True, env=env,
-            stdout=log_f, stderr=subprocess.STDOUT)
-    except Exception as e:
-        return f"div_paper: failed ({e})"
-    return "div_paper: WAS DEAD -> restarted (paper only, no live)"
+    """DOGE/XRP/NEAR paper sleeve is sat. Owner is on live desk_book only."""
+    if div_paper_alive() and _stop_named_supervisor(
+            DIV_PIDFILE, "kalshi_div_paper_loop"):
+        return "div_paper: stopped (owner sat paper; not restarting)"
+    return "div_paper: off (not restarting)"
 
 
 def _live_env_on() -> bool:

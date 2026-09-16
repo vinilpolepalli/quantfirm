@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Paper-only Polymarket vs Kalshi 15m sleeve (BTC/ETH).
+# SAT: check-in will not restart this loop. Owner is on live desk_book.
 #
 # Poly picks the side (≥60¢ Up=YES / Down=NO). The engine *simulates*
 # that side on Kalshi if Kalshi also has it ≥60¢. Never sends Kalshi

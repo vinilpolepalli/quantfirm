@@ -1067,8 +1067,9 @@ class TestPolymarketTape(unittest.TestCase):
         self.assertEqual(PAPER_STRATEGY, "desk_book")
         from quantfirm.kalshi.runtime import ensure_poly_paper
         src = inspect.getsource(ensure_poly_paper)
-        self.assertIn('env["KALSHI_LIVE"] = "0"', src)
+        self.assertNotIn("Popen", src)
         self.assertNotIn("--live", src)
+        self.assertIn("not restarting", src)
 
     def test_poly_compare_and_engine_paths(self):
         from quantfirm.kalshi.cli import _engine_paths, _refuse_live_sleeve
@@ -1126,8 +1127,9 @@ class TestPolymarketTape(unittest.TestCase):
         self.assertNotIn("METALS=sol", loop)
         from quantfirm.kalshi.runtime import ensure_div_paper
         src = inspect.getsource(ensure_div_paper)
-        self.assertIn('env["KALSHI_LIVE"] = "0"', src)
+        self.assertNotIn("Popen", src)
         self.assertNotIn("--live", src)
+        self.assertIn("not restarting", src)
         from quantfirm.kalshi.universe import CRYPTO_LIVE, CRYPTO_PAPER, PAPER_ASSETS
         self.assertEqual(CRYPTO_PAPER, ("doge", "xrp", "near"))
         self.assertEqual(CRYPTO_LIVE, ("btc", "eth"))
@@ -1576,6 +1578,19 @@ class TestBankSweep(unittest.TestCase):
 
 
 class KillSwitchSupervisor(unittest.TestCase):
+    def test_stop_named_supervisor_refuses_live_loop(self):
+        from quantfirm.kalshi import runtime
+        with tempfile.TemporaryDirectory() as tmp:
+            pidfile = os.path.join(tmp, "p.pid")
+            with open(pidfile, "w") as f:
+                f.write("1\n")
+            with mock.patch.object(runtime, "_cmdline",
+                                   return_value="/bin/bash scripts/kalshi_paper_loop.sh"), \
+                 mock.patch.object(runtime, "_kill_tree") as kill:
+                self.assertFalse(runtime._stop_named_supervisor(
+                    pidfile, "kalshi_poly_paper_loop"))
+                kill.assert_not_called()
+
     def test_ensure_loops_do_not_restart_under_kill_switch(self):
         from quantfirm.kalshi import runtime
         with mock.patch.object(runtime, "kill_switch_tripped", return_value=True), \
