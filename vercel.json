@@ -1,4 +1,32 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "//": [
+    "The incentive collector commits state/*.json to main every 20 minutes (~72",
+    "commits/day), and the desk loops add more. Every push to a connected repo",
+    "CREATES a deployment, and the Hobby cap is 100 Deployments Created per Day",
+    "-- which this account blew through on 2026-09-16.",
+    "",
+    "deploymentEnabled turns off automatic deployments for main, which is the",
+    "only documented way to stop a deployment being created at all; it is",
+    "branch-scoped, with no path-scoped equivalent. dashboard/ is static HTML",
+    "that changes rarely, so it is redeployed deliberately from the Vercel",
+    "dashboard or CLI rather than on every state tick.",
+    "",
+    "ignoreCommand is kept for the branches that still deploy (PR previews). It",
+    "skips the BUILD when a commit does not touch dashboard/, which saves build",
+    "minutes -- but note it does NOT avoid the deployment count: a skipped build",
+    "still creates a deployment, which is why Vercel publishes a separate",
+    "'Skipped deployments per minute' rate limit. Root-relative pathspec so it",
+    "works whatever the configured root directory is; if HEAD^ is missing on a",
+    "shallow clone the command errors non-zero and the build proceeds, which is",
+    "the safe default."
+  ],
+
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ':/dashboard/'"
 }
