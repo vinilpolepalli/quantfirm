@@ -1619,3 +1619,111 @@ class KillSwitchSupervisor(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestDailyStopDerivedFromLog(unittest.TestCase):
+    """Ported from the metals desk. The stop used to read state['cash'], which
+    two concurrent engines corrupt via last-writer-wins saves; a real -9.38%
+    day read as -10.08% against a baseline taken from drifted cash and halted a
+    book for three hours. The same gate guards the `live` book here."""
+
+    @staticmethod
+    def _engine(tmp, rows, frac=0.1):
+        import csv as _csv
+        from quantfirm.kalshi.paper import PaperEngine, PaperState
+        from quantfirm.kalshi.strategy import Params as P
+        log = os.path.join(tmp, "trades.csv")
+        cols = ["settled_at", "adapter", "ticker", "metal", "side", "count",
+                "fill_price", "fee", "fair_at_entry", "result", "pnl", "tag",
+                "cash_after"]
+        with open(log, "w", newline="") as f:
+            w = _csv.DictWriter(f, fieldnames=cols)
+            w.writeheader()
+            for r in rows:
+                w.writerow({c: r.get(c, "") for c in cols})
+        e = PaperEngine.__new__(PaperEngine)
+        e.log_path = log
+        e.params = P(daily_stop_frac=frac)
+        e.state = PaperState(os.path.join(tmp, "state.json"), 500.0)
+        return e
+
+    def _today(self):
+        from datetime import datetime, timezone
+        return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    def test_ignores_corrupted_cash(self):
+        rows = [{"settled_at": "2026-09-10", "adapter": "live", "pnl": "57.51"},
+                {"settled_at": self._today(), "adapter": "live", "pnl": "-52.29"}]
+        with tempfile.TemporaryDirectory() as d:
+            e = self._engine(d, rows)
+            e.state.d["cash"]["live"] = 466.26
+            e.state.d["day_stop"] = {"date": self._today(),
+                                     "start": {"live": 518.55}}
+            self.assertTrue(e._entries_allowed()["live"],
+                            "-9.38% must not trip a 10% stop, whatever cash says")
+
+    def test_still_fires_on_a_real_breach(self):
+        rows = [{"settled_at": "2026-09-10", "adapter": "live", "pnl": "57.51"},
+                {"settled_at": self._today(), "adapter": "live", "pnl": "-60.00"}]
+        with tempfile.TemporaryDirectory() as d:
+            e = self._engine(d, rows)
+            e.state.d["cash"]["live"] = 900.0   # flattering cash must not rescue it
+            self.assertFalse(e._entries_allowed()["live"])
+
+    def test_books_independent(self):
+        rows = [{"settled_at": self._today(), "adapter": "live", "pnl": "-80"},
+                {"settled_at": self._today(), "adapter": "maker", "pnl": "+20"}]
+        with tempfile.TemporaryDirectory() as d:
+            a = self._engine(d, rows)._entries_allowed()
+        self.assertFalse(a["live"])
+        self.assertTrue(a["maker"])
+
+
+class TestOpenPositionsSurviveConcurrentSave(unittest.TestCase):
+    """Ported. A wholesale rewrite deleted the other engine's open positions:
+    two fills vanished before settling and never reached the trade log, so n,
+    hit rate and t were computed on an incomplete sample."""
+
+    @staticmethod
+    def _pos(**kw):
+        from quantfirm.kalshi.paper import PaperPosition
+        base = dict(ticker="KXGOLD15M-X", metal="gold", side="no", count=35,
+                    fill_price=0.79, fee=0.0, fair=0.16, entry_ts=1, close_ts=2,
+                    adapter="maker", tag="maker")
+        base.update(kw)
+        return PaperPosition(**base)
+
+    def test_second_engine_does_not_erase_the_first(self):
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "state.json")
+            a = PaperState(path)
+            a.open = [self._pos(), self._pos(ticker="KXSILVER15M-X",
+                                             metal="silver", count=32,
+                                             fill_price=0.81)]
+            a.save()
+            b = PaperState(path)
+            b.open = [self._pos(ticker="KXSILVER15M-Y", count=53,
+                                fill_price=0.52)]
+            b.save()
+            after = PaperState(path)
+            self.assertEqual(len(after.open), 3,
+                             "a concurrent save must not drop the other engine's fills")
+
+    def test_settled_not_resurrected(self):
+        from dataclasses import asdict as _ad
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "state.json")
+            a = PaperState(path); a.open = [self._pos()]; a.save()
+            b = PaperState(path); b.open = []
+            b.save(settled_keys={PaperState._pos_key(_ad(self._pos()))})
+            self.assertEqual(PaperState(path).open, [])
+
+    def test_identical_positions_do_not_duplicate(self):
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "state.json")
+            a = PaperState(path); a.open = [self._pos()]; a.save()
+            b = PaperState(path); b.open = [self._pos()]; b.save()
+            self.assertEqual(len(PaperState(path).open), 1)
