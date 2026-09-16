@@ -12,7 +12,10 @@
 #     (2026-09-11: wedged at 17:10Z with the process still alive and burned
 #     ~55 min because the supervisor only reacted to process exit.)
 #   * open-count flake         -> start the session anyway (do NOT sleep 10m
-#     and miss the window). Only sleep when the API says every series is dark.
+#     and miss the window). Live open-count is commodity series only, so
+#     sleep when gold/silver/copper/wti/natgas are dark even if BTC/ETH
+#     are open. Poly/div paper sleeves are sat; live open-count is
+#     commodity-only.
 #   * container restart        -> hourly check-in / 15-min timer re-launches
 #
 # Writes a PID file so liveness can be checked without pgrep self-matching.

@@ -163,8 +163,12 @@ tournament, and it wires the live paper engine to the settlement feed.
 | `KXBTC15M` | BTC | CF Benchmarks 60s average | ~1.8M | **live, 4%** |
 | `KXETH15M` | ETH | CF Benchmarks 60s average | large | **live, 4%** |
 
-Hours: commodity 15M books **close Sat ~04:00Z and reopen Mon ~03:15Z**.
-BTC/ETH stay open. Treat the API as truth. Fees unchanged: quadratic
+Hours: commodity 15M books **close Sat ~04:00Z and reopen Mon ~03:15Z**,
+and go dark **Thu 07:00–09:00Z** (exchange maintenance). BTC/ETH stay
+open on Kalshi. Treat the API as truth. **Live `desk_book` sits the
+whole book (BTC/ETH included)** when no commodity 15m window is open;
+the next live session starts when gold/silver/copper/wti/natgas print
+again. Poly/div paper sleeves are **off**. Fees unchanged: quadratic
 taker `ceil(0.07·C·P·(1−P))`, maker $0.
 
 Default paper book: **gold, silver, copper, WTI, natgas, BTC, ETH**.
@@ -308,9 +312,9 @@ python3 scripts/kalshi_oss_iterate.py                    # BTC+ETH both-green ba
 python3 scripts/kalshi_param_sweep.py                    # wait × 1¢ bar grid
 python3 scripts/kalshi_btc_wait_sweep.py                  # BTC longer waits (off live)
 python3 scripts/kalshi_eth_wait_sweep.py                  # ETH longer waits (off live)
-./scripts/kalshi_paper_loop.sh          # 24/7 supervisor, 5 commodities + BTC/ETH
-./scripts/kalshi_poly_paper_loop.sh   # paper-only Poly sleeve; never --live
-python scripts/kalshi_desk_checkin.py   # heal live + poly paper, commit heartbeat
+./scripts/kalshi_paper_loop.sh          # 24/7 live supervisor, 5 commodities + BTC/ETH
+# ./scripts/kalshi_poly_paper_loop.sh  # sat; do not restart
+python scripts/kalshi_desk_checkin.py   # heal live supervisor, commit heartbeat
 ```
 
 24/7 wiring is in `docs/KALSHI_ROUTINE.md`. Promotion bar is unchanged

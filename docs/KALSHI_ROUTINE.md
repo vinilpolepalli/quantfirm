@@ -13,9 +13,13 @@ agree. Sit out 60–74¢, longshots, 99¢ last ticks (fee-eat), and live
 IOC dust under 4 lots. Maker quotes off. `yolo_book` / `nuke_lock` /
 `longshot` stay registered and off this loop.
 
-Live canary is **on** 24/7 in this environment (`KALSHI_LIVE=1` in gitignored
-`.env.kalshi`). Real orders go out. Stop with `touch state/KILL_SWITCH_KALSHI`.
-Do not revert to paper-only on a stale timer prompt.
+Live canary is **on** in this environment (`KALSHI_LIVE=1` in gitignored
+`.env.kalshi`) while commodity 15m series are open. When those series
+are dark (weekend Sat ~04:00Z→Mon ~03:15Z, Thu 07:00–09:00Z), live
+sits the **whole book including BTC/ETH**. Poly/div paper sleeves are
+**off** — owner is on live `desk_book` only. Real orders go out when
+live is clipping. Stop with `touch state/KILL_SWITCH_KALSHI`. Do not
+revert to paper-only on a stale timer prompt.
 
 ## 1. Persistent supervisor (primary)
 
@@ -24,15 +28,16 @@ cd /path/to/quantfirm
 ./scripts/kalshi_paper_loop.sh
 ```
 
-110-minute LangGraph sessions, 90s sleep when every series is dark,
-watchdog if no decision for 5 minutes. Heal with:
+110-minute LangGraph sessions, 90s sleep when live commodity series are
+dark (crypto-only is not enough to start a live session), watchdog if
+no decision for 5 minutes. Heal with:
 
 ```bash
 python scripts/kalshi_desk_checkin.py
 ```
 
-Check-in also heals the **paper** Poly sleeve (`state/kalshi_poly_paper.pid`).
-That is not a second live agent.
+Check-in heals the **live** supervisor only. Poly/div paper sleeves
+are sat and are not restarted.
 
 ## 2. Cursor Cloud timer
 
@@ -61,10 +66,8 @@ Whole book waits first 3 min. Commodities 8% ≥75¢ after that. BTC and ETH: 4%
    Do not switch commodities back to 4% or to yolo_book.
    Do not last-minute lock crypto. Whole-book 3 min wait + crypto Poly
    confirm is the live overlay. All seven names can clip. Do not switch
-   the whole book to poly_book.
-   A separate paper sleeve (`scripts/kalshi_poly_paper_loop.sh`) still
-   shadows Poly vs Kalshi; compare at EOD with `poly-compare`. Do not
-   start a second live agent.
+   the whole book to poly_book. Poly/div paper sleeves are off; do not
+   restart them. Do not start a second live agent.
 6. Reply with: open windows, fills this window, shadow + live cash, realized,
    strategy name, universe, any halt. Owner handles Kalshi → BofA
    withdrawals; do not POST /portfolio/withdrawals.

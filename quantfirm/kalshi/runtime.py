@@ -12,7 +12,7 @@ import subprocess
 from datetime import datetime, timezone
 
 from .halt import kill_switch_tripped
-from .universe import BANKROLL, PAPER_ASSETS, PAPER_STRATEGY
+from .universe import BANKROLL, COMMODITY_ASSETS, PAPER_ASSETS, PAPER_STRATEGY
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PIDFILE = os.path.join(REPO, "state", "kalshi_paper_loop.pid")
@@ -72,8 +72,9 @@ def ensure_supervisor() -> str:
     os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
     os.chmod(LOOP, 0o755)
     env = os.environ.copy()
-    # Registered live book. Do not inherit a stale METALS/STRATEGY from a
-    # previous commodities-only session (that sat out weekend BTC).
+    # Registered live book. Do not inherit a stale METALS/STRATEGY.
+    # METALS stays the seven names; live entries sit separately when
+    # commodity 15m series are dark.
     env["METALS"] = ",".join(PAPER_ASSETS)
     env["STRATEGY"] = PAPER_STRATEGY
     env.setdefault("BANKROLL", str(int(BANKROLL)))
@@ -100,34 +101,68 @@ def poly_paper_alive() -> bool:
         return False
 
 
-def ensure_poly_paper() -> str:
-    """Paper-only Poly vs Kalshi sleeve. Never live."""
-    if kill_switch_tripped():
-        if poly_paper_alive():
-            return "poly_paper: alive (kill switch — not restarting)"
-        return "poly_paper: down (kill switch — not restarting)"
-    if poly_paper_alive():
-        return "poly_paper: alive"
-    if not os.path.isfile(POLY_LOOP):
-        return "poly_paper: missing loop script"
-    os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
+def _pidfile_pid(path: str) -> int | None:
     try:
-        os.chmod(POLY_LOOP, 0o755)
-        env = os.environ.copy()
-        env["KALSHI_LIVE"] = "0"
-        env["STRATEGY"] = "poly_book"
-        env["METALS"] = "btc,eth"
-        env.setdefault("BANKROLL", str(int(BANKROLL)))
-        env.setdefault("SESSION_MIN", "110")
-        log_path = os.path.join(REPO, "state", "kalshi_poly_paper_loop.log")
-        log_f = open(log_path, "a")
-        subprocess.Popen(
-            ["/bin/bash", POLY_LOOP],
-            cwd=REPO, start_new_session=True, env=env,
-            stdout=log_f, stderr=subprocess.STDOUT)
-    except Exception as e:
-        return f"poly_paper: failed ({e})"
-    return "poly_paper: WAS DEAD -> restarted (paper only, no live)"
+        with open(path) as f:
+            return int(f.read().strip())
+    except (OSError, ValueError):
+        return None
+
+
+def _cmdline(pid: int) -> str:
+    try:
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            return f.read().replace(b"\0", b" ").decode(errors="replace")
+    except OSError:
+        return ""
+
+
+def _kill_tree(pid: int) -> None:
+    """SIGKILL pid and descendants. Targeted PIDs only — never pkill -f."""
+    try:
+        kids = subprocess.run(
+            ["pgrep", "-P", str(pid)], capture_output=True, text=True)
+        for line in kids.stdout.split():
+            try:
+                _kill_tree(int(line))
+            except ValueError:
+                pass
+    except Exception:
+        pass
+    try:
+        os.kill(pid, 9)
+    except OSError:
+        pass
+
+
+def _stop_named_supervisor(pidfile: str, expect: str) -> bool:
+    """Stop one paper-sleeve bash loop if the pidfile matches `expect`.
+
+    Refuses to kill the live desk (`kalshi_paper_loop.sh`).
+    """
+    pid = _pidfile_pid(pidfile)
+    if pid is None:
+        return False
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    cmd = _cmdline(pid)
+    if expect not in cmd:
+        return False
+    _kill_tree(pid)
+    return True
+
+
+def ensure_poly_paper() -> str:
+    """Poly paper sleeve is sat. Owner is on live desk_book only.
+
+    Check-in still calls this so a stray loop is stopped, never restarted.
+    """
+    if poly_paper_alive() and _stop_named_supervisor(
+            POLY_PIDFILE, "kalshi_poly_paper_loop"):
+        return "poly_paper: stopped (owner sat paper; not restarting)"
+    return "poly_paper: off (not restarting)"
 
 
 def div_paper_alive() -> bool:
@@ -144,56 +179,77 @@ def div_paper_alive() -> bool:
 
 
 def ensure_div_paper() -> str:
-    """Paper-only DOGE/XRP/NEAR 15m sleeve. Never live."""
-    if kill_switch_tripped():
-        if div_paper_alive():
-            return "div_paper: alive (kill switch — not restarting)"
-        return "div_paper: down (kill switch — not restarting)"
-    if div_paper_alive():
-        return "div_paper: alive"
-    if not os.path.isfile(DIV_LOOP):
-        return "div_paper: missing loop script"
-    os.makedirs(os.path.join(REPO, "state"), exist_ok=True)
-    try:
-        os.chmod(DIV_LOOP, 0o755)
-        env = os.environ.copy()
-        env["KALSHI_LIVE"] = "0"
-        env["STRATEGY"] = "desk_book"
-        env["METALS"] = "doge,xrp,near"
-        env.setdefault("BANKROLL", str(int(BANKROLL)))
-        env.setdefault("SESSION_MIN", "110")
-        log_path = os.path.join(REPO, "state", "kalshi_div_paper_loop.log")
-        log_f = open(log_path, "a")
-        subprocess.Popen(
-            ["/bin/bash", DIV_LOOP],
-            cwd=REPO, start_new_session=True, env=env,
-            stdout=log_f, stderr=subprocess.STDOUT)
-    except Exception as e:
-        return f"div_paper: failed ({e})"
-    return "div_paper: WAS DEAD -> restarted (paper only, no live)"
+    """DOGE/XRP/NEAR paper sleeve is sat. Owner is on live desk_book only."""
+    if div_paper_alive() and _stop_named_supervisor(
+            DIV_PIDFILE, "kalshi_div_paper_loop"):
+        return "div_paper: stopped (owner sat paper; not restarting)"
+    return "div_paper: off (not restarting)"
 
 
-def count_open_markets(client=None) -> int:
-    """How many paper-book 15m series have an open window right now.
+def _live_env_on() -> bool:
+    return os.environ.get("KALSHI_LIVE", "0") in ("1", "true", "TRUE", "yes")
 
-    Counts PAPER_ASSETS (commodities + BTC + ETH). Weekend: gold/WTI
-    close Sat 04:00Z; crypto stays open and is enough to start a session.
+
+def open_count_universe() -> tuple[str, ...]:
+    """Which 15m names `open-count` should probe.
+
+    Live supervisor inherits KALSHI_LIVE=1, so a crypto-only weekend
+    (or Thu maintenance) does not start a live session. Poly/div force
+    KALSHI_LIVE=0 and still see BTC/ETH.
+    """
+    return COMMODITY_ASSETS if _live_env_on() else PAPER_ASSETS
+
+
+def probe_open_markets(client=None, assets=None) -> tuple[int, int]:
+    """(open_windows, successful_probes) over `assets`.
+
+    Default assets=PAPER_ASSETS (commodities + BTC + ETH). A probe that
+    throws is not successful — live sit fail-opens when probed==0.
     """
     from .client import KalshiClient
     from .universe import LIVE_SERIES, PAPER_ASSETS
+    names = PAPER_ASSETS if assets is None else tuple(assets)
     inv = {asset: ticker for ticker, asset in LIVE_SERIES.items()}
     c = client or KalshiClient("prod")
     n = 0
-    for asset in PAPER_ASSETS:
+    probed = 0
+    for asset in names:
         series = inv.get(asset)
         if not series:
             continue
         try:
-            if c.open_market_for_series(series):
-                n += 1
+            m = c.open_market_for_series(series)
+            probed += 1
         except Exception:
             continue
-    return n
+        if m:
+            n += 1
+    return n, probed
+
+
+def count_open_markets(client=None, assets=None) -> int:
+    """How many of `assets` 15m series have an open window right now.
+
+    Default PAPER_ASSETS (commodities + BTC + ETH). Live `open-count`
+    passes COMMODITY_ASSETS so weekend BTC/ETH is not enough to start
+    a live session. Poly/div keep the default.
+    """
+    from .universe import PAPER_ASSETS
+    names = PAPER_ASSETS if assets is None else tuple(assets)
+    return probe_open_markets(client=client, assets=names)[0]
+
+
+def live_commodity_dark(client=None) -> bool:
+    """True iff commodity 15m series are observably dark.
+
+    Fail-open: if every probe threw, return False so live does not sit
+    on a total API flake (same idea as supervisor open-count fail →
+    start anyway).
+    """
+    n, probed = probe_open_markets(client=client, assets=COMMODITY_ASSETS)
+    if probed == 0:
+        return False
+    return n == 0
 
 
 def write_desk_status(supervisor: str | None = None,

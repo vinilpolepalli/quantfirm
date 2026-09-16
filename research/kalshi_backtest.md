@@ -784,3 +784,115 @@ cannot support the claim.
 * 2026-09-15T16:57Z (auto check-in). Taker +2.75 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
 
 * 2026-09-15T17:13Z (auto check-in). Taker +10.24 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T17:28Z (auto check-in). Taker -1.21 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T17:35Z (auto check-in). Taker +19.50 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T17:49Z (auto check-in). Taker +17.57 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T18:06Z (auto check-in). Taker +15.31 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T18:23Z (auto check-in). Taker +21.25 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T18:40Z (auto check-in). Taker -22.54 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T18:57Z (auto check-in). Taker -1.98 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T19:14Z (auto check-in). Taker -17.30 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T19:27Z (auto check-in). Taker -0.24 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T19:33Z (auto check-in). Taker -27.77 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T19:49Z (auto check-in). Taker +3.64 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T20:06Z (auto check-in). Taker +6.41 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T20:22Z (auto check-in). Taker +10.03 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T20:39Z (auto check-in). Taker +21.92 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T20:55Z (auto check-in). Taker -0.03 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T21:11Z (auto check-in). Taker -4.65 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T21:30Z (auto check-in). Taker -2.81 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T21:45Z (auto check-in). Taker +24.47 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T22:00Z (auto check-in). Taker -21.43 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T22:17Z (auto check-in). Taker +5.61 (14). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T22:34Z (auto check-in). Taker -31.70 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T22:51Z (auto check-in). Taker +8.41 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T23:08Z (auto check-in). Taker +11.08 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T23:24Z (auto check-in). Taker +23.16 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T23:40Z (auto check-in). Taker -43.67 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-15T23:56Z (auto check-in). Taker +7.13 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T00:12Z (auto check-in). Taker +17.16 (6). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T00:28Z (auto check-in). Taker +22.04 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T00:43Z (auto check-in). Taker +24.79 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T01:01Z (auto check-in). Taker +11.08 (14). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T01:17Z (auto check-in). Taker +7.39 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T01:33Z (auto check-in). Taker +13.51 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T01:49Z (auto check-in). Taker +10.67 (6). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T02:13Z (auto check-in). Taker +12.48 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T02:28Z (auto check-in). Taker +15.67 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T02:43Z (auto check-in). Taker +10.05 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T02:58Z (auto check-in). Taker +30.82 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T03:13Z (auto check-in). Taker +28.32 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T03:39Z (auto check-in). Taker -47.88 (13). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T03:58Z (auto check-in). Taker +15.45 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T04:13Z (auto check-in). Taker -36.10 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T04:28Z (auto check-in). Taker +15.97 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T04:43Z (auto check-in). Taker -21.59 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T05:06Z (auto check-in). Taker +8.73 (12). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T05:28Z (auto check-in). Taker +6.09 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T05:43Z (auto check-in). Taker -14.78 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T05:58Z (auto check-in). Taker +27.13 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T06:13Z (auto check-in). Taker -8.97 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T06:28Z (auto check-in). Taker +12.21 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T06:44Z (auto check-in). Taker -16.67 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T06:58Z (auto check-in). Taker -54.70 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T07:13Z (auto check-in). Taker -14.68 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T07:28Z (auto check-in). Taker -39.87 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T07:36Z (auto check-in). Taker -32.96 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T07:58Z (auto check-in). Taker -41.31 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
+
+* 2026-09-16T08:13Z (auto check-in). Taker -8.95 (7). **Cumulative maker +1.65 (5 fills, hit 0.600 vs break-even 0.574, cushion +2.57pp, t=0.10).** t-history: 0.1.
