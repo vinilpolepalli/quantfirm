@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""Paper-trade the Kalshi Liquidity Incentive Program. No credentials, no orders.
+
+Holds a notional book (default $250), re-prices it every run, and accrues the
+reward it WOULD have earned since the last run. Writes
+state/kalshi_incentive_paper.json and prints a digest.
+
+    python scripts/kalshi_incentive_paper.py --capital 250          # one tick
+    python scripts/kalshi_incentive_paper.py --capital 250 --email  # tick + email
+
+Why this exists: the scan in kalshi_incentive_scan.py puts $250 somewhere
+between $1.55/day (board average) and ~$70/day (perfect selection). That gap
+cannot be closed from snapshots, only by logging what we would have scored and
+reconciling it against rewards Kalshi actually credits. Estimates update live
+but are not final until a program ends, so ESTIMATED here is a claim, not a
+result, and the memo says so.
+
+Accrual is deliberately conservative:
+  * a snapshot pays NOBODY unless both sides hold >= Target Size, so a
+    position whose book falls under target accrues zero for that interval;
+  * our size is scored against the CURRENT book, i.e. we assume competitors
+    react instantly and we never get a stale-book bonus;
+  * we bill ourselves the whole interval at the rate observed at its END,
+    which is the pessimistic end of the interval when competition is growing.
+"""
+import argparse
+import datetime as dt
+import json
+import os
+import sys
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATE = os.path.join(REPO, "state", "kalshi_incentive_paper.json")
+BASE = "https://api.elections.kalshi.com/trade-api/v2"
+PROGRAMS = "https://external-api.kalshi.com/trade-api/v2/incentive_programs"
+
+
+def _get(url, timeout=30):
+    with urllib.request.urlopen(url, timeout=timeout) as r:
+        return json.load(r)
+
+
+def _f(x, default=0.0):
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return default
+
+
+def _ts(s):
+    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+def fetch_programs():
+    out, cursor = [], ""
+    while True:
+        d = _get(f"{PROGRAMS}?status=active&limit=1000" + (f"&cursor={cursor}" if cursor else ""), 60)
+        page = d.get("incentive_programs", [])
+        out += page
+        cursor = d.get("next_cursor") or ""
+        if not cursor or not page:
+            return out
+
+
+def reference_score(levels, target_size, discount):
+    book = sorted(levels, key=lambda z: -z[0])
+    cum, ref = 0.0, None
+    for price, size in book:
+        cum += size
+        if cum >= target_size / 5:
+            ref = price
+            break
+    if ref is None:
+        return None, 0.0
+    total = 0.0
+    for price, size in book:
+        ticks = round((ref - price) * 100)
+        total += size * (discount ** ticks) if ticks > 0 else size
+    return ref, total
+
+
+def price(prog, now):
+    ticker = prog["market_ticker"]
+    try:
+        ob = _get(f"{BASE}/markets/{ticker}/orderbook?depth=100")["orderbook_fp"]
+    except Exception:
+        return None
+    yes = [(_f(a), _f(b)) for a, b in (ob.get("yes_dollars") or [])]
+    no = [(_f(a), _f(b)) for a, b in (ob.get("no_dollars") or [])]
+    if not yes or not no:
+        return None
+    target = _f(prog["target_size_fp"])
+    discount = (prog.get("discount_factor_bps") or 0) / 10000.0
+    yes_ref, yes_score = reference_score(yes, target, discount)
+    no_ref, no_score = reference_score(no, target, discount)
+    if yes_ref is None or no_ref is None or yes_ref + no_ref <= 0:
+        return None
+    start, end = _ts(prog["start_date"]), _ts(prog["end_date"])
+    duration_h = (end - start).total_seconds() / 3600.0
+    if duration_h <= 0:
+        return None
+    return dict(
+        ticker=ticker, yes_ref=yes_ref, no_ref=no_ref, unit=yes_ref + no_ref,
+        yes_score=yes_score, no_score=no_score, target=target,
+        yes_depth=sum(s for _, s in yes), no_depth=sum(s for _, s in no),
+        reward_per_hour=(prog["period_reward"] / 10000.0) / duration_h,
+        ends=prog["end_date"], duration_h=duration_h,
+        age_h=(now - start).total_seconds() / 3600.0,
+    )
+
+
+def rate_per_hour(m, capital):
+    """$/hour we would accrue. Zero if the Target Size exclusion bites."""
+    size = capital / m["unit"]
+    if m["yes_depth"] + size < m["target"] or m["no_depth"] + size < m["target"]:
+        return 0.0, size, 0.0, True
+    share = 0.5 * (size / (size + m["yes_score"]) + size / (size + m["no_score"]))
+    return m["reward_per_hour"] * share, size, share, False
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--capital", type=float, default=250.0)
+    ap.add_argument("--slots", type=int, default=5, help="markets held at once")
+    ap.add_argument("--sample", type=int, default=400, help="programs to price per tick")
+    ap.add_argument("--email", action="store_true")
+    ap.add_argument("--state", default=STATE)
+    args = ap.parse_args()
+
+    now = dt.datetime.now(dt.timezone.utc)
+    st = {"started": now.isoformat(), "accrued": 0.0, "ticks": 0,
+          "positions": [], "history": []}
+    if os.path.exists(args.state):
+        try:
+            st = json.load(open(args.state))
+        except Exception:
+            pass
+
+    live = {p["market_ticker"]: p for p in fetch_programs()
+            if p["incentive_type"] == "liquidity" and _ts(p["end_date"]) > now}
+
+    # 1. accrue on what we already hold
+    last = st.get("last_tick")
+    interval_h = 0.0
+    if last:
+        interval_h = max(0.0, (now - _ts(last)).total_seconds() / 3600.0)
+    earned, kept, closed = 0.0, [], []
+    per = args.capital / max(args.slots, 1)
+    for pos in st.get("positions", []):
+        prog = live.get(pos["ticker"])
+        if not prog:
+            closed.append(dict(pos, reason="program ended"))
+            continue
+        m = price(prog, now)
+        if not m:
+            closed.append(dict(pos, reason="book unreadable"))
+            continue
+        rate, size, share, excluded = rate_per_hour(m, per)
+        got = rate * interval_h
+        earned += got
+        kept.append(dict(ticker=pos["ticker"], capital=per, size=round(size, 1),
+                         share=round(share, 4), rate_per_hour=round(rate, 4),
+                         excluded=excluded, accrued=round(pos.get("accrued", 0.0) + got, 4),
+                         ends=m["ends"]))
+
+    # 2. refill empty slots with the best available
+    if len(kept) < args.slots:
+        import random
+        random.seed()
+        held = {k["ticker"] for k in kept}
+        pool = [p for t, p in live.items() if t not in held]
+        pick = random.sample(pool, min(args.sample, len(pool)))
+        with ThreadPoolExecutor(24) as ex:
+            cand = [m for m in ex.map(lambda p: price(p, now), pick) if m]
+        scored = []
+        for m in cand:
+            rate, size, share, excluded = rate_per_hour(m, per)
+            if not excluded and rate > 0:
+                scored.append((rate, size, share, m))
+        scored.sort(reverse=True, key=lambda z: z[0])
+        for rate, size, share, m in scored[:args.slots - len(kept)]:
+            kept.append(dict(ticker=m["ticker"], capital=per, size=round(size, 1),
+                             share=round(share, 4), rate_per_hour=round(rate, 4),
+                             excluded=False, accrued=0.0, ends=m["ends"],
+                             opened=now.isoformat()))
+
+    st["positions"] = kept
+    st["accrued"] = round(st.get("accrued", 0.0) + earned, 4)
+    st["ticks"] = st.get("ticks", 0) + 1
+    st["last_tick"] = now.isoformat()
+    st["capital"] = args.capital
+    st["history"] = (st.get("history", []) + [dict(
+        t=now.isoformat(), earned=round(earned, 4), total=st["accrued"],
+        held=len(kept), interval_h=round(interval_h, 3))])[-500:]
+
+    run_h = max((now - _ts(st["started"])).total_seconds() / 3600.0, 1e-9)
+    rate_day = st["accrued"] / run_h * 24
+    lines = []
+    lines.append(f"Kalshi LIP paper book — ${args.capital:,.0f} notional, {len(kept)} slots")
+    lines.append(f"tick {st['ticks']}  ·  running {run_h:.1f}h  ·  {now.strftime('%Y-%m-%d %H:%M')}Z")
+    lines.append("")
+    lines.append(f"  accrued this tick   ${earned:,.4f}  (over {interval_h:.2f}h)")
+    lines.append(f"  accrued total       ${st['accrued']:,.4f}")
+    lines.append(f"  implied run-rate    ${rate_day:,.2f}/day  ({rate_day/args.capital*100:.2f}%/day)")
+    lines.append("")
+    lines.append(f"  {'ticker':<34}{'size':>8}{'share':>8}{'$/hr':>9}{'accrued':>10}")
+    for k in kept:
+        lines.append(f"  {k['ticker']:<34}{k['size']:>8,.0f}{k['share']*100:>7.1f}%"
+                     f"{k['rate_per_hour']:>9.3f}{k['accrued']:>10.4f}")
+    if closed:
+        lines.append("")
+        for c in closed:
+            lines.append(f"  closed: {c['ticker']} — {c['reason']} "
+                         f"(accrued ${c.get('accrued', 0):.4f})")
+    lines.append("")
+    lines.append("PAPER ONLY — no orders placed, no credentials used. Accrual is an")
+    lines.append("ESTIMATE from the public book; Kalshi only credits after a program ends.")
+    digest = "\n".join(lines)
+    print(digest)
+
+    os.makedirs(os.path.dirname(args.state), exist_ok=True)
+    with open(args.state, "w") as fh:
+        json.dump(st, fh, indent=1)
+
+    if args.email:
+        out = os.path.join(os.path.dirname(args.state), "kalshi_incentive_digest.txt")
+        with open(out, "w") as fh:
+            fh.write(digest)
+        print(f"\n[digest written to {out} for the mailer]", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

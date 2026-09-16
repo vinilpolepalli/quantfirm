@@ -1,0 +1,73 @@
+{
+ "started": "2026-09-16T16:16:07.458665+00:00",
+ "accrued": 0.0,
+ "ticks": 1,
+ "positions": [
+  {
+   "ticker": "KXTEMPMIAH-26SEP1613-T89.99",
+   "capital": 50.0,
+   "size": 59.5,
+   "share": 0.1361,
+   "rate_per_hour": 13.6134,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-16T17:00:00Z",
+   "opened": "2026-09-16T16:16:07.458665+00:00"
+  },
+  {
+   "ticker": "KXTTELITEMATCH-26SEP161135MKOMAD-MKO",
+   "capital": 50.0,
+   "size": 2500.0,
+   "share": 0.8851,
+   "rate_per_hour": 11.8014,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-16T16:35:00Z",
+   "opened": "2026-09-16T16:16:07.458665+00:00"
+  },
+  {
+   "ticker": "KXAAAGASDOR-26SEP17-5.0850",
+   "capital": 50.0,
+   "size": 384.6,
+   "share": 0.4282,
+   "rate_per_hour": 3.5078,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-17T03:59:00Z",
+   "opened": "2026-09-16T16:16:07.458665+00:00"
+  },
+  {
+   "ticker": "KXAAAGASDMN-26SEP17-4.2750",
+   "capital": 50.0,
+   "size": 384.6,
+   "share": 0.4248,
+   "rate_per_hour": 3.4794,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-17T03:59:00Z",
+   "opened": "2026-09-16T16:16:07.458665+00:00"
+  },
+  {
+   "ticker": "KXAAAGASDSC-26SEP17-4.1050",
+   "capital": 50.0,
+   "size": 166.7,
+   "share": 0.412,
+   "rate_per_hour": 3.3745,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-17T03:59:00Z",
+   "opened": "2026-09-16T16:16:07.458665+00:00"
+  }
+ ],
+ "history": [
+  {
+   "t": "2026-09-16T16:16:07.458665+00:00",
+   "earned": 0.0,
+   "total": 0.0,
+   "held": 5,
+   "interval_h": 0.0
+  }
+ ],
+ "last_tick": "2026-09-16T16:16:07.458665+00:00",
+ "capital": 250.0
+}
