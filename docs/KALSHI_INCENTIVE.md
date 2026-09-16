@@ -2,6 +2,40 @@
 
 **Status: SHADOW. Not armed. No real money has ever been placed.**
 
+## Where the loop stands (2026-09-16T20:40Z)
+
+The hourly collector is **running**. `kalshi-incentive-paper` fired on schedule
+at 20:25Z, ticked the shadow book, and pushed `kalshi: incentive tick
+2026-09-16T20:25Z` to main. Nothing else needs starting; the loop is the agent.
+
+Verified against prod this session, read-only:
+
+- Credentials authenticate and the deposit is real — balance **$257.0071**.
+- **0 resting orders** on the account. Nothing of ours is live anywhere.
+- Gate output: `INCENTIVE_LIVE False`, `kill switch clear False`. Two
+  independent blocks, as designed.
+- Book verdict: **`INSUFFICIENT`** — 4.2h of data against the 48h the gate
+  requires. The `$97.21/day` run-rate the tick prints is an early-tick
+  over-read of exactly the kind the traps table is about. Do not repeat it as
+  a finding.
+
+Two defects were found and fixed while confirming the above:
+
+1. `KalshiClient.orders()` requested `/portfolio/events/orders`, which **404s**.
+   The quoter reads that as "cannot see broker state" and sets `live = False`,
+   so the book could never have sent an order even fully armed — it would have
+   failed closed, silently, on gate 2. Now `/portfolio/orders`, verified.
+2. The Actions quote step passed `--capital 257 --markets 8` alongside `--live`.
+   Since that line is what the first armed pass executes, arming would have
+   skipped the canary and rested ~$255 across eight markets on pass one. Now
+   `--capital 40 --markets 2`, matching the canary this doc specifies.
+
+**The secrets are not set in Actions.** The 20:25Z run log shows
+`KALSHI_PROD_KEY_ID`, `KALSHI_PROD_PRIVATE_KEY` and `KALSHI_LIVE` all arriving
+empty. The keys exist in the agent container's environment, which is the wrong
+place — that container is ephemeral and is not what runs the loop. They must be
+set as repository secrets by hand; see *Running it* below.
+
 Farming Kalshi's Liquidity Incentive Program: rest two-sided quotes in
 subsidised markets and collect the subsidy, rather than trying to predict
 anything. The owner deposited $257 for this on 2026-09-16; it is not deployed.
@@ -130,6 +164,17 @@ For the **hourly loop**, credentials belong in GitHub Actions secrets
 (`KALSHI_PROD_KEY_ID`, `KALSHI_PROD_PRIVATE_KEY`, `KALSHI_LIVE`) — the loop runs
 in Actions, not in a Claude container. `kalshi.yml` already references the same
 three names.
+
+As of 2026-09-16 **none of those three secrets exist**; the workflow resolves
+them to empty and the quoter correctly reports `credentials present False`.
+Setting them is a by-hand step at
+`Settings → Secrets and variables → Actions → New repository secret`, because a
+key pasted into a chat or a commit is a key that has to be rotated. Paste the
+PEM whole; the client normalises a one-line `\n` form. Note that setting these
+three alone does **not** arm anything: `state/INCENTIVE_LIVE` must also exist
+and `state/KILL_SWITCH_KALSHI` must be removed, which is two more deliberate
+acts. Setting the secrets while the book still reads `INSUFFICIENT` is safe and
+is what lets the hourly pass reconcile against real broker state.
 
 To stop everything: `touch state/KILL_SWITCH_KALSHI`, then
 `python3 scripts/kalshi_incentive_quote.py --cancel-all --live` to pull resting
