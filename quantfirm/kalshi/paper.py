@@ -209,6 +209,11 @@ class PaperEngine:
         self.poly = PolymarketFeed()
         self._poly_assets = POLY_ASSETS
         self._last_bbo: dict[str, tuple] = {}
+        # Live sit when gold/silver/copper/wti/natgas 15m are dark.
+        # Log the transition once; keep writing decisions so the
+        # supervisor watchdog does not kill a sitting session.
+        self._sat_commodity_dark = False
+        self._sit_log_ts = 0.0
 
     # ------------------------------------------------------------ vol warmup
     def warm_vol_from_bars(self, metal: str, sym: str, minutes: int = 400):
@@ -400,6 +405,22 @@ class PaperEngine:
     def tick(self) -> list[str]:
         notes = []
         now = int(time.time())
+        if self.use_live:
+            from .runtime import live_commodity_dark
+            if live_commodity_dark(self.prod):
+                if not self._sat_commodity_dark:
+                    notes.append(
+                        "live sit: commodity 15m series dark (btc/eth sit too)")
+                    self._sat_commodity_dark = True
+                if (self.decisions_path
+                        and (time.time() - self._sit_log_ts) >= 60):
+                    with open(self.decisions_path, "a") as f:
+                        f.write(json.dumps(
+                            {"ts": now, "sit": "commodity_dark"}) + "\n")
+                    self._sit_log_ts = time.time()
+                notes.extend(self.settle_due())
+                return notes
+            self._sat_commodity_dark = False
         allowed = self._entries_allowed()
         for metal in self.metals:
             series = SERIES.get(metal)

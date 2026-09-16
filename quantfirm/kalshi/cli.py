@@ -300,13 +300,16 @@ def cmd_agent(a):
 
 
 def cmd_open_count(_a):
-    """Print how many of the live 15m series have an open window.
+    """Print how many 15m series have an open window.
 
     Supervisor uses this instead of grepping `status` (a flake there used
-    to sleep 10 minutes and miss the next window).
+    to sleep 10 minutes and miss the next window). Live (KALSHI_LIVE=1)
+    counts commodity series only so crypto-only hours do not start a
+    live session. Paper poly/div force KALSHI_LIVE=0 and still count
+    BTC/ETH.
     """
-    from .runtime import count_open_markets
-    print(count_open_markets())
+    from .runtime import count_open_markets, open_count_universe
+    print(count_open_markets(assets=open_count_universe()))
 
 
 def cmd_heartbeat(_a):

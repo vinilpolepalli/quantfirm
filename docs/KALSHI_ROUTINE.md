@@ -13,9 +13,13 @@ agree. Sit out 60–74¢, longshots, 99¢ last ticks (fee-eat), and live
 IOC dust under 4 lots. Maker quotes off. `yolo_book` / `nuke_lock` /
 `longshot` stay registered and off this loop.
 
-Live canary is **on** 24/7 in this environment (`KALSHI_LIVE=1` in gitignored
-`.env.kalshi`). Real orders go out. Stop with `touch state/KILL_SWITCH_KALSHI`.
-Do not revert to paper-only on a stale timer prompt.
+Live canary is **on** in this environment (`KALSHI_LIVE=1` in gitignored
+`.env.kalshi`) while commodity 15m series are open. When those series
+are dark (weekend Sat ~04:00Z→Mon ~03:15Z, Thu 07:00–09:00Z), live
+sits the **whole book including BTC/ETH**. Poly/div paper keep running.
+Real orders go out when live is clipping. Stop with
+`touch state/KILL_SWITCH_KALSHI`. Do not revert to paper-only on a
+stale timer prompt.
 
 ## 1. Persistent supervisor (primary)
 
@@ -24,8 +28,9 @@ cd /path/to/quantfirm
 ./scripts/kalshi_paper_loop.sh
 ```
 
-110-minute LangGraph sessions, 90s sleep when every series is dark,
-watchdog if no decision for 5 minutes. Heal with:
+110-minute LangGraph sessions, 90s sleep when live commodity series are
+dark (crypto-only is not enough to start a live session), watchdog if
+no decision for 5 minutes. Heal with:
 
 ```bash
 python scripts/kalshi_desk_checkin.py
