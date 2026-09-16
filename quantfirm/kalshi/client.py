@@ -214,7 +214,10 @@ class KalshiClient:
         return self._req("GET", "/portfolio/fills", params=params, auth=True)
 
     def orders(self, **params) -> dict:
-        return self._req("GET", "/portfolio/events/orders", params=params, auth=True)
+        """GET /portfolio/orders. NOT /portfolio/events/orders — that path 404s,
+        which the incentive quoter reads as "cannot see broker state" and then
+        refuses to send. Verified against prod 2026-09-16."""
+        return self._req("GET", "/portfolio/orders", params=params, auth=True)
 
     def withdrawals(self, limit: int = 50) -> dict:
         """GET /portfolio/withdrawals. Empty list is fine. No account numbers logged."""

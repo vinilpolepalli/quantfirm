@@ -28,6 +28,15 @@ jobs:
       # it needs KALSHI_LIVE=1, state/INCENTIVE_LIVE present, no kill switch,
       # and credentials. Absent any of those this is a dry run that still
       # reconciles and reports, which is what we want on every hourly pass.
+      #
+      # SIZE IS THE CANARY SIZE, DELIBERATELY. The runbook's first real
+      # allocation is ~$40 across two long-duration markets, not $257 across
+      # eight -- nobody has yet seen Kalshi credit a single reward from this
+      # program, so the first money buys that one fact and nothing else.
+      # Because --live is already passed here, whatever sits on this line is
+      # what the first armed pass sends; at $257/8 the canary would be skipped
+      # by accident. Raising it is a commit, so git blame shows who did it,
+      # and it should not happen before a credited reward is observed.
       - name: quote / reconcile the incentive book
         env:
           KALSHI_PROD_KEY_ID: ${{ secrets.KALSHI_PROD_KEY_ID }}
@@ -36,7 +45,7 @@ jobs:
         run: |
           pip install -q requests cryptography
           python3 scripts/kalshi_incentive_quote.py \
-            --capital 257 --max-per-market 40 --markets 8 --sample 400 --live
+            --capital 40 --max-per-market 20 --markets 2 --sample 400 --live
 
       - name: commit state
         run: |
