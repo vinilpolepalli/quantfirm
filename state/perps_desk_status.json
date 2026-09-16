@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-16T00:57:10+00:00",
+ "ts": "2026-09-16T02:15:16+00:00",
  "book": "incumbent",
  "adapter": "shadow",
  "strategy": "trend_long_only",
@@ -27,46 +27,28 @@
   "consecutive_loss_days_pause": 5
  },
  "bankroll0": 250,
- "equity": 249.31,
- "cash": 249.99,
- "realized": 0.0,
- "fees": 0.0317,
+ "equity": 249.27,
+ "cash": 249.74,
+ "realized": -0.23,
+ "fees": 0.0511,
  "funding": -0.0024,
- "interest": 0.0222,
+ "interest": 0.0234,
  "peak_equity": 250.0,
- "drawdown": -0.0028,
+ "drawdown": -0.0029,
  "positions": [
-  {
-   "asset": "btc",
-   "ticker": "KXBTCPERP",
-   "contracts": 1.0,
-   "avg_price": 7.7998,
-   "opened": "2026-09-15T00:28:33+00:00",
-   "mark": 7.5732,
-   "weight": 0.0304
-  },
   {
    "asset": "eth",
    "ticker": "KXETHPERP",
    "contracts": 4.0,
    "avg_price": 2.509,
    "opened": "2026-09-15T00:28:33+00:00",
-   "mark": 2.3995,
-   "weight": 0.0385
-  },
-  {
-   "asset": "gold",
-   "ticker": "KXGOLDPERP",
-   "contracts": 2.0,
-   "avg_price": 4.2867,
-   "opened": "2026-09-15T00:28:33+00:00",
-   "mark": 4.2794,
-   "weight": 0.0343
+   "mark": 2.3916,
+   "weight": 0.0384
   }
  ],
- "gross_leverage": 0.103,
+ "gross_leverage": 0.038,
  "halted": "",
  "kill_switch": false,
- "n_ticks": 6,
+ "n_ticks": 7,
  "started": "2026-09-15T00:28:32+00:00"
 }
