@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-16T04:57:08+00:00",
+ "ts": "2026-09-16T08:56:42+00:00",
  "book": "incumbent",
  "adapter": "shadow",
  "strategy": "trend_long_only",
@@ -32,7 +32,7 @@
  "realized": -0.23,
  "fees": 0.0511,
  "funding": -0.0024,
- "interest": 0.0258,
+ "interest": 0.0295,
  "peak_equity": 250.0,
  "drawdown": -0.0027,
  "positions": [
@@ -42,13 +42,13 @@
    "contracts": 4.0,
    "avg_price": 2.509,
    "opened": "2026-09-15T00:28:33+00:00",
-   "mark": 2.4028,
+   "mark": 2.4011,
    "weight": 0.0385
   }
  ],
  "gross_leverage": 0.039,
  "halted": "",
  "kill_switch": false,
- "n_ticks": 8,
+ "n_ticks": 9,
  "started": "2026-09-15T00:28:32+00:00"
 }

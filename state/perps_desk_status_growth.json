@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-16T04:57:27+00:00",
+ "ts": "2026-09-16T08:57:08+00:00",
  "book": "growth",
  "adapter": "shadow",
  "strategy": "blend_core_sleeve",
@@ -43,14 +43,14 @@
   "consecutive_loss_days_pause": 5
  },
  "bankroll0": 250,
- "equity": 249.4,
+ "equity": 249.66,
  "cash": 249.83,
  "realized": 0.0,
  "fees": 0.1749,
  "funding": -0.0093,
- "interest": 0.0123,
+ "interest": 0.0154,
  "peak_equity": 250.0,
- "drawdown": -0.0024,
+ "drawdown": -0.0014,
  "positions": [
   {
    "asset": "btc",
@@ -58,8 +58,8 @@
    "contracts": 4.0,
    "avg_price": 7.7055,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 7.5787,
-   "weight": 0.1216
+   "mark": 7.5646,
+   "weight": 0.1212
   },
   {
    "asset": "eth",
@@ -67,8 +67,8 @@
    "contracts": 9.0,
    "avg_price": 2.4839,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.4028,
-   "weight": 0.0867
+   "mark": 2.4011,
+   "weight": 0.0866
   },
   {
    "asset": "silver",
@@ -76,8 +76,8 @@
    "contracts": 3.0,
    "avg_price": 6.3805000000000005,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 6.457,
-   "weight": 0.0777
+   "mark": 6.4536,
+   "weight": 0.0775
   },
   {
    "asset": "gold",
@@ -85,8 +85,8 @@
    "contracts": 6.0,
    "avg_price": 4.2916,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 4.3213,
-   "weight": 0.104
+   "mark": 4.3304,
+   "weight": 0.1041
   },
   {
    "asset": "near",
@@ -94,7 +94,7 @@
    "contracts": 3.0,
    "avg_price": 2.4023,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.3448,
+   "mark": 2.3459,
    "weight": 0.0282
   },
   {
@@ -103,8 +103,8 @@
    "contracts": 2.0,
    "avg_price": 2.2503,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.1561,
-   "weight": 0.0173
+   "mark": 2.2294,
+   "weight": 0.0179
   },
   {
    "asset": "sui",
@@ -112,8 +112,8 @@
    "contracts": -1.0,
    "avg_price": 7.138,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 6.911,
-   "weight": -0.0277
+   "mark": 6.8516,
+   "weight": -0.0274
   },
   {
    "asset": "bch",
@@ -121,8 +121,8 @@
    "contracts": -2.0,
    "avg_price": 2.2414,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 2.1962,
-   "weight": -0.0176
+   "mark": 2.1805,
+   "weight": -0.0175
   },
   {
    "asset": "doge",
@@ -130,8 +130,8 @@
    "contracts": -1.0,
    "avg_price": 8.3172,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 8.0255,
-   "weight": -0.0322
+   "mark": 7.9406,
+   "weight": -0.0318
   },
   {
    "asset": "bnb",
@@ -139,8 +139,8 @@
    "contracts": 15.0,
    "avg_price": 0.7221,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 0.7148,
-   "weight": 0.043
+   "mark": 0.7069,
+   "weight": 0.0425
   },
   {
    "asset": "kshib",
@@ -148,13 +148,13 @@
    "contracts": -1.0,
    "avg_price": 5.1854,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": 4.9237,
-   "weight": -0.0197
+   "mark": 4.8478,
+   "weight": -0.0194
   }
  ],
- "gross_leverage": 0.576,
+ "gross_leverage": 0.574,
  "halted": "",
  "kill_switch": false,
- "n_ticks": 7,
+ "n_ticks": 8,
  "started": "2026-09-15T13:05:45+00:00"
 }
