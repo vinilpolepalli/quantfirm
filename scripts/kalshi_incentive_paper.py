@@ -120,6 +120,79 @@ def rate_per_hour(m, capital):
     return m["reward_per_hour"] * share, size, share, False
 
 
+
+# ---------------------------------------------------------------- the gate
+# Deterministic go/no-go. The firm's rule is that code decides and agents
+# report, so this is arithmetic on the accrual log, not a judgement call.
+#
+# Thresholds, and why:
+#   $1.55/day  the board-wide average return on resting capital ($106k/day of
+#              reward against $17.07M resting). Earning this is earning nothing
+#              special -- it is what capital makes by showing up.
+#   $5.00/day  2%/day on $250. Enough to clear the operational cost of
+#              requoting five slots continuously and to be worth real money.
+MIN_HOURS = 48.0          # below this the sample is noise, whatever it says
+STALE_HOURS = 3.0         # no tick this recently => the collector is down
+BOARD_AVG_PER_DAY = 1.55
+GO_PER_DAY = 5.00
+
+
+def trailing_rate(history, hours, now):
+    """$/day accrued over the last `hours`, or None if not enough log."""
+    cut = now - dt.timedelta(hours=hours)
+    got = span = 0.0
+    for h in history:
+        try:
+            t = _ts(h["t"])
+        except Exception:
+            continue
+        if t < cut:
+            continue
+        got += h.get("earned", 0.0)
+        span += h.get("interval_h", 0.0)
+    if span < hours * 0.5:        # too many gaps to trust the window
+        return None
+    return got / span * 24 if span > 0 else None
+
+
+def verdict(st, now):
+    """(code, one-line reason). Codes: STALLED, INSUFFICIENT, FALLING, GO,
+    MARGINAL, NO."""
+    hist = st.get("history", [])
+    if not hist:
+        return "INSUFFICIENT", "no accrual logged yet"
+    try:
+        last = _ts(hist[-1]["t"])
+    except Exception:
+        return "STALLED", "unreadable last tick"
+    age = (now - last).total_seconds() / 3600.0
+    if age > STALE_HOURS:
+        return "STALLED", (f"no tick for {age:.1f}h - the collector is down, so "
+                           f"nothing below this line is being measured")
+    run_h = (now - _ts(st["started"])).total_seconds() / 3600.0
+    if run_h < MIN_HOURS:
+        return "INSUFFICIENT", (f"{run_h:.1f}h of data, need {MIN_HOURS:.0f}h "
+                                f"- early ticks over-read badly")
+    r24 = trailing_rate(hist, 24.0, now)
+    r48 = trailing_rate(hist, 48.0, now)
+    if r24 is None:
+        return "INSUFFICIENT", "trailing 24h window has too many gaps"
+    # Still decaying? Then the current number is not the number.
+    if r48 is not None and r48 > 0 and r24 < 0.7 * r48:
+        return "FALLING", (f"trailing 24h ${r24:.2f}/day is still well under the "
+                           f"48h ${r48:.2f}/day - it has not settled, keep waiting")
+    if r24 >= GO_PER_DAY:
+        return "GO", (f"trailing 24h ${r24:.2f}/day on ${st['capital']:.0f} "
+                      f"({r24 / st['capital'] * 100:.2f}%/day), stable, clears "
+                      f"${GO_PER_DAY:.2f}/day")
+    if r24 >= BOARD_AVG_PER_DAY:
+        return "MARGINAL", (f"trailing 24h ${r24:.2f}/day - above the "
+                            f"${BOARD_AVG_PER_DAY:.2f}/day board average but under "
+                            f"${GO_PER_DAY:.2f}/day; probably not worth the plumbing")
+    return "NO", (f"trailing 24h ${r24:.2f}/day - at or below the "
+                  f"${BOARD_AVG_PER_DAY:.2f}/day a passive book earns anyway")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--capital", type=float, default=250.0)
@@ -131,6 +204,8 @@ def main():
                          "since the last one. Lets the tick run hourly (good accrual data) "
                          "without sending 24 mails a day.")
     ap.add_argument("--state", default=STATE)
+    ap.add_argument("--exit-on-go", action="store_true",
+                    help="exit 10 when the gate says GO, so a cron can branch on it")
     args = ap.parse_args()
 
     now = dt.datetime.now(dt.timezone.utc)
@@ -218,6 +293,11 @@ def main():
         for c in closed:
             lines.append(f"  closed: {c['ticker']} — {c['reason']} "
                          f"(accrued ${c.get('accrued', 0):.4f})")
+    code, why = verdict(st, now)
+    st["verdict"] = code
+    st["verdict_reason"] = why
+    lines.append("")
+    lines.append(f"  VERDICT: {code} - {why}")
     lines.append("")
     lines.append("PAPER ONLY — no orders placed, no credentials used. Accrual is an")
     lines.append("ESTIMATE from the public book; Kalshi only credits after a program ends.")
@@ -246,6 +326,9 @@ def main():
                 os.remove(out)
             print("\n[email not due yet - tick recorded silently]", file=sys.stderr)
 
+    if args.exit_on_go and code == "GO":
+        return 10
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

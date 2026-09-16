@@ -123,6 +123,33 @@ because estimates update live but are not final until a program ends.
 | **Tax** | 1099 income, not capital gains. SSN verification above IRS thresholds. |
 | **Payment lag** | Rewards are credited only after a program ends, in a later processing run. |
 
+## The go/no-go gate
+
+Encoded in `scripts/kalshi_incentive_paper.py` as arithmetic on the accrual
+log, not left to an agent's judgement — the firm's rule is that code decides
+and agents report. `--exit-on-go` returns 10 so a cron can branch on it.
+
+| verdict | condition | means |
+|---|---|---|
+| `STALLED` | no tick in 3h | collector is down; nothing is being measured |
+| `INSUFFICIENT` | < 48h of data | early ticks over-read badly — at 2 minutes this book implied $767/day |
+| `FALLING` | trailing 24h < 0.7x trailing 48h | still decaying; the current number is not the number |
+| **`GO`** | **trailing 24h >= $5.00/day, stable** | **2%/day on $250. Fund a small real test** |
+| `MARGINAL` | $1.55–$5.00/day | above the board average but under the cost of the plumbing |
+| `NO` | <= $1.55/day | what a passive book earns anyway |
+
+$1.55/day is the board-wide average return on resting capital ($106,033/day of
+reward against $17,067,304 resting). Earning it is earning nothing special.
+
+The rate is measured on a **trailing 24h window**, never since inception, and
+a window with more than half its span missing returns nothing rather than a
+flattering partial. Observed so far: $767/day at 2 minutes, $113/day at 1.3h,
+$124/day at 1.5h. It is still falling and the gate will not read it until 48h.
+
+**What even a GO does not establish:** that Kalshi pays. Accrual here is an
+estimate from the public book; rewards are credited only after a program ends.
+A GO justifies a small real allocation to test *payment*, not the full $250.
+
 ## Gate
 
 Shadow first: `scripts/kalshi_incentive_paper.py` logs what it would have
