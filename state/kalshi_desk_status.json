@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-16T01:50:21Z",
+ "ts": "2026-09-16T01:50:53Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -18,7 +18,7 @@
   "shadow": 406.1319999999994,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 469.79182499999615
+  "live": 460.03042499999617
  },
  "realized": {
   "shadow": 206.16199999999986,
@@ -26,7 +26,7 @@
   "maker": 1.6499999999999968,
   "live": 261.31012499999923
  },
- "n_open": 6,
+ "n_open": 7,
  "open": [
   {
    "metal": "wti",
@@ -75,10 +75,18 @@
    "ticker": "KXETH15M-26SEP152200-00",
    "fill_price": 0.79,
    "adapter": "shadow"
+  },
+  {
+   "metal": "natgas",
+   "side": "yes",
+   "count": 11,
+   "ticker": "KXNATGAS15M-26SEP152200-00",
+   "fill_price": 0.88,
+   "adapter": "live"
   }
  ],
  "n_settled": 2952,
- "updated": "2026-09-16T01:50:21Z",
+ "updated": "2026-09-16T01:50:53Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "alive",
  "poly_paper_n_open": 0,
