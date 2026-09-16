@@ -126,6 +126,10 @@ def main():
     ap.add_argument("--slots", type=int, default=5, help="markets held at once")
     ap.add_argument("--sample", type=int, default=400, help="programs to price per tick")
     ap.add_argument("--email", action="store_true")
+    ap.add_argument("--email-every", type=float, default=0.0,
+                    help="with --email, only emit a digest if this many hours have passed "
+                         "since the last one. Lets the tick run hourly (good accrual data) "
+                         "without sending 24 mails a day.")
     ap.add_argument("--state", default=STATE)
     args = ap.parse_args()
 
@@ -225,10 +229,22 @@ def main():
         json.dump(st, fh, indent=1)
 
     if args.email:
+        due = True
+        if args.email_every > 0 and st.get("last_email"):
+            since = (now - _ts(st["last_email"])).total_seconds() / 3600.0
+            due = since >= args.email_every
         out = os.path.join(os.path.dirname(args.state), "kalshi_incentive_digest.txt")
-        with open(out, "w") as fh:
-            fh.write(digest)
-        print(f"\n[digest written to {out} for the mailer]", file=sys.stderr)
+        if due:
+            with open(out, "w") as fh:
+                fh.write(digest)
+            st["last_email"] = now.isoformat()
+            with open(args.state, "w") as fh:
+                json.dump(st, fh, indent=1)
+            print(f"\n[EMAIL DUE - digest at {out}]", file=sys.stderr)
+        else:
+            if os.path.exists(out):
+                os.remove(out)
+            print("\n[email not due yet - tick recorded silently]", file=sys.stderr)
 
 
 if __name__ == "__main__":

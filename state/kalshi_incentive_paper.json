@@ -1,18 +1,17 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 0.0,
- "ticks": 1,
+ "accrued": 1.3119,
+ "ticks": 2,
  "positions": [
   {
    "ticker": "KXTEMPMIAH-26SEP1613-T89.99",
    "capital": 50.0,
    "size": 59.5,
-   "share": 0.1361,
-   "rate_per_hour": 13.6134,
+   "share": 0.0915,
+   "rate_per_hour": 9.1531,
    "excluded": false,
-   "accrued": 0.0,
-   "ends": "2026-09-16T17:00:00Z",
-   "opened": "2026-09-16T16:16:07.458665+00:00"
+   "accrued": 0.3753,
+   "ends": "2026-09-16T17:00:00Z"
   },
   {
    "ticker": "KXTTELITEMATCH-26SEP161135MKOMAD-MKO",
@@ -21,20 +20,18 @@
    "share": 0.8851,
    "rate_per_hour": 11.8014,
    "excluded": false,
-   "accrued": 0.0,
-   "ends": "2026-09-16T16:35:00Z",
-   "opened": "2026-09-16T16:16:07.458665+00:00"
+   "accrued": 0.4839,
+   "ends": "2026-09-16T16:35:00Z"
   },
   {
    "ticker": "KXAAAGASDOR-26SEP17-5.0850",
    "capital": 50.0,
    "size": 384.6,
-   "share": 0.4282,
-   "rate_per_hour": 3.5078,
+   "share": 0.4271,
+   "rate_per_hour": 3.4982,
    "excluded": false,
-   "accrued": 0.0,
-   "ends": "2026-09-17T03:59:00Z",
-   "opened": "2026-09-16T16:16:07.458665+00:00"
+   "accrued": 0.1434,
+   "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDMN-26SEP17-4.2750",
@@ -43,20 +40,18 @@
    "share": 0.4248,
    "rate_per_hour": 3.4794,
    "excluded": false,
-   "accrued": 0.0,
-   "ends": "2026-09-17T03:59:00Z",
-   "opened": "2026-09-16T16:16:07.458665+00:00"
+   "accrued": 0.1427,
+   "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDSC-26SEP17-4.1050",
    "capital": 50.0,
-   "size": 166.7,
-   "share": 0.412,
-   "rate_per_hour": 3.3745,
+   "size": 263.2,
+   "share": 0.4959,
+   "rate_per_hour": 4.0619,
    "excluded": false,
-   "accrued": 0.0,
-   "ends": "2026-09-17T03:59:00Z",
-   "opened": "2026-09-16T16:16:07.458665+00:00"
+   "accrued": 0.1666,
+   "ends": "2026-09-17T03:59:00Z"
   }
  ],
  "history": [
@@ -66,8 +61,16 @@
    "total": 0.0,
    "held": 5,
    "interval_h": 0.0
+  },
+  {
+   "t": "2026-09-16T16:18:35.072722+00:00",
+   "earned": 1.3119,
+   "total": 1.3119,
+   "held": 5,
+   "interval_h": 0.041
   }
  ],
- "last_tick": "2026-09-16T16:16:07.458665+00:00",
- "capital": 250.0
+ "last_tick": "2026-09-16T16:18:35.072722+00:00",
+ "capital": 250.0,
+ "last_email": "2026-09-16T16:18:35.072722+00:00"
 }

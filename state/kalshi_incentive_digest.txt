@@ -1,0 +1,16 @@
+Kalshi LIP paper book — $250 notional, 5 slots
+tick 2  ·  running 0.0h  ·  2026-09-16 16:18Z
+
+  accrued this tick   $1.3119  (over 0.04h)
+  accrued total       $1.3119
+  implied run-rate    $767.87/day  (307.15%/day)
+
+  ticker                                size   share     $/hr   accrued
+  KXTEMPMIAH-26SEP1613-T89.99             60    9.2%    9.153    0.3753
+  KXTTELITEMATCH-26SEP161135MKOMAD-MKO   2,500   88.5%   11.801    0.4839
+  KXAAAGASDOR-26SEP17-5.0850             385   42.7%    3.498    0.1434
+  KXAAAGASDMN-26SEP17-4.2750             385   42.5%    3.479    0.1427
+  KXAAAGASDSC-26SEP17-4.1050             263   49.6%    4.062    0.1666
+
+PAPER ONLY — no orders placed, no credentials used. Accrual is an
+ESTIMATE from the public book; Kalshi only credits after a program ends.
