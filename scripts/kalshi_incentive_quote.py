@@ -47,6 +47,12 @@ sys.path.insert(0, REPO)
 from quantfirm.kalshi.client import KalshiClient          # noqa: E402
 from quantfirm.kalshi.halt import kill_switch_tripped     # noqa: E402
 
+# This book arms SEPARATELY from the 15m desk. KALSHI_LIVE is shared, so if we
+# keyed off it alone, turning the metals desk on would silently start quoting
+# $257 of incentive book too. This file must exist, and it is tracked, so git
+# blame shows who armed it and when.
+ARM = os.path.join(REPO, "state", "INCENTIVE_LIVE")
+
 BASE = "https://api.elections.kalshi.com/trade-api/v2"
 PROGRAMS = "https://external-api.kalshi.com/trade-api/v2/incentive_programs"
 LOG = os.path.join(REPO, "state", "kalshi_incentive_orders.jsonl")
@@ -161,6 +167,78 @@ def log(rec):
         fh.write(json.dumps(rec) + "\n")
 
 
+
+def reconcile(client, live, progs_by_ticker, now, max_ticks_below, args):
+    """Cancel quotes that stopped earning; return (kept_capital, kept_tickers).
+
+    The board rotates -- roughly 200+ new programs an hour, and every program
+    ends. So each pass has to retire dead quotes before funding new ones. Three
+    reasons to cancel, and nothing else:
+
+      * the program ended or vanished  -> the market pays nothing now;
+      * our price fell >max_ticks_below the current Reference Price -> score is
+        DiscountFactor**k, so at 0.5 we are earning a rounding error;
+      * the book fell under Target Size on either side -> the snapshot is
+        excluded and pays NOBODY, so our capital sits there earning zero.
+
+    Everything else is left alone on purpose. Requoting costs a fee that rounds
+    UP per order, so churning a quote that is still scoring is how you pay real
+    money for imaginary improvement.
+    """
+    try:
+        resting = (client.orders(status="resting").get("orders") or [])
+    except Exception as e:
+        print(f"reconcile: cannot read resting orders ({type(e).__name__}) — not cancelling")
+        return 0.0, set(), 0
+    kept_cap, kept, cancelled = 0.0, set(), 0
+    # price each ticker once, not once per order
+    tickers = {o.get("ticker") for o in resting if o.get("ticker")}
+    books = {}
+    with ThreadPoolExecutor(16) as ex:
+        for tk, m in zip(tickers, ex.map(
+                lambda t: assess(progs_by_ticker[t], now, 0.0) if t in progs_by_ticker else None,
+                tickers)):
+            books[tk] = m
+    for o in resting:
+        tk = o.get("ticker")
+        oid = o.get("order_id") or o.get("id")
+        px = _f(o.get("price_dollars") or o.get("yes_price_dollars"))
+        ct = _f(o.get("remaining_count") or o.get("count"))
+        side = o.get("side")
+        m = books.get(tk)
+        why = None
+        if tk not in progs_by_ticker:
+            why = "program ended"
+        elif m is None:
+            why = "book unreadable"
+        else:
+            # our YES bid is px; our NO bid is (1 - px) because the API prices
+            # every order as the YES price
+            ours = px if side == "bid" else round(1.0 - px, 2)
+            ref = m["yes_ref"] if side == "bid" else m["no_ref"]
+            ticks = round((ref - ours) * 100)
+            if ticks > max_ticks_below:
+                why = f"{ticks} ticks below ref ({m['discount'] ** ticks:.3f}x credit)"
+            elif m["yes_depth"] < m["target"] or m["no_depth"] < m["target"]:
+                why = "book under Target Size — snapshots excluded, pays nobody"
+        if why:
+            print(f"  cancel {tk} {side} @{px:.2f} x{ct:.0f} — {why}")
+            if live and oid:
+                try:
+                    client.cancel_order(oid)
+                    log({"ts": now.isoformat(), "action": "cancel", "order_id": oid,
+                         "ticker": tk, "reason": why})
+                    cancelled += 1
+                except Exception as e:
+                    print(f"    cancel failed: {type(e).__name__}")
+                    kept_cap += px * ct
+                    kept.add(tk)
+        else:
+            kept_cap += px * ct
+            kept.add(tk)
+    return kept_cap, kept, cancelled
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--capital", type=float, default=250.0, help="total $ across all markets")
@@ -171,6 +249,9 @@ def main():
     ap.add_argument("--sample", type=int, default=600)
     ap.add_argument("--live", action="store_true", help="actually send orders")
     ap.add_argument("--cancel-all", action="store_true", help="cancel every resting LIP order")
+    ap.add_argument("--max-ticks-below", type=int, default=2,
+                    help="cancel a quote once it sits this many ticks under the current "
+                         "Reference Price; at discount 0.5 three ticks is already 0.125x")
     args = ap.parse_args()
 
     now = dt.datetime.now(dt.timezone.utc)
@@ -179,31 +260,37 @@ def main():
     # ---- gate 1: may we trade at all? -----------------------------------
     killed = kill_switch_tripped()
     env_live = os.environ.get("KALSHI_LIVE") == "1"
-    live = args.live and env_live and not killed and client.can_trade
+    armed = os.path.exists(ARM)
+    live = args.live and env_live and armed and not killed and client.can_trade
     print("gate:")
     print(f"  --live passed        {args.live}")
     print(f"  KALSHI_LIVE=1        {env_live}")
+    print(f"  state/INCENTIVE_LIVE {armed}"
+          + ("" if armed else "  <- this book is not armed"))
     print(f"  credentials present  {client.can_trade}")
     print(f"  kill switch clear    {not killed}"
           + ("" if not killed else "  <- state/KILL_SWITCH_KALSHI is present"))
     print(f"  => {'LIVE, ORDERS WILL BE SENT' if live else 'DRY RUN, nothing will be sent'}\n")
 
     # ---- gate 2: broker state is truth ----------------------------------
-    resting, committed = [], 0.0
+    resting, committed, held = [], 0.0, set()
+    progs_all = [p for p in fetch_programs()
+                 if p["incentive_type"] == "liquidity" and _ts(p["end_date"]) > now]
+    progs_by_ticker = {p["market_ticker"]: p for p in progs_all}
     if client.can_trade:
         try:
-            bal = client.balance()
-            print(f"broker: balance ${bal}")
-            existing = (client.orders(status="resting").get("orders") or [])
-            for o in existing:
-                px = _f(o.get("price_dollars") or o.get("yes_price_dollars"))
-                ct = _f(o.get("remaining_count") or o.get("count"))
-                resting.append(o)
-                committed += px * ct
-            print(f"broker: {len(resting)} resting orders, ${committed:.2f} already committed")
+            print(f"broker: balance ${client.balance()}")
+            resting = (client.orders(status="resting").get("orders") or [])
+            print(f"broker: {len(resting)} resting orders")
         except Exception as e:
             print(f"broker: could not read state ({type(e).__name__}) — refusing to send")
             live = False
+        if not args.cancel_all:
+            print("\nreconcile (the board rotates; retire dead quotes before funding new):")
+            committed, held, n = reconcile(client, live, progs_by_ticker, now,
+                                           args.max_ticks_below, args)
+            print(f"  kept ${committed:.2f} across {len(held)} markets, "
+                  f"{'cancelled' if live else 'would cancel'} {n}")
     else:
         print("broker: no credentials, cannot read account state")
 
@@ -218,11 +305,10 @@ def main():
         return 0
 
     # ---- select ----------------------------------------------------------
-    progs = [p for p in fetch_programs()
-             if p["incentive_type"] == "liquidity" and _ts(p["end_date"]) > now]
     import random
     random.seed()
-    pick = random.sample(progs, min(args.sample, len(progs)))
+    fresh = [p for p in progs_all if p["market_ticker"] not in held]
+    pick = random.sample(fresh, min(args.sample, len(fresh)))
     with ThreadPoolExecutor(24) as ex:
         scored = [m for m in ex.map(lambda p: assess(p, now, args.min_hours_left), pick) if m]
 
@@ -287,8 +373,9 @@ def main():
         print("\nDRY RUN — nothing was sent. To go live you need all of:")
         print("  1. KALSHI_PROD_KEY_ID and KALSHI_PROD_PRIVATE_KEY in the environment")
         print("  2. KALSHI_LIVE=1")
-        print("  3. rm state/KILL_SWITCH_KALSHI")
-        print("  4. --live on the command line")
+        print("  3. touch state/INCENTIVE_LIVE   (arms THIS book only)")
+        print("  4. rm state/KILL_SWITCH_KALSHI")
+        print("  5. --live on the command line")
     return 0
 
 
