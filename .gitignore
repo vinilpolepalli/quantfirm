@@ -21,3 +21,6 @@ state/kalshi_paper_loop.pid
 
 # public trade tape (rotated daily, megabytes -- regenerate by running the desk)
 state/kalshi_tape_*.jsonl
+
+# engine singleton lock (runtime, per-container)
+state/kalshi_paper_engine.lock

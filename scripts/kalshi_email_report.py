@@ -10,6 +10,9 @@ from __future__ import annotations
 import csv, glob, json, math, os, sys, collections
 from datetime import datetime, timezone
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from quantfirm.kalshi.bookstats import book_stats  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "state")
 
@@ -26,11 +29,12 @@ def books():
         pnl = [float(r["pnl"]) for r in rs]
         w = [x for x in pnl if x > 0]; l = [-x for x in pnl if x <= 0]
         aw = sum(w)/len(w) if w else 0.0; al = sum(l)/len(l) if l else 0.0
-        n = len(pnl); mu = sum(pnl)/n
-        sd = math.sqrt(sum((x-mu)**2 for x in pnl)/(n-1)) if n > 1 else 0.0
-        out[b] = dict(n=n, life=sum(pnl), hit=len(w)/n,
+        n = len(pnl)
+        bs = book_stats(rows, b)      # t clustered by market, not by fill
+        out[b] = dict(n=n, n_markets=bs["n_markets"], life=sum(pnl),
+                      hit=len(w)/n,
                       be=(al/(aw+al) if aw+al else 0.0),
-                      t=(mu/(sd/math.sqrt(n)) if sd > 0 else 0.0),
+                      t=bs["t"], t_naive=bs["t_naive"],
                       today=sum(float(r["pnl"]) for r in rs
                                 if (r.get("settled_at") or "")[:10] == today))
     return out
@@ -73,6 +77,10 @@ def main() -> int:
         slack = b["hit"] - b["be"]
         L.append(f"  {label:<13} n={b['n']:<4} lifetime {b['life']:+8.2f}   today {b['today']:+8.2f}")
         L.append(f"  {'':<13} hit {b['hit']:.3f} vs break-even {b['be']:.3f}  (slack {slack:+.3f})   t={b['t']:+.2f}")
+        if b["n"] != b["n_markets"]:
+            L.append(f"  {'':<13} t clustered over {b['n_markets']} markets "
+                     f"(per-fill it would read {b['t_naive']:+.2f}; fills in "
+                     f"one market share one settlement)")
     L.append("")
     if hist:
         L.append("t trajectory (recent check-ins): " + " ".join(f"{v:+.2f}" for v in hist[-10:]))

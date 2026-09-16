@@ -9,18 +9,19 @@ Repo scope: `quantfirm/kalshi/`, `scripts/kalshi_*`, `docs/KALSHI.md`,
 
 ---
 
-## 0. Read this first — the two traps
+## 0. Read this first — the traps
 
 This desk is a **paper/shadow** system. No real money is at risk anywhere, and
 none should be added without clearing §5.
 
-Three results looked excellent and were all artifacts of the instrumentation:
+Four results looked excellent and were all artifacts of the instrumentation:
 
 | what it printed | why it was wrong |
 | :--- | :--- |
 | taker **+103.7%** | Kalshi 1-min candle *opens* are carry-forward quotes, so the "fill only if the next candle confirms" gate was zero-latency. At realistic latency: **−14.6%**. |
 | maker **+944%** | The fill test read the *quote* range. We post at `best_bid + 1c`, so `bid_low <= our_price` is true **by construction** — every quote filled instantly. |
 | passive edge **t=+23.3** | Pseudo-replication. ~1,000 tape prints inside one 15-minute market settle on ONE draw, so they are one observation counted a thousand times; t inflates ~30×. Clustered per market: **t=+0.38**. (§3d of `docs/KALSHI.md`.) |
+| desk **t** itself | The same pseudo-replication, reached a second way: two concurrent engines double-entered markets, so one settlement produced two trade-log rows. 28 of 333. Every reported t is now clustered by market (§2c). |
 
 The pattern is the point: **every time this desk produced a spectacular
 number, the cause was our own measurement, not the market.** Four times now.
@@ -216,10 +217,66 @@ the BACKGROUND engine's fills, so a foreground fill can never show up as
 size the loss that way returned "2 of 151" — and both were simply still open.
 No log sees both engines.
 
-`state["cash"]` is still racy. It only feeds Kelly sizing, where drifting low
-means sizing small — the safe direction — so it is filed as open problem 10
-rather than patched in a hurry. **Do not build a new risk control on
-`state["cash"]`.** Derive it from the trade log.
+`state["cash"]` was still racy at this point, and I filed it as open problem 10
+with the note that it "only feeds Kelly sizing, where drifting low means sizing
+small — the safe direction". **That was wrong.** Checked on 2026-09-16 it was
+drifting *high*: $1211.18 / $1244.47 against a log-derived $773.69 / $711.81.
+Kelly on a bankroll 65% too large stakes 65% too large. It is now rebuilt from
+the log on every construction (problem 10, DONE). The standing rule survives
+either way: **do not build a risk control on `state["cash"]`** — derive it from
+the trade log, which is append-only and holds each settlement exactly once.
+
+### The real fix: only ONE engine may run (2026-09-16)
+
+Union-on-save stopped the two engines *deleting* each other's positions. It
+could not stop them *double-entering*, and that turned out to be the larger
+error. The guard that says "I am already in this ticker" reads
+`self.state.open` — a per-process in-memory list. Two engines, two lists,
+both False, both enter.
+
+The 05:15 gold market on 2026-09-16 shows it end to end:
+
+| book | fills in ONE 15-min gold market | contracts | P&L |
+| :--- | :--- | ---: | ---: |
+| shadow | YES 89 @0.71 **and** YES 81 @0.78 | 170 | −$128.64 |
+| maker | YES 90 @0.70 **and** YES 61 @0.69 | 151 | −$105.09 |
+
+Both books took the same view twice, at roughly double the stake Kelly sized
+for. This is what I had been filing as "concentration within a window" and
+treating as a strategy-level risk to document. It was not. It was the hourly
+check-in's foreground `cli paper` racing the supervisor's, and it happened on
+every window a check-in overlapped: **28 of 333 logged rows are duplicate
+`(ticker, side)` pairs.**
+
+Two consequences, and the second is the one that matters:
+
+1. **Sizing.** Position size on those windows was ~2× intended. Doubling the
+   stake doubles variance and leaves expectation alone, which is strictly bad
+   when expectation is indistinguishable from zero.
+2. **Inference.** Those duplicate rows went into the trade log as independent
+   settlements. They are not — both legs resolve on one settlement draw. This
+   is the **same pseudo-replication that made the passive-edge study read
+   t=+23.3**, back again, this time inside the desk's own headline number.
+
+Fixes, both pinned by tests:
+
+* `cli paper` takes an exclusive `flock` on `state/kalshi_paper_engine.lock`
+  and exits **3** rather than starting a second engine (`_engine_lock`,
+  `--allow-concurrent` to override). The supervisor backs off 120s on rc=3
+  instead of hammering.
+* The hourly Routine's step 2 is now `scripts/kalshi_keepalive.py`, which
+  blocks for the same duration — the point was always to hold the container
+  awake, never to trade a second book — and babysits the supervisor while it
+  waits.
+* Every reported t is clustered by market via `quantfirm/kalshi/bookstats.py`.
+  `n` and the hit rate stay at fill level (they are honest descriptive counts);
+  only the inference clusters. The per-fill t is still printed beside it so the
+  correction stays visible rather than silently applied.
+
+Effect on the headline at the time of the fix: maker t **0.72 → 0.67** over
+198 markets, shadow t **1.23 → 1.12** over 105. Small, because only 8% of rows
+were duplicated — but it was growing with every check-in, and it was growing
+in the flattering direction.
 
 ## 3. Where it stands
 
@@ -297,14 +354,21 @@ green week.
    queue-priority question, and it still risks no real money.
 8. **Copper.** `KXCOPPER15M` is plumbed but not traded (`--metals gold,silver`).
    Thinner book; check it is not just wider spreads.
-10. **Reconcile `state["cash"]` with the trade log.** It drifts because two
-   engines hold the state in memory and overwrite each other on save (§2c).
-   Cheapest correct fix: recompute `cash[book] = bankroll0 + sum(pnl)` from the
-   log on `PaperState.__init__`, so every 110-minute restart re-converges and
-   drift is bounded by one session. Only Kelly sizing reads it today, and it
-   errs small, so this is not urgent — but it is the last place the two
-   concurrent engines can still disagree, and the daily stop already got
-   burned by it once.
+10. ~~**Reconcile `state["cash"]` with the trade log.**~~ **DONE**
+   (2026-09-16). It drifted because two engines held the state in memory and
+   overwrote each other on save (§2c); the single-engine lock removes the
+   cause, but the drift already in the file had to be repaired. It read
+   shadow **$1211.18** / maker **$1244.47** against a log-derived $773.69 /
+   $711.81 — about **65% too rich**, and Kelly sizes on it, so the engine was
+   staking as though it held half again the bankroll it had. I had previously
+   written the drift off as "erring small, the safe direction"; that was
+   wrong — it errs both ways and was erring large, which is a second reason
+   the double-entered windows were oversized.
+   `PaperState.__init__` now recomputes `cash[book] = bankroll0 + Σ(log pnl)`,
+   re-debiting the cost of positions still open, so every restart
+   re-converges. Confirmed live: the engine rebooted on $773.69/$711.81 and
+   its first maker quote dropped from 90 contracts to 40.
+   `TestCashRebuiltFromTradeLog` pins it.
 
 9. Taker leg is dead unless a genuinely faster signal appears. Do not tune
    `theta` to revive it — that is how PBO 0.40 happened.

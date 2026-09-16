@@ -16,12 +16,14 @@ from __future__ import annotations
 
 import csv
 import json
-import math
 import os
 import subprocess
 import shlex
-import statistics as st
+import sys
 from datetime import datetime, timezone
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from quantfirm.kalshi.bookstats import book_stats  # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRADES = os.path.join(REPO, "state", "kalshi_paper_trades.csv")
@@ -74,22 +76,9 @@ def load():
 
 
 def stats(rows, adapter):
-    p = [float(r["pnl"]) for r in rows if r["adapter"] == adapter]
-    if not p:
-        return None
-    n = len(p)
-    wins = [x for x in p if x > 0]
-    losses = [x for x in p if x <= 0]
-    mu = st.mean(p)
-    sd = st.stdev(p) if n > 1 else 0.0
-    t = mu / (sd / math.sqrt(n)) if sd > 0 else 0.0
-    aw = st.mean(wins) if wins else 0.0
-    al = st.mean(losses) if losses else 0.0
-    be = abs(al) / (aw + abs(al)) if (aw + abs(al)) > 0 else None
-    return {"n": n, "pnl": round(sum(p), 2), "hit": round(len(wins) / n, 4),
-            "mean": round(mu, 3), "sd": round(sd, 2), "t": round(t, 2),
-            "breakeven_hit": round(be, 4) if be else None,
-            "cushion_pp": round(100 * (len(wins) / n - be), 2) if be else None}
+    """Delegates to the one clustered implementation (bookstats.book_stats):
+    the reported t counts one MARKET as one observation, not one fill."""
+    return book_stats(rows, adapter)
 
 
 def main():

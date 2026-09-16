@@ -154,9 +154,44 @@ REGISTERED = dict(theta=0.07, vol_halflife_min=30.0, tau_min_s=300,
                   tau_max_s=600, price_min=0.35, price_max=0.92)
 
 
+def _engine_lock(path: str):
+    """Exclusive, non-blocking lock so only ONE paper engine can run.
+
+    Two engines against the same state files do not merely race on `cash`:
+    each keeps its own in-memory `state.open`, so the per-market "already in
+    this ticker" guard is False for both and the SAME view gets opened twice
+    in one 15-min window. On 2026-09-16 the 05:15 gold market was entered
+    twice on each book (shadow 89@0.71 + 81@0.78, maker 61@0.69 + 90@0.70) --
+    roughly double the Kelly stake, and two correlated rows in the trade log
+    counted as independent settlements. 28 of 333 logged rows are such pairs.
+
+    Returns the held file object (the caller MUST keep a reference; closing it
+    releases the lock) or None if another engine already holds it.
+    """
+    import fcntl
+    f = open(path, "w")
+    try:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        f.close()
+        return None
+    f.write(f"{os.getpid()}\n")
+    f.flush()
+    return f
+
+
 def cmd_paper(a):
     import dataclasses as _dc
     from .paper import PaperEngine
+    os.makedirs(STATE_DIR, exist_ok=True)
+    lock_path = os.path.join(STATE_DIR, "kalshi_paper_engine.lock")
+    lock = None
+    if not a.allow_concurrent:
+        lock = _engine_lock(lock_path)
+        if lock is None:
+            print("another paper engine holds the engine lock; refusing to "
+                  "start a second one (use --allow-concurrent to override)")
+            return 3
     kw = dict(REGISTERED)
     for f in dataclasses.fields(Params):
         v = getattr(a, f.name, None)
@@ -178,7 +213,12 @@ def cmd_paper(a):
         use_demo=not a.no_demo,
         bankroll0=a.bankroll,
         maker=not a.no_maker)
-    eng.run(minutes=a.minutes, poll_s=a.poll)
+    try:
+        eng.run(minutes=a.minutes, poll_s=a.poll)
+    finally:
+        if lock is not None:
+            lock.close()   # releases the flock
+    return 0
 
 
 def cmd_status(a):
@@ -278,6 +318,9 @@ def main():
                     help="do not record the public trade tape")
     sp.add_argument("--tape-poll", dest="tape_poll", type=int, default=15,
                     help="seconds between tape polls per market (default 15)")
+    sp.add_argument("--allow-concurrent", dest="allow_concurrent",
+                    action="store_true",
+                    help="bypass the single-engine lock (double-sizes trades)")
     add_params(sp)
     sp.set_defaults(fn=cmd_paper)
 
@@ -285,8 +328,8 @@ def main():
     sp.set_defaults(fn=cmd_status)
 
     a = ap.parse_args()
-    a.fn(a)
+    return a.fn(a) or 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

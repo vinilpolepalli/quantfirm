@@ -56,7 +56,40 @@ class PaperPosition:
 
 
 class PaperState:
-    def __init__(self, path: str, bankroll0: float = 500.0):
+    @staticmethod
+    def _cash_from_log(log_path: str, bankroll0: float) -> dict[str, float]:
+        """Authoritative cash: bankroll0 + every settled P&L in the trade log.
+
+        `cash` is the one field a concurrent save cannot merge -- union is
+        well defined for a set of open positions, not for a running balance --
+        so it drifted, and the drift compounded: at the 2026-09-16 fix it read
+        shadow $1211.18 / maker $1244.47 against a log-derived $773.69 /
+        $711.81, i.e. ~65% too RICH. Kelly reads this number, so the engine
+        was staking as though it held half again the bankroll it had. (I had
+        earlier written off the drift as erring small and therefore safe; it
+        errs in both directions and was erring large here.)
+
+        The trade log is append-only and deduped by trade key, so recomputing
+        from it on every construction re-converges the balance each restart.
+        Costs of positions still OPEN are re-applied by the caller.
+        """
+        cash = {"shadow": bankroll0, "demo": bankroll0, "maker": bankroll0}
+        try:
+            with open(log_path, newline="") as f:
+                for r in csv.DictReader(f):
+                    b = r.get("adapter")
+                    if b not in cash:
+                        continue
+                    try:
+                        cash[b] += float(r["pnl"])
+                    except (KeyError, TypeError, ValueError):
+                        continue
+        except FileNotFoundError:
+            pass
+        return cash
+
+    def __init__(self, path: str, bankroll0: float = 500.0,
+                 log_path: str | None = None):
         self.path = path
         if os.path.exists(path):
             with open(path) as f:
@@ -71,6 +104,13 @@ class PaperState:
             d.setdefault("fees", {}).setdefault(book, 0.0)
         self.d = d
         self.open: list[PaperPosition] = [PaperPosition(**p) for p in d.get("open", [])]
+        if log_path:
+            b0 = float(d.get("bankroll0", bankroll0))
+            cash = self._cash_from_log(log_path, b0)
+            for pos in self.open:      # an open position's cost is still out
+                if pos.adapter in cash:
+                    cash[pos.adapter] -= pos.count * pos.fill_price + pos.fee
+            self.d["cash"] = cash
 
     @staticmethod
     def _pos_key(p: dict) -> tuple:
@@ -178,7 +218,9 @@ class PaperEngine:
         self.prod = KalshiClient("prod")
         self.demo = KalshiClient("demo")
         self.use_demo = use_demo and self.demo.can_trade
-        self.state = PaperState(state_path, bankroll0)
+        # log_path passed in so cash is rebuilt from the append-only trade log
+        # rather than trusted from the drifting state file (PaperState._cash_from_log)
+        self.state = PaperState(state_path, bankroll0, log_path=log_path)
         self.log_path = log_path
         self.decisions_path = decisions_path
         # public trade tape -- see _persist_tape for why this exists

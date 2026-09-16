@@ -24,6 +24,9 @@ import json
 import math
 import os
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from quantfirm.kalshi.bookstats import book_stats  # noqa: E402
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -58,10 +61,10 @@ def _books(rows):
         # break-even hit rate given the realised win/loss sizes
         be = al / (aw + al) if (aw + al) > 0 else 0.0
         n = len(pnl)
-        mu = sum(pnl) / n
-        sd = math.sqrt(sum((x - mu) ** 2 for x in pnl) / (n - 1)) if n > 1 else 0.0
+        bs = book_stats(rows, book)   # t clustered by market, not by fill
         out[book] = {
             "n": n,
+            "n_markets": bs["n_markets"],
             "lifetime": sum(pnl),
             "today": sum(float(r["pnl"]) for r in rs
                          if (r.get("settled_at") or "")[:10] == today),
@@ -69,7 +72,8 @@ def _books(rows):
             "be": be,
             "avg_win": aw,
             "avg_loss": al,
-            "t": (mu / (sd / math.sqrt(n))) if sd > 0 else 0.0,
+            "t": bs["t"],
+            "t_naive": bs["t_naive"],
             "equity": 500.0 + sum(pnl),
         }
     return out
@@ -255,8 +259,13 @@ def render() -> str:
             f'<dt>slack over break-even</dt><dd>{slack:+.3f}</dd>'
             f'<dt>avg win / avg loss</dt>'
             f'<dd>{theme.money(b["avg_win"])} / {theme.money(b["avg_loss"])}</dd>'
-            f'<dt>t-stat</dt><dd>{b["t"]:+.2f}</dd>'
-            f'</dl></div>')
+            f'<dt>t-stat <span class="n">clustered over {b["n_markets"]} '
+            f'markets</span></dt><dd>{b["t"]:+.2f}</dd>'
+            + (f'<dt>t-stat <span class="n">per fill — inflated, shown so the '
+               f'correction is visible</span></dt>'
+               f'<dd><span class="n">{b["t_naive"]:+.2f}</span></dd>'
+               if b["n"] != b["n_markets"] else '')
+            + f'</dl></div>')
     parts.append('</div>')
 
     parts.append(

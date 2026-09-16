@@ -90,5 +90,15 @@ while true; do
     pkill -9 -f 'quantfirm[.]kalshi[.]cli paper' 2>/dev/null
   fi
   log "session ended (rc=$rc)"
+  if [ "$rc" -eq 3 ]; then
+    # cli paper exits 3 when another engine holds the single-engine lock.
+    # Restarting on a 20s cadence would just hammer it, so back off. This
+    # should be rare: the stray sweep above frees the lock. If it persists,
+    # a wedged engine is holding it and the watchdog will not see it (the
+    # watchdog only watches the engine THIS loop launched).
+    log "engine refused: another engine holds the lock -> backing off 120s"
+    sleep 120
+    continue
+  fi
   sleep 20
 done

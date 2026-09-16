@@ -503,6 +503,128 @@ class TestOpenPositionsSurviveConcurrentSave(unittest.TestCase):
             self.assertEqual(len(PaperState(path).open), 1)
 
 
+class TestSingleEngineLock(unittest.TestCase):
+    """Two engines against one state file double-enter the same market.
+
+    The union-on-save fix stopped them DELETING each other's positions; it
+    cannot stop them OPENING the same view twice, because each engine's
+    "am I already in this ticker" guard reads its own in-memory state.open.
+    On 2026-09-16 that put 170 shadow contracts and 151 maker contracts into
+    one 15-min gold market -- about double the intended Kelly stake on each
+    book -- because the hourly check-in ran a foreground engine alongside the
+    supervisor's. The lock makes the second engine refuse to start."""
+
+    def test_second_engine_is_refused_while_lock_held(self):
+        from quantfirm.kalshi.cli import _engine_lock
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "engine.lock")
+            first = _engine_lock(path)
+            self.assertIsNotNone(first, "the first engine must get the lock")
+            self.assertIsNone(_engine_lock(path),
+                              "a second engine must be refused, not queued")
+            first.close()
+            second = _engine_lock(path)
+            self.assertIsNotNone(second,
+                                 "the lock must free when the holder exits")
+            second.close()
+
+
+class TestClusteredTStat(unittest.TestCase):
+    """One 15-minute market settles once. Every fill inside it resolves on
+    that single draw, so counting fills as independent observations inflates
+    t by ~sqrt(fills/market). Same trap as the passive-edge study (t=+23.3
+    per print vs t=+0.38 per market)."""
+
+    @staticmethod
+    def _rows(pairs):
+        return [{"adapter": "maker", "ticker": t, "pnl": str(v)}
+                for t, v in pairs]
+
+    def test_duplicate_fills_in_one_market_do_not_inflate_t(self):
+        from quantfirm.kalshi.bookstats import book_stats
+        # 6 markets, each won twice by the same amount: replicating every fill
+        # must not change the market-level evidence at all.
+        base = [(f"M{i}", 10.0 if i % 3 else -12.0) for i in range(6)]
+        single = book_stats(self._rows(base), "maker")
+        doubled = book_stats(self._rows([(t, v) for t, v in base
+                                         for _ in (0, 1)]), "maker")
+        self.assertEqual(doubled["n"], 2 * single["n"])
+        self.assertEqual(doubled["n_markets"], single["n_markets"])
+        self.assertAlmostEqual(doubled["t"], single["t"], places=6)
+        self.assertGreater(abs(doubled["t_naive"]), abs(single["t_naive"]),
+                           "the per-fill t is the inflated one, kept visible")
+
+    def test_n_and_hit_stay_at_fill_level(self):
+        from quantfirm.kalshi.bookstats import book_stats
+        s = book_stats(self._rows([("A", 5.0), ("A", 5.0), ("B", -1.0)]),
+                       "maker")
+        self.assertEqual((s["n"], s["n_markets"]), (3, 2))
+        self.assertAlmostEqual(s["hit"], 2 / 3, places=3)   # stored rounded
+        # A's two winning fills net into ONE market observation of +10
+        self.assertAlmostEqual(s["pnl"], 9.0)
+
+    def test_empty_book_is_none(self):
+        from quantfirm.kalshi.bookstats import book_stats
+        self.assertIsNone(book_stats(self._rows([]), "maker"))
+        self.assertIsNone(book_stats(self._rows([("A", 1.0)]), "shadow"))
+
+
+class TestCashRebuiltFromTradeLog(unittest.TestCase):
+    """`cash` is the one field concurrent saves cannot merge, so it drifted --
+    by the 2026-09-16 fix it read ~65% richer than the log, and Kelly sizes on
+    it. Rebuilding from the append-only log on every construction re-converges
+    it each restart."""
+
+    def _log(self, d, rows):
+        path = os.path.join(d, "trades.csv")
+        with open(path, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["adapter", "ticker", "pnl"])
+            w.writeheader()
+            for r in rows:
+                w.writerow(r)
+        return path
+
+    def test_drifted_cash_is_overwritten_by_the_log(self):
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            sp = os.path.join(d, "state.json")
+            with open(sp, "w") as f:
+                json.dump({"bankroll0": 500.0,
+                           "cash": {"shadow": 9999.0, "demo": 500.0,
+                                    "maker": 9999.0},
+                           "open": []}, f)
+            lp = self._log(d, [{"adapter": "maker", "ticker": "A", "pnl": "10.5"},
+                               {"adapter": "maker", "ticker": "B", "pnl": "-4.0"},
+                               {"adapter": "shadow", "ticker": "A", "pnl": "2.0"}])
+            st = PaperState(sp, log_path=lp)
+            self.assertAlmostEqual(st.d["cash"]["maker"], 506.5)
+            self.assertAlmostEqual(st.d["cash"]["shadow"], 502.0)
+
+    def test_open_position_cost_stays_debited(self):
+        from quantfirm.kalshi.paper import PaperState, PaperPosition
+        with tempfile.TemporaryDirectory() as d:
+            sp = os.path.join(d, "state.json")
+            pos = dict(ticker="T", metal="gold", side="yes", count=10,
+                       fill_price=0.40, fee=0.17, fair=0.5, entry_ts=0,
+                       close_ts=1, adapter="maker")
+            with open(sp, "w") as f:
+                json.dump({"bankroll0": 500.0, "cash": {"maker": 1.0},
+                           "open": [pos]}, f)
+            lp = self._log(d, [])
+            st = PaperState(sp, log_path=lp)
+            # 500 - (10 * 0.40 + 0.17): an unsettled position's cost is still out
+            self.assertAlmostEqual(st.d["cash"]["maker"], 495.83)
+
+    def test_no_log_path_leaves_cash_alone(self):
+        from quantfirm.kalshi.paper import PaperState
+        with tempfile.TemporaryDirectory() as d:
+            sp = os.path.join(d, "state.json")
+            with open(sp, "w") as f:
+                json.dump({"bankroll0": 500.0, "cash": {"maker": 123.0},
+                           "open": []}, f)
+            self.assertAlmostEqual(PaperState(sp).d["cash"]["maker"], 123.0)
+
+
 def asdict_compat(p):
     from dataclasses import asdict
     return asdict(p)

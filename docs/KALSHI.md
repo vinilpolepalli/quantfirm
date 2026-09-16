@@ -318,6 +318,34 @@ result through.
 This is the fourth time on this desk that the instrumentation, not the market,
 produced the interesting number. Cluster first, believe later.
 
+### 3e. The same trap had reached the desk's own headline (2026-09-16)
+
+Having caught pseudo-replication in the tape study, I left the *live* t-stat
+computed per fill — and it had quietly acquired the same defect by a different
+route. Two engines were running against one state file (the supervisor's, plus
+a foreground one the hourly check-in launched), each with its own in-memory
+open-position set, so the "already in this ticker" guard was False for both and
+the same view was entered twice in one window. Those two rows land in the trade
+log as two settlements. They are one: both resolve on the same close.
+
+28 of 333 logged rows were such duplicate `(ticker, side)` pairs. Clustered by
+market the headline moved maker **t 0.72 → 0.67** (198 markets) and shadow
+**t 1.23 → 1.12** (105) — small, but growing with every check-in and growing in
+the flattering direction.
+
+Now: `cli paper` takes an exclusive lock and refuses to start a second engine
+(`quantfirm/kalshi/cli.py::_engine_lock`); the check-in's foreground step is
+`scripts/kalshi_keepalive.py`, which holds the container awake without trading;
+and every reporting surface computes t through
+`quantfirm/kalshi/bookstats.py`, which clusters by market. `n` and the hit rate
+stay at fill level — they are descriptive counts, and the hit rate is a
+property of fills — while only the inference clusters. The per-fill t is
+printed beside the clustered one so the correction stays visible.
+
+The generalisable rule: **a correction applied to one analysis is not applied
+to the system.** The tape study was fixed in 2026-09-14 and the live number
+carried the identical error for two more days.
+
 ## 4. Backtest protocol & honesty constraints
 
 Data: full settled-market history + per-market 1-min contract candles
