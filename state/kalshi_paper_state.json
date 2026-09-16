@@ -1,7 +1,7 @@
 {
  "bankroll0": 250.0,
  "cash": {
-  "shadow": 370.68199999999933,
+  "shadow": 342.6419999999993,
   "demo": 250.0,
   "maker": 251.64999999999998,
   "live": 424.5901249999962
@@ -188,6 +188,20 @@
    "adapter": "live",
    "tag": "favorite",
    "order_id": "01a0a7e9-26b0-7fbc-9c66-90839f252b32"
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP152200-00",
+   "metal": "natgas",
+   "side": "yes",
+   "count": 33,
+   "fill_price": 0.84,
+   "fee": 0.32,
+   "fair": 0.84,
+   "entry_ts": 1789523537,
+   "close_ts": 1789524000,
+   "adapter": "shadow",
+   "tag": "favorite",
+   "order_id": null
   }
  ],
  "n_settled": 2952,
@@ -212,7 +226,7 @@
    "live": 404.25362499999596
   }
  },
- "updated": "2026-09-16T01:51:49Z",
+ "updated": "2026-09-16T01:58:46Z",
  "metals": [
   "gold",
   "silver",
