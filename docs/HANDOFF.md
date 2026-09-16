@@ -9,6 +9,37 @@ Repo scope: `quantfirm/kalshi/`, `scripts/kalshi_*`, `docs/KALSHI.md`,
 
 ---
 
+## HALTED — 2026-09-16 15:17 UTC
+
+**The owner stopped this desk. Do not restart it without being asked.**
+
+Supervisor and engine killed, pidfile and engine lock removed, and BOTH
+Routines disabled: `trig_01RTb4BwpoFRyAQoN8oC5uu4` (hourly check-in) and
+`trig_01NFLkgFRzCzWMxwsyDYVZPg` (4-hourly email). Zero open positions at the
+stop, so nothing was abandoned mid-window and the trade log is complete.
+
+Final books, 7 days, paper only, no real money at any point:
+
+| book | start | P&L | equity | fills | markets | hit | break-even | t |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| maker | $500.00 | +$117.47 | $617.47 | 239 | 218 | 0.695 | 0.682 | +0.36 |
+| shadow taker | $500.00 | +$256.24 | $756.24 | 125 | 116 | 0.752 | 0.705 | +1.00 |
+| **total** | **$1,000.00** | **+$373.71** | **$1,373.71** | | | | | |
+
+**+37.4% and no demonstrated edge — both are true.** The maker t of 0.36 is
+against a bar of 3.0; the bootstrapped 95% CI on P&L spans roughly −$379 to
++$786; deleting 10.6% of winning fills as an adverse-selection haircut takes
+the edge to zero. P(a green week | no edge) exceeds 76%. The P&L is real
+bookkeeping on simulated fills. It is not evidence.
+
+The final day is itself the cleanest illustration: maker peaked at +$233.96
+(t=0.74) at 10:05Z and finished at +$117.47 (t=0.36) without anything
+changing. Half the headline evaporated inside six hours of ordinary noise.
+
+Everything below is preserved as-is: the code runs, the tests pass (50), and
+the traps are documented because they generalise beyond this desk. Section 5
+lists what promotion would have required; none of it was met.
+
 ## 0. Read this first — the traps
 
 This desk is a **paper/shadow** system. No real money is at risk anywhere, and
