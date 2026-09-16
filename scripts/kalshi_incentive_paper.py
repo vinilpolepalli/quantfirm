@@ -133,6 +133,15 @@ def rate_per_hour(m, capital):
 #              requoting five slots continuously and to be worth real money.
 MIN_HOURS = 48.0          # below this the sample is noise, whatever it says
 STALE_HOURS = 3.0         # no tick this recently => the collector is down
+# A tick accrues rate x interval, i.e. it reads the book ONCE and applies that
+# rate backwards over the whole gap since the last tick. GitHub's scheduler
+# drops slots, so gaps of hours happen, and uncapped this manufactures accrual
+# from a single instant -- on 2026-09-16 one tick booked $9.03, over half the
+# running total, off a 2.65h gap. Capping means a missed slot LOSES accrual
+# instead of inventing it, which is the direction this book should err in. It
+# also restores the trailing-window gap guard: `span` is a sum of intervals, so
+# uncapped intervals grew to fill any gap and the guard never fired.
+MAX_INTERVAL_H = 1.0
 BOARD_AVG_PER_DAY = 1.55
 GO_PER_DAY = 5.00
 
@@ -198,6 +207,10 @@ def main():
     ap.add_argument("--capital", type=float, default=250.0)
     ap.add_argument("--slots", type=int, default=5, help="markets held at once")
     ap.add_argument("--sample", type=int, default=400, help="programs to price per tick")
+    ap.add_argument("--min-hours-left", type=float, default=48.0,
+                    help="only open positions in programs ending no sooner than this. "
+                         "Must match kalshi_incentive_quote.py or the shadow book is "
+                         "measuring a different strategy than the one we would run.")
     ap.add_argument("--email", action="store_true")
     ap.add_argument("--email-every", type=float, default=0.0,
                     help="with --email, only emit a digest if this many hours have passed "
@@ -222,9 +235,11 @@ def main():
 
     # 1. accrue on what we already hold
     last = st.get("last_tick")
-    interval_h = 0.0
+    raw_interval_h = 0.0
     if last:
-        interval_h = max(0.0, (now - _ts(last)).total_seconds() / 3600.0)
+        raw_interval_h = max(0.0, (now - _ts(last)).total_seconds() / 3600.0)
+    interval_h = min(raw_interval_h, MAX_INTERVAL_H)
+    dropped_h = raw_interval_h - interval_h
     earned, kept, closed = 0.0, [], []
     per = args.capital / max(args.slots, 1)
     for pos in st.get("positions", []):
@@ -249,7 +264,19 @@ def main():
         import random
         random.seed()
         held = {k["ticker"] for k in kept}
-        pool = [p for t, p in live.items() if t not in held]
+        # Only pick what the REAL quoter would quote. kalshi_incentive_quote.py
+        # skips anything ending sooner than --min-hours-left, so without the
+        # same filter the shadow book measures a strategy we would never run:
+        # it sorts on $/hour, short programs have a small pool over a short
+        # duration and so score highest, and the book fills with things that
+        # expire before we could rest anything in them. On 2026-09-16 it held
+        # KXTEMPMIAH-26SEP1617, which ended within the hour having accrued
+        # $0.00. `live` stays unfiltered above so positions already held keep
+        # accruing as they age out, rather than churning on the boundary.
+        pool = [p for t, p in live.items()
+                if t not in held
+                and (_ts(p["end_date"]) - now).total_seconds() / 3600.0
+                >= args.min_hours_left]
         pick = random.sample(pool, min(args.sample, len(pool)))
         with ThreadPoolExecutor(24) as ex:
             cand = [m for m in ex.map(lambda p: price(p, now), pick) if m]
@@ -263,6 +290,13 @@ def main():
             kept.append(dict(ticker=m["ticker"], capital=per, size=round(size, 1),
                              share=round(share, 4), rate_per_hour=round(rate, 4),
                              excluded=False, accrued=0.0, ends=m["ends"],
+                             # Age of the PROGRAM when we picked it. Measured
+                             # decay from fresh to a week old is 119x, so a
+                             # verdict built entirely on hours-old programs is
+                             # measuring freshness, not edge. Recorded rather
+                             # than filtered on: it makes the question
+                             # answerable when the gate finally fires.
+                             age_h_at_open=round(m["age_h"], 1),
                              opened=now.isoformat()))
 
     st["positions"] = kept
@@ -281,13 +315,24 @@ def main():
     lines.append(f"tick {st['ticks']}  ·  running {run_h:.1f}h  ·  {now.strftime('%Y-%m-%d %H:%M')}Z")
     lines.append("")
     lines.append(f"  accrued this tick   ${earned:,.4f}  (over {interval_h:.2f}h)")
+    if dropped_h > 0.01:
+        lines.append(f"  ** MISSED SLOTS: gap was {raw_interval_h:.2f}h, capped at "
+                     f"{MAX_INTERVAL_H:.2f}h — {dropped_h:.2f}h of accrual dropped "
+                     f"rather than extrapolated. The scheduler is skipping.")
     lines.append(f"  accrued total       ${st['accrued']:,.4f}")
     lines.append(f"  implied run-rate    ${rate_day:,.2f}/day  ({rate_day/args.capital*100:.2f}%/day)")
     lines.append("")
-    lines.append(f"  {'ticker':<34}{'size':>8}{'share':>8}{'$/hr':>9}{'accrued':>10}")
+    lines.append(f"  {'ticker':<34}{'size':>8}{'share':>8}{'$/hr':>9}{'accrued':>10}{'age@open':>10}")
     for k in kept:
+        age = k.get("age_h_at_open")
+        age_s = f"{age:>9.1f}h" if age is not None else f"{'—':>10}"
         lines.append(f"  {k['ticker']:<34}{k['size']:>8,.0f}{k['share']*100:>7.1f}%"
-                     f"{k['rate_per_hour']:>9.3f}{k['accrued']:>10.4f}")
+                     f"{k['rate_per_hour']:>9.3f}{k['accrued']:>10.4f}{age_s}")
+    ages = [k["age_h_at_open"] for k in kept if k.get("age_h_at_open") is not None]
+    if ages:
+        lines.append(f"  mean program age at open: {sum(ages)/len(ages):.1f}h "
+                     f"(fresh-to-week-old decay is 119x; a verdict off hours-old "
+                     f"programs is measuring freshness)")
     if closed:
         lines.append("")
         for c in closed:

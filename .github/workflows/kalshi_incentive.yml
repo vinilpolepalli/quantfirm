@@ -1,7 +1,13 @@
 name: kalshi-incentive-paper
 on:
   schedule:
-    - cron: '41 * * * *'   # hourly at :41 (off-peak minute; GH cron drifts)
+    # Every 20 minutes, NOT hourly. GitHub's scheduler is best-effort on shared
+    # runners: between 20:25Z and 22:00Z on 2026-09-16 the hourly '41 * * * *'
+    # fired exactly once, and that run landed 44 minutes late. Three slots an
+    # hour means dropping one or two still leaves a tick, and the tick is the
+    # measurement -- a collector that does not fire produces no data, which is
+    # worse than one that fails loudly.
+    - cron: '*/20 * * * *'
   workflow_dispatch: {}
 
 concurrency:
@@ -21,8 +27,12 @@ jobs:
         with: {python-version: '3.11'}
 
       # The shadow book. Always runs, never touches the account, no credentials.
+      # --min-hours-left must match the quoter's below, or the shadow book is
+      # measuring a strategy the real one would never execute.
       - name: tick the paper book
-        run: python3 scripts/kalshi_incentive_paper.py --capital 257 --slots 5 --sample 250
+        run: |
+          python3 scripts/kalshi_incentive_paper.py \
+            --capital 257 --slots 5 --sample 250 --min-hours-left 48
 
       # The real book. The script's own gate decides whether anything is sent:
       # it needs KALSHI_LIVE=1, state/INCENTIVE_LIVE present, no kill switch,
