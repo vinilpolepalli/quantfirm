@@ -4,7 +4,7 @@
   "shadow": 406.1319999999994,
   "demo": 250.0,
   "maker": 251.64999999999998,
-  "live": 469.79182499999615
+  "live": 460.03042499999617
  },
  "open": [
   {
@@ -90,6 +90,20 @@
    "adapter": "shadow",
    "tag": "crypto_fav",
    "order_id": null
+  },
+  {
+   "ticker": "KXNATGAS15M-26SEP152200-00",
+   "metal": "natgas",
+   "side": "yes",
+   "count": 11,
+   "fill_price": 0.88,
+   "fee": 0.0814,
+   "fair": 0.88,
+   "entry_ts": 1789523424,
+   "close_ts": 1789524000,
+   "adapter": "live",
+   "tag": "favorite",
+   "order_id": "01a0a7e8-7ad0-7649-bd95-b87f83aad87e"
   }
  ],
  "n_settled": 2952,
@@ -114,7 +128,7 @@
    "live": 404.25362499999596
   }
  },
- "updated": "2026-09-16T01:50:21Z",
+ "updated": "2026-09-16T01:50:53Z",
  "metals": [
   "gold",
   "silver",
