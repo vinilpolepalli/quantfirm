@@ -1,0 +1,36 @@
+name: kalshi-incentive-paper
+on:
+  schedule:
+    - cron: '41 * * * *'   # hourly at :41 (off-peak minute; GH cron drifts)
+  workflow_dispatch: {}
+
+concurrency:
+  group: kalshi-incentive-paper
+  cancel-in-progress: false   # queue, never kill a tick mid-write
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      # stdlib only on purpose - no pip install, keeps the job under a billed minute
+      - name: tick the paper book
+        run: python3 scripts/kalshi_incentive_paper.py --capital 250 --slots 5 --sample 250
+      - name: commit state
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/kalshi_incentive_paper.json
+          git diff --staged --quiet && { echo "no change"; exit 0; }
+          git commit -m "kalshi: incentive paper tick $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
+            echo "push race, retry $i"; sleep $((2**i))
+          done
+          exit 1

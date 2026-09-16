@@ -1,57 +1,59 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 1.3119,
- "ticks": 2,
+ "accrued": 5.8984,
+ "ticks": 3,
  "positions": [
-  {
-   "ticker": "KXTEMPMIAH-26SEP1613-T89.99",
-   "capital": 50.0,
-   "size": 59.5,
-   "share": 0.0915,
-   "rate_per_hour": 9.1531,
-   "excluded": false,
-   "accrued": 0.3753,
-   "ends": "2026-09-16T17:00:00Z"
-  },
-  {
-   "ticker": "KXTTELITEMATCH-26SEP161135MKOMAD-MKO",
-   "capital": 50.0,
-   "size": 2500.0,
-   "share": 0.8851,
-   "rate_per_hour": 11.8014,
-   "excluded": false,
-   "accrued": 0.4839,
-   "ends": "2026-09-16T16:35:00Z"
-  },
   {
    "ticker": "KXAAAGASDOR-26SEP17-5.0850",
    "capital": 50.0,
-   "size": 384.6,
-   "share": 0.4271,
-   "rate_per_hour": 3.4982,
+   "size": 50.5,
+   "share": 0.0421,
+   "rate_per_hour": 0.3452,
    "excluded": false,
-   "accrued": 0.1434,
+   "accrued": 0.5611,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDMN-26SEP17-4.2750",
    "capital": 50.0,
-   "size": 384.6,
-   "share": 0.4248,
-   "rate_per_hour": 3.4794,
+   "size": 217.4,
+   "share": 0.2104,
+   "rate_per_hour": 1.7231,
    "excluded": false,
-   "accrued": 0.1427,
+   "accrued": 2.2276,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDSC-26SEP17-4.1050",
    "capital": 50.0,
-   "size": 263.2,
-   "share": 0.4959,
-   "rate_per_hour": 4.0619,
+   "size": 90.9,
+   "share": 0.2103,
+   "rate_per_hour": 1.7224,
    "excluded": false,
-   "accrued": 0.1666,
+   "accrued": 2.2506,
    "ends": "2026-09-17T03:59:00Z"
+  },
+  {
+   "ticker": "KXAAAGASDTN-26SEP17-4.0700",
+   "capital": 50.0,
+   "size": 135.1,
+   "share": 0.3839,
+   "rate_per_hour": 3.4536,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-17T03:59:00Z",
+   "opened": "2026-09-16T17:31:10.793709+00:00"
+  },
+  {
+   "ticker": "KXAAAGASDCO-26SEP17-4.2650",
+   "capital": 50.0,
+   "size": 142.9,
+   "share": 0.3209,
+   "rate_per_hour": 2.6284,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-17T03:59:00Z",
+   "opened": "2026-09-16T17:31:10.793709+00:00"
   }
  ],
  "history": [
@@ -68,9 +70,16 @@
    "total": 1.3119,
    "held": 5,
    "interval_h": 0.041
+  },
+  {
+   "t": "2026-09-16T17:31:10.793709+00:00",
+   "earned": 4.5865,
+   "total": 5.8984,
+   "held": 5,
+   "interval_h": 1.21
   }
  ],
- "last_tick": "2026-09-16T16:18:35.072722+00:00",
+ "last_tick": "2026-09-16T17:31:10.793709+00:00",
  "capital": 250.0,
  "last_email": "2026-09-16T16:18:35.072722+00:00"
 }
