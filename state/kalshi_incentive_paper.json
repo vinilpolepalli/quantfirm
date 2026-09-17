@@ -1,57 +1,65 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 48.1194,
- "ticks": 12,
+ "accrued": 48.3366,
+ "ticks": 13,
  "positions": [
-  {
-   "ticker": "KXAAAGASDSC-26SEP17-4.1050",
-   "capital": 51.4,
-   "size": 122.4,
-   "share": 0.0927,
-   "rate_per_hour": 0.759,
-   "excluded": false,
-   "accrued": 8.9727,
-   "ends": "2026-09-17T03:59:00Z"
-  },
-  {
-   "ticker": "KXAAAGASDTN-26SEP17-4.0700",
-   "capital": 51.4,
-   "size": 1713.3,
-   "share": 0.2034,
-   "rate_per_hour": 1.8297,
-   "excluded": false,
-   "accrued": 18.4792,
-   "ends": "2026-09-17T03:59:00Z"
-  },
-  {
-   "ticker": "KXAAAGASDCO-26SEP17-4.2650",
-   "capital": 51.4,
-   "size": 53.5,
-   "share": 0.0,
-   "rate_per_hour": 0.0,
-   "excluded": true,
-   "accrued": 4.8155,
-   "ends": "2026-09-17T03:59:00Z"
-  },
-  {
-   "ticker": "KXAAAGASDIL-26SEP17-4.8100",
-   "capital": 51.4,
-   "size": 51.9,
-   "share": 0.0727,
-   "rate_per_hour": 1.0211,
-   "excluded": false,
-   "accrued": 8.9409,
-   "ends": "2026-09-17T03:59:00Z"
-  },
   {
    "ticker": "KX30YMORTW-26SEP17-T6.94",
    "capital": 51.4,
    "size": 51.9,
-   "share": 0.0762,
-   "rate_per_hour": 0.299,
+   "share": 0.0734,
+   "rate_per_hour": 0.2881,
    "excluded": false,
-   "accrued": 2.3572,
+   "accrued": 2.5744,
    "ends": "2026-09-17T15:59:00Z"
+  },
+  {
+   "ticker": "KXRSIANNOUNCE-29-28JAN01",
+   "capital": 51.4,
+   "size": 2570.0,
+   "share": 0.6757,
+   "rate_per_hour": 1.5963,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-20T03:59:59.999999Z",
+   "age_h_at_open": 0.2,
+   "opened": "2026-09-17T04:13:04.495258+00:00"
+  },
+  {
+   "ticker": "KXLEAVEMERZ-29JAN01-26OCT01",
+   "capital": 51.4,
+   "size": 2570.0,
+   "share": 0.6631,
+   "rate_per_hour": 0.6911,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-20T03:59:59.999999Z",
+   "age_h_at_open": 0.2,
+   "opened": "2026-09-17T04:13:04.495258+00:00"
+  },
+  {
+   "ticker": "KXAIINCIDENTREPORT-26SEP-27JAN01",
+   "capital": 51.4,
+   "size": 183.6,
+   "share": 0.149,
+   "rate_per_hour": 0.3378,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-20T03:59:59.999999Z",
+   "age_h_at_open": 3.2,
+   "opened": "2026-09-17T04:13:04.495258+00:00"
+  },
+  {
+   "ticker": "KXMLBPLAYOFFHOST-26CHC-4",
+   "capital": 51.4,
+   "size": 467.3,
+   "share": 0.4552,
+   "rate_per_hour": 0.2709,
+   "excluded": false,
+   "accrued": 0.0,
+   "ends": "2026-09-24T00:01:52.317485Z",
+   "age_h_at_open": 4.2,
+   "opened": "2026-09-17T04:13:04.495258+00:00"
   }
  ],
  "history": [
@@ -138,11 +146,18 @@
    "total": 48.1194,
    "held": 5,
    "interval_h": 0.979
+  },
+  {
+   "t": "2026-09-17T04:13:04.495258+00:00",
+   "earned": 0.2172,
+   "total": 48.3366,
+   "held": 5,
+   "interval_h": 0.754
   }
  ],
- "last_tick": "2026-09-17T03:27:50.434955+00:00",
+ "last_tick": "2026-09-17T04:13:04.495258+00:00",
  "capital": 257.0,
  "last_email": "2026-09-16T16:18:35.072722+00:00",
  "verdict": "INSUFFICIENT",
- "verdict_reason": "11.2h of data, need 48h - early ticks over-read badly"
+ "verdict_reason": "11.9h of data, need 48h - early ticks over-read badly"
 }
