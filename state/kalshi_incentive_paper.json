@@ -1,46 +1,46 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 36.4515,
- "ticks": 9,
+ "accrued": 37.6573,
+ "ticks": 10,
  "positions": [
   {
    "ticker": "KXAAAGASDSC-26SEP17-4.1050",
    "capital": 51.4,
-   "size": 87.1,
-   "share": 0.0833,
-   "rate_per_hour": 0.682,
+   "size": 88.6,
+   "share": 0.0746,
+   "rate_per_hour": 0.6114,
    "excluded": false,
-   "accrued": 7.4256,
+   "accrued": 7.5758,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDTN-26SEP17-4.0700",
    "capital": 51.4,
-   "size": 205.6,
-   "share": 0.1404,
-   "rate_per_hour": 1.263,
+   "size": 165.8,
+   "share": 0.1184,
+   "rate_per_hour": 1.0648,
    "excluded": false,
-   "accrued": 13.0072,
+   "accrued": 13.2687,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDCO-26SEP17-4.2650",
    "capital": 51.4,
    "size": 51.9,
-   "share": 0.029,
-   "rate_per_hour": 0.2379,
+   "share": 0.0284,
+   "rate_per_hour": 0.2327,
    "excluded": false,
-   "accrued": 4.2799,
+   "accrued": 4.3371,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDIL-26SEP17-4.8100",
    "capital": 51.4,
-   "size": 65.9,
-   "share": 0.1217,
-   "rate_per_hour": 1.7103,
+   "size": 69.5,
+   "share": 0.1798,
+   "rate_per_hour": 2.5262,
    "excluded": false,
-   "accrued": 5.5354,
+   "accrued": 6.1559,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
@@ -50,7 +50,7 @@
    "share": 0.1207,
    "rate_per_hour": 0.4736,
    "excluded": false,
-   "accrued": 1.6495,
+   "accrued": 1.7658,
    "ends": "2026-09-17T15:59:00Z"
   }
  ],
@@ -117,11 +117,18 @@
    "total": 36.4515,
    "held": 5,
    "interval_h": 0.756
+  },
+  {
+   "t": "2026-09-17T01:28:31.935568+00:00",
+   "earned": 1.2058,
+   "total": 37.6573,
+   "held": 5,
+   "interval_h": 0.246
   }
  ],
- "last_tick": "2026-09-17T01:13:47.638373+00:00",
+ "last_tick": "2026-09-17T01:28:31.935568+00:00",
  "capital": 257.0,
  "last_email": "2026-09-16T16:18:35.072722+00:00",
  "verdict": "INSUFFICIENT",
- "verdict_reason": "9.0h of data, need 48h - early ticks over-read badly"
+ "verdict_reason": "9.2h of data, need 48h - early ticks over-read badly"
 }
