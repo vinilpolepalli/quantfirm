@@ -28,6 +28,7 @@ as a candidate list for the paper loop, never as P&L.
 import argparse
 import datetime as dt
 import json
+import os
 import random
 import statistics
 import sys
@@ -68,6 +69,8 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--min-age-hours", type=float, default=MIN_AGE_HOURS,
                     help="0 = include brand-new programs (the empty-room trap)")
+    ap.add_argument("--min-hours-left", type=float, default=48.0,
+                    help="skip programs ending sooner than this, matching the quoter")
     args = ap.parse_args()
 
     now = dt.datetime.now(dt.timezone.utc)
@@ -77,9 +80,10 @@ def main():
     print(f"live liquidity programs: {len(progs):,}")
     print(f"pool accruing in the next {args.horizon:.0f}h, board-wide: ${board:,.0f}")
 
-    aged = [p for p in progs if eligible_program(p, now, min_hours_left=0.0,
-                                                min_age_hours=args.min_age_hours)]
-    print(f"programs older than {args.min_age_hours:.0f}h: {len(aged):,}")
+    aged = [p for p in progs if eligible_program(p, now, args.min_hours_left,
+                                                args.min_age_hours)]
+    print(f"programs older than {args.min_age_hours:.0f}h with "
+          f">{args.min_hours_left:.0f}h left: {len(aged):,}")
 
     chosen = aged
     if args.sample and args.sample < len(chosen):
@@ -104,11 +108,21 @@ def main():
     if not rows:
         print("no markets priced")
         return
-    untraded = sum(1 for r in rows if r["vol24"] == 0)
-    print(f"priced {len(rows):,} markets; {untraded}/{len(rows)} "
-          f"({untraded / len(rows) * 100:.0f}%) had zero 24h volume")
+    if mkts:
+        untraded = sum(1 for r in rows if r["vol24"] == 0)
+        print(f"priced {len(rows):,} markets; {untraded}/{len(rows)} "
+              f"({untraded / len(rows) * 100:.0f}%) had zero 24h volume")
+    else:
+        print(f"priced {len(rows):,} markets (24h volume unavailable; "
+              f"batch /markets?tickers= 400s on some symbols)")
 
-    pool = [r for r in rows if r["vol24"] == 0] if args.untraded_only else list(rows)
+    if args.untraded_only:
+        if not mkts:
+            print("--untraded-only needs market stats; none available this pass")
+            return
+        pool = [r for r in rows if r["vol24"] == 0]
+    else:
+        pool = list(rows)
     if args.max_unit_cost is not None:
         pool = [r for r in pool if r["yes_ref"] + r["no_ref"] <= args.max_unit_cost]
         print(f"{len(pool)} markets with a reference price at or under "

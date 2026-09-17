@@ -1,3 +1,91 @@
+# Kalshi incentive farming — aged qualifying-depth, still paper (2026-09-17)
+
+**SHADOW. Not armed. No LIP order has ever been sent.** The 2026-09-16
+memo below is the autopsy of the first four wrong numbers. This section is
+a new pass over live PRs, the live account, and a recomputed board.
+
+```bash
+python3 scripts/kalshi_incentive_stress.py --per-bucket 40 --capital 51.4
+python3 scripts/kalshi_incentive_scan.py --sample 500 --capital 257 --min-age-hours 12 --min-hours-left 48
+python3 scripts/kalshi_incentive_quote.py --capital 40 --markets 2 --min-age-hours 12   # dry run
+python3 scripts/kalshi_incentive_paper.py --capital 257 --slots 5 --min-age-hours 12 --state /tmp/scratch.json
+```
+
+## Verdict (2026-09-17)
+
+| | |
+|---|---|
+| **Do we arm?** | **No.** Gate is `INSUFFICIENT` on a new 48h clock. Nobody has seen a credited LIP reward. |
+| **Account** | **$260.5449**, 0 resting orders, 0 positions. The $257 ACH is still cash. Fills on the account are 15m-desk gold/WTI/etc from Sep 16, not this book. |
+| **Collector** | **Stalled.** Last main tick 16:31Z. GitHub dropped every `*/20` slot after that. Most historical ticks were manual `workflow_dispatch`. |
+| **Old paper book** | $57.39 accrued over 24.3h, last pick `KXCLAUDE-CLAUDE6-27SEP30` at **1.5h old**. Measuring freshness. Clock void. |
+| **Board pot, next 24h** | **$112,500** across 4,328 live LIP programs (was $106,033 on Sep 16). Almost all `df=0.50`, target 1,000. |
+| **Volume incentives** | One live program, **$96/day** board-wide. Eligible prints are 3–97¢, cap $0.005/contract. Hard no at this size. |
+| **Aged median** | $1.33/day per $51.40 slot on programs ≥12h (stress, 110 books). Five slots at the median is **~$6.65/day** and is still a snapshot. |
+| **Aged decay** | Brand-new $21.29/day per slot → 12–48h $2.30 → >7d $0.71. **30x**. Cheap-≤4¢ share goes from 10% to **0%** after 2h. |
+| **Canary dry-run** | Would rest **$40** on `KXYTVIEWSHIGH-DRA26OCT-14.0M` and `KXYTVIEWSW-MOR26SEP20-5.75M` (45–50h old, unit 8–10¢). Tape: 0 prints at our bid. Estimate ~$6/day on $40. **Estimate, not a credit.** |
+
+A scan that prints "$52/day on $257" by taking the best 10 of 500 is the same
+cherry-pick the 2026-09-16 memo already killed. The number that is allowed
+to decide is the paper book's trailing 24h after `selection_since`, and it
+does not exist yet.
+
+## What the recent PRs actually did
+
+| PR | what it was | what survived |
+|---|---|---|
+| #84 | scan / stress / paper | mechanism is real; every headline number was wrong |
+| #87 | `orders()` 404; canary sized $40/2 | an armed book would have failed closed and silent; first pass is still the canary |
+| #88 | `*/20` cron, interval cap, 48h-left filter | collector still dies when GitHub skips; paper was picking 18-minute-old programs |
+| #89 (open) | own kill switch | folded in: `KILL_SWITCH_INCENTIVE`. Metals stay halted. |
+| #90 (open) | `age_h_at_open` died after one tick | folded in: carried across ticks |
+
+## What changed in the book
+
+1. **Qualifying-depth score.** Help article + UI gray-dot: only orders that
+   help reach Target Size are scored. Median qualifying/full score in this
+   sample: **0.45**. The old scan counted the whole book and overstated
+   competition. A quote at the T/5 reference still always qualifies.
+2. **`--min-age-hours 12`.** New slots skip the empty room. A scratch paper
+   tick opened five programs aged **18.9–44.7h** (mean 34.4h), not 0.3h.
+3. **`selection_since`.** The 48h gate restarts so a GO cannot fire on a
+   mix of freshness-book and aged-book ticks. Lifetime accrual is not rewritten.
+4. **Shared module** `quantfirm/kalshi/incentive.py` so the four scripts
+   cannot drift.
+
+The 2025 CFTC backup filing set Reference Price to the touch. The 2026 help
+article contradicts that on purpose ("a small order at the top does not set
+it"). Production follows the help article. If Kalshi still uses the filing,
+a 2¢ bid 23¢ under the touch earns ~0 — that is a reason the first money
+is a canary, not a reason to skip paper.
+
+## Account, this session, read-only
+
+- Balance **$260.5449** (`249.9449` on exchange 0, `10.6000` on exchange 2).
+- Deposits: $250 ACH + $257 ACH. Do not treat the $3.54 gap vs $257 as LIP P&L.
+- 0 resting orders, 0 open positions, 0 LIP fills.
+- Gate: `--live` false, `KALSHI_LIVE` unset, `INCENTIVE_LIVE` absent,
+  credentials present, `KILL_SWITCH_INCENTIVE` absent → **DRY RUN**.
+
+## Can $257 lose money?
+
+Unchanged in structure: capital rests as bids. A fill at our reference
+risks that price per contract. YES+NO both filling is a pair that settles
+at $1. Worst case on $257 is about **-$125**.
+
+What did change: the 2026-09-16 "13 prints, zero hits" is not the current
+tape. In this session's cheap-reference stress sample, **8 of 12** prints
+would have hit. The two canary names themselves had **zero** hits at our
+bid. Fill risk is market-specific; do not inherit the old zero.
+
+## What would make a GO
+
+The same table as below, but the clock is `selection_since` under
+`aged12_qualifying`, and the first real allocation is still **$40 / 2
+markets** to test whether Kalshi pays. Volume programs stay off.
+
+---
+
 # Kalshi incentive farming — scan, not live (2026-09-16)
 
 Owner asked whether agents can farm the Kalshi incentive programs, what the
