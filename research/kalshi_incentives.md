@@ -2,7 +2,8 @@
 
 Owner asked whether agents can farm the Kalshi incentive programs, what the
 minimum capital is, and whether $250 can lose money. **Nothing here has been
-traded, on paper or live.**
+traded, on paper or live.** How LIP sits next to the other $250
+prediction-market families is `research/pm_low_risk_250.md`.
 
 ```bash
 python scripts/kalshi_incentive_scan.py --sample 400 --capital 250
