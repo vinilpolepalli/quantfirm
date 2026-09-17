@@ -2,7 +2,8 @@
 """Hourly / 15-minute check-in for the Kalshi paper desk.
 
 Safe to run unattended:
-  * restarts the supervisor if the PID is dead
+  * restarts the live supervisor if the PID is dead
+  * does not restart poly/div paper sleeves (owner sat them)
   * writes state/kalshi_desk_status.json (the committed heartbeat)
   * tallies new settled fills into research/kalshi_backtest.md
   * commits only the durable files (not the growing tape)
