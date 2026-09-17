@@ -1,26 +1,26 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 56.3649,
- "ticks": 22,
+ "accrued": 56.5142,
+ "ticks": 23,
  "positions": [
   {
    "ticker": "KX30YMORTW-26SEP17-T6.94",
    "capital": 51.4,
    "size": 51.9,
-   "share": 0.0527,
-   "rate_per_hour": 0.2068,
+   "share": 0.052,
+   "rate_per_hour": 0.2039,
    "excluded": false,
-   "accrued": 4.7156,
+   "accrued": 4.772,
    "ends": "2026-09-17T15:59:00Z"
   },
   {
    "ticker": "KXRSIANNOUNCE-29-28JAN01",
    "capital": 51.4,
    "size": 467.3,
-   "share": 0.0826,
-   "rate_per_hour": 0.1951,
+   "share": 0.0749,
+   "rate_per_hour": 0.1769,
    "excluded": false,
-   "accrued": 2.7039,
+   "accrued": 2.7528,
    "ends": "2026-09-20T03:59:59.999999Z"
   },
   {
@@ -30,7 +30,7 @@
    "share": 0.0325,
    "rate_per_hour": 0.0339,
    "excluded": false,
-   "accrued": 0.6518,
+   "accrued": 0.6612,
    "ends": "2026-09-20T03:59:59.999999Z"
   },
   {
@@ -40,17 +40,17 @@
    "share": 0.0404,
    "rate_per_hour": 0.0915,
    "excluded": false,
-   "accrued": 0.8175,
+   "accrued": 0.8428,
    "ends": "2026-09-20T03:59:59.999999Z"
   },
   {
    "ticker": "KXMLBPLAYOFFHOST-26CHC-4",
    "capital": 51.4,
-   "size": 233.6,
-   "share": 0.0429,
-   "rate_per_hour": 0.0255,
+   "size": 223.5,
+   "share": 0.0563,
+   "rate_per_hour": 0.0335,
    "excluded": false,
-   "accrued": 1.7136,
+   "accrued": 1.7229,
    "ends": "2026-09-24T00:01:52.317485Z"
   }
  ],
@@ -208,11 +208,18 @@
    "total": 56.3649,
    "held": 5,
    "interval_h": 0.726
+  },
+  {
+   "t": "2026-09-17T12:07:49.889487+00:00",
+   "earned": 0.1493,
+   "total": 56.5142,
+   "held": 5,
+   "interval_h": 0.277
   }
  ],
- "last_tick": "2026-09-17T11:51:14.296742+00:00",
+ "last_tick": "2026-09-17T12:07:49.889487+00:00",
  "capital": 257.0,
  "last_email": "2026-09-16T16:18:35.072722+00:00",
  "verdict": "INSUFFICIENT",
- "verdict_reason": "19.6h of data, need 48h - early ticks over-read badly"
+ "verdict_reason": "19.9h of data, need 48h - early ticks over-read badly"
 }
