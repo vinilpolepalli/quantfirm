@@ -74,6 +74,7 @@ If a third-party skill is even in the tree:
 | Equity | LIVE | `docs/EQUITY.md` |
 | Kalshi 15m `desk_book` | canary / kill-switch gated | `docs/KALSHI_15M.md` |
 | Kalshi incentive | SHADOW, not armed | `docs/KALSHI_INCENTIVE.md` |
+| Kalshi OSS clone | PAPER, $257 notional, no live path | `scripts/kalshi_oss_paper.py` |
 | Kalshi perps | halted, shadow | `docs/KALSHI_PERPS.md` |
 
 Recompute every number you quote. The traps table in `docs/KALSHI_INCENTIVE.md`

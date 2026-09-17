@@ -120,3 +120,34 @@ OSS bots do not change this gate. Arming still takes five conditions in `docs/KA
 Retail weather bots that publicly report a number report **low thousands**, not millions. The incentive board still pays **0.62%/day** on resting capital as an accounting identity (`docs/KALSHI_INCENTIVE.md`). A $257 book cannot compound its way out of that. Selection is bounded.
 
 The 15m live path remains `desk_book` behind `state/KILL_SWITCH_KALSHI`. This research does not change it.
+
+## What we cloned onto the $257 (paper only)
+
+The owner asked to clone the OSS loop onto the ~$260 Kalshi deposit. Doing that
+**live** would spend the deposit on a book this tape already scored red. The
+clone is therefore a **paper sleeve** marked to **$257** (the actual balance),
+with the improvements the skills themselves demand:
+
+| OSS default | this clone |
+|---|---|
+| live executor optional | `--live` is a hard refuse; no `create_order` in the sleeve |
+| maker print-replay credited as P&L | maker candidates logged, **$0 fill** |
+| 31-member GFS take when edge > 8% | forecast takes sat (12-day tape −$12) |
+| hourly BTC/ETH ranges | sat (sum ask $4–14, volume-0 wings) |
+| 1¢ / size-70 empty asks | `phantom_wing` filter |
+| no kill line | sit after 20 settled fades if hit_rate ≥ mean ask **or** pnl ≤ 0 |
+
+```bash
+python3 scripts/kalshi_oss_paper.py --capital 257
+```
+
+State: `state/kalshi_oss_paper.json`. Collector:
+`.github/workflows/kalshi_oss_paper.yml` (paper only, no secrets).
+
+First tick (2026-09-17T23:46Z), public books, no orders: **7** one-lot NO
+fades, cash **$250.47** / $257 notional. CHI 2, DEN 3, LAX 2. Dutch 0.
+Verdict **INSUFFICIENT** (0/20 settled). `--live` exits without a request.
+
+The $257 stays in the account. This book does not reserve the incentive cash
+and does not lift `state/KILL_SWITCH_KALSHI`. A `PAPER_OK` verdict is still
+not a live raise — canary would be a later PR, ~$40, after the 20-fill gate.
