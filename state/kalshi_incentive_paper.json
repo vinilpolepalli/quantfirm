@@ -1,56 +1,56 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 33.1483,
- "ticks": 8,
+ "accrued": 36.4515,
+ "ticks": 9,
  "positions": [
   {
    "ticker": "KXAAAGASDSC-26SEP17-4.1050",
    "capital": 51.4,
-   "size": 82.9,
-   "share": 0.0661,
-   "rate_per_hour": 0.5414,
+   "size": 87.1,
+   "share": 0.0833,
+   "rate_per_hour": 0.682,
    "excluded": false,
-   "accrued": 6.9097,
+   "accrued": 7.4256,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDTN-26SEP17-4.0700",
    "capital": 51.4,
-   "size": 171.3,
-   "share": 0.1492,
-   "rate_per_hour": 1.3425,
+   "size": 205.6,
+   "share": 0.1404,
+   "rate_per_hour": 1.263,
    "excluded": false,
-   "accrued": 12.0518,
+   "accrued": 13.0072,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDCO-26SEP17-4.2650",
    "capital": 51.4,
    "size": 51.9,
-   "share": 0.1084,
-   "rate_per_hour": 0.8877,
+   "share": 0.029,
+   "rate_per_hour": 0.2379,
    "excluded": false,
-   "accrued": 4.1,
+   "accrued": 4.2799,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KXAAAGASDIL-26SEP17-4.8100",
    "capital": 51.4,
-   "size": 81.6,
-   "share": 0.1406,
-   "rate_per_hour": 1.975,
+   "size": 65.9,
+   "share": 0.1217,
+   "rate_per_hour": 1.7103,
    "excluded": false,
-   "accrued": 4.2417,
+   "accrued": 5.5354,
    "ends": "2026-09-17T03:59:00Z"
   },
   {
    "ticker": "KX30YMORTW-26SEP17-T6.94",
    "capital": 51.4,
-   "size": 54.1,
-   "share": 0.1318,
-   "rate_per_hour": 0.5171,
+   "size": 51.9,
+   "share": 0.1207,
+   "rate_per_hour": 0.4736,
    "excluded": false,
-   "accrued": 1.2913,
+   "accrued": 1.6495,
    "ends": "2026-09-17T15:59:00Z"
   }
  ],
@@ -110,11 +110,18 @@
    "total": 33.1483,
    "held": 5,
    "interval_h": 1.0
+  },
+  {
+   "t": "2026-09-17T01:13:47.638373+00:00",
+   "earned": 3.3032,
+   "total": 36.4515,
+   "held": 5,
+   "interval_h": 0.756
   }
  ],
- "last_tick": "2026-09-17T00:28:24.512355+00:00",
+ "last_tick": "2026-09-17T01:13:47.638373+00:00",
  "capital": 257.0,
  "last_email": "2026-09-16T16:18:35.072722+00:00",
  "verdict": "INSUFFICIENT",
- "verdict_reason": "8.2h of data, need 48h - early ticks over-read badly"
+ "verdict_reason": "9.0h of data, need 48h - early ticks over-read badly"
 }
