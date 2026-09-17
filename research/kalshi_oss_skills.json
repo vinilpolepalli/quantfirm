@@ -1,0 +1,445 @@
+{
+  "ts": "2026-09-17T23:40:12.323464+00:00",
+  "verdict": "DO_NOT_RUN_OSS_BOTS_LIVE",
+  "hist": {
+    "source": "research/kalshi_div_weather_hist.json",
+    "n_events_in_file": 48,
+    "n_events": 12,
+    "modal_hits": 2,
+    "modal_hit_rate": 0.1667,
+    "ensemble_take": {
+      "n": 37,
+      "pnl": -12.29
+    },
+    "flb_taker_from_recorded_quotes": {
+      "n": 14,
+      "pnl": -0.77,
+      "hits": 12,
+      "longshot_hits": 2
+    },
+    "flb_maker_upper_from_recorded_quotes": {
+      "n": 14,
+      "pnl": -0.4,
+      "hits": 12,
+      "longshot_hits": 2
+    },
+    "note": "FLB rows are only legs the ensemble script already quoted (ask 5\u201320\u00a2). That is a selected subset, not a full-book fade. Maker P&L assumes every cheap ask filled \u2014 an upper bound.",
+    "gaussian_vs_ensemble_winner": [
+      {
+        "event": "KXHIGHNY-26SEP11",
+        "ens_p_winner": 0.45,
+        "gauss_p_winner_sigma2_5": 0.2859,
+        "modal_hit": false
+      },
+      {
+        "event": "KXHIGHNY-26SEP08",
+        "ens_p_winner": 0.0,
+        "gauss_p_winner_sigma2_5": 0.0162,
+        "modal_hit": false
+      },
+      {
+        "event": "KXHIGHCHI-26SEP11",
+        "ens_p_winner": 0.225,
+        "gauss_p_winner_sigma2_5": 0.2979,
+        "modal_hit": false
+      },
+      {
+        "event": "KXHIGHCHI-26SEP10",
+        "ens_p_winner": 0.45,
+        "gauss_p_winner_sigma2_5": 0.2865,
+        "modal_hit": true
+      },
+      {
+        "event": "KXHIGHCHI-26SEP09",
+        "ens_p_winner": 0.2625,
+        "gauss_p_winner_sigma2_5": 0.2278,
+        "modal_hit": false
+      },
+      {
+        "event": "KXHIGHCHI-26SEP08",
+        "ens_p_winner": 0.0,
+        "gauss_p_winner_sigma2_5": 0.0009,
+        "modal_hit": false
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP11",
+        "ens_p_winner": 0.5875,
+        "gauss_p_winner_sigma2_5": 0.3053,
+        "modal_hit": true
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP10",
+        "ens_p_winner": 0.2625,
+        "gauss_p_winner_sigma2_5": 0.2598,
+        "modal_hit": false
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP09",
+        "ens_p_winner": 0.3375,
+        "gauss_p_winner_sigma2_5": 0.2489,
+        "modal_hit": false
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP08",
+        "ens_p_winner": 0.0,
+        "gauss_p_winner_sigma2_5": 0.0,
+        "modal_hit": false
+      }
+    ],
+    "trades": {
+      "taker": [
+        {
+          "event": "KXHIGHNY-26SEP11",
+          "ticker": "KXHIGHNY-26SEP11-T79",
+          "ask": 0.19,
+          "bid": 0.18,
+          "ens_side": "no",
+          "mode": "taker_no",
+          "no_px": 0.82,
+          "fee": 0.02,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHNY-26SEP10",
+          "ticker": "KXHIGHNY-26SEP10-T85",
+          "ask": 0.1,
+          "bid": 0.09,
+          "ens_side": "no",
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": -0.92,
+          "won_yes": true
+        },
+        {
+          "event": "KXHIGHNY-26SEP10",
+          "ticker": "KXHIGHNY-26SEP10-B89.5",
+          "ask": 0.05,
+          "bid": 0.04,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHNY-26SEP09",
+          "ticker": "KXHIGHNY-26SEP09-B86.5",
+          "ask": 0.06,
+          "bid": 0.05,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHNY-26SEP08",
+          "ticker": "KXHIGHNY-26SEP08-T80",
+          "ask": 0.1,
+          "bid": 0.09,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": 0.08,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP11",
+          "ticker": "KXHIGHCHI-26SEP11-B78.5",
+          "ask": 0.15,
+          "bid": 0.11,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.89,
+          "fee": 0.01,
+          "pnl": 0.1,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP10",
+          "ticker": "KXHIGHCHI-26SEP10-B77.5",
+          "ask": 0.2,
+          "bid": 0.17,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.83,
+          "fee": 0.01,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP09",
+          "ticker": "KXHIGHCHI-26SEP09-B84.5",
+          "ask": 0.09,
+          "bid": 0.08,
+          "ens_side": "no",
+          "mode": "taker_no",
+          "no_px": 0.92,
+          "fee": 0.01,
+          "pnl": 0.07,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP08",
+          "ticker": "KXHIGHCHI-26SEP08-T85",
+          "ask": 0.17,
+          "bid": 0.15,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.85,
+          "fee": 0.01,
+          "pnl": 0.14,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP11",
+          "ticker": "KXHIGHTBOS-26SEP11-B76.5",
+          "ask": 0.06,
+          "bid": 0.04,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP10",
+          "ticker": "KXHIGHTBOS-26SEP10-B84.5",
+          "ask": 0.05,
+          "bid": 0.04,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP09",
+          "ticker": "KXHIGHTBOS-26SEP09-T76",
+          "ask": 0.1,
+          "bid": 0.09,
+          "ens_side": "no",
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": 0.08,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP09",
+          "ticker": "KXHIGHTBOS-26SEP09-B76.5",
+          "ask": 0.13,
+          "bid": 0.12,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.88,
+          "fee": 0.01,
+          "pnl": -0.89,
+          "won_yes": true
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP08",
+          "ticker": "KXHIGHTBOS-26SEP08-T78",
+          "ask": 0.15,
+          "bid": 0.13,
+          "ens_side": "yes",
+          "mode": "taker_no",
+          "no_px": 0.87,
+          "fee": 0.01,
+          "pnl": 0.12,
+          "won_yes": false
+        }
+      ],
+      "maker": [
+        {
+          "event": "KXHIGHNY-26SEP11",
+          "ticker": "KXHIGHNY-26SEP11-T79",
+          "ask": 0.19,
+          "bid": 0.18,
+          "ens_side": "no",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.19,
+          "fee": 0.0,
+          "pnl": 0.19,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHNY-26SEP10",
+          "ticker": "KXHIGHNY-26SEP10-T85",
+          "ask": 0.1,
+          "bid": 0.09,
+          "ens_side": "no",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.1,
+          "fee": 0.0,
+          "pnl": -0.9,
+          "won_yes": true
+        },
+        {
+          "event": "KXHIGHNY-26SEP10",
+          "ticker": "KXHIGHNY-26SEP10-B89.5",
+          "ask": 0.05,
+          "bid": 0.04,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHNY-26SEP09",
+          "ticker": "KXHIGHNY-26SEP09-B86.5",
+          "ask": 0.06,
+          "bid": 0.05,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHNY-26SEP08",
+          "ticker": "KXHIGHNY-26SEP08-T80",
+          "ask": 0.1,
+          "bid": 0.09,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.1,
+          "fee": 0.0,
+          "pnl": 0.1,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP11",
+          "ticker": "KXHIGHCHI-26SEP11-B78.5",
+          "ask": 0.15,
+          "bid": 0.11,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.15,
+          "fee": 0.0,
+          "pnl": 0.15,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP10",
+          "ticker": "KXHIGHCHI-26SEP10-B77.5",
+          "ask": 0.2,
+          "bid": 0.17,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.2,
+          "fee": 0.0,
+          "pnl": 0.2,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP09",
+          "ticker": "KXHIGHCHI-26SEP09-B84.5",
+          "ask": 0.09,
+          "bid": 0.08,
+          "ens_side": "no",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.09,
+          "fee": 0.0,
+          "pnl": 0.09,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHCHI-26SEP08",
+          "ticker": "KXHIGHCHI-26SEP08-T85",
+          "ask": 0.17,
+          "bid": 0.15,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.17,
+          "fee": 0.0,
+          "pnl": 0.17,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP11",
+          "ticker": "KXHIGHTBOS-26SEP11-B76.5",
+          "ask": 0.06,
+          "bid": 0.04,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP10",
+          "ticker": "KXHIGHTBOS-26SEP10-B84.5",
+          "ask": 0.05,
+          "bid": 0.04,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP09",
+          "ticker": "KXHIGHTBOS-26SEP09-T76",
+          "ask": 0.1,
+          "bid": 0.09,
+          "ens_side": "no",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.1,
+          "fee": 0.0,
+          "pnl": 0.1,
+          "won_yes": false
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP09",
+          "ticker": "KXHIGHTBOS-26SEP09-B76.5",
+          "ask": 0.13,
+          "bid": 0.12,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.13,
+          "fee": 0.0,
+          "pnl": -0.87,
+          "won_yes": true
+        },
+        {
+          "event": "KXHIGHTBOS-26SEP08",
+          "ticker": "KXHIGHTBOS-26SEP08-T78",
+          "ask": 0.15,
+          "bid": 0.13,
+          "ens_side": "yes",
+          "mode": "maker_yes_ask_upper",
+          "px": 0.15,
+          "fee": 0.0,
+          "pnl": 0.15,
+          "won_yes": false
+        }
+      ]
+    }
+  },
+  "incentive": {
+    "ok": true,
+    "verdict": "STALLED",
+    "reason": "no tick for 3.8h - the collector is down, so nothing below this line is being measured",
+    "run_hours": 31.4,
+    "trailing_24h_per_day": 45.7991,
+    "accrued_total_not_a_rate": 57.7456,
+    "capital": 257.0,
+    "last_tick": "2026-09-17T19:50:41.844848+00:00",
+    "gate_min_hours": 48.0
+  },
+  "live": null,
+  "hist_candles": null
+}
