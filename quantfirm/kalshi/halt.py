@@ -6,6 +6,9 @@ import os
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 KILL_SWITCH = os.path.join(REPO, "state", "KILL_SWITCH_KALSHI")
+# Separate from KILL_SWITCH_KALSHI so the metals desk can stay halted
+# while this book runs. Cost: stopping everything on Kalshi is two files.
+INCENTIVE_KILL_SWITCH = os.path.join(REPO, "state", "KILL_SWITCH_INCENTIVE")
 
 # Each name is its own book. Gold and silver (or WTI/natgas) can both
 # clip the same side in one window. Day-stop is the portfolio brake.
@@ -15,6 +18,11 @@ CORR_GROUPS = ()
 
 def kill_switch_tripped() -> bool:
     return os.path.exists(KILL_SWITCH)
+
+
+def incentive_kill_tripped() -> bool:
+    """Halt the incentive book only. KILL_SWITCH_KALSHI does not trip this."""
+    return os.path.exists(INCENTIVE_KILL_SWITCH)
 
 
 def blocked_by_corr(metal: str, side: str, open_positions) -> bool:

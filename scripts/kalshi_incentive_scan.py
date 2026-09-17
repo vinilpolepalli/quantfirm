@@ -31,106 +31,19 @@ import json
 import random
 import statistics
 import sys
-import urllib.request
-from concurrent.futures import ThreadPoolExecutor
 
-BASE = "https://api.elections.kalshi.com/trade-api/v2"
-PROGRAMS = "https://external-api.kalshi.com/trade-api/v2/incentive_programs"
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO)
 
-
-def _get(url, timeout=25):
-    with urllib.request.urlopen(url, timeout=timeout) as r:
-        return json.load(r)
-
-
-def _f(x, default=0.0):
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return default
-
-
-def fetch_programs(status="active"):
-    out, cursor = [], ""
-    while True:
-        url = f"{PROGRAMS}?status={status}&limit=1000" + (f"&cursor={cursor}" if cursor else "")
-        d = _get(url, timeout=60)
-        page = d.get("incentive_programs", [])
-        out += page
-        cursor = d.get("next_cursor") or ""
-        if not cursor or not page:
-            return out
-
-
-def _ts(s):
-    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
-
-
-def reference_score(levels, target_size, discount):
-    """Return (reference_price, total discounted score) for one side of a book.
-
-    levels is [(price_dollars, size)]. Mirrors the LIP reference-price walk and
-    the DiscountFactor**ticks penalty.
-    """
-    book = sorted(levels, key=lambda z: -z[0])
-    cum, ref = 0.0, None
-    for price, size in book:
-        cum += size
-        if cum >= target_size / 5:
-            ref = price
-            break
-    if ref is None:
-        return None, 0.0          # book too thin to even set a reference price
-    total = 0.0
-    for price, size in book:
-        ticks = round((ref - price) * 100)
-        total += size * (discount ** ticks) if ticks > 0 else size
-    return ref, total
-
-
-def score_market(prog, horizon_h, now):
-    ticker = prog["market_ticker"]
-    try:
-        ob = _get(f"{BASE}/markets/{ticker}/orderbook?depth=100")["orderbook_fp"]
-        mk = _get(f"{BASE}/markets/{ticker}")["market"]
-    except Exception:
-        return None
-    yes = [(_f(p), _f(s)) for p, s in (ob.get("yes_dollars") or [])]
-    no = [(_f(p), _f(s)) for p, s in (ob.get("no_dollars") or [])]
-    if not yes or not no:
-        return None
-
-    target = _f(prog.get("target_size_fp"))
-    discount = (prog.get("discount_factor_bps") or 0) / 10000.0
-    if target <= 0:
-        return None
-    yes_ref, yes_score = reference_score(yes, target, discount)
-    no_ref, no_score = reference_score(no, target, discount)
-    if yes_ref is None or no_ref is None:
-        return None
-
-    start, end = _ts(prog["start_date"]), _ts(prog["end_date"])
-    duration_h = (end - start).total_seconds() / 3600.0
-    window_end = now + dt.timedelta(hours=horizon_h)
-    overlap_h = max(0.0, (min(end, window_end) - max(start, now)).total_seconds() / 3600.0)
-    if duration_h <= 0 or overlap_h <= 0:
-        return None
-    reward = prog["period_reward"] / 10000.0            # centi-cents -> dollars
-    # Only the slice of the pool that actually accrues inside our horizon.
-    pool = reward * (overlap_h / duration_h)
-
-    return dict(
-        ticker=ticker, pool=pool, reward=reward, target=target, discount=discount,
-        yes_ref=yes_ref, no_ref=no_ref, yes_score=yes_score, no_score=no_score,
-        duration_h=duration_h, overlap_h=overlap_h,
-        vol24=_f(mk.get("volume_24h_fp")), oi=_f(mk.get("open_interest_fp")),
-        title=(mk.get("title") or "")[:60],
-    )
+from quantfirm.kalshi.incentive import (  # noqa: E402
+    MIN_AGE_HOURS, board_pool, eligible_program, fetch_markets,
+    fetch_programs, price_many, share_for_size, ts as _ts,
+)
 
 
 def expected_pay(m, size):
     """Gross subsidy for resting `size` contracts per side at the reference price."""
-    return m["pool"] * 0.5 * (size / (size + m["yes_score"]) + size / (size + m["no_score"]))
+    return m["pool"] * share_for_size(size, m["yes_score"], m["no_score"])
 
 
 def collateral(m, size):
@@ -153,28 +66,41 @@ def main():
                          "where credit is cheap and a fill can cost at most a cent or two.")
     ap.add_argument("--json", help="write ranked rows here")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--min-age-hours", type=float, default=MIN_AGE_HOURS,
+                    help="0 = include brand-new programs (the empty-room trap)")
     args = ap.parse_args()
 
     now = dt.datetime.now(dt.timezone.utc)
     progs = [p for p in fetch_programs("active")
              if p["incentive_type"] == "liquidity" and _ts(p["end_date"]) > now]
-    board = 0.0
-    for p in progs:
-        d = (_ts(p["end_date"]) - _ts(p["start_date"])).total_seconds() / 3600.0
-        ov = max(0.0, (min(_ts(p["end_date"]), now + dt.timedelta(hours=args.horizon))
-                       - max(_ts(p["start_date"]), now)).total_seconds() / 3600.0)
-        if d > 0:
-            board += (p["period_reward"] / 10000.0) * (ov / d)
+    board = board_pool(progs, now, args.horizon)
     print(f"live liquidity programs: {len(progs):,}")
     print(f"pool accruing in the next {args.horizon:.0f}h, board-wide: ${board:,.0f}")
 
-    chosen = progs
-    if args.sample and args.sample < len(progs):
+    aged = [p for p in progs if eligible_program(p, now, min_hours_left=0.0,
+                                                min_age_hours=args.min_age_hours)]
+    print(f"programs older than {args.min_age_hours:.0f}h: {len(aged):,}")
+
+    chosen = aged
+    if args.sample and args.sample < len(chosen):
         random.seed(args.seed)
-        chosen = random.sample(progs, args.sample)
+        chosen = random.sample(chosen, args.sample)
     print(f"pricing {len(chosen):,} books ...", file=sys.stderr)
-    with ThreadPoolExecutor(24) as ex:
-        rows = [r for r in ex.map(lambda p: score_market(p, args.horizon, now), chosen) if r]
+    priced = price_many(chosen, now)
+    mkts = fetch_markets([m["ticker"] for m in priced])
+    rows = []
+    for m in priced:
+        overlap_h = min(m["left_h"], args.horizon)
+        if overlap_h <= 0:
+            continue
+        pool = m["reward"] * (overlap_h / m["duration_h"])
+        mk = mkts.get(m["ticker"]) or {}
+        row = dict(m, pool=pool, overlap_h=overlap_h,
+                   vol24=float(mk.get("volume_24h_fp") or 0),
+                   title=(mk.get("title") or m["ticker"])[:60])
+        row.pop("yes_book", None)
+        row.pop("no_book", None)
+        rows.append(row)
     if not rows:
         print("no markets priced")
         return

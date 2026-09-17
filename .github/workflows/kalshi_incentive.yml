@@ -8,6 +8,10 @@ on:
     # measurement -- a collector that does not fire produces no data, which is
     # worse than one that fails loudly.
     - cron: '*/20 * * * *'
+    # GitHub's scheduler dropped nine consecutive */20 slots after 16:31Z on
+    # 2026-09-17. A second, offset hourly cron is a cheap extra roll of the
+    # dice; the tick is the measurement.
+    - cron: '7 * * * *'
   workflow_dispatch: {}
 
 concurrency:
@@ -32,7 +36,7 @@ jobs:
       - name: tick the paper book
         run: |
           python3 scripts/kalshi_incentive_paper.py \
-            --capital 257 --slots 5 --sample 250 --min-hours-left 48
+            --capital 257 --slots 5 --sample 250 --min-hours-left 48 --min-age-hours 12
 
       # The real book. The script's own gate decides whether anything is sent:
       # it needs KALSHI_LIVE=1, state/INCENTIVE_LIVE present, no kill switch,
@@ -55,7 +59,8 @@ jobs:
         run: |
           pip install -q requests cryptography
           python3 scripts/kalshi_incentive_quote.py \
-            --capital 40 --max-per-market 20 --markets 2 --sample 400 --live
+            --capital 40 --max-per-market 20 --markets 2 --sample 400 \
+            --min-hours-left 48 --min-age-hours 12 --live
 
       - name: commit state
         run: |

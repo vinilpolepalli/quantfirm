@@ -1,32 +1,33 @@
 #!/usr/bin/env python3
 """Stress-test the Kalshi LIP farming strategy. Public endpoints, no credentials.
 
-Answers three questions the ranking scan in kalshi_incentive_scan.py cannot:
+Answers five questions the ranking scan cannot:
 
-  1. DECAY    - does the edge survive? Prices every book bucketed by how long
-                its program has been running. This is the one that matters:
-                a thin book on a fresh program is not an inefficiency, it is
-                an empty room that fills up.
-  2. FILLS    - can the capital actually be lost? Walks the trade tape and
-                counts prints that would have hit a resting bid at our price.
-  3. DILUTION - what happens to our share as other farmers arrive.
+  1. DECAY         - does the edge survive program age?
+  2. FILLS         - can the capital actually be lost?
+  3. DILUTION      - what happens to our share as other farmers arrive?
+  4. QUALIFYING    - how much does scoring only Target Size change competition?
+  5. AGED + CHEAP  - does the 1-2c reference survive 12 hours?
 
     python scripts/kalshi_incentive_stress.py --per-bucket 45
-
-Scoring mirrors the published LIP rules; see kalshi_incentive_scan.py for the
-rule-by-rule notes. Scores are kept PER SIDE here, because payout is per side
-and collapsing them understates competition by roughly 2x.
 """
 import argparse
 import datetime as dt
 import json
+import os
 import random
 import statistics
+import sys
 import urllib.request
-from concurrent.futures import ThreadPoolExecutor
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO)
+
+from quantfirm.kalshi.incentive import (  # noqa: E402
+    fetch_programs, price_many, share_for_size, ts as _ts,
+)
 
 BASE = "https://api.elections.kalshi.com/trade-api/v2"
-PROGRAMS = "https://external-api.kalshi.com/trade-api/v2/incentive_programs"
 BUCKETS = [(0, 2, "0-2h (brand new)"), (2, 12, "2-12h"), (12, 48, "12-48h"),
            (48, 168, "2-7d"), (168, 1e9, ">7d")]
 
@@ -43,78 +44,14 @@ def _f(x, default=0.0):
         return default
 
 
-def _ts(s):
-    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
-
-
-def fetch_programs():
-    out, cursor = [], ""
-    while True:
-        d = _get(f"{PROGRAMS}?status=active&limit=1000" + (f"&cursor={cursor}" if cursor else ""), 60)
-        page = d.get("incentive_programs", [])
-        out += page
-        cursor = d.get("next_cursor") or ""
-        if not cursor or not page:
-            return out
-
-
-def reference_score(levels, target_size, discount):
-    """(reference price, discounted score) for ONE side. See LIP rules."""
-    book = sorted(levels, key=lambda z: -z[0])
-    cum, ref = 0.0, None
-    for price, size in book:
-        cum += size
-        if cum >= target_size / 5:
-            ref = price
-            break
-    if ref is None:
-        return None, 0.0
-    total = 0.0
-    for price, size in book:
-        ticks = round((ref - price) * 100)
-        total += size * (discount ** ticks) if ticks > 0 else size
-    return ref, total
-
-
-def price_book(prog, now):
-    ticker = prog["market_ticker"]
-    try:
-        ob = _get(f"{BASE}/markets/{ticker}/orderbook?depth=100")["orderbook_fp"]
-    except Exception:
-        return None
-    yes = [(_f(a), _f(b)) for a, b in (ob.get("yes_dollars") or [])]
-    no = [(_f(a), _f(b)) for a, b in (ob.get("no_dollars") or [])]
-    if not yes or not no:
-        return None
-    target = _f(prog["target_size_fp"])
-    discount = (prog.get("discount_factor_bps") or 0) / 10000.0
-    yes_ref, yes_score = reference_score(yes, target, discount)
-    no_ref, no_score = reference_score(no, target, discount)
-    if yes_ref is None or no_ref is None:
-        return None
-    duration_h = (_ts(prog["end_date"]) - _ts(prog["start_date"])).total_seconds() / 3600.0
-    if duration_h <= 0:
-        return None
-    return dict(
-        ticker=ticker, yes_ref=yes_ref, no_ref=no_ref,
-        yes_score=yes_score, no_score=no_score, target=target,
-        unit=yes_ref + no_ref,
-        age_h=(now - _ts(prog["start_date"])).total_seconds() / 3600.0,
-        reward_per_day=(prog["period_reward"] / 10000.0) * 24 / duration_h,
-    )
-
-
-def earnings_per_day(m, capital):
-    """Gross subsidy/day for `capital` split across both sides at the reference price.
-
-    Payout is per side, each side worth half the pool, so score is compared
-    side-by-side rather than against a pooled total.
-    """
+def earnings_per_day(m, capital, qual=True):
+    """Gross subsidy/day for `capital` split across both sides at the T/5 ref."""
     if m["unit"] <= 0:
         return 0.0
-    size = capital / m["unit"]          # contracts per side
-    return m["reward_per_day"] * 0.5 * (
-        size / (size + m["yes_score"]) + size / (size + m["no_score"]))
+    size = capital / m["unit"]
+    ys = m["yes_score"] if qual else m["yes_full"]
+    ns = m["no_score"] if qual else m["no_full"]
+    return m["reward_per_hour"] * 24 * share_for_size(size, ys, ns)
 
 
 def fill_risk(ticker, our_price):
@@ -130,10 +67,13 @@ def fill_risk(ticker, our_price):
             prices.append(_f(p))
     if not prices:
         return dict(n=0, hits=0)
-    # our YES bid fills on a print at or below it; our NO bid at (1 - our_price)
-    # fills on a print at or above (1 - our_price).
     hits = sum(1 for p in prices if p <= our_price or p >= 1 - our_price)
     return dict(n=len(prices), hits=hits)
+
+
+def _public(m):
+    skip = {"yes_book", "no_book"}
+    return {k: v for k, v in m.items() if k not in skip}
 
 
 def main():
@@ -158,9 +98,10 @@ def main():
         print(f"  {label:<18} population={len(grp):>5}")
         picks += [(label, p) for p in random.sample(grp, min(args.per_bucket, len(grp)))]
 
-    with ThreadPoolExecutor(24) as ex:
-        rows = [(lbl, m) for (lbl, m) in
-                ((lbl, price_book(p, now)) for lbl, p in picks) if m]
+    priced = price_many([p for _, p in picks], now)
+    by_ticker = {m["ticker"]: m for m in priced}
+    rows = [(lbl, by_ticker[p["market_ticker"]])
+            for lbl, p in picks if p["market_ticker"] in by_ticker]
     print(f"\npriced {len(rows)} books\n")
 
     print("=== 1. DECAY: does a fresh program's thin book survive? ===")
@@ -203,19 +144,52 @@ def main():
     if base:
         m = min(base, key=lambda z: z["unit"])
         size = args.capital / m["unit"]
+        pool_day = m["reward_per_hour"] * 24
         print(f"  reference market {m['ticker']} (unit ${m['unit']:.2f}, "
-              f"pool ${m['reward_per_day']:.2f}/day)")
+              f"pool ${pool_day:.2f}/day)")
         print(f"  {'other farmers':<16}{'our share':>11}{'$/day':>9}")
         for k in (0, 1, 2, 5, 10, 25):
             ys = m["yes_score"] + k * size
             ns = m["no_score"] + k * size
-            share = 0.5 * (size / (size + ys) + size / (size + ns))
-            print(f"  {k:<16}{share * 100:>10.1f}%{m['reward_per_day'] * share:>9.2f}")
+            share = share_for_size(size, ys, ns)
+            print(f"  {k:<16}{share * 100:>10.1f}%{pool_day * share:>9.2f}")
         print("  Each farmer our size roughly halves what is left.")
+
+    print("\n=== 4. QUALIFYING vs FULL-BOOK SCORE ===")
+    if rows:
+        ratios = []
+        for _, m in rows:
+            full = m["yes_full"] + m["no_full"]
+            qual = m["yes_score"] + m["no_score"]
+            if full > 0:
+                ratios.append(qual / full)
+        if ratios:
+            print(f"  median qualifying/full score: {statistics.median(ratios):.2f} "
+                  f"(1.00 means the whole book is inside Target Size)")
+            print("  Production uses qualifying depth. Full-book scoring was the "
+                  "old scan, and it overstated competition when discount is high.")
+
+    print("\n=== 5. AGED + CHEAP: does the empty-room edge survive 12h? ===")
+    aged_cheap = [m for _, m in rows if m["age_h"] >= 12 and m["unit"] <= 0.10]
+    aged = [m for _, m in rows if m["age_h"] >= 12]
+    print(f"  aged >=12h in this sample: {len(aged)}")
+    print(f"  of those, unit <= $0.10: {len(aged_cheap)}")
+    if aged:
+        print(f"  median unit among aged: ${statistics.median([m['unit'] for m in aged]):.2f}")
+        print(f"  median $/day per ${int(args.capital)} among aged: "
+              f"${statistics.median([earnings_per_day(m, args.capital) for m in aged]):.2f}")
+    if aged_cheap:
+        print("  cheap structure that survived 12h (these are the only empty-room leftovers):")
+        for m in sorted(aged_cheap, key=lambda z: -earnings_per_day(z, args.capital))[:8]:
+            print(f"    {m['ticker']:<34} unit ${m['unit']:.2f}  "
+                  f"age {m['age_h']:.1f}h  ${earnings_per_day(m, args.capital):.2f}/day")
+    else:
+        print("  none. After 12h the 1-2c reference is usually gone. "
+              "Selecting on $/hour without an age floor is measuring freshness.")
 
     if args.json:
         with open(args.json, "w") as fh:
-            json.dump([m for _, m in rows], fh, indent=1)
+            json.dump([_public(m) for _, m in rows], fh, indent=1)
         print(f"\nwrote {args.json}")
 
 

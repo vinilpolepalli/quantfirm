@@ -18,106 +18,29 @@ result, and the memo says so.
 Accrual is deliberately conservative:
   * a snapshot pays NOBODY unless both sides hold >= Target Size, so a
     position whose book falls under target accrues zero for that interval;
+  * competition is the qualifying-depth score (orders that help reach
+    Target Size), not the whole book;
   * our size is scored against the CURRENT book, i.e. we assume competitors
     react instantly and we never get a stale-book bonus;
   * we bill ourselves the whole interval at the rate observed at its END,
-    which is the pessimistic end of the interval when competition is growing.
+    which is the pessimistic end of the interval when competition is growing;
+  * new slots require --min-age-hours (default 12): a thin book on a
+    brand-new program is an empty room, not an edge.
 """
 import argparse
 import datetime as dt
 import json
 import os
 import sys
-import urllib.request
-from concurrent.futures import ThreadPoolExecutor
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO)
 STATE = os.path.join(REPO, "state", "kalshi_incentive_paper.json")
-BASE = "https://api.elections.kalshi.com/trade-api/v2"
-PROGRAMS = "https://external-api.kalshi.com/trade-api/v2/incentive_programs"
 
-
-def _get(url, timeout=30):
-    with urllib.request.urlopen(url, timeout=timeout) as r:
-        return json.load(r)
-
-
-def _f(x, default=0.0):
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return default
-
-
-def _ts(s):
-    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
-
-
-def fetch_programs():
-    out, cursor = [], ""
-    while True:
-        d = _get(f"{PROGRAMS}?status=active&limit=1000" + (f"&cursor={cursor}" if cursor else ""), 60)
-        page = d.get("incentive_programs", [])
-        out += page
-        cursor = d.get("next_cursor") or ""
-        if not cursor or not page:
-            return out
-
-
-def reference_score(levels, target_size, discount):
-    book = sorted(levels, key=lambda z: -z[0])
-    cum, ref = 0.0, None
-    for price, size in book:
-        cum += size
-        if cum >= target_size / 5:
-            ref = price
-            break
-    if ref is None:
-        return None, 0.0
-    total = 0.0
-    for price, size in book:
-        ticks = round((ref - price) * 100)
-        total += size * (discount ** ticks) if ticks > 0 else size
-    return ref, total
-
-
-def price(prog, now):
-    ticker = prog["market_ticker"]
-    try:
-        ob = _get(f"{BASE}/markets/{ticker}/orderbook?depth=100")["orderbook_fp"]
-    except Exception:
-        return None
-    yes = [(_f(a), _f(b)) for a, b in (ob.get("yes_dollars") or [])]
-    no = [(_f(a), _f(b)) for a, b in (ob.get("no_dollars") or [])]
-    if not yes or not no:
-        return None
-    target = _f(prog["target_size_fp"])
-    discount = (prog.get("discount_factor_bps") or 0) / 10000.0
-    yes_ref, yes_score = reference_score(yes, target, discount)
-    no_ref, no_score = reference_score(no, target, discount)
-    if yes_ref is None or no_ref is None or yes_ref + no_ref <= 0:
-        return None
-    start, end = _ts(prog["start_date"]), _ts(prog["end_date"])
-    duration_h = (end - start).total_seconds() / 3600.0
-    if duration_h <= 0:
-        return None
-    return dict(
-        ticker=ticker, yes_ref=yes_ref, no_ref=no_ref, unit=yes_ref + no_ref,
-        yes_score=yes_score, no_score=no_score, target=target,
-        yes_depth=sum(s for _, s in yes), no_depth=sum(s for _, s in no),
-        reward_per_hour=(prog["period_reward"] / 10000.0) / duration_h,
-        ends=prog["end_date"], duration_h=duration_h,
-        age_h=(now - start).total_seconds() / 3600.0,
-    )
-
-
-def rate_per_hour(m, capital):
-    """$/hour we would accrue. Zero if the Target Size exclusion bites."""
-    size = capital / m["unit"]
-    if m["yes_depth"] + size < m["target"] or m["no_depth"] + size < m["target"]:
-        return 0.0, size, 0.0, True
-    share = 0.5 * (size / (size + m["yes_score"]) + size / (size + m["no_score"]))
-    return m["reward_per_hour"] * share, size, share, False
+from quantfirm.kalshi.incentive import (  # noqa: E402
+    MIN_AGE_HOURS, MIN_HOURS_LEFT, SELECTION, eligible_program,
+    fetch_programs, price_book, price_many, rate_per_hour, ts as _ts,
+)
 
 
 
@@ -178,9 +101,11 @@ def verdict(st, now):
     if age > STALE_HOURS:
         return "STALLED", (f"no tick for {age:.1f}h - the collector is down, so "
                            f"nothing below this line is being measured")
-    run_h = (now - _ts(st["started"])).total_seconds() / 3600.0
+    clock = st.get("selection_since") or st["started"]
+    run_h = (now - _ts(clock)).total_seconds() / 3600.0
     if run_h < MIN_HOURS:
-        return "INSUFFICIENT", (f"{run_h:.1f}h of data, need {MIN_HOURS:.0f}h "
+        return "INSUFFICIENT", (f"{run_h:.1f}h of {st.get('selection', 'legacy')} "
+                                f"data, need {MIN_HOURS:.0f}h "
                                 f"- early ticks over-read badly")
     r24 = trailing_rate(hist, 24.0, now)
     r48 = trailing_rate(hist, 48.0, now)
@@ -207,10 +132,14 @@ def main():
     ap.add_argument("--capital", type=float, default=250.0)
     ap.add_argument("--slots", type=int, default=5, help="markets held at once")
     ap.add_argument("--sample", type=int, default=400, help="programs to price per tick")
-    ap.add_argument("--min-hours-left", type=float, default=48.0,
+    ap.add_argument("--min-hours-left", type=float, default=MIN_HOURS_LEFT,
                     help="only open positions in programs ending no sooner than this. "
                          "Must match kalshi_incentive_quote.py or the shadow book is "
                          "measuring a different strategy than the one we would run.")
+    ap.add_argument("--min-age-hours", type=float, default=MIN_AGE_HOURS,
+                    help="skip programs younger than this when opening a slot. Fresh "
+                         "books are empty rooms (measured 119x decay); the first 24h "
+                         "of this book picked them and over-read. Must match the quoter.")
     ap.add_argument("--email", action="store_true")
     ap.add_argument("--email-every", type=float, default=0.0,
                     help="with --email, only emit a digest if this many hours have passed "
@@ -230,6 +159,13 @@ def main():
         except Exception:
             pass
 
+    if st.get("selection") != SELECTION:
+        # Do not rewrite accrued history — that is the audit trail of the
+        # old freshness-biased book. Restart the 48h clock so a GO cannot
+        # fire on a mix of two strategies.
+        st["selection"] = SELECTION
+        st["selection_since"] = now.isoformat()
+
     live = {p["market_ticker"]: p for p in fetch_programs()
             if p["incentive_type"] == "liquidity" and _ts(p["end_date"]) > now}
 
@@ -247,17 +183,25 @@ def main():
         if not prog:
             closed.append(dict(pos, reason="program ended"))
             continue
-        m = price(prog, now)
+        m = price_book(prog, now)
         if not m:
             closed.append(dict(pos, reason="book unreadable"))
             continue
         rate, size, share, excluded = rate_per_hour(m, per)
         got = rate * interval_h
         earned += got
-        kept.append(dict(ticker=pos["ticker"], capital=per, size=round(size, 1),
-                         share=round(share, 4), rate_per_hour=round(rate, 4),
-                         excluded=excluded, accrued=round(pos.get("accrued", 0.0) + got, 4),
-                         ends=m["ends"]))
+        rec = dict(ticker=pos["ticker"], capital=per, size=round(size, 1),
+                   share=round(share, 4), rate_per_hour=round(rate, 4),
+                   excluded=excluded, accrued=round(pos.get("accrued", 0.0) + got, 4),
+                   ends=m["ends"])
+        # Carry fields recorded at open. The accrual loop rebuilds the
+        # dict every tick; anything not copied here lives one tick and
+        # dies (the #88 / #90 bug).
+        if pos.get("age_h_at_open") is not None:
+            rec["age_h_at_open"] = pos["age_h_at_open"]
+        if pos.get("opened"):
+            rec["opened"] = pos["opened"]
+        kept.append(rec)
 
     # 2. refill empty slots with the best available
     if len(kept) < args.slots:
@@ -275,11 +219,9 @@ def main():
         # accruing as they age out, rather than churning on the boundary.
         pool = [p for t, p in live.items()
                 if t not in held
-                and (_ts(p["end_date"]) - now).total_seconds() / 3600.0
-                >= args.min_hours_left]
+                and eligible_program(p, now, args.min_hours_left, args.min_age_hours)]
         pick = random.sample(pool, min(args.sample, len(pool)))
-        with ThreadPoolExecutor(24) as ex:
-            cand = [m for m in ex.map(lambda p: price(p, now), pick) if m]
+        cand = price_many(pick, now)
         scored = []
         for m in cand:
             rate, size, share, excluded = rate_per_hour(m, per)
@@ -290,12 +232,9 @@ def main():
             kept.append(dict(ticker=m["ticker"], capital=per, size=round(size, 1),
                              share=round(share, 4), rate_per_hour=round(rate, 4),
                              excluded=False, accrued=0.0, ends=m["ends"],
-                             # Age of the PROGRAM when we picked it. Measured
-                             # decay from fresh to a week old is 119x, so a
-                             # verdict built entirely on hours-old programs is
-                             # measuring freshness, not edge. Recorded rather
-                             # than filtered on: it makes the question
-                             # answerable when the gate finally fires.
+                             # Age of the PROGRAM when we picked it. New
+                             # slots also require --min-age-hours; this
+                             # field is how we verify the filter held.
                              age_h_at_open=round(m["age_h"], 1),
                              opened=now.isoformat()))
 
@@ -308,19 +247,24 @@ def main():
         t=now.isoformat(), earned=round(earned, 4), total=st["accrued"],
         held=len(kept), interval_h=round(interval_h, 3))])[-500:]
 
-    run_h = max((now - _ts(st["started"])).total_seconds() / 3600.0, 1e-9)
-    rate_day = st["accrued"] / run_h * 24
+    life_h = max((now - _ts(st["started"])).total_seconds() / 3600.0, 1e-9)
+    sel_h = max((now - _ts(st.get("selection_since") or st["started"])).total_seconds() / 3600.0, 1e-9)
     lines = []
     lines.append(f"Kalshi LIP paper book — ${args.capital:,.0f} notional, {len(kept)} slots")
-    lines.append(f"tick {st['ticks']}  ·  running {run_h:.1f}h  ·  {now.strftime('%Y-%m-%d %H:%M')}Z")
+    lines.append(f"tick {st['ticks']}  ·  book {life_h:.1f}h  ·  "
+                 f"{st.get('selection', 'legacy')} {sel_h:.1f}h  ·  "
+                 f"{now.strftime('%Y-%m-%d %H:%M')}Z")
     lines.append("")
     lines.append(f"  accrued this tick   ${earned:,.4f}  (over {interval_h:.2f}h)")
     if dropped_h > 0.01:
         lines.append(f"  ** MISSED SLOTS: gap was {raw_interval_h:.2f}h, capped at "
                      f"{MAX_INTERVAL_H:.2f}h — {dropped_h:.2f}h of accrual dropped "
                      f"rather than extrapolated. The scheduler is skipping.")
-    lines.append(f"  accrued total       ${st['accrued']:,.4f}")
-    lines.append(f"  implied run-rate    ${rate_day:,.2f}/day  ({rate_day/args.capital*100:.2f}%/day)")
+    lines.append(f"  accrued total       ${st['accrued']:,.4f}  (lifetime, mixed strategies)")
+    if interval_h > 0:
+        tick_rate = earned / interval_h * 24
+        lines.append(f"  this-tick run-rate  ${tick_rate:,.2f}/day  "
+                     f"({tick_rate / args.capital * 100:.2f}%/day) — a single tick, not a finding")
     lines.append("")
     lines.append(f"  {'ticker':<34}{'size':>8}{'share':>8}{'$/hr':>9}{'accrued':>10}{'age@open':>10}")
     for k in kept:

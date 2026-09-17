@@ -14,7 +14,7 @@ A snapshot pays NOBODY unless both sides hold >= Target Size, so markets where
 our size cannot get the book over that line are skipped rather than funded.
 
 SAFETY, in the order it is enforced:
-  1. dry run unless --live AND env KALSHI_LIVE=1 AND no state/KILL_SWITCH_KALSHI;
+  1. dry run unless --live AND env KALSHI_LIVE=1 AND no state/KILL_SWITCH_INCENTIVE;
   2. the kill switch is re-checked immediately before EVERY order, not once;
   3. post_only on every order -- a maker order that crosses gets taker-filled,
      which is 4x the fee and breaks the whole thesis;
@@ -37,7 +37,6 @@ import hashlib
 import json
 import os
 import sys
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from decimal import Decimal
 
@@ -45,7 +44,11 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 
 from quantfirm.kalshi.client import KalshiClient          # noqa: E402
-from quantfirm.kalshi.halt import kill_switch_tripped     # noqa: E402
+from quantfirm.kalshi.halt import incentive_kill_tripped  # noqa: E402
+from quantfirm.kalshi.incentive import (                  # noqa: E402
+    MIN_AGE_HOURS, MIN_HOURS_LEFT, eligible_program, fetch_orderbooks,
+    fetch_programs, plan_market, price_book, ts as _ts,
+)
 
 # This book arms SEPARATELY from the 15m desk. KALSHI_LIVE is shared, so if we
 # keyed off it alone, turning the metals desk on would silently start quoting
@@ -53,14 +56,7 @@ from quantfirm.kalshi.halt import kill_switch_tripped     # noqa: E402
 # blame shows who armed it and when.
 ARM = os.path.join(REPO, "state", "INCENTIVE_LIVE")
 
-BASE = "https://api.elections.kalshi.com/trade-api/v2"
-PROGRAMS = "https://external-api.kalshi.com/trade-api/v2/incentive_programs"
 LOG = os.path.join(REPO, "state", "kalshi_incentive_orders.jsonl")
-
-
-def _get(url, timeout=30):
-    with urllib.request.urlopen(url, timeout=timeout) as r:
-        return json.load(r)
 
 
 def _f(x, default=0.0):
@@ -70,88 +66,11 @@ def _f(x, default=0.0):
         return default
 
 
-def _ts(s):
-    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
-
-
-def fetch_programs():
-    out, cursor = [], ""
-    while True:
-        d = _get(f"{PROGRAMS}?status=active&limit=1000" + (f"&cursor={cursor}" if cursor else ""), 60)
-        page = d.get("incentive_programs", [])
-        out += page
-        cursor = d.get("next_cursor") or ""
-        if not cursor or not page:
-            return out
-
-
-def reference_price(levels, target_size):
-    """Walk DOWN from the best bid until cumulative size reaches target/5."""
-    cum = 0.0
-    for price, size in sorted(levels, key=lambda z: -z[0]):
-        cum += size
-        if cum >= target_size / 5:
-            return price
-    return None
-
-
-def discounted_score(levels, ref, discount):
-    total = 0.0
-    for price, size in levels:
-        ticks = round((ref - price) * 100)
-        total += size * (discount ** ticks) if ticks > 0 else size
-    return total
-
-
-def assess(prog, now, min_hours):
+def assess(prog, now, min_hours, min_age, ob=None):
     """Price one market. Returns None when it is not worth funding."""
-    ticker = prog["market_ticker"]
-    dur_h = (_ts(prog["end_date"]) - _ts(prog["start_date"])).total_seconds() / 3600.0
-    left_h = (_ts(prog["end_date"]) - now).total_seconds() / 3600.0
-    if dur_h <= 0 or left_h < min_hours:
+    if not eligible_program(prog, now, min_hours, min_age):
         return None
-    try:
-        ob = _get(f"{BASE}/markets/{ticker}/orderbook?depth=100")["orderbook_fp"]
-    except Exception:
-        return None
-    yes = [(_f(a), _f(b)) for a, b in (ob.get("yes_dollars") or [])]
-    no = [(_f(a), _f(b)) for a, b in (ob.get("no_dollars") or [])]
-    if not yes or not no:
-        return None
-    target = _f(prog["target_size_fp"])
-    discount = (prog.get("discount_factor_bps") or 0) / 10000.0
-    yes_ref = reference_price(yes, target)
-    no_ref = reference_price(no, target)
-    if yes_ref is None or no_ref is None or yes_ref <= 0 or no_ref <= 0:
-        return None
-    return dict(
-        ticker=ticker, target=target, discount=discount,
-        yes_ref=yes_ref, no_ref=no_ref, unit=yes_ref + no_ref,
-        yes_depth=sum(s for _, s in yes), no_depth=sum(s for _, s in no),
-        yes_score=discounted_score(yes, yes_ref, discount),
-        no_score=discounted_score(no, no_ref, discount),
-        pool=prog["period_reward"] / 10000.0, dur_h=dur_h, left_h=left_h,
-    )
-
-
-def plan_market(m, budget):
-    """Sizes for one market, or None if the snapshot could never qualify."""
-    # Split the budget across the two legs in proportion to their prices, so
-    # both legs carry the same contract count -- the exclusion rule is about
-    # CONTRACTS on each side, not dollars.
-    size = budget / m["unit"]
-    size = float(int(size))               # whole contracts, and round DOWN so the
-                                          # cap below is computed on what we actually send
-    if size < 1:
-        return None
-    if m["yes_depth"] + size < m["target"] or m["no_depth"] + size < m["target"]:
-        return None                       # snapshot would be excluded: pays nobody
-    pool_share = 0.5 * (size / (size + m["yes_score"]) + size / (size + m["no_score"]))
-    expected = m["pool"] * pool_share * min(1.0, m["left_h"] / m["dur_h"])
-    if expected < 1.0:                    # under the $1 minimum payout: never paid
-        return None
-    return dict(size=size, yes_cost=size * m["yes_ref"], no_cost=size * m["no_ref"],
-                share=pool_share, expected=expected)
+    return price_book(prog, now, ob=ob)
 
 
 def coid(ticker, side, price):
@@ -196,7 +115,7 @@ def reconcile(client, live, progs_by_ticker, now, max_ticks_below, args):
     books = {}
     with ThreadPoolExecutor(16) as ex:
         for tk, m in zip(tickers, ex.map(
-                lambda t: assess(progs_by_ticker[t], now, 0.0) if t in progs_by_ticker else None,
+                lambda t: assess(progs_by_ticker[t], now, 0.0, 0.0) if t in progs_by_ticker else None,
                 tickers)):
             books[tk] = m
     for o in resting:
@@ -244,8 +163,10 @@ def main():
     ap.add_argument("--capital", type=float, default=250.0, help="total $ across all markets")
     ap.add_argument("--max-per-market", type=float, default=40.0)
     ap.add_argument("--markets", type=int, default=8)
-    ap.add_argument("--min-hours-left", type=float, default=48.0,
+    ap.add_argument("--min-hours-left", type=float, default=MIN_HOURS_LEFT,
                     help="skip programs ending sooner than this; long programs need no chasing")
+    ap.add_argument("--min-age-hours", type=float, default=MIN_AGE_HOURS,
+                    help="skip programs younger than this. Fresh books are empty rooms.")
     ap.add_argument("--sample", type=int, default=600)
     ap.add_argument("--live", action="store_true", help="actually send orders")
     ap.add_argument("--cancel-all", action="store_true", help="cancel every resting LIP order")
@@ -258,7 +179,7 @@ def main():
     client = KalshiClient(env="prod")
 
     # ---- gate 1: may we trade at all? -----------------------------------
-    killed = kill_switch_tripped()
+    killed = incentive_kill_tripped()
     env_live = os.environ.get("KALSHI_LIVE") == "1"
     armed = os.path.exists(ARM)
     live = args.live and env_live and armed and not killed and client.can_trade
@@ -269,7 +190,7 @@ def main():
           + ("" if armed else "  <- this book is not armed"))
     print(f"  credentials present  {client.can_trade}")
     print(f"  kill switch clear    {not killed}"
-          + ("" if not killed else "  <- state/KILL_SWITCH_KALSHI is present"))
+          + ("" if not killed else "  <- state/KILL_SWITCH_INCENTIVE is present"))
     print(f"  => {'LIVE, ORDERS WILL BE SENT' if live else 'DRY RUN, nothing will be sent'}\n")
 
     # ---- gate 2: broker state is truth ----------------------------------
@@ -307,10 +228,15 @@ def main():
     # ---- select ----------------------------------------------------------
     import random
     random.seed()
-    fresh = [p for p in progs_all if p["market_ticker"] not in held]
+    fresh = [p for p in progs_all
+             if p["market_ticker"] not in held
+             and eligible_program(p, now, args.min_hours_left, args.min_age_hours)]
     pick = random.sample(fresh, min(args.sample, len(fresh)))
-    with ThreadPoolExecutor(24) as ex:
-        scored = [m for m in ex.map(lambda p: assess(p, now, args.min_hours_left), pick) if m]
+    books = fetch_orderbooks([p["market_ticker"] for p in pick])
+    scored = [m for m in (
+        assess(p, now, args.min_hours_left, args.min_age_hours,
+               books.get(p["market_ticker"]))
+        for p in pick) if m]
 
     budget = min(args.max_per_market, args.capital / max(args.markets, 1))
     cands = []
@@ -320,7 +246,8 @@ def main():
             cands.append((pl["expected"] / (pl["yes_cost"] + pl["no_cost"]), m, pl))
     cands.sort(reverse=True, key=lambda z: z[0])
 
-    print(f"\npriced {len(scored)} programs with >{args.min_hours_left:.0f}h left; "
+    print(f"\npriced {len(scored)} programs with >{args.min_hours_left:.0f}h left "
+          f"and >{args.min_age_hours:.0f}h age; "
           f"{len(cands)} can qualify at ${budget:.0f}/market\n")
     if not cands:
         print("nothing fundable this pass")
@@ -349,7 +276,7 @@ def main():
             log(intent)                                   # log BEFORE sending
             if not live:
                 continue
-            if kill_switch_tripped():                     # re-check every order
+            if incentive_kill_tripped():                  # re-check every order
                 print("  kill switch tripped mid-run — stopping")
                 return 1
             try:
@@ -374,7 +301,7 @@ def main():
         print("  1. KALSHI_PROD_KEY_ID and KALSHI_PROD_PRIVATE_KEY in the environment")
         print("  2. KALSHI_LIVE=1")
         print("  3. touch state/INCENTIVE_LIVE   (arms THIS book only)")
-        print("  4. rm state/KILL_SWITCH_KALSHI")
+        print("  4. rm state/KILL_SWITCH_INCENTIVE  (KILL_SWITCH_KALSHI does not halt this book)")
         print("  5. --live on the command line")
     return 0
 

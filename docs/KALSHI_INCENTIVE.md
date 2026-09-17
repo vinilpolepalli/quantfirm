@@ -2,22 +2,31 @@
 
 **Status: SHADOW. Not armed. No real money has ever been placed.**
 
-## Where the loop stands (2026-09-16T20:40Z)
+## Where the loop stands (2026-09-17T20:00Z)
 
-The hourly collector is **running**. `kalshi-incentive-paper` fired on schedule
-at 20:25Z, ticked the shadow book, and pushed `kalshi: incentive tick
-2026-09-16T20:25Z` to main. Nothing else needs starting; the loop is the agent.
+The collector is **stalled**. Last successful tick on main was
+`kalshi: incentive tick 2026-09-17T16:31Z`. GitHub's `*/20` cron then dropped
+every slot through 20:00Z — nine misses. Most historical ticks were
+`workflow_dispatch`, not schedule. An offset hourly cron (`7 * * * *`) is
+now a second roll of the dice; it does not make the scheduler reliable.
 
 Verified against prod this session, read-only:
 
-- Credentials authenticate and the deposit is real — balance **$257.0071**.
-- **0 resting orders** on the account. Nothing of ours is live anywhere.
-- Gate output: `INCENTIVE_LIVE False`, `kill switch clear False`. Two
-  independent blocks, as designed.
-- Book verdict: **`INSUFFICIENT`** — 4.2h of data against the 48h the gate
-  requires. The `$97.21/day` run-rate the tick prints is an early-tick
-  over-read of exactly the kind the traps table is about. Do not repeat it as
-  a finding.
+- Credentials authenticate. Balance **$260.5449**. The $257 ACH for this
+  book is still sitting there; the extra is 15m-desk settlement, not LIP.
+- **0 resting orders. 0 open positions.** Nothing of ours is live on LIP.
+- Recent fills are `KXGOLD15M` / `KXWTI15M` / etc. from Sep 16. Not this book.
+- `state/INCENTIVE_LIVE` absent. `KALSHI_LIVE` unset. This book now reads
+  `state/KILL_SWITCH_INCENTIVE` (absent) — `KILL_SWITCH_KALSHI` no longer
+  halts it. Metals stay halted on their own file.
+- Book verdict on main: **`INSUFFICIENT`** — 24.3h of the old freshness-biased
+  selection. That clock is **void**. Selection is now `aged12_qualifying`
+  (programs ≥12h old, qualifying-depth score). The 48h gate restarts at
+  `selection_since` so a GO cannot fire on a mix of two strategies.
+
+Do not arm. Nobody has seen Kalshi credit a LIP reward to this account.
+The first real money is still the canary: `$40` across two markets, and
+only after the new selection's own 48h gate says `GO`.
 
 Two defects were found and fixed while confirming the above:
 
@@ -138,11 +147,12 @@ should be ~$40 across two long-duration markets, not $257 across eight.
 
 ```bash
 # always safe, no credentials, touches nothing
-python3 scripts/kalshi_incentive_paper.py --capital 257 --slots 5 --sample 250
-python3 scripts/kalshi_incentive_scan.py  --sample 400 --capital 257
+python3 scripts/kalshi_incentive_paper.py --capital 257 --slots 5 --sample 250 --min-age-hours 12
+python3 scripts/kalshi_incentive_scan.py  --sample 400 --capital 257 --min-age-hours 12
+python3 scripts/kalshi_incentive_stress.py --per-bucket 45
 
 # the real quoter — DRY RUN unless every gate below passes
-python3 scripts/kalshi_incentive_quote.py --capital 40 --markets 2 --sample 400
+python3 scripts/kalshi_incentive_quote.py --capital 40 --markets 2 --sample 400 --min-age-hours 12
 ```
 
 To arm, **all five** are required, by design:
@@ -153,7 +163,9 @@ To arm, **all five** are required, by design:
 4. `state/INCENTIVE_LIVE` exists — arms **this book only**
 5. `--live` on the command line
 
-and `state/KILL_SWITCH_KALSHI` must be absent.
+and `state/KILL_SWITCH_INCENTIVE` must be absent. `KILL_SWITCH_KALSHI`
+does not halt this book — that file is the metals desk. Stopping
+everything on Kalshi is two files.
 
 `INCENTIVE_LIVE` is separate from `KALSHI_LIVE` on purpose: `KALSHI_LIVE` is
 shared with the 15m metals desk, so without a separate flag, turning that desk
@@ -172,13 +184,13 @@ Setting them is a by-hand step at
 key pasted into a chat or a commit is a key that has to be rotated. Paste the
 PEM whole; the client normalises a one-line `\n` form. Note that setting these
 three alone does **not** arm anything: `state/INCENTIVE_LIVE` must also exist
-and `state/KILL_SWITCH_KALSHI` must be removed, which is two more deliberate
+and `state/KILL_SWITCH_INCENTIVE` must be absent, which is two more deliberate
 acts. Setting the secrets while the book still reads `INSUFFICIENT` is safe and
 is what lets the hourly pass reconcile against real broker state.
 
-To stop everything: `touch state/KILL_SWITCH_KALSHI`, then
+To stop this book: `touch state/KILL_SWITCH_INCENTIVE`, then
 `python3 scripts/kalshi_incentive_quote.py --cancel-all --live` to pull resting
-quotes.
+quotes. To stop every Kalshi desk, also `touch state/KILL_SWITCH_KALSHI`.
 
 ## Rotation
 
