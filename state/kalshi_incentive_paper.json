@@ -1,7 +1,7 @@
 {
  "started": "2026-09-16T16:16:07.458665+00:00",
- "accrued": 51.2946,
- "ticks": 15,
+ "accrued": 51.3272,
+ "ticks": 16,
  "positions": [
   {
    "ticker": "KX30YMORTW-26SEP17-T6.94",
@@ -10,7 +10,7 @@
    "share": 0.0877,
    "rate_per_hour": 0.344,
    "excluded": false,
-   "accrued": 3.1684,
+   "accrued": 3.1787,
    "ends": "2026-09-17T15:59:00Z"
   },
   {
@@ -20,7 +20,7 @@
    "share": 0.1337,
    "rate_per_hour": 0.3159,
    "excluded": false,
-   "accrued": 1.3477,
+   "accrued": 1.3572,
    "ends": "2026-09-20T03:59:59.999999Z"
   },
   {
@@ -30,7 +30,7 @@
    "share": 0.0624,
    "rate_per_hour": 0.0651,
    "excluded": false,
-   "accrued": 0.2907,
+   "accrued": 0.2927,
    "ends": "2026-09-20T03:59:59.999999Z"
   },
   {
@@ -40,7 +40,7 @@
    "share": 0.0509,
    "rate_per_hour": 0.1154,
    "excluded": false,
-   "accrued": 0.2142,
+   "accrued": 0.2177,
    "ends": "2026-09-20T03:59:59.999999Z"
   },
   {
@@ -50,7 +50,7 @@
    "share": 0.4146,
    "rate_per_hour": 0.2468,
    "excluded": false,
-   "accrued": 0.5114,
+   "accrued": 0.5188,
    "ends": "2026-09-24T00:01:52.317485Z"
   }
  ],
@@ -159,11 +159,18 @@
    "total": 51.2946,
    "held": 5,
    "interval_h": 1.0
+  },
+  {
+   "t": "2026-09-17T06:13:28.345675+00:00",
+   "earned": 0.0326,
+   "total": 51.3272,
+   "held": 5,
+   "interval_h": 0.03
   }
  ],
- "last_tick": "2026-09-17T06:11:40.247000+00:00",
+ "last_tick": "2026-09-17T06:13:28.345675+00:00",
  "capital": 257.0,
  "last_email": "2026-09-16T16:18:35.072722+00:00",
  "verdict": "INSUFFICIENT",
- "verdict_reason": "13.9h of data, need 48h - early ticks over-read badly"
+ "verdict_reason": "14.0h of data, need 48h - early ticks over-read badly"
 }
