@@ -5,9 +5,9 @@
 Reproduce (public data only, no orders):
 
 ```bash
-python3 -m unittest tests.test_weather_brackets tests.test_kalshi_ladder -q
-python3 scripts/kalshi_oss_skills_eval.py            # offline + live books
-python3 scripts/kalshi_oss_skills_eval.py --offline  # tape only
+python3 -m unittest tests.test_weather_brackets tests.test_kalshi_ladder tests.test_kalshi.TestBankSweep -q
+python3 scripts/kalshi_oss_skills_eval.py --offline
+python3 scripts/kalshi_oss_skills_eval.py --hist-candles   # public books + morning-candle fade
 ```
 
 This pass does not touch `desk_book`, does not create `state/INCENTIVE_LIVE`,
@@ -17,7 +17,7 @@ and does not lift a kill switch.
 
 | source | what they sell | on this desk |
 |---|---|---|
-| [agiprolabs/claude-trading-skills](https://github.com/agiprolabs/claude-trading-skills) `prediction-market-strategy` | maker fade of 5–20¢ longshots; fee-aware θ; phantom-edge catalog | **doctrine is good; the fade is not a raise.** On our 12 city-days, recorded 5–20¢ YES quotes: taker fade **−$0.77** / 14 legs / 2 longshot hits. Maker print-replay (upper bound) **−$0.40**. Same tape's forecast take is already **−$12.29**. |
+| [agiprolabs/claude-trading-skills](https://github.com/agiprolabs/claude-trading-skills) `prediction-market-strategy` | maker fade of 5–20¢ longshots; fee-aware θ; phantom-edge catalog | **doctrine is good; the fade is not a raise.** Morning-candle fade on 48 settled city-days: **66** cheap YES legs, hit **7/66 = 10.6%**, taker **−$1.21**, maker print-replay (upper bound) **+$0.56**. Same 12-day ensemble take is **−$12.29**. |
 | same repo `prediction-market-live-ops` + [agiprolabs/kalshi-stack](https://github.com/agiprolabs/kalshi-stack) | backtest → paper → micro-probe → ratchet; truthful cancels; print-replay is an upper bound | **lift this.** Written as `skills/kalshi-agent-onboarding/SKILL.md`. `classify_cancel` / `cancel_order_checked` are now in `quantfirm/kalshi/client.py`. |
 | same repo `kalshi-weather-markets` | 2°F inclusive brackets, Gaussian +½ continuity correction, ticker date not `close_time`, CLI ≠ METAR, LST ≠ DST | **formulas lifted** to `quantfirm/kalshi/weather_brackets.py`. Mapper + station table already existed. Do not paper weather. |
 | same repo `kalshi-crypto-index-markets` | hourly/daily BTC/ETH/SPX/NDX ranges; longshot-sell; they call hourly crypto "too sparse / HFT" | We already measured complete-hour **sum(ask) ~$3** and 0 executable dutch. Their own evidence is ~50 index trades. Not a sleeve. |
@@ -53,21 +53,39 @@ A Gaussian with σ=2.5°F on the winning bracket does not rescue it. On the days
 
 ### Favorite–longshot fade (the skill's surviving claim)
 
-Same 12 mornings, every recorded quote with YES ask in **5–20¢**, fade it (buy NO), hold to venue `result`. One lot.
+Fade every YES ask in **5–20¢**, hold to venue `result`, one lot. Two samples:
 
-| mode | n | pnl | cheap YES that won |
-|---|---:|---:|---:|
-| taker (pay 1 − bid) | 14 | **−$0.77** | 2 |
-| maker at the cheap ask (upper bound) | 14 | **−$0.40** | 2 |
+| sample | mode | n | pnl | cheap YES that won |
+|---|---|---:|---:|---:|
+| 12 mornings the ensemble already quoted | taker (pay 1 − bid) | 14 | **−$0.77** | 2 |
+| same | maker at the cheap ask (upper bound) | 14 | **−$0.40** | 2 |
+| 48 settled city-days, 12:00 UTC candles | taker | 66 | **−$1.21** | **7** |
+| same | maker print-replay (upper bound) | 66 | **+$0.56** | 7 |
 
-The two hits are the whole story:
+Hit rate on the 66-leg tape is **7/66 = 10.6%**. The band is 5–20¢. That is roughly fair, not “a 10¢ contract wins ~2%”. Taker losses on the seven hits are **−$6.31**; the 59 misses make **+$5.10**. Maker upper-bound is **+$0.56 total** (~0.8¢/contract) *before* queue and adverse selection — the skill’s own live-ops note says print-replay of passive fills is an upper bound, not an estimate.
 
-- `KXHIGHNY-26SEP10-T85` at **10¢** settled YES (Central Park printed the tail vs an 87.4°F grid mean). Taker **−$0.92**.
-- `KXHIGHTBOS-26SEP09-B76.5` at **13¢** settled YES. Taker **−$0.89**.
+Elephant rows (taker):
 
-Twelve 3–16¢ wins do not cover two ~90¢ losses. Hit rate on this band is **2/14 ≈ 14%**. That is *not* "a 10¢ contract wins ~2%". It is a 12-morning sample with a station/grid basis event in it. n=14 is not a raise, and the maker number is the optimistic one.
+- `KXHIGHNY-26SEP10-T85` at 10¢ — Central Park printed the tail vs an 87.4°F grid mean. **−$0.92**
+- `KXHIGHNY-26AUG28-B84.5` at 5¢. **−$0.97**
+- `KXHIGHCHI-26SEP04-B93.5` at 14¢. **−$0.89**
+- `KXHIGHCHI-26SEP03-B92.5` at 13¢. **−$0.92**
+- `KXHIGHTBOS-26SEP09-B76.5` at 13¢. **−$0.89**
+- `KXHIGHTBOS-26SEP07-B81.5` at 18¢. **−$0.84**
+- `KXHIGHTBOS-26AUG30-B86.5` at 16¢. **−$0.88**
 
-This is also why their catalog says measure fill-rate *forward*. We did not get a forward fill. We got a selected tape.
+n=66 is still not a raise. Do not paper it.
+
+### Live public books (2026-09-17T23:36Z, no orders)
+
+| book | legs | sum(ask) | dutch | 5–20¢ YES asks |
+|---|---:|---:|---|---:|
+| weather highs (12 open events) | 6-ish each | 1.03–1.08 | **0 tradeable** | 7 real (volume hundreds–5k, size 2–76) |
+| `KXBTC-26SEP1720` | 188 | **$4.09** | no (sell: missing_bid) | 18, advertised size 70, **volume 0** |
+| `KXETH-26SEP1720` | 300 | **$13.81** | no (sell: missing_bid) | 49, size 70, **volume 0** |
+| `KXINX-26SEP18H1600` | 30 | **$2.52** | no | 13, some real volume |
+
+Hourly crypto “cheap asks” are the empty-room wings we already refuse. Weather tails tonight are real quotes and still not a dutch. The skill’s own hourly-crypto row is “too sparse / HFT”. Live agrees.
 
 ### Incentive book (recomputed, not inherited)
 
@@ -75,7 +93,7 @@ This is also why their catalog says measure fill-rate *forward*. We did not get 
 
 - **STALLED** — last tick 2026-09-17T19:50Z, then >3h silence. The collector is down; nothing below that line is being measured.
 - Run length **31.4h** vs the 48h gate. Even with a live collector this is still `INSUFFICIENT`.
-- Accrued total **$57.75** on $257 notional is **not a daily rate**. The trailing-24h print (~$46/day) is the same early-tick over-read the traps table exists for. Do not repeat it as a finding.
+- Accrued total **$57.75** on $257 notional is **not a daily rate**. Do not annualise it and do not quote the trailing-24h print while the gate is STALLED.
 
 OSS bots do not change this gate. Arming still takes five conditions in `docs/KALSHI_INCENTIVE.md`.
 

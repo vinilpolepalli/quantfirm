@@ -1,5 +1,5 @@
 {
-  "ts": "2026-09-17T23:40:12.323464+00:00",
+  "ts": "2026-09-17T23:41:28.068332+00:00",
   "verdict": "DO_NOT_RUN_OSS_BOTS_LIVE",
   "hist": {
     "source": "research/kalshi_div_weather_hist.json",
@@ -433,13 +433,2292 @@
     "ok": true,
     "verdict": "STALLED",
     "reason": "no tick for 3.8h - the collector is down, so nothing below this line is being measured",
-    "run_hours": 31.4,
+    "run_hours": 31.42,
     "trailing_24h_per_day": 45.7991,
     "accrued_total_not_a_rate": 57.7456,
     "capital": 257.0,
     "last_tick": "2026-09-17T19:50:41.844848+00:00",
     "gate_min_hours": 48.0
   },
-  "live": null,
-  "hist_candles": null
+  "live": {
+    "ts": "2026-09-17T23:41:30.135956+00:00",
+    "weather": [
+      {
+        "event": "KXHIGHNY-26SEP18",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.07,
+        "buy_reason": "no_edge",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.04
+      },
+      {
+        "event": "KXHIGHNY-26SEP17",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.05,
+        "buy_reason": "no_ask_depth",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.02
+      },
+      {
+        "event": "KXHIGHCHI-26SEP18",
+        "n_legs": 6,
+        "n_flb_asks": 2,
+        "flb_asks": [
+          {
+            "ticker": "KXHIGHCHI-26SEP18-B76.5",
+            "yes_ask": 0.12,
+            "yes_bid": 0.11,
+            "yes_ask_size": 5.11,
+            "volume": 487.27,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXHIGHCHI-26SEP18-B70.5",
+            "yes_ask": 0.1,
+            "yes_bid": 0.09,
+            "yes_ask_size": 12.34,
+            "volume": 422.61,
+            "strike_type": "between"
+          }
+        ],
+        "dutch_tradeable": false,
+        "sum_ask": 1.04,
+        "buy_reason": "no_edge",
+        "sell_reason": "no_edge",
+        "mid_sum": 1.01
+      },
+      {
+        "event": "KXHIGHCHI-26SEP17",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.05,
+        "buy_reason": "no_ask_depth",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.02
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP18",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.04,
+        "buy_reason": "no_edge",
+        "sell_reason": "no_edge",
+        "mid_sum": 1.01
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP17",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.05,
+        "buy_reason": "no_ask_depth",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.02
+      },
+      {
+        "event": "KXHIGHLAX-26SEP18",
+        "n_legs": 6,
+        "n_flb_asks": 2,
+        "flb_asks": [
+          {
+            "ticker": "KXHIGHLAX-26SEP18-T79",
+            "yes_ask": 0.09,
+            "yes_bid": 0.07,
+            "yes_ask_size": 9.54,
+            "volume": 5083.95,
+            "strike_type": "greater"
+          },
+          {
+            "ticker": "KXHIGHLAX-26SEP18-B74.5",
+            "yes_ask": 0.05,
+            "yes_bid": 0.04,
+            "yes_ask_size": 13.16,
+            "volume": 4575.12,
+            "strike_type": "between"
+          }
+        ],
+        "dutch_tradeable": false,
+        "sum_ask": 1.08,
+        "buy_reason": "no_edge",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.045
+      },
+      {
+        "event": "KXHIGHLAX-26SEP17",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.05,
+        "buy_reason": "no_ask_depth",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.02
+      },
+      {
+        "event": "KXHIGHMIA-26SEP18",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.04,
+        "buy_reason": "no_edge",
+        "sell_reason": "no_edge",
+        "mid_sum": 1.01
+      },
+      {
+        "event": "KXHIGHMIA-26SEP17",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.05,
+        "buy_reason": "no_ask_depth",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.02
+      },
+      {
+        "event": "KXHIGHDEN-26SEP18",
+        "n_legs": 6,
+        "n_flb_asks": 3,
+        "flb_asks": [
+          {
+            "ticker": "KXHIGHDEN-26SEP18-T85",
+            "yes_ask": 0.06,
+            "yes_bid": 0.05,
+            "yes_ask_size": 76.06,
+            "volume": 784.21,
+            "strike_type": "greater"
+          },
+          {
+            "ticker": "KXHIGHDEN-26SEP18-B80.5",
+            "yes_ask": 0.13,
+            "yes_bid": 0.12,
+            "yes_ask_size": 2.0,
+            "volume": 235.24,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXHIGHDEN-26SEP18-B78.5",
+            "yes_ask": 0.07,
+            "yes_bid": 0.03,
+            "yes_ask_size": 34.0,
+            "volume": 332.46,
+            "strike_type": "between"
+          }
+        ],
+        "dutch_tradeable": false,
+        "sum_ask": 1.03,
+        "buy_reason": "no_edge",
+        "sell_reason": "no_bid_depth",
+        "mid_sum": 0.975
+      },
+      {
+        "event": "KXHIGHDEN-26SEP17",
+        "n_legs": 6,
+        "n_flb_asks": 0,
+        "flb_asks": [],
+        "dutch_tradeable": false,
+        "sum_ask": 1.05,
+        "buy_reason": "no_ask_depth",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.02
+      }
+    ],
+    "ranges": [
+      {
+        "series": "KXBTC",
+        "event": "KXBTC-26SEP1720",
+        "n_legs": 188,
+        "n_flb_asks": 18,
+        "flb_asks": [
+          {
+            "ticker": "KXBTC-26SEP1720-B77650",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B77550",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B77450",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B77350",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B77250",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B77150",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B77050",
+            "yes_ask": 0.08,
+            "yes_bid": 0.0,
+            "yes_ask_size": 100.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B76950",
+            "yes_ask": 0.08,
+            "yes_bid": 0.0,
+            "yes_ask_size": 100.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B76550",
+            "yes_ask": 0.07,
+            "yes_bid": 0.04,
+            "yes_ask_size": 400.0,
+            "volume": 671.06,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B76250",
+            "yes_ask": 0.14,
+            "yes_bid": 0.12,
+            "yes_ask_size": 100.0,
+            "volume": 921.49,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75750",
+            "yes_ask": 0.08,
+            "yes_bid": 0.0,
+            "yes_ask_size": 100.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75650",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75550",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75450",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75350",
+            "yes_ask": 0.05,
+            "yes_bid": 0.0,
+            "yes_ask_size": 5.0,
+            "volume": 690.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75250",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75150",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXBTC-26SEP1720-B75050",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          }
+        ],
+        "dutch_tradeable": false,
+        "sum_ask": 4.09,
+        "buy_reason": "no_edge",
+        "sell_reason": "missing_bid",
+        "mid_sum": 2.51,
+        "n_open_events": 2
+      },
+      {
+        "series": "KXETH",
+        "event": "KXETH-26SEP1720",
+        "n_legs": 300,
+        "n_flb_asks": 49,
+        "flb_asks": [
+          {
+            "ticker": "KXETH-26SEP1720-B2627",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2622",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2617",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2612",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2607",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2602",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2597",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2592",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2587",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2582",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2577",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2572",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2567",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2562",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2557",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2552",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2547",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2542",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2537",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2532",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2527",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2522",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2452",
+            "yes_ask": 0.11,
+            "yes_bid": 0.09,
+            "yes_ask_size": 40.0,
+            "volume": 4.8,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2437",
+            "yes_ask": 0.07,
+            "yes_bid": 0.06,
+            "yes_ask_size": 41.0,
+            "volume": 31.18,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2392",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2387",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2382",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2377",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2372",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2367",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2362",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2357",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2352",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2347",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2342",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2337",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2332",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2327",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2322",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2317",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2312",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2307",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2302",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2297",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2292",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2287",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2282",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2277",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXETH-26SEP1720-B2272",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 70.0,
+            "volume": 0.0,
+            "strike_type": "between"
+          }
+        ],
+        "dutch_tradeable": false,
+        "sum_ask": 13.81,
+        "buy_reason": "no_edge",
+        "sell_reason": "missing_bid",
+        "mid_sum": 7.38,
+        "n_open_events": 2
+      },
+      {
+        "series": "KXINX",
+        "event": "KXINX-26SEP18H1600",
+        "n_legs": 30,
+        "n_flb_asks": 13,
+        "flb_asks": [
+          {
+            "ticker": "KXINX-26SEP18H1600-B7762",
+            "yes_ask": 0.14,
+            "yes_bid": 0.0,
+            "yes_ask_size": 30.0,
+            "volume": 5.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7737",
+            "yes_ask": 0.17,
+            "yes_bid": 0.01,
+            "yes_ask_size": 30.0,
+            "volume": 5.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7712",
+            "yes_ask": 0.19,
+            "yes_bid": 0.03,
+            "yes_ask_size": 30.0,
+            "volume": 217.17,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7687",
+            "yes_ask": 0.19,
+            "yes_bid": 0.03,
+            "yes_ask_size": 30.0,
+            "volume": 212.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7612",
+            "yes_ask": 0.2,
+            "yes_bid": 0.06,
+            "yes_ask_size": 85.0,
+            "volume": 47.03,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7562",
+            "yes_ask": 0.19,
+            "yes_bid": 0.04,
+            "yes_ask_size": 30.0,
+            "volume": 18.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7537",
+            "yes_ask": 0.15,
+            "yes_bid": 0.01,
+            "yes_ask_size": 30.0,
+            "volume": 1009.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7512",
+            "yes_ask": 0.12,
+            "yes_bid": 0.0,
+            "yes_ask_size": 30.0,
+            "volume": 88.27,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7487",
+            "yes_ask": 0.09,
+            "yes_bid": 0.0,
+            "yes_ask_size": 30.0,
+            "volume": 5.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7462",
+            "yes_ask": 0.08,
+            "yes_bid": 0.0,
+            "yes_ask_size": 30.0,
+            "volume": 5.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7437",
+            "yes_ask": 0.07,
+            "yes_bid": 0.0,
+            "yes_ask_size": 30.0,
+            "volume": 5.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7412",
+            "yes_ask": 0.06,
+            "yes_bid": 0.0,
+            "yes_ask_size": 30.0,
+            "volume": 5.0,
+            "strike_type": "between"
+          },
+          {
+            "ticker": "KXINX-26SEP18H1600-B7362",
+            "yes_ask": 0.05,
+            "yes_bid": 0.0,
+            "yes_ask_size": 30.0,
+            "volume": 5.0,
+            "strike_type": "between"
+          }
+        ],
+        "dutch_tradeable": false,
+        "sum_ask": 2.52,
+        "buy_reason": "no_edge",
+        "sell_reason": "missing_bid",
+        "mid_sum": 1.46,
+        "n_open_events": 1
+      }
+    ],
+    "weather_n_events": 12,
+    "weather_n_flb": 7,
+    "weather_dutch_tradeable": 0,
+    "range_dutch_tradeable": 0
+  },
+  "hist_candles": {
+    "n_cheap_legs": 66,
+    "taker_n": 66,
+    "taker_pnl": -1.21,
+    "taker_longshot_hits": 7,
+    "maker_upper_n": 66,
+    "maker_upper_pnl": 0.56,
+    "maker_upper_longshot_hits": 7,
+    "legs": [
+      {
+        "event": "KXHIGHNY-26SEP11",
+        "ticker": "KXHIGHNY-26SEP11-T79",
+        "ask": 0.19,
+        "bid": 0.18,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.82,
+          "fee": 0.02,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.19,
+          "fee": 0.0,
+          "pnl": 0.19,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP10",
+        "ticker": "KXHIGHNY-26SEP10-B89.5",
+        "ask": 0.05,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP10",
+        "ticker": "KXHIGHNY-26SEP10-T85",
+        "ask": 0.1,
+        "bid": 0.09,
+        "won_yes": true,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": -0.92,
+          "won_yes": true
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.1,
+          "fee": 0.0,
+          "pnl": -0.9,
+          "won_yes": true
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP09",
+        "ticker": "KXHIGHNY-26SEP09-B86.5",
+        "ask": 0.06,
+        "bid": 0.05,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP08",
+        "ticker": "KXHIGHNY-26SEP08-T80",
+        "ask": 0.1,
+        "bid": 0.09,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": 0.08,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.1,
+          "fee": 0.0,
+          "pnl": 0.1,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP07",
+        "ticker": "KXHIGHNY-26SEP07-B81.5",
+        "ask": 0.14,
+        "bid": 0.13,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.87,
+          "fee": 0.01,
+          "pnl": 0.12,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.14,
+          "fee": 0.0,
+          "pnl": 0.14,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP06",
+        "ticker": "KXHIGHNY-26SEP06-B77.5",
+        "ask": 0.13,
+        "bid": 0.12,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.88,
+          "fee": 0.01,
+          "pnl": 0.11,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.13,
+          "fee": 0.0,
+          "pnl": 0.13,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP05",
+        "ticker": "KXHIGHNY-26SEP05-B81.5",
+        "ask": 0.14,
+        "bid": 0.12,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.88,
+          "fee": 0.01,
+          "pnl": 0.11,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.14,
+          "fee": 0.0,
+          "pnl": 0.14,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP03",
+        "ticker": "KXHIGHNY-26SEP03-B87.5",
+        "ask": 0.06,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP02",
+        "ticker": "KXHIGHNY-26SEP02-B77.5",
+        "ask": 0.05,
+        "bid": 0.03,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.97,
+          "fee": 0.01,
+          "pnl": 0.02,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP02",
+        "ticker": "KXHIGHNY-26SEP02-B75.5",
+        "ask": 0.16,
+        "bid": 0.14,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.86,
+          "fee": 0.01,
+          "pnl": 0.13,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.16,
+          "fee": 0.0,
+          "pnl": 0.16,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26SEP01",
+        "ticker": "KXHIGHNY-26SEP01-B85.5",
+        "ask": 0.11,
+        "bid": 0.09,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": 0.08,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.11,
+          "fee": 0.0,
+          "pnl": 0.11,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26AUG31",
+        "ticker": "KXHIGHNY-26AUG31-B80.5",
+        "ask": 0.08,
+        "bid": 0.07,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.93,
+          "fee": 0.01,
+          "pnl": 0.06,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.08,
+          "fee": 0.0,
+          "pnl": 0.08,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26AUG30",
+        "ticker": "KXHIGHNY-26AUG30-B84.5",
+        "ask": 0.06,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26AUG29",
+        "ticker": "KXHIGHNY-26AUG29-B81.5",
+        "ask": 0.07,
+        "bid": 0.06,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.94,
+          "fee": 0.01,
+          "pnl": 0.05,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.07,
+          "fee": 0.0,
+          "pnl": 0.07,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26AUG28",
+        "ticker": "KXHIGHNY-26AUG28-B84.5",
+        "ask": 0.05,
+        "bid": 0.04,
+        "won_yes": true,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": -0.97,
+          "won_yes": true
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": -0.95,
+          "won_yes": true
+        }
+      },
+      {
+        "event": "KXHIGHNY-26AUG28",
+        "ticker": "KXHIGHNY-26AUG28-T80",
+        "ask": 0.13,
+        "bid": 0.12,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.88,
+          "fee": 0.01,
+          "pnl": 0.11,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.13,
+          "fee": 0.0,
+          "pnl": 0.13,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHNY-26AUG27",
+        "ticker": "KXHIGHNY-26AUG27-B82.5",
+        "ask": 0.09,
+        "bid": 0.07,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.93,
+          "fee": 0.01,
+          "pnl": 0.06,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.09,
+          "fee": 0.0,
+          "pnl": 0.09,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP11",
+        "ticker": "KXHIGHCHI-26SEP11-B78.5",
+        "ask": 0.15,
+        "bid": 0.11,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.89,
+          "fee": 0.01,
+          "pnl": 0.1,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.15,
+          "fee": 0.0,
+          "pnl": 0.15,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP10",
+        "ticker": "KXHIGHCHI-26SEP10-B77.5",
+        "ask": 0.2,
+        "bid": 0.17,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.83,
+          "fee": 0.01,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.2,
+          "fee": 0.0,
+          "pnl": 0.2,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP09",
+        "ticker": "KXHIGHCHI-26SEP09-B84.5",
+        "ask": 0.09,
+        "bid": 0.08,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.92,
+          "fee": 0.01,
+          "pnl": 0.07,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.09,
+          "fee": 0.0,
+          "pnl": 0.09,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP08",
+        "ticker": "KXHIGHCHI-26SEP08-T85",
+        "ask": 0.17,
+        "bid": 0.15,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.85,
+          "fee": 0.01,
+          "pnl": 0.14,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.17,
+          "fee": 0.0,
+          "pnl": 0.17,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP07",
+        "ticker": "KXHIGHCHI-26SEP07-B82.5",
+        "ask": 0.05,
+        "bid": 0.03,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.97,
+          "fee": 0.01,
+          "pnl": 0.02,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP06",
+        "ticker": "KXHIGHCHI-26SEP06-B81.5",
+        "ask": 0.17,
+        "bid": 0.16,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.84,
+          "fee": 0.01,
+          "pnl": 0.15,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.17,
+          "fee": 0.0,
+          "pnl": 0.17,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP06",
+        "ticker": "KXHIGHCHI-26SEP06-B77.5",
+        "ask": 0.18,
+        "bid": 0.16,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.84,
+          "fee": 0.01,
+          "pnl": 0.15,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.18,
+          "fee": 0.0,
+          "pnl": 0.18,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP05",
+        "ticker": "KXHIGHCHI-26SEP05-B85.5",
+        "ask": 0.2,
+        "bid": 0.17,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.83,
+          "fee": 0.01,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.2,
+          "fee": 0.0,
+          "pnl": 0.2,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP05",
+        "ticker": "KXHIGHCHI-26SEP05-B87.5",
+        "ask": 0.05,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP04",
+        "ticker": "KXHIGHCHI-26SEP04-B91.5",
+        "ask": 0.17,
+        "bid": 0.15,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.85,
+          "fee": 0.01,
+          "pnl": 0.14,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.17,
+          "fee": 0.0,
+          "pnl": 0.17,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP04",
+        "ticker": "KXHIGHCHI-26SEP04-B93.5",
+        "ask": 0.14,
+        "bid": 0.12,
+        "won_yes": true,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.88,
+          "fee": 0.01,
+          "pnl": -0.89,
+          "won_yes": true
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.14,
+          "fee": 0.0,
+          "pnl": -0.86,
+          "won_yes": true
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP03",
+        "ticker": "KXHIGHCHI-26SEP03-B90.5",
+        "ask": 0.06,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP03",
+        "ticker": "KXHIGHCHI-26SEP03-B92.5",
+        "ask": 0.13,
+        "bid": 0.09,
+        "won_yes": true,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": -0.92,
+          "won_yes": true
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.13,
+          "fee": 0.0,
+          "pnl": -0.87,
+          "won_yes": true
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP02",
+        "ticker": "KXHIGHCHI-26SEP02-B92.5",
+        "ask": 0.12,
+        "bid": 0.11,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.89,
+          "fee": 0.01,
+          "pnl": 0.1,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.12,
+          "fee": 0.0,
+          "pnl": 0.12,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP01",
+        "ticker": "KXHIGHCHI-26SEP01-B91.5",
+        "ask": 0.19,
+        "bid": 0.16,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.84,
+          "fee": 0.01,
+          "pnl": 0.15,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.19,
+          "fee": 0.0,
+          "pnl": 0.19,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26SEP01",
+        "ticker": "KXHIGHCHI-26SEP01-B89.5",
+        "ask": 0.05,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26AUG31",
+        "ticker": "KXHIGHCHI-26AUG31-B93.5",
+        "ask": 0.06,
+        "bid": 0.05,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26AUG29",
+        "ticker": "KXHIGHCHI-26AUG29-B84.5",
+        "ask": 0.08,
+        "bid": 0.06,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.94,
+          "fee": 0.01,
+          "pnl": 0.05,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.08,
+          "fee": 0.0,
+          "pnl": 0.08,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26AUG29",
+        "ticker": "KXHIGHCHI-26AUG29-T80",
+        "ask": 0.09,
+        "bid": 0.08,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.92,
+          "fee": 0.01,
+          "pnl": 0.07,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.09,
+          "fee": 0.0,
+          "pnl": 0.09,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26AUG28",
+        "ticker": "KXHIGHCHI-26AUG28-B80.5",
+        "ask": 0.07,
+        "bid": 0.05,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.07,
+          "fee": 0.0,
+          "pnl": 0.07,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHCHI-26AUG27",
+        "ticker": "KXHIGHCHI-26AUG27-B78.5",
+        "ask": 0.09,
+        "bid": 0.08,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.92,
+          "fee": 0.01,
+          "pnl": 0.07,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.09,
+          "fee": 0.0,
+          "pnl": 0.09,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP11",
+        "ticker": "KXHIGHTBOS-26SEP11-B76.5",
+        "ask": 0.06,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP10",
+        "ticker": "KXHIGHTBOS-26SEP10-B84.5",
+        "ask": 0.05,
+        "bid": 0.04,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.96,
+          "fee": 0.01,
+          "pnl": 0.03,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.05,
+          "fee": 0.0,
+          "pnl": 0.05,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP09",
+        "ticker": "KXHIGHTBOS-26SEP09-T76",
+        "ask": 0.1,
+        "bid": 0.09,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.91,
+          "fee": 0.01,
+          "pnl": 0.08,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.1,
+          "fee": 0.0,
+          "pnl": 0.1,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP09",
+        "ticker": "KXHIGHTBOS-26SEP09-B76.5",
+        "ask": 0.13,
+        "bid": 0.12,
+        "won_yes": true,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.88,
+          "fee": 0.01,
+          "pnl": -0.89,
+          "won_yes": true
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.13,
+          "fee": 0.0,
+          "pnl": -0.87,
+          "won_yes": true
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP09",
+        "ticker": "KXHIGHTBOS-26SEP09-B82.5",
+        "ask": 0.06,
+        "bid": 0.05,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP08",
+        "ticker": "KXHIGHTBOS-26SEP08-T78",
+        "ask": 0.15,
+        "bid": 0.13,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.87,
+          "fee": 0.01,
+          "pnl": 0.12,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.15,
+          "fee": 0.0,
+          "pnl": 0.15,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP08",
+        "ticker": "KXHIGHTBOS-26SEP08-B82.5",
+        "ask": 0.07,
+        "bid": 0.06,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.94,
+          "fee": 0.01,
+          "pnl": 0.05,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.07,
+          "fee": 0.0,
+          "pnl": 0.07,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP07",
+        "ticker": "KXHIGHTBOS-26SEP07-B81.5",
+        "ask": 0.18,
+        "bid": 0.17,
+        "won_yes": true,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.83,
+          "fee": 0.01,
+          "pnl": -0.84,
+          "won_yes": true
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.18,
+          "fee": 0.0,
+          "pnl": -0.82,
+          "won_yes": true
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP07",
+        "ticker": "KXHIGHTBOS-26SEP07-B77.5",
+        "ask": 0.2,
+        "bid": 0.18,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.82,
+          "fee": 0.02,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.2,
+          "fee": 0.0,
+          "pnl": 0.2,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP06",
+        "ticker": "KXHIGHTBOS-26SEP06-B71.5",
+        "ask": 0.2,
+        "bid": 0.19,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.81,
+          "fee": 0.02,
+          "pnl": 0.17,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.2,
+          "fee": 0.0,
+          "pnl": 0.2,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP06",
+        "ticker": "KXHIGHTBOS-26SEP06-T67",
+        "ask": 0.11,
+        "bid": 0.1,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.9,
+          "fee": 0.01,
+          "pnl": 0.09,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.11,
+          "fee": 0.0,
+          "pnl": 0.11,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP05",
+        "ticker": "KXHIGHTBOS-26SEP05-B74.5",
+        "ask": 0.09,
+        "bid": 0.08,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.92,
+          "fee": 0.01,
+          "pnl": 0.07,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.09,
+          "fee": 0.0,
+          "pnl": 0.09,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP04",
+        "ticker": "KXHIGHTBOS-26SEP04-B82.5",
+        "ask": 0.2,
+        "bid": 0.19,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.81,
+          "fee": 0.02,
+          "pnl": 0.17,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.2,
+          "fee": 0.0,
+          "pnl": 0.2,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP04",
+        "ticker": "KXHIGHTBOS-26SEP04-B80.5",
+        "ask": 0.19,
+        "bid": 0.18,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.82,
+          "fee": 0.02,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.19,
+          "fee": 0.0,
+          "pnl": 0.19,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP03",
+        "ticker": "KXHIGHTBOS-26SEP03-B75.5",
+        "ask": 0.19,
+        "bid": 0.18,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.82,
+          "fee": 0.02,
+          "pnl": 0.16,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.19,
+          "fee": 0.0,
+          "pnl": 0.19,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP03",
+        "ticker": "KXHIGHTBOS-26SEP03-T80",
+        "ask": 0.17,
+        "bid": 0.15,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.85,
+          "fee": 0.01,
+          "pnl": 0.14,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.17,
+          "fee": 0.0,
+          "pnl": 0.17,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP02",
+        "ticker": "KXHIGHTBOS-26SEP02-T70",
+        "ask": 0.06,
+        "bid": 0.05,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP02",
+        "ticker": "KXHIGHTBOS-26SEP02-B74.5",
+        "ask": 0.08,
+        "bid": 0.07,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.93,
+          "fee": 0.01,
+          "pnl": 0.06,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.08,
+          "fee": 0.0,
+          "pnl": 0.08,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26SEP01",
+        "ticker": "KXHIGHTBOS-26SEP01-B72.5",
+        "ask": 0.07,
+        "bid": 0.06,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.94,
+          "fee": 0.01,
+          "pnl": 0.05,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.07,
+          "fee": 0.0,
+          "pnl": 0.07,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG31",
+        "ticker": "KXHIGHTBOS-26AUG31-B77.5",
+        "ask": 0.1,
+        "bid": 0.08,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.92,
+          "fee": 0.01,
+          "pnl": 0.07,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.1,
+          "fee": 0.0,
+          "pnl": 0.1,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG30",
+        "ticker": "KXHIGHTBOS-26AUG30-B86.5",
+        "ask": 0.16,
+        "bid": 0.13,
+        "won_yes": true,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.87,
+          "fee": 0.01,
+          "pnl": -0.88,
+          "won_yes": true
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.16,
+          "fee": 0.0,
+          "pnl": -0.84,
+          "won_yes": true
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG29",
+        "ticker": "KXHIGHTBOS-26AUG29-B78.5",
+        "ask": 0.15,
+        "bid": 0.11,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.89,
+          "fee": 0.01,
+          "pnl": 0.1,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.15,
+          "fee": 0.0,
+          "pnl": 0.15,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG28",
+        "ticker": "KXHIGHTBOS-26AUG28-B79.5",
+        "ask": 0.07,
+        "bid": 0.06,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.94,
+          "fee": 0.01,
+          "pnl": 0.05,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.07,
+          "fee": 0.0,
+          "pnl": 0.07,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG28",
+        "ticker": "KXHIGHTBOS-26AUG28-B85.5",
+        "ask": 0.16,
+        "bid": 0.15,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.85,
+          "fee": 0.01,
+          "pnl": 0.14,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.16,
+          "fee": 0.0,
+          "pnl": 0.16,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG28",
+        "ticker": "KXHIGHTBOS-26AUG28-T79",
+        "ask": 0.06,
+        "bid": 0.05,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.06,
+          "fee": 0.0,
+          "pnl": 0.06,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG28",
+        "ticker": "KXHIGHTBOS-26AUG28-T86",
+        "ask": 0.08,
+        "bid": 0.05,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.95,
+          "fee": 0.01,
+          "pnl": 0.04,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.08,
+          "fee": 0.0,
+          "pnl": 0.08,
+          "won_yes": false
+        }
+      },
+      {
+        "event": "KXHIGHTBOS-26AUG27",
+        "ticker": "KXHIGHTBOS-26AUG27-B86.5",
+        "ask": 0.14,
+        "bid": 0.13,
+        "won_yes": false,
+        "taker": {
+          "mode": "taker_no",
+          "no_px": 0.87,
+          "fee": 0.01,
+          "pnl": 0.12,
+          "won_yes": false
+        },
+        "maker": {
+          "mode": "maker_yes_ask_upper",
+          "px": 0.14,
+          "fee": 0.0,
+          "pnl": 0.14,
+          "won_yes": false
+        }
+      }
+    ]
+  }
 }
