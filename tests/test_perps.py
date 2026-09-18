@@ -94,8 +94,9 @@ class TestClient(unittest.TestCase):
         self.assertIsNone(banded_price("bid", bid, None, tick))
 
     def test_signing_path_and_headers(self):
-        c = MarginClient("prod", key_id="k", private_key_pem=None)
-        self.assertFalse(c.can_trade)
+        with mock.patch.object(MarginClient, "_pem_from_env", return_value=None):
+            c = MarginClient("prod", key_id="k", private_key_pem=None)
+            self.assertFalse(c.can_trade)
         signer = mock.Mock()
         signer.sign.return_value = "SIG"
         c._signer = signer
@@ -514,6 +515,16 @@ class TestPaperEngine(unittest.TestCase):
                                     universe=("btc", "eth"), client=mock.Mock())
             self.assertEqual(eng.book.positions["eth"]["contracts"], 4.0)
             self.assertEqual(eng.book.n_ticks, 12)
+
+    def test_explicit_state_path_does_not_hydrate_live_status(self):
+        from quantfirm.perps import paper as P
+        with tempfile.TemporaryDirectory() as tmp:
+            eng = P.PaperEngine("flat", {}, R.PROFILES["balanced"], adapter="shadow",
+                                bankroll=250.0, universe=("btc", "gold"),
+                                client=mock.Mock(), state_path=os.path.join(tmp, "s.json"))
+            self.assertEqual(eng.book.positions, {})
+            self.assertEqual(eng.book.cash, 250.0)
+            self.assertEqual(eng.book.n_ticks, 0)
 
 
 class TestGranularity(unittest.TestCase):

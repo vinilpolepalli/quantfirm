@@ -204,6 +204,10 @@ class PaperEngine:
         # compares a candidate against the incumbent on the same live prices.
         self.book_name = book
         suffix = f"_{book}" if book else ""
+        # Hydrate from committed status only for the default book files.
+        # A caller-supplied state_path is an isolated book (tests, one-offs)
+        # and must not inherit the live desk's legs.
+        self._hydrate_from_status = state_path is None
         self.state_path = state_path or os.path.join(STATE_DIR, f"perps_paper_state{suffix}.json")
         self.status_path = os.path.join(STATE_DIR, f"perps_desk_status{suffix}.json")
         self.decisions_path = os.path.join(STATE_DIR, f"perps_decisions{suffix}.jsonl")
@@ -235,7 +239,12 @@ class PaperEngine:
             return None
 
     def _load(self) -> Book | None:
-        return self._load_paper_state() or book_from_status_file(self.status_path, self.adapter)
+        loaded = self._load_paper_state()
+        if loaded is not None:
+            return loaded
+        if not self._hydrate_from_status:
+            return None
+        return book_from_status_file(self.status_path, self.adapter)
 
     def save(self) -> None:
         os.makedirs(os.path.dirname(self.state_path), exist_ok=True)
