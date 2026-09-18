@@ -65,30 +65,34 @@ MIN_FUNDING_INTERVALS = 30      # ten days; below this a "rate" is two observati
 def funding_reading(asset: str, n: int = 90) -> dict | None:
     """Deadband status of the last ``n`` funding intervals, or None if there is no history."""
     from quantfirm.perps import data as D
+    from quantfirm.perps.specs import SPECS
     f = D.load_kalshi_funding(asset)
     if f is None or not len(f):
         return None
-    return summarise_funding(f, n)
+    # Metals print once a day; crypto prints three times. Using 3x on gold
+    # triples the cost of holding. Look the cadence up, do not assume crypto.
+    return summarise_funding(f, n, funding_per_day=SPECS[asset].funding_per_day)
 
 
-def summarise_funding(f, n: int = 90) -> dict:
-    """The arithmetic of a reading, split out from the disk read so it can be tested."""
+def summarise_funding(f, n: int = 90, funding_per_day: float = 3) -> dict:
+    """The arithmetic of a reading, split out from the disk read so it can be tested.
+
+    ``funding_per_day`` is 3 for crypto and 1 for metals. Default 3 keeps the
+    existing crypto tests honest; callers that know the asset must pass the
+    venue cadence. The headline annualisation is the MEAN over every interval,
+    zeros included, because a holder sits through the zeros too.
+    """
     recent = f.tail(n)
     live = recent[recent.abs() >= 1e-12]
     med = float(np.median(live)) if len(live) else 0.0
     mean = float(recent.mean())
-    # Three eight-hour intervals a day; a long pays this fraction of notional when positive.
-    # The headline annualisation is the MEAN over every interval, zeros included, because a
-    # holder sits through the zeros too: that is what holding actually costs. Annualising the
-    # median of the non-zero ones instead answers a different and much narrower question
-    # ("what does an interval cost WHEN it charges"), and on a market that is quiet most of
-    # the time it overstates the cost of holding by the reciprocal of the live share.
     return {
         "intervals": int(len(recent)),
         "zero_share": round(float((recent.abs() < 1e-12).mean()), 3),
         "median_nonzero": round(med, 6),
-        "annualised": round(mean * 3 * 365, 4),
-        "annualised_when_live": round(med * 3 * 365, 4),
+        "funding_per_day": funding_per_day,
+        "annualised": round(mean * funding_per_day * 365, 4),
+        "annualised_when_live": round(med * funding_per_day * 365, 4),
     }
 
 

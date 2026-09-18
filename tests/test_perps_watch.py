@@ -113,6 +113,20 @@ class TestAnnualisation(unittest.TestCase):
         self.assertEqual(set(got) >= {"annualised", "annualised_when_live", "zero_share",
                                       "median_nonzero", "intervals"}, True)
 
+    def test_metals_use_one_print_a_day_not_three(self):
+        # Gold and silver fund once a weekday. Treating them as crypto 3x/day
+        # triples the cost of holding — the error this desk already made once
+        # on ETH by annualising the live median.
+        import pandas as pd
+        rate = 0.0001
+        s = pd.Series([0.0] * 9 + [rate],
+                      index=pd.date_range("2026-01-01", periods=10, freq="D", tz="UTC"))
+        crypto = W.summarise_funding(s, n=10, funding_per_day=3)
+        metals = W.summarise_funding(s, n=10, funding_per_day=1)
+        self.assertAlmostEqual(crypto["annualised"], round(rate * 3 * 365 / 10, 4), places=9)
+        self.assertAlmostEqual(metals["annualised"], round(rate * 1 * 365 / 10, 4), places=9)
+        self.assertGreater(crypto["annualised"], metals["annualised"])
+
 
 class TestThinSample(unittest.TestCase):
     def test_floor_is_ten_days(self):

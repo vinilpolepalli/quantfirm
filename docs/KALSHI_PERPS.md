@@ -724,6 +724,16 @@ checks it; removing it is an owner action by commit). Demo and live need
 
 ## 9. What would change the verdict
 
+**2026-09-18.** The owner asked whether the $257 should leave the incentive
+book for Kalshi perps or "just perps" online. Recomputed in
+`research/kalshi_perps/ALLOC_257.md`: **no.** Predictions and margin are
+separate accounts; last-24h LIP paper accrual is $3.12/day against ~$0.07/day
+for the gated perps posture; the catalog of internet perps strategies is the
+set this desk already killed; copper/US500/WTI are still unlisted. BTC
+Kalshi funding is still live (last-90 holding cost **+15.13%/yr**, zeros
+included, up from +14.25% on the 09-15 disk). That remains a watch item, not
+a registered trial. `scripts/perps_alloc_257.py --live` reprints the numbers.
+
 * A candidate that beats vol-scaled long-only out of sample with DSR ≥ 0.95
   and PBO ≤ 0.10 under the same cost model. The backlog is now shorter than
   it was, because §3c answered its biggest item: **more coins are not the
@@ -731,9 +741,10 @@ checks it; removing it is an owner action by commit). Demo and live need
   so the thing worth waiting for is a perp in an asset class that is not
   crypto — copper, US500 and WTI were on Kalshi's roadmap, and gold and
   silver are already the only genuine diversifiers in the book. What is left:
-  a funding-conditional overlay if Kalshi's BTC premium (+14.8%/yr in
-  September) persists above the deadband; gold-specific carry once the metals
-  funding history is months long rather than days.
+  a funding-conditional overlay if Kalshi's BTC premium persists above the
+  deadband (it has: +15.13%/yr over the last 90 intervals as of 2026-09-18);
+  gold-specific carry once the metals funding history is months long rather
+  than days.
 * Kalshi's own history reaching a year, so the proxies can be replaced.
 * A fee tier below 12 bps (≥ $100k of 30-day volume, which the 15-minute
   desk's prediction volume also counts toward).

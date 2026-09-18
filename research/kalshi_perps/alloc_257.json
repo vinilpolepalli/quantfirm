@@ -1,0 +1,579 @@
+{
+ "ran_at": "2026-09-18T13:03:33+00:00",
+ "live": true,
+ "capital_usd": 257.0,
+ "verdict": {
+  "move_the_257_to_perps": "NO",
+  "dump_internet_strats_into_the_registry": "NO",
+  "restart_the_halted_perps_desk": "NO",
+  "register_a_funding_overlay_today": "NO",
+  "why": "The $257 is in the predictions account, reserved for the LIP, still INSUFFICIENT (43.18h of 48h). Last-24h wall-clock paper accrual is $3.1225/day against a board identity of $1.5966/day. The deployable perps posture at this size is gated beta at about $0.07/day with a ~$24 drawdown, and that desk is owner-halted after two paper days. A catalog of internet perps strategies is the set this desk already killed; more trials raise the deflated-Sharpe bar. BTC Kalshi funding is still live on a 90-interval window (+15.1% a year paid by longs), which is the one named opening \u2014 watch it, do not register it on three months of one name. Jupiter/Hyperliquid are the wrong venue for this account. Copper/US500/WTI are still unlisted.",
+  "what_would_change_this": [
+   "incentive gate prints GO on a trailing 24h that is not still falling, then a $40 canary \u2014 still not the full $257",
+   "incentive gate prints NO and stays there: then the $257 is free, and perps is still only a beta bet after the \u00a77 paper gate",
+   "a non-crypto listing (copper, US500, WTI) \u2014 the missing diversifier",
+   "Kalshi-native BTC funding history long enough to pre-register a cost overlay against the existing crowding-gauge miss"
+  ]
+ },
+ "incentive": {
+  "verdict": "INSUFFICIENT",
+  "verdict_reason": "43.2h of data, need 48h - early ticks over-read badly",
+  "capital": 257.0,
+  "started": "2026-09-16T16:16:07.458665+00:00",
+  "last_tick": "2026-09-18T11:27:08.227552+00:00",
+  "run_hours": 43.18,
+  "ticks": 30,
+  "accrued_usd": 59.0858,
+  "since_inception_usd_per_day": 32.838,
+  "board_identity_usd_per_day": 1.5966,
+  "windows": {
+   "6h": {
+    "hours": 6,
+    "n_ticks": 2,
+    "earned_usd": 0.5972,
+    "capped_interval_h": 2.0,
+    "wall_usd_per_day": 2.3888,
+    "gate_usd_per_day": null
+   },
+   "12h": {
+    "hours": 12,
+    "n_ticks": 3,
+    "earned_usd": 0.9161,
+    "capped_interval_h": 3.0,
+    "wall_usd_per_day": 1.8322,
+    "gate_usd_per_day": null
+   },
+   "24h": {
+    "hours": 24,
+    "n_ticks": 9,
+    "earned_usd": 3.1225,
+    "capped_interval_h": 8.003,
+    "wall_usd_per_day": 3.1225,
+    "gate_usd_per_day": null
+   },
+   "48h": {
+    "hours": 48,
+    "n_ticks": 30,
+    "earned_usd": 59.0858,
+    "capped_interval_h": 26.16,
+    "wall_usd_per_day": 29.5429,
+    "gate_usd_per_day": 54.2072
+   }
+  },
+  "note": "since-inception and the 48h window are early-tick over-reads; trust the 12\u201324h wall-clock windows and the board identity"
+ },
+ "perps_at_257": {
+  "trend_long_only@0.12": {
+   "family": "trend_long_only@0.12",
+   "measured_at_usd": 250.0,
+   "scaled_to_usd": 257.0,
+   "net_sharpe": 0.856,
+   "cagr": 0.1016,
+   "max_drawdown": -0.0937,
+   "expected_usd_per_year": 26.11,
+   "typical_dd_usd": 24.08,
+   "expected_usd_per_day": 0.0715,
+   "window": "2018-01-01 \u2192 2025-06-30, taker tier 0, Kalshi funding, whole contracts at the stated bankroll (None = fractional)"
+  },
+  "vol_target_hold@0.12": {
+   "family": "vol_target_hold@0.12",
+   "measured_at_usd": 250.0,
+   "scaled_to_usd": 257.0,
+   "net_sharpe": 0.905,
+   "cagr": 0.1492,
+   "max_drawdown": -0.2199,
+   "expected_usd_per_year": 38.34,
+   "typical_dd_usd": 56.51,
+   "expected_usd_per_day": 0.1051,
+   "window": "2018-01-01 \u2192 2025-06-30, taker tier 0, Kalshi funding, whole contracts at the stated bankroll (None = fractional)"
+  },
+  "vol_target_hold@0.08": {
+   "family": "vol_target_hold@0.08",
+   "measured_at_usd": 250.0,
+   "scaled_to_usd": 257.0,
+   "net_sharpe": 1.075,
+   "cagr": 0.1326,
+   "max_drawdown": -0.145,
+   "expected_usd_per_year": 34.08,
+   "typical_dd_usd": 37.27,
+   "expected_usd_per_day": 0.0934,
+   "window": "2018-01-01 \u2192 2025-06-30, taker tier 0, Kalshi funding, whole contracts at the stated bankroll (None = fractional)"
+  }
+ },
+ "allocation": [
+  {
+   "place": "kalshi_predictions_idle",
+   "usd_per_day": 0.0,
+   "usd_per_year": 0.0,
+   "typical_dd_usd": 0.0,
+   "what_it_is": "cash sitting where it is now, earning no 3.25% (that yield is margin-only)"
+  },
+  {
+   "place": "kalshi_margin_idle",
+   "usd_per_day": 0.0229,
+   "usd_per_year": 8.35,
+   "typical_dd_usd": 0.0,
+   "what_it_is": "transfer to perps margin and hold cash; ~3.25% APY if the $250 avg-balance rule is met"
+  },
+  {
+   "place": "incentive_board_identity",
+   "usd_per_day": 1.5966,
+   "usd_per_year": null,
+   "typical_dd_usd": 125.0,
+   "what_it_is": "accounting identity from 2026-09-16: $106k/day pot / $17.1M resting = 1.5966/day on $257. Not a promise Kalshi credits. Worst-case fill math is about -$125. Do not annualise."
+  },
+  {
+   "place": "incentive_last_24h_wall",
+   "usd_per_day": 3.1225,
+   "usd_per_year": null,
+   "typical_dd_usd": 125.0,
+   "what_it_is": "paper book logged $3.1225 in the last 24h of wall clock. Uncredited estimate. Do not annualise."
+  },
+  {
+   "place": "incentive_last_12h_wall",
+   "usd_per_day": 1.8322,
+   "usd_per_year": null,
+   "typical_dd_usd": 125.0,
+   "what_it_is": "more recent, closer to the board identity, still decaying, still uncredited"
+  },
+  {
+   "place": "perps_trend_gate_12pct",
+   "usd_per_day": 0.0715,
+   "usd_per_year": 26.11,
+   "typical_dd_usd": 24.08,
+   "what_it_is": "paper incumbent, proxy history 2018\u20132025, whole contracts, tier-0 taker. Beta with a gate, not alpha."
+  },
+  {
+   "place": "perps_vol_target_hold_12pct",
+   "usd_per_day": 0.1051,
+   "usd_per_year": 38.34,
+   "typical_dd_usd": 56.51,
+   "what_it_is": "the control the campaign could not beat. Larger return, ~2x the drawdown, losing years in 2018 and 2022."
+  }
+ ],
+ "already_killed": [
+  {
+   "name": "grid / DCA / martingale bots",
+   "family": "intraday + leverage",
+   "why": "20 RT/month at 12 bps and 2x is a 115%/yr fee hurdle; recovery sizing is ruin"
+  },
+  {
+   "name": "funding farm / cash-and-carry",
+   "family": "funding carry",
+   "why": "Kalshi deadband zeroes most intervals; ETH still does; cross-venue needs an offshore short a US account cannot hold"
+  },
+  {
+   "name": "basis / funding-as-crowding",
+   "family": "basis_crowding",
+   "why": "OOS Sharpe 1.100 vs control 1.131, 0.996 correlated with the long book"
+  },
+  {
+   "name": "scalping / tape / market making",
+   "family": "kalshi_micro + MM",
+   "why": "no rebates below 0.5% of maker volume; largest native micro effect 6.8 bps vs 49 bps hurdle"
+  },
+  {
+   "name": "EMA / MACD / RSI / Ichimoku",
+   "family": "trend, ma_trend, tsmom, trend_v2",
+   "why": "every dress of slow trend lost to vol-targeted long-only"
+  },
+  {
+   "name": "weekend / turn-of-month / OpEx",
+   "family": "reversal_seasonality",
+   "why": "OOS 1.026 and 0.958; fees ate 24\u201363% of the gap"
+  },
+  {
+   "name": "crash / VIX / vol-spike filter",
+   "family": "crash_filter_beta",
+   "why": "OOS 1.011; the configs that 'work' were the ones that rode 2022"
+  },
+  {
+   "name": "dual / relative momentum",
+   "family": "dual_momentum",
+   "why": "OOS 1.047, real timing content, still trails the passive book"
+  },
+  {
+   "name": "raw cross-sectional alt momentum",
+   "family": "xsec_momentum + breadth",
+   "why": "sixteen names are 1.98 bets; raw sort is a beta sort; t-stat \u2264 0.52"
+  },
+  {
+   "name": "LLM / GPT signals, copy-trading",
+   "family": "Alpha Arena / FIRM rule",
+   "why": "4/6 frontier models lost 31\u201363% in 17 days; code decides, models do not"
+  },
+  {
+   "name": "Hyperliquid / Jupiter / offshore perps",
+   "family": "venue + US retail",
+   "why": "HL geoblocks US; Jupiter is unregulated 1.1\u2013250x vs JLP; this $257 is already on Kalshi"
+  }
+ ],
+ "plumbing": {
+  "predictions_vs_margin": "separate accounts; liquidation on perps cannot touch predictions",
+  "to_use_257_on_perps": "owner applies for margin, completes the tutorial, transfers from predictions",
+  "kill_switch_perps": true,
+  "incentive_armed": false,
+  "perps_status": "HALTED, shadow, live=false"
+ },
+ "funding": {
+  "btc": {
+   "ticker": "KXBTCPERP",
+   "n": 321,
+   "first": "2026-06-03T20:00:00+00:00",
+   "last": "2026-09-18T12:00:00+00:00",
+   "funding_per_day": 3,
+   "windows": {
+    "12": {
+     "intervals": 12,
+     "zero_share": 0.333,
+     "median_nonzero": 0.000129,
+     "funding_per_day": 3,
+     "annualised": 0.099,
+     "annualised_when_live": 0.1416
+    },
+    "30": {
+     "intervals": 30,
+     "zero_share": 0.167,
+     "median_nonzero": 0.000147,
+     "funding_per_day": 3,
+     "annualised": 0.1372,
+     "annualised_when_live": 0.1612
+    },
+    "90": {
+     "intervals": 90,
+     "zero_share": 0.2,
+     "median_nonzero": 0.000161,
+     "funding_per_day": 3,
+     "annualised": 0.1513,
+     "annualised_when_live": 0.1766
+    },
+    "321": {
+     "intervals": 321,
+     "zero_share": 0.539,
+     "median_nonzero": 0.000147,
+     "funding_per_day": 3,
+     "annualised": 0.0795,
+     "annualised_when_live": 0.1607
+    }
+   },
+   "last_8": [
+    {
+     "ts": "2026-09-16T04:00:00+00:00",
+     "rate": 0.0001751248338681
+    },
+    {
+     "ts": "2026-09-16T12:00:00+00:00",
+     "rate": 0.0001267435483983
+    },
+    {
+     "ts": "2026-09-16T20:00:00+00:00",
+     "rate": 0.0001127338884727
+    },
+    {
+     "ts": "2026-09-17T04:00:00+00:00",
+     "rate": 0.0001110390014896
+    },
+    {
+     "ts": "2026-09-17T12:00:00+00:00",
+     "rate": 0.0001015024775434
+    },
+    {
+     "ts": "2026-09-17T20:00:00+00:00",
+     "rate": 0.0001410613059777
+    },
+    {
+     "ts": "2026-09-18T04:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-18T12:00:00+00:00",
+     "rate": 0.0
+    }
+   ],
+   "estimate_now": {
+    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "funding_rate": 0,
+    "mark_price": "7.7935",
+    "market_ticker": "KXBTCPERP",
+    "next_funding_time": "2026-09-18T20:00:00Z"
+   }
+  },
+  "eth": {
+   "ticker": "KXETHPERP",
+   "n": 321,
+   "first": "2026-06-03T20:00:00+00:00",
+   "last": "2026-09-18T12:00:00+00:00",
+   "funding_per_day": 3,
+   "windows": {
+    "12": {
+     "intervals": 12,
+     "zero_share": 1.0,
+     "median_nonzero": 0.0,
+     "funding_per_day": 3,
+     "annualised": 0.0,
+     "annualised_when_live": 0.0
+    },
+    "30": {
+     "intervals": 30,
+     "zero_share": 0.967,
+     "median_nonzero": -0.000111,
+     "funding_per_day": 3,
+     "annualised": -0.0041,
+     "annualised_when_live": -0.1219
+    },
+    "90": {
+     "intervals": 90,
+     "zero_share": 0.889,
+     "median_nonzero": -0.000118,
+     "funding_per_day": 3,
+     "annualised": -0.0151,
+     "annualised_when_live": -0.1296
+    },
+    "321": {
+     "intervals": 321,
+     "zero_share": 0.875,
+     "median_nonzero": -0.000124,
+     "funding_per_day": 3,
+     "annualised": -0.0172,
+     "annualised_when_live": -0.1363
+    }
+   },
+   "last_8": [
+    {
+     "ts": "2026-09-16T04:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-16T12:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-16T20:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-17T04:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-17T12:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-17T20:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-18T04:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-18T12:00:00+00:00",
+     "rate": 0.0
+    }
+   ],
+   "estimate_now": {
+    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "funding_rate": 0,
+    "mark_price": "2.4946",
+    "market_ticker": "KXETHPERP",
+    "next_funding_time": "2026-09-18T20:00:00Z"
+   }
+  },
+  "gold": {
+   "ticker": "KXGOLDPERP",
+   "n": 7,
+   "first": "2026-09-11T14:00:00+00:00",
+   "last": "2026-09-17T14:00:00+00:00",
+   "funding_per_day": 1,
+   "windows": {
+    "12": {
+     "intervals": 7,
+     "zero_share": 0.714,
+     "median_nonzero": 0.000316,
+     "funding_per_day": 1,
+     "annualised": 0.0329,
+     "annualised_when_live": 0.1153
+    },
+    "30": {
+     "intervals": 7,
+     "zero_share": 0.714,
+     "median_nonzero": 0.000316,
+     "funding_per_day": 1,
+     "annualised": 0.0329,
+     "annualised_when_live": 0.1153
+    },
+    "90": {
+     "intervals": 7,
+     "zero_share": 0.714,
+     "median_nonzero": 0.000316,
+     "funding_per_day": 1,
+     "annualised": 0.0329,
+     "annualised_when_live": 0.1153
+    },
+    "7": {
+     "intervals": 7,
+     "zero_share": 0.714,
+     "median_nonzero": 0.000316,
+     "funding_per_day": 1,
+     "annualised": 0.0329,
+     "annualised_when_live": 0.1153
+    }
+   },
+   "last_8": [
+    {
+     "ts": "2026-09-11T14:00:00+00:00",
+     "rate": 0.000468101219617
+    },
+    {
+     "ts": "2026-09-12T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-13T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-14T14:00:00+00:00",
+     "rate": 0.0001637974179074
+    },
+    {
+     "ts": "2026-09-15T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-16T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-17T14:00:00+00:00",
+     "rate": 0.0
+    }
+   ],
+   "estimate_now": {
+    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "funding_rate": 0,
+    "mark_price": "4.3650",
+    "market_ticker": "KXGOLDPERP",
+    "next_funding_time": "2026-09-18T14:00:00Z"
+   }
+  },
+  "silver": {
+   "ticker": "KXSILVERPERP",
+   "n": 7,
+   "first": "2026-09-11T14:00:00+00:00",
+   "last": "2026-09-17T14:00:00+00:00",
+   "funding_per_day": 1,
+   "windows": {
+    "12": {
+     "intervals": 7,
+     "zero_share": 0.857,
+     "median_nonzero": 0.000292,
+     "funding_per_day": 1,
+     "annualised": 0.0152,
+     "annualised_when_live": 0.1067
+    },
+    "30": {
+     "intervals": 7,
+     "zero_share": 0.857,
+     "median_nonzero": 0.000292,
+     "funding_per_day": 1,
+     "annualised": 0.0152,
+     "annualised_when_live": 0.1067
+    },
+    "90": {
+     "intervals": 7,
+     "zero_share": 0.857,
+     "median_nonzero": 0.000292,
+     "funding_per_day": 1,
+     "annualised": 0.0152,
+     "annualised_when_live": 0.1067
+    },
+    "7": {
+     "intervals": 7,
+     "zero_share": 0.857,
+     "median_nonzero": 0.000292,
+     "funding_per_day": 1,
+     "annualised": 0.0152,
+     "annualised_when_live": 0.1067
+    }
+   },
+   "last_8": [
+    {
+     "ts": "2026-09-11T14:00:00+00:00",
+     "rate": 0.0002924359874453
+    },
+    {
+     "ts": "2026-09-12T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-13T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-14T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-15T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-16T14:00:00+00:00",
+     "rate": 0.0
+    },
+    {
+     "ts": "2026-09-17T14:00:00+00:00",
+     "rate": 0.0
+    }
+   ],
+   "estimate_now": {
+    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "funding_rate": 0,
+    "mark_price": "6.6475",
+    "market_ticker": "KXSILVERPERP",
+    "next_funding_time": "2026-09-18T14:00:00Z"
+   }
+  }
+ },
+ "markets": {
+  "n_listed": 23,
+  "n_tradable": 20,
+  "by_class": {
+   "crypto": [
+    "KXAAVEPERP",
+    "KXADAPERP",
+    "KXBCHPERP",
+    "KXBNBPERP",
+    "KXBTCPERP",
+    "KXDOGEPERP",
+    "KXETHPERP",
+    "KXHYPEPERP",
+    "KXKSHIBPERP",
+    "KXLINKPERP",
+    "KXLTCPERP",
+    "KXNEARPERP",
+    "KXSOLPERP",
+    "KXSUIPERP",
+    "KXVVVPERP",
+    "KXWLDPERP",
+    "KXXRPPERP",
+    "KXZECPERP"
+   ],
+   "metals": [
+    "KXGOLDPERP",
+    "KXSILVERPERP"
+   ]
+  },
+  "non_crypto_classes": [
+   "metals"
+  ],
+  "inactive": [
+   "KXDOTPERP",
+   "KXHBARPERP",
+   "KXXLMPERP"
+  ],
+  "copper_us500_wti_listed": false
+ }
+}
