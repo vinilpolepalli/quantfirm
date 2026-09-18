@@ -6,6 +6,32 @@ moved and what evidence backs it.
 
 ---
 
+## 0.2.6 — 2026-09-18 — paper the three measured perps books before any transfer
+
+Owner asked to paper-trade (or backtest) before moving the $257 onto perps
+margin. Paper first is the right order. A catalog of new internet systems is
+not: that set was already killed, and each new registered family raises the
+deflated-Sharpe bar for every other idea.
+
+This release restarts **shadow/paper only**:
+
+* `state/KILL_SWITCH_PERPS` removed
+* `config/perps.json` `status: PAPER`, `live` stays **false**
+* `.github/workflows/perps.yml` daily schedule uncommented
+* the three existing books continue from the frozen 2026-09-16 snapshots
+  (incumbent / candidate / growth), not from a wiped $250
+
+The paper engine now hydrates a missing local book from the committed desk
+status, because paper state is gitignored and a fresh Actions runner would
+otherwise open a new book and erase the legs. Lifting the kill switch also
+clears a `halted: kill_switch` book so the next tick actually trades.
+
+Claude Routines (daily digest, 4-hourly alert, weekly watch) are not files
+in this repo and are not flipped here. GitHub cron is the durable heartbeat.
+Nothing here transfers the $257 or sends a live order.
+
+---
+
 ## 0.2.5 — 2026-09-18 — incentive desk killed; $257 goes to perps
 
 Owner killed the Kalshi Liquidity Incentive Program book. The collector,

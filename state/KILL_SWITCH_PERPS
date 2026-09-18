@@ -1,5 +1,0 @@
-{
- "reason": "halted by the owner",
- "tripped_at": "2026-09-16T15:18:06+00:00",
- "note": "Not a risk event. The owner asked to halt perps on 2026-09-16. Nothing was live: all three books were paper and config live was already false, so there is no position to flatten and no money was at risk. Removing this file is not enough to restart the desk - the three routines are disabled and the GitHub workflow schedule is commented out; see docs/KALSHI_PERPS.md."
-}

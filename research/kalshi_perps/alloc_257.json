@@ -4,15 +4,16 @@
  "capital_usd": 257.0,
  "verdict": {
   "incentive_desk": "DEAD",
-  "owner_transfers_257_to_perps": "YES",
+  "owner_transfers_257_to_perps": "YES_AFTER_PAPER",
   "agent_moves_money": "NO",
-  "lift_kill_switch_or_go_live": "NO",
+  "lift_kill_switch_for_paper": "YES",
+  "set_live_true": "NO",
   "dump_internet_strats_into_the_registry": "NO",
   "register_a_funding_overlay_today": "NO",
-  "why": "Owner killed the incentive desk 2026-09-18 and is moving the $257 to perps margin themselves. Agents do not transfer and do not lift KILL_SWITCH_PERPS. Gated beta at this size is about $0.07/day with a ~$24 drawdown. A catalog of internet perps strategies is the set this desk already killed; more trials raise the deflated-Sharpe bar. BTC Kalshi funding is still live on a 90-interval window (+15.1% a year paid by longs). Copper/US500/WTI are still unlisted.",
+  "why": "Owner asked to paper the measured books before transferring the $257. Kill switch is lifted for shadow/paper only; live stays false. Agents do not transfer. Gated beta at this size is about $0.07/day with a ~$24 drawdown. A catalog of internet perps strategies is the set this desk already killed; more trials raise the deflated-Sharpe bar. BTC Kalshi funding is still live on a 90-interval window (+15.1% a year paid by longs). Copper/US500/WTI are still unlisted.",
   "what_is_next": [
-   "owner transfers $257 from predictions to perps margin",
-   "then work the perps desk in paper; \u00a77 still binds",
+   "paper the three measured books (incumbent / candidate / growth)",
+   "owner transfers $257 after those books have a reading",
    "do not register a funding overlay on three months of one name"
   ]
  },
@@ -136,9 +137,9 @@
  ],
  "plumbing": {
   "predictions_vs_margin": "separate accounts; owner transfers, agents do not",
-  "kill_switch_perps": true,
+  "kill_switch_perps": false,
   "incentive_desk": "DEAD",
-  "perps_status": "HALTED, shadow, live=false"
+  "perps_status": "PAPER, shadow, live=false"
  },
  "funding": {
   "btc": {

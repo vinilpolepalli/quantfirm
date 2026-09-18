@@ -449,6 +449,72 @@ class TestPaperEngine(unittest.TestCase):
             self.assertTrue(any("KILL_SWITCH" in n for n in notes))
             eng.client.markets.assert_not_called()
 
+    def test_tick_clears_kill_switch_halt_after_lift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eng, P = self._engine(tmp)
+            eng.book.halted = "kill_switch"
+            panel = synthetic_panel(n=400, assets=("btc", "gold"))
+            for a in panel:
+                panel[a].index = panel[a].index + (pd.Timestamp.now(tz="UTC").normalize() - panel[a].index[-1])
+            eng.status_path = os.path.join(tmp, "st.json")
+            eng.decisions_path = os.path.join(tmp, "d.jsonl")
+            with mock.patch.object(P, "STATE_DIR", tmp), \
+                 mock.patch.object(P, "kill_switch_tripped", return_value=False), \
+                 mock.patch.object(P.D, "load_panel", return_value=panel):
+                notes = eng.tick()
+            self.assertEqual(eng.book.halted, "")
+            self.assertTrue(any("resumed: kill switch lifted" in n for n in notes))
+            self.assertTrue(any("orders 0" in n for n in notes))
+
+    def test_hydrate_from_committed_status_when_paper_state_missing(self):
+        from quantfirm.perps import paper as P
+        status = {
+            "ts": "2026-09-16T15:19:06+00:00",
+            "adapter": "shadow",
+            "strategy": "trend_long_only",
+            "bankroll0": 250,
+            "equity": 249.75,
+            "cash": 249.75,
+            "realized": -0.23,
+            "fees": 0.0511,
+            "funding": -0.0024,
+            "interest": 0.0332,
+            "peak_equity": 250.0,
+            "n_ticks": 12,
+            "started": "2026-09-15T00:28:32+00:00",
+            "halted": "kill_switch",
+            "positions": [{
+                "asset": "eth",
+                "ticker": "KXETHPERP",
+                "contracts": 4.0,
+                "avg_price": 2.509,
+                "opened": "2026-09-15T00:28:33+00:00",
+                "mark": None,
+                "weight": 0.0402,
+            }],
+        }
+        book = P.book_from_status(status, "shadow")
+        self.assertIsNotNone(book)
+        self.assertEqual(book.positions["eth"]["contracts"], 4.0)
+        self.assertNotIn("mark", book.positions["eth"])
+        self.assertNotIn("weight", book.positions["eth"])
+        self.assertEqual(book.n_ticks, 12)
+        self.assertEqual(book.cash, 249.75)
+        self.assertEqual(book.last_funding_ts["eth"], "2026-09-16T15:19:06+00:00")
+        self.assertEqual(book.last_rebalance_day, "2026-09-15")
+        self.assertEqual(book.halted, "kill_switch")
+        self.assertIsNone(P.book_from_status(status, "live"))
+        with tempfile.TemporaryDirectory() as tmp:
+            status_path = os.path.join(tmp, "perps_desk_status.json")
+            with open(status_path, "w") as f:
+                json.dump(status, f)
+            with mock.patch.object(P, "STATE_DIR", tmp):
+                eng = P.PaperEngine("trend_long_only", {}, R.PROFILES["balanced"],
+                                    adapter="shadow", bankroll=250.0,
+                                    universe=("btc", "eth"), client=mock.Mock())
+            self.assertEqual(eng.book.positions["eth"]["contracts"], 4.0)
+            self.assertEqual(eng.book.n_ticks, 12)
+
 
 class TestGranularity(unittest.TestCase):
     def test_whole_contracts_only(self):

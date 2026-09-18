@@ -1,6 +1,6 @@
 {
   "desk": "kalshi_perps",
-  "status": "HALTED",
+  "status": "PAPER",
   "bankroll_usd": 250,
   "strategy": "trend_long_only",
   "params": {
@@ -17,7 +17,7 @@
   "live": false,
   "rebalance_every_days": 7,
   "rebalance_band": 0.03,
-  "note": "HALTED by the owner 2026-09-16. live stays false until a human flips it AFTER the promotion gate in docs/KALSHI_PERPS.md \u00a77 is met. Keys live in the environment (KALSHI_PERPS_KEY_ID / KALSHI_PERPS_PRIVATE_KEY[_PATH]), never here. The strategy named here is the paper incumbent, not an approval. Two books run side by side in paper: the unnamed incumbent (trend_long_only) and 'candidate' (blend_core_sleeve). Neither is an approval, and the promotion gate is unchanged.",
+  "note": "PAPER/SHADOW restarted 2026-09-18. Owner asked to paper the measured books before transferring the $257. live stays false until a human flips it AFTER the promotion gate in docs/KALSHI_PERPS.md \u00a77 is met. Kill switch removed for paper only. Keys live in the environment (KALSHI_PERPS_KEY_ID / KALSHI_PERPS_PRIVATE_KEY[_PATH]), never here. Three books run side by side: incumbent (trend_long_only), candidate (blend_core_sleeve 12%), growth (same blend 18%/40% sleeve). None of them is an approval.",
   "books": {
     "candidate": {
       "strategy": "blend_core_sleeve",
@@ -85,6 +85,6 @@
       "note": "The owner said risk is acceptable, so this is the same blend with the dial turned up: an 18% volatility target and a 40% sleeve. Out of sample 2021-10 to 2025-06 that scored 21.96% a year at 12.76% realised volatility and a -13.14% drawdown, Sharpe 1.721 \u2014 about the same risk as the plain core book at a 12% target, for half again the return. P(better than its own core) 0.869. It carries EVERY caveat of the 12% version and multiplies them: one regime, a well-published and likely crowded effect, and a failed deflated-Sharpe gate. Raising the target scales the loss too if the edge is not real."
     }
   },
-  "halted_at": "2026-09-16T15:18:06+00:00",
-  "halted_reason": "owner request 2026-09-16"
+  "restarted_at": "2026-09-18T13:30:00+00:00",
+  "restarted_reason": "owner asked to paper the measured books before transferring the $257; live stays false"
 }

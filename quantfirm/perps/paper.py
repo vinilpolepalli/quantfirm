@@ -104,6 +104,84 @@ def _now_iso() -> str:
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
 
+def _iso_to_unix(ts: str) -> float:
+    if not ts:
+        return 0.0
+    try:
+        return dt.datetime.fromisoformat(ts.replace("Z", "+00:00")).timestamp()
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _week_of(ts: str) -> str:
+    try:
+        return dt.datetime.fromisoformat(ts.replace("Z", "+00:00")).strftime("%G-W%V")
+    except (TypeError, ValueError):
+        return ""
+
+
+def _position_fields(p: dict) -> dict:
+    return {
+        "asset": p["asset"],
+        "ticker": p["ticker"],
+        "contracts": float(p["contracts"]),
+        "avg_price": float(p["avg_price"]),
+        "opened": p["opened"],
+    }
+
+
+def book_from_status(status: dict, adapter: str) -> Book | None:
+    """Rebuild the local paper book from the committed desk status.
+
+    Paper state is gitignored; the status snapshot is what survives a fresh
+    clone or a GitHub Actions runner. Without this, every new checkout
+    silently opens a brand-new $250 book and the frozen legs disappear.
+    ``last_funding_ts`` is the status timestamp so we accrue from then
+    forward and do not replay funding the last tick already booked.
+    """
+    if not status or status.get("adapter") != adapter:
+        return None
+    raw_pos = status.get("positions") or []
+    try:
+        positions = {p["asset"]: _position_fields(p) for p in raw_pos}
+    except (KeyError, TypeError, ValueError):
+        return None
+    ts = status.get("ts") or ""
+    started = status.get("started") or ts
+    equity = float(status.get("equity") or status.get("cash") or 0.0)
+    cash = float(status.get("cash") if status.get("cash") is not None else equity)
+    return Book(
+        adapter=adapter,
+        bankroll0=float(status.get("bankroll0") or 250.0),
+        cash=cash,
+        positions=positions,
+        realized=float(status.get("realized") or 0.0),
+        fees=float(status.get("fees") or 0.0),
+        funding=float(status.get("funding") or 0.0),
+        interest=float(status.get("interest") or 0.0),
+        peak_equity=float(status.get("peak_equity") or equity or 250.0),
+        day=ts[:10] if ts else "",
+        day_start_equity=equity,
+        week=_week_of(ts),
+        week_start_equity=equity,
+        last_funding_ts={a: ts for a in positions},
+        last_interest_ts=_iso_to_unix(ts),
+        last_rebalance_day=(started[:10] if started else ""),
+        n_ticks=int(status.get("n_ticks") or 0),
+        halted=status.get("halted") or "",
+        started=started,
+        updated=ts,
+    )
+
+
+def book_from_status_file(path: str, adapter: str) -> Book | None:
+    try:
+        with open(path) as f:
+            return book_from_status(json.load(f), adapter)
+    except (FileNotFoundError, TypeError, json.JSONDecodeError):
+        return None
+
+
 class PaperEngine:
     def __init__(self, strategy: str, params: dict | None = None, policy: PerpsRiskPolicy | None = None,
                  adapter: str = "shadow", bankroll: float = 250.0, universe=("btc", "eth", "gold", "silver"),
@@ -146,7 +224,7 @@ class PaperEngine:
         self._quotes: dict[str, PerpQuote] = {}
 
     # ------------------------------------------------------------ persistence
-    def _load(self) -> Book | None:
+    def _load_paper_state(self) -> Book | None:
         try:
             with open(self.state_path) as f:
                 d = json.load(f)
@@ -155,6 +233,9 @@ class PaperEngine:
             return Book(**d)
         except (FileNotFoundError, TypeError, json.JSONDecodeError):
             return None
+
+    def _load(self) -> Book | None:
+        return self._load_paper_state() or book_from_status_file(self.status_path, self.adapter)
 
     def save(self) -> None:
         os.makedirs(os.path.dirname(self.state_path), exist_ok=True)
@@ -385,6 +466,10 @@ class PaperEngine:
             notes.append("halted: KILL_SWITCH_PERPS")
             self.save()
             return notes
+        if self.book.halted == "kill_switch":
+            self.book.halted = ""
+            notes.append("resumed: kill switch lifted")
+            self.decision("resumed", reason="kill_switch_lifted")
         try:
             st = self.client.exchange_status()
         except KalshiApiError as e:

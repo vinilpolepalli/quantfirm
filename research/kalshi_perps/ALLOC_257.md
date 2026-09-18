@@ -1,8 +1,10 @@
-# $257 on Kalshi perps — 2026-09-18, owner override
+# $257 on Kalshi perps — 2026-09-18, paper first
 
 The morning memo said leave the $257 on the incentive book. The owner killed
 that desk the same afternoon and will move the $257 to perps margin
-themselves. **This file is the override.** Nothing here was traded.
+themselves. They then asked to paper-trade a bunch of strats, or backtest
+the one we found, **before** transferring. **This file is the override.**
+Nothing here was traded live.
 
 ```bash
 python3 scripts/perps_alloc_257.py --live
@@ -13,10 +15,50 @@ python3 scripts/perps_alloc_257.py --live
 | action | call |
 |---|---|
 | Incentive / LIP desk | **DEAD.** Collector, quoter, runbook, paper state removed. Do not rebuild. |
-| Transfer $257 predictions → perps margin | **Owner does this.** Agents do not move money. |
-| Lift `KILL_SWITCH_PERPS` / set `live: true` | **NO, not this commit.** Transfer ≠ go-live. Gate is still §7. |
-| Dump internet / Jupiter / Hyperliquid catalogs into the registry | **NO.** Already tested; more trials raise the DSR bar. |
+| Paper the three already-measured books | **YES, now.** Incumbent / candidate / growth. Shadow adapter. |
+| Paper a catalog of internet / Jupiter / HL systems | **NO.** Already tested; more trials raise the DSR bar. |
+| Re-run CLI `backtest` / `holdout` for a demo | **NO.** `registry.record` and the sealed vault. The numbers already exist. |
+| Transfer $257 predictions → perps margin | **Owner does this, after paper has a reading.** Agents do not move money. |
+| Set `live: true` | **NO.** Transfer ≠ go-live. Gate is still §7. |
 | Register a BTC funding-cost overlay today | **NO.** Watch it. `basis_crowding` already used funding as a signal and lost. |
+
+## Why not paper a bunch of new strats
+
+Paper-before-transfer is the right order. Papering *everything that looks
+tradable on the internet* is the wrong one.
+
+The desk already ran that catalog through the gauntlet: thirteen trend
+dresses, then twelve campaign families, then a residual-momentum sleeve.
+Twenty-two walk-forward trials. Nothing passed the alpha gate. The
+control (`vol_target_hold`) beat almost every overlay. The sleeve that
+helped still failed deflated Sharpe. Internet/Jupiter/Hyperliquid lists
+are the same objects under other names.
+
+The trial registry is append-only. Each new family raises the
+deflated-Sharpe bar for every other idea. On this history a candidate
+now needs an out-of-sample Sharpe near 1.4. Dumping twenty fresh
+lookalikes into paper does not buy twenty independent readings; it
+buys a higher hurdle and a story that something "is working" on two
+days of $250.
+
+So the paper books are the three that were already built and measured:
+
+| book | rule | why it is in paper |
+|---|---|---|
+| incumbent | `trend_long_only` @ 12% vol, BTC/ETH/gold/silver | the deployable posture: gated beta, not alpha |
+| candidate | `blend_core_sleeve` @ 12% vol, 30% residual sleeve | the one thing that beat the core OOS; still fails DSR |
+| growth | same blend @ 18% vol, 40% sleeve | same evidence, dial up; owner said risk is acceptable |
+
+`vol_target_hold` is the already-backtested control (OOS Sharpe 1.13,
+holdout +27.1% / −11.6%). It does not need a fourth paper book to
+"find" it, and adding one is not a new trial.
+
+The backtests that matter are already on disk:
+`research/kalshi_perps/tournament.md`, `CAMPAIGN_RESULTS.md`,
+`families/xsmom_residual.md`, `holdout_trend_long_only.json`,
+`granularity.json`. Re-running them through the CLI would append
+registry rows and, if someone passed `--i-am-the-judge`, reopen a
+sealed holdout. Do not.
 
 ## What $257 is, on this desk
 
@@ -30,10 +72,10 @@ the $250-row whole-contract sim in `granularity.json`, scaled to $257:
 | `vol_target_hold` 12% vol (control) | $38.34 | $0.11 | −$56.51 |
 | idle on margin at 3.25% | $8.35 | $0.02 | $0 |
 
-That is gated beta, not alpha. The campaign's best overlay still lost to the
-control. The residual-momentum sleeve improved the book and still failed
-deflated Sharpe. Paper books on 2026-09-16, when the owner halted them, were
-$249.75 / $249.92 / $249.83 after two days. That is not a result.
+That is gated beta, not alpha. Two days of paper at halt ($249.75 /
+$249.92 / $249.83) is not a result either. A reading takes weeks, which
+is why this restarts the daily shadow tick instead of waiting on a
+transfer.
 
 ## What stays true from the morning pass
 
@@ -61,6 +103,7 @@ session.
 
 ## Next
 
-1. Owner transfers $257 to the perps margin account.
-2. Then we work the perps desk: paper first, §7 still binds, kill switch
-   stays until they say otherwise.
+1. Shadow/paper is on: three books, daily cron, `live: false`.
+2. Owner transfers the $257 after those books have a reading they want
+   to fund — not so the books can start.
+3. §7 still binds. A transfer is not a go-live.

@@ -27,14 +27,15 @@ Read this before touching anything.
 |---|---|---|---|
 | Equity | Robinhood equities | **LIVE**, $250, six names | `docs/EQUITY.md` |
 | Kalshi 15M | Kalshi commodity/crypto binaries | halted (kill switch) | `docs/KALSHI_15M.md` |
-| Kalshi perps | Kalshi perpetual futures | halted, shadow only; owner is moving $257 here | `docs/KALSHI_PERPS.md` |
+| Kalshi perps | Kalshi perpetual futures | **PAPER/SHADOW**, live=false; $257 owner-transfers after paper | `docs/KALSHI_PERPS.md` |
 | Crypto | Robinhood Crypto | disabled, tournament NO-GO | `docs/TOURNAMENT.md` |
 
 The Kalshi Liquidity Incentive Program desk is **dead**. Owner killed it
 2026-09-18. Do not rebuild the collector, the quoter, or `state/INCENTIVE_LIVE`.
 The $257 that was reserved for it transfers to perps **by the owner**, not by
-an agent. Perps stays behind `state/KILL_SWITCH_PERPS` until they say to
-restart it.
+an agent, and **after** the paper books have a reading — not before. Do not
+set `live: true`. Do not recreate `state/KILL_SWITCH_PERPS` unless something
+is actually wrong.
 
 Note `docs/FIRM.md` is the original design brief and has drifted: it describes a
 Robinhood **crypto** desk that is now disabled, and references paths under

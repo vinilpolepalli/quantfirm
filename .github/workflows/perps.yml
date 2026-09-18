@@ -7,12 +7,11 @@ name: kalshi-perps-shadow
 # No secrets are read; nothing here can send an order.
 
 on:
-  # HALTED by the owner 2026-09-16. The daily schedule is commented out rather
-  # than deleted so restarting is one uncomment, and so the diff says plainly
-  # that this stopped on purpose rather than rotting. workflow_dispatch stays so
-  # the job can still be run by hand to inspect the desk.
-  #   schedule:
-  #     - cron: '20 1 * * *'   # 01:20 UTC daily, after the crypto 00:00 UTC bar closes
+  # Re-enabled 2026-09-18 for PAPER/SHADOW only. live stays false. This is the
+  # in-repo heartbeat; it cannot send an order. workflow_dispatch stays so a
+  # tick can also be run by hand.
+  schedule:
+    - cron: '20 1 * * *'   # 01:20 UTC daily, after the crypto 00:00 UTC bar closes
   workflow_dispatch: {}
 
 concurrency:

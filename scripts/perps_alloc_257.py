@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """$257 on the Kalshi perps desk — economics and the already-killed catalog.
 
-Owner killed the incentive book 2026-09-18 and is moving this capital to
-perps margin themselves. This screen does not transfer money, does not lift
-the kill switch, and does not append to the trial registry.
+Owner killed the incentive book 2026-09-18 and will move this capital to
+perps margin themselves after paper has a reading. This screen does not
+transfer money, does not set live:true, and does not append to the trial
+registry.
 
     python3 scripts/perps_alloc_257.py              # saved backtests
     python3 scripts/perps_alloc_257.py --live       # plus Kalshi public APIs
@@ -165,15 +166,16 @@ def verdict(markets: dict | None, funding: dict | None) -> dict:
                 else "NEED A REREAD")
     return {
         "incentive_desk": "DEAD",
-        "owner_transfers_257_to_perps": "YES",
+        "owner_transfers_257_to_perps": "YES_AFTER_PAPER",
         "agent_moves_money": "NO",
-        "lift_kill_switch_or_go_live": "NO",
+        "lift_kill_switch_for_paper": "YES",
+        "set_live_true": "NO",
         "dump_internet_strats_into_the_registry": "NO",
         "register_a_funding_overlay_today": "NO",
         "why": (
-            "Owner killed the incentive desk 2026-09-18 and is moving the $257 "
-            "to perps margin themselves. Agents do not transfer and do not lift "
-            f"KILL_SWITCH_PERPS. Gated beta at this size is about "
+            "Owner asked to paper the measured books before transferring the "
+            "$257. Kill switch is lifted for shadow/paper only; live stays "
+            "false. Agents do not transfer. Gated beta at this size is about "
             f"${0.1016 * CAPITAL / 365.0:.2f}/day with a ~$24 drawdown. "
             "A catalog of internet perps strategies is the set this desk already "
             "killed; more trials raise the deflated-Sharpe bar. BTC Kalshi funding "
@@ -181,10 +183,28 @@ def verdict(markets: dict | None, funding: dict | None) -> dict:
             f"{listings}."
         ),
         "what_is_next": [
-            "owner transfers $257 from predictions to perps margin",
-            "then work the perps desk in paper; §7 still binds",
+            "paper the three measured books (incumbent / candidate / growth)",
+            "owner transfers $257 after those books have a reading",
             "do not register a funding overlay on three months of one name",
         ],
+    }
+
+
+def _plumbing() -> dict:
+    cfg: dict = {}
+    cfg_path = os.path.join(REPO, "config", "perps.json")
+    try:
+        with open(cfg_path) as fh:
+            cfg = json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        pass
+    status = cfg.get("status") or "UNKNOWN"
+    live = bool(cfg.get("live"))
+    return {
+        "predictions_vs_margin": "separate accounts; owner transfers, agents do not",
+        "kill_switch_perps": os.path.exists(KILL),
+        "incentive_desk": "DEAD",
+        "perps_status": f"{status}, shadow, live={str(live).lower()}",
     }
 
 
@@ -214,12 +234,7 @@ def main() -> int:
         "already_killed": [
             {"name": a, "family": b, "why": c} for a, b, c in ALREADY_KILLED
         ],
-        "plumbing": {
-            "predictions_vs_margin": "separate accounts; owner transfers, agents do not",
-            "kill_switch_perps": os.path.exists(KILL),
-            "incentive_desk": "DEAD",
-            "perps_status": "HALTED, shadow, live=false",
-        },
+        "plumbing": _plumbing(),
         "funding": funding,
         "markets": markets,
     }
@@ -232,7 +247,8 @@ def main() -> int:
     print(f"incentive desk: {v['incentive_desk']}")
     print(f"owner transfers $257 to perps: {v['owner_transfers_257_to_perps']}")
     print(f"agent moves money: {v['agent_moves_money']}")
-    print(f"lift kill switch / go live: {v['lift_kill_switch_or_go_live']}")
+    print(f"lift kill switch for paper: {v['lift_kill_switch_for_paper']}")
+    print(f"set live true: {v['set_live_true']}")
     print(f"dump internet strats: {v['dump_internet_strats_into_the_registry']}")
     print()
     print(v["why"])

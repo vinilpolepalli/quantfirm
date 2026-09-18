@@ -45,9 +45,10 @@ class TestVerdict(unittest.TestCase):
     def test_dead_lip_owner_transfer_no_go_live(self):
         v = A.verdict({"copper_us500_wti_listed": False}, None)
         self.assertEqual(v["incentive_desk"], "DEAD")
-        self.assertEqual(v["owner_transfers_257_to_perps"], "YES")
+        self.assertEqual(v["owner_transfers_257_to_perps"], "YES_AFTER_PAPER")
         self.assertEqual(v["agent_moves_money"], "NO")
-        self.assertEqual(v["lift_kill_switch_or_go_live"], "NO")
+        self.assertEqual(v["lift_kill_switch_for_paper"], "YES")
+        self.assertEqual(v["set_live_true"], "NO")
         self.assertEqual(v["dump_internet_strats_into_the_registry"], "NO")
         self.assertEqual(v["register_a_funding_overlay_today"], "NO")
 
@@ -63,10 +64,14 @@ class TestVerdict(unittest.TestCase):
             with open(out) as fh:
                 payload = json.load(fh)
             self.assertEqual(payload["verdict"]["incentive_desk"], "DEAD")
-            self.assertEqual(payload["verdict"]["lift_kill_switch_or_go_live"], "NO")
+            self.assertEqual(payload["verdict"]["lift_kill_switch_for_paper"], "YES")
+            self.assertEqual(payload["verdict"]["set_live_true"], "NO")
             self.assertFalse(payload["live"])
             self.assertEqual(payload["capital_usd"], 257.0)
             self.assertNotIn("incentive", payload)
+            self.assertFalse(payload["plumbing"]["kill_switch_perps"])
+            self.assertIn("PAPER", payload["plumbing"]["perps_status"])
+            self.assertIn("live=false", payload["plumbing"]["perps_status"])
 
 
 class TestPrune(unittest.TestCase):

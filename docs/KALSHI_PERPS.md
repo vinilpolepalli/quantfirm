@@ -1,6 +1,7 @@
 # KALSHI PERPS DESK — plan, evidence, verdict, and how the agents run it
 
-**Status: RESEARCH + SHADOW. Nothing trades real money.** Built 2026-09-15 on
+**Status: PAPER + SHADOW, restarted 2026-09-18. `live: false`. Nothing trades
+real money.** Built 2026-09-15 on
 `claude/kalshi-perps-trading-agents-h0cvkh`. Venue facts in
 `research/kalshi_perps/venue_dossier.md`; the evidence behind every design
 choice in `research/kalshi_perps/evidence_review.md`; the numbers in
@@ -132,39 +133,42 @@ adverse move liquidates BTC, and every published number on retail perps
 says anything above ~2x is a coin flip over a quarter. The risk policy caps
 gross leverage at 1.0–2.0x by rung.
 
-## 0. HALTED — 2026-09-16
+## 0. PAPER RESTARTED — 2026-09-18
 
-The owner asked to halt perps on 2026-09-16 and the desk is stopped. This is
-not a risk event: nothing was ever live, `live` was already `false`, and no
-money was at risk at any point.
+The owner halted perps on 2026-09-16 (not a risk event; nothing was live).
+On 2026-09-18 they asked to paper the measured books — or backtest the one
+we found — **before** transferring the $257. Paper first is the right
+order. A pile of new internet systems is not; that catalog is the set
+§2 already killed, and more registered trials raise the deflated-Sharpe
+bar. The backtests that matter are already on disk. Do not re-run
+`cli backtest` / `cli holdout` for a demo.
 
-Four independent stops, so that removing any one of them does not silently
-restart the desk:
+Three of the four halt layers are undone in this commit. Claude Routines
+(daily digest, 4-hourly alert, weekly watch) are not files in this repo
+and stay a human action. GitHub cron is the durable heartbeat.
 
 | layer | state |
 |---|---|
-| `state/KILL_SWITCH_PERPS` | present — the engine reads it every tick and refuses to trade |
-| `config/perps.json` | `status: HALTED`, `live: false` |
-| `.github/workflows/perps.yml` | daily `schedule:` commented out; `workflow_dispatch` kept for manual inspection |
-| routines (daily digest, 4-hourly alert, weekly watch) | all three disabled |
+| `state/KILL_SWITCH_PERPS` | **removed** — paper ticks may trade again |
+| `config/perps.json` | `status: PAPER`, `live: false` |
+| `.github/workflows/perps.yml` | daily `schedule:` on at 01:20 UTC |
+| routines (daily digest, 4-hourly alert, weekly watch) | still a Claude-side enable; not flipped here |
 
-**The paper positions are frozen, not liquidated.** A halt stops new trading; it
-does not close what is open, and on a paper book there is nothing to close. The
-books stopped here:
+**The paper positions stay the frozen legs, not a wiped $250.** Paper
+state is gitignored, so the engine now hydrates a missing local book
+from the committed desk status. The books resume from:
 
-| book | equity | legs |
+| book | equity at halt | legs |
 |---|---:|---:|
 | incumbent | $249.75 | 1 (eth) |
 | candidate | $249.92 | 8 |
 | growth | $249.83 | 11 |
 
 All three within a quarter of a percent of their $250 start after two days,
-which means nothing in either direction — two days is not a result.
-
-**To restart**, all four have to be undone: delete `state/KILL_SWITCH_PERPS`,
-set `status` back in `config/perps.json`, uncomment the workflow schedule, and
-re-enable the routines. None of that promotes anything to live; the promotion
-gate in §7 is unchanged and was never met.
+which means nothing in either direction — two days is not a result. A
+reading takes weeks. The $257 stays in predictions until the owner moves
+it. None of this promotes anything to live; the gate in §7 is unchanged
+and was never met.
 
 ## 1a. Funding went live on BTC, and the desk noticed
 
@@ -724,13 +728,14 @@ checks it; removing it is an owner action by commit). Demo and live need
 
 ## 9. What would change the verdict
 
-**2026-09-18, afternoon.** Owner killed the incentive desk and is moving the
-$257 to perps margin themselves. The earlier "leave it on LIP" call in this
-section is overridden. The incentive collector, quoter, and runbook are gone.
-This desk stays **HALTED** until the owner lifts the four stops in §0; a
-transfer is not a go-live. Strategy catalog and funding watch still stand in
-`research/kalshi_perps/ALLOC_257.md`. `scripts/perps_alloc_257.py --live`
-reprints the $257 economics.
+**2026-09-18, afternoon.** Owner killed the incentive desk and will move the
+$257 to perps margin themselves **after** the paper books have a reading.
+The earlier "leave it on LIP" call in this section is overridden. The
+incentive collector, quoter, and runbook are gone. This desk is
+**PAPER/SHADOW** (`live: false`); a transfer is not a go-live. Paper the
+three measured books, not a new catalog. Strategy catalog and funding
+watch still stand in `research/kalshi_perps/ALLOC_257.md`.
+`scripts/perps_alloc_257.py --live` reprints the $257 economics.
 
 * A candidate that beats vol-scaled long-only out of sample with DSR ≥ 0.95
   and PBO ≤ 0.10 under the same cost model. The backlog is now shorter than
