@@ -10,8 +10,7 @@ Read this before touching anything.
    desk gates on a kill-switch file plus an explicit env flag. Do not bypass a
    gate to "test" something — run the dry run instead.
 2. **Kill switches are files.** `state/KILL_SWITCH_KALSHI`, `KILL_SWITCH_PERPS`,
-   `KILL_SWITCH_EQ`, `state/INCENTIVE_LIVE` (that last one *arms* rather than
-   halts). Present = that desk is stopped. Creating one is always safe.
+   `KILL_SWITCH_EQ`. Present = that desk is stopped. Creating one is always safe.
 3. **Broker state is truth.** Reconcile against the venue before deciding
    anything; never "correct" a mismatch by trading.
 4. **Promotion is gated**: IDEA → RESEARCH → REVIEW → PAPER → CANARY →
@@ -28,14 +27,14 @@ Read this before touching anything.
 |---|---|---|---|
 | Equity | Robinhood equities | **LIVE**, $250, six names | `docs/EQUITY.md` |
 | Kalshi 15M | Kalshi commodity/crypto binaries | halted (kill switch) | `docs/KALSHI_15M.md` |
-| Kalshi perps | Kalshi perpetual futures | halted, shadow only | `docs/KALSHI_PERPS.md` |
-| **Kalshi incentive** | Kalshi Liquidity Incentive Program | **SHADOW, not armed** | **`docs/KALSHI_INCENTIVE.md`** |
+| Kalshi perps | Kalshi perpetual futures | halted, shadow only; owner is moving $257 here | `docs/KALSHI_PERPS.md` |
 | Crypto | Robinhood Crypto | disabled, tournament NO-GO | `docs/TOURNAMENT.md` |
 
-If the owner says *"start the kalshi incentive cron agent"*, *"the incentive
-book"*, or *"the LIP thing"* — that is `docs/KALSHI_INCENTIVE.md`. Read it in
-full first. $257 is deposited for it and **not deployed**; arming it takes five
-separate conditions, all listed there.
+The Kalshi Liquidity Incentive Program desk is **dead**. Owner killed it
+2026-09-18. Do not rebuild the collector, the quoter, or `state/INCENTIVE_LIVE`.
+The $257 that was reserved for it transfers to perps **by the owner**, not by
+an agent. Perps stays behind `state/KILL_SWITCH_PERPS` until they say to
+restart it.
 
 Note `docs/FIRM.md` is the original design brief and has drifted: it describes a
 Robinhood **crypto** desk that is now disabled, and references paths under
@@ -52,8 +51,8 @@ eval still govern; its subject does not.
 - **Thin books on brand-new programs are empty rooms, not edges.** Measured
   decay is 119x from fresh to a week old.
 - **A persistence test that re-measures the same fresh objects proves nothing.**
-- Every optimistic number produced for the incentive book on 2026-09-16 was
-  wrong, four times, each by about an order of magnitude. Recompute; do not
+- The dead incentive book produced four optimistic numbers on 2026-09-16, each
+  wrong by about an order of magnitude. That lesson stays: recompute; do not
   inherit.
 
 ## Conventions

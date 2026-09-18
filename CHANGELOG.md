@@ -6,6 +6,21 @@ moved and what evidence backs it.
 
 ---
 
+## 0.2.5 — 2026-09-18 — incentive desk killed; $257 goes to perps
+
+Owner killed the Kalshi Liquidity Incentive Program book. The collector,
+quoter, scan, stress test, runbook, research memo, and paper state are
+removed. The GitHub Actions workflow is gone, which is what stops the
+20-minute tick. Nothing was ever armed; no live LIP orders existed to
+cancel.
+
+The $257 that sat in predictions for that book transfers to Kalshi perps
+**by the owner**. This release does not lift `KILL_SWITCH_PERPS`, does not
+set `live: true`, and does not send a perps order. Next work is the perps
+desk, behind the existing promotion gate in `docs/KALSHI_PERPS.md` §7.
+
+---
+
 ## 0.2.4 — 2026-09-15 — three paper books, and a daily report the owner actually reads
 
 ### Added

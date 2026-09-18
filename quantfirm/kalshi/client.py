@@ -215,8 +215,8 @@ class KalshiClient:
 
     def orders(self, **params) -> dict:
         """GET /portfolio/orders. NOT /portfolio/events/orders — that path 404s,
-        which the incentive quoter reads as "cannot see broker state" and then
-        refuses to send. Verified against prod 2026-09-16."""
+        which a caller will read as "cannot see broker state" and then refuse
+        to send. Verified against prod 2026-09-16."""
         return self._req("GET", "/portfolio/orders", params=params, auth=True)
 
     def withdrawals(self, limit: int = 50) -> dict:

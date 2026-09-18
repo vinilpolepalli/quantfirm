@@ -44,7 +44,6 @@ Two desks:
 - `docs/IDEA_BACKLOG.md` — graded idea pipeline + the graveyard of dead ends
 - `docs/TOURNAMENT.md` / `docs/RESEARCH.md` — crypto desk verdict and findings
 - `docs/RUNBOOK.md` — go-live checklist, kill switch, incident playbook
-- `docs/KALSHI_INCENTIVE.md` — Kalshi liquidity-incentive book: mechanics, the go/no-go gate, how to arm it
 - `docs/KALSHI.md` / `docs/KALSHI_15M.md` — 15-minute Kalshi desk (live canary + **setup**)
 - `docs/KALSHI_PERPS.md` — perpetual-futures desk: venue dossier, evidence, tournament verdict, agent roster, risk policy, rollout gate
 - `docs/PROCESS.md` — build log (how agents built this)

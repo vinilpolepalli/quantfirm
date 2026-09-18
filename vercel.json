@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
 
   "//": [
-    "The incentive collector commits state/*.json to main every 20 minutes (~72",
-    "commits/day), and the desk loops add more. Every push to a connected repo",
+    "Desk loops commit state/*.json to main on a short cadence (tens of",
+    "commits/day). Every push to a connected repo",
     "CREATES a deployment, and the Hobby cap is 100 Deployments Created per Day",
     "-- which this account blew through on 2026-09-16.",
     "",
