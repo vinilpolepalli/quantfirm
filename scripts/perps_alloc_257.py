@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-"""Should the $257 leave the incentive book for Kalshi perps (or 'just perps')?
+"""$257 on the Kalshi perps desk — economics and the already-killed catalog.
 
-This is a SCREEN, not a tournament and not an order. It recomputes the
-numbers a session is tempted to inherit, then writes
-``research/kalshi_perps/alloc_257.json``. It does not append to the trial
-registry. Dumping internet strategies into that registry is how this desk
-makes itself unable to validate the next real idea.
+Owner killed the incentive book 2026-09-18 and is moving this capital to
+perps margin themselves. This screen does not transfer money, does not lift
+the kill switch, and does not append to the trial registry.
 
-    python3 scripts/perps_alloc_257.py              # state + saved backtests
+    python3 scripts/perps_alloc_257.py              # saved backtests
     python3 scripts/perps_alloc_257.py --live       # plus Kalshi public APIs
 """
 from __future__ import annotations
@@ -24,19 +22,13 @@ if REPO not in sys.path:
 if os.path.join(REPO, "scripts") not in sys.path:
     sys.path.insert(0, os.path.join(REPO, "scripts"))
 
-INCENTIVE_STATE = os.path.join(REPO, "state", "kalshi_incentive_paper.json")
 GRANULARITY = os.path.join(REPO, "research", "kalshi_perps", "granularity.json")
 OUT = os.path.join(REPO, "research", "kalshi_perps", "alloc_257.json")
+KILL = os.path.join(REPO, "state", "KILL_SWITCH_PERPS")
 CAPITAL = 257.0
-# 2026-09-16 board identity (research/kalshi_incentives.md): $106,033/day
-# paid against $17,067,304 resting. Not re-scraped here — that scrape is
-# how the first four wrong numbers were born. The identity is the bound.
-BOARD_PAID_PER_DAY = 106033.0
-BOARD_RESTING = 17067304.0
 PERPS_BASE_BANKROLL = 250.0
+COLLATERAL_APY = 0.0325
 
-# Internet / "just perps" names mapped onto families this desk already killed.
-# The point is not completeness. The point is that a catalog is not a pipeline.
 ALREADY_KILLED = (
     ("grid / DCA / martingale bots", "intraday + leverage",
      "20 RT/month at 12 bps and 2x is a 115%/yr fee hurdle; recovery sizing is ruin"),
@@ -59,70 +51,8 @@ ALREADY_KILLED = (
     ("LLM / GPT signals, copy-trading", "Alpha Arena / FIRM rule",
      "4/6 frontier models lost 31–63% in 17 days; code decides, models do not"),
     ("Hyperliquid / Jupiter / offshore perps", "venue + US retail",
-     "HL geoblocks US; Jupiter is unregulated 1.1–250x vs JLP; this $257 is already on Kalshi"),
+     "HL geoblocks US; Jupiter is unregulated 1.1–250x vs JLP; this $257 is a Kalshi transfer"),
 )
-
-
-def parse_ts(s: str) -> dt.datetime:
-    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
-
-
-def wall_clock_window(history: list, hours: float, now: dt.datetime) -> dict:
-    """Dollars the log actually booked in the last ``hours`` of wall clock.
-
-    This is not the paper book's gate. The gate divides by the *capped*
-    ``interval_h`` sum and refuses the window when that span is too gappy.
-    A human asking 'what did the last day look like?' wants the wall-clock
-    sum. Both get reported so nobody mixes them.
-    """
-    cut = now - dt.timedelta(hours=hours)
-    rows = [h for h in history if _safe_ts(h) is not None and _safe_ts(h) >= cut]
-    earned = sum(float(h.get("earned") or 0.0) for h in rows)
-    span = sum(float(h.get("interval_h") or 0.0) for h in rows)
-    return {
-        "hours": hours,
-        "n_ticks": len(rows),
-        "earned_usd": round(earned, 4),
-        "capped_interval_h": round(span, 3),
-        "wall_usd_per_day": round(earned / hours * 24.0, 4) if hours else None,
-        "gate_usd_per_day": (round(earned / span * 24.0, 4)
-                             if span >= hours * 0.5 else None),
-    }
-
-
-def _safe_ts(h: dict) -> dt.datetime | None:
-    try:
-        return parse_ts(h["t"])
-    except (KeyError, TypeError, ValueError):
-        return None
-
-
-def incentive_screen(st: dict, now: dt.datetime | None = None) -> dict:
-    hist = st.get("history") or []
-    if not hist:
-        return {"verdict": st.get("verdict", "INSUFFICIENT"), "reason": "no history"}
-    last = parse_ts(hist[-1]["t"])
-    now = now or last
-    started = parse_ts(st["started"])
-    run_h = (now - started).total_seconds() / 3600.0
-    accrued = float(st.get("accrued") or 0.0)
-    capital = float(st.get("capital") or CAPITAL)
-    identity = BOARD_PAID_PER_DAY / BOARD_RESTING * capital
-    return {
-        "verdict": st.get("verdict"),
-        "verdict_reason": st.get("verdict_reason"),
-        "capital": capital,
-        "started": st["started"],
-        "last_tick": hist[-1]["t"],
-        "run_hours": round(run_h, 2),
-        "ticks": st.get("ticks"),
-        "accrued_usd": accrued,
-        "since_inception_usd_per_day": round(accrued / run_h * 24.0, 4) if run_h else None,
-        "board_identity_usd_per_day": round(identity, 4),
-        "windows": {f"{int(h)}h": wall_clock_window(hist, h, now) for h in (6, 12, 24, 48)},
-        "note": ("since-inception and the 48h window are early-tick over-reads; "
-                 "trust the 12–24h wall-clock windows and the board identity"),
-    }
 
 
 def perps_row(granularity: dict, name: str, capital: float) -> dict:
@@ -141,49 +71,14 @@ def perps_row(granularity: dict, name: str, capital: float) -> dict:
     }
 
 
-def allocation_table(inc: dict, perps: dict) -> list[dict]:
-    """What $257 does in each place. Dollars only, no annualised fantasy on the LIP."""
-    w24 = inc["windows"]["24h"]
-    w12 = inc["windows"]["12h"]
+def allocation_table(perps: dict) -> list[dict]:
     return [
         {
-            "place": "kalshi_predictions_idle",
-            "usd_per_day": 0.0,
-            "usd_per_year": 0.0,
-            "typical_dd_usd": 0.0,
-            "what_it_is": "cash sitting where it is now, earning no 3.25% (that yield is margin-only)",
-        },
-        {
             "place": "kalshi_margin_idle",
-            "usd_per_day": round(0.0325 * CAPITAL / 365.0, 4),
-            "usd_per_year": round(0.0325 * CAPITAL, 2),
+            "usd_per_day": round(COLLATERAL_APY * CAPITAL / 365.0, 4),
+            "usd_per_year": round(COLLATERAL_APY * CAPITAL, 2),
             "typical_dd_usd": 0.0,
-            "what_it_is": "transfer to perps margin and hold cash; ~3.25% APY if the $250 avg-balance rule is met",
-        },
-        {
-            "place": "incentive_board_identity",
-            "usd_per_day": inc["board_identity_usd_per_day"],
-            "usd_per_year": None,
-            "typical_dd_usd": 125.0,
-            "what_it_is": ("accounting identity from 2026-09-16: $106k/day pot / $17.1M resting "
-                           f"= {inc['board_identity_usd_per_day']}/day on ${inc['capital']:.0f}. "
-                           "Not a promise Kalshi credits. Worst-case fill math is about -$125. "
-                           "Do not annualise."),
-        },
-        {
-            "place": "incentive_last_24h_wall",
-            "usd_per_day": w24["wall_usd_per_day"],
-            "usd_per_year": None,
-            "typical_dd_usd": 125.0,
-            "what_it_is": (f"paper book logged ${w24['earned_usd']} in the last 24h of wall clock. "
-                           "Uncredited estimate. Do not annualise."),
-        },
-        {
-            "place": "incentive_last_12h_wall",
-            "usd_per_day": w12["wall_usd_per_day"],
-            "usd_per_year": None,
-            "typical_dd_usd": 125.0,
-            "what_it_is": "more recent, closer to the board identity, still decaying, still uncredited",
+            "what_it_is": "cash on perps margin; ~3.25% APY if the $250 avg-balance rule is met",
         },
         {
             "place": "perps_trend_gate_12pct",
@@ -241,10 +136,9 @@ def live_markets() -> dict:
     from quantfirm.perps.client import MarginClient, parse_market
     rows = [parse_market(m) for m in MarginClient("prod").markets()]
     tradable = [r for r in rows if r.get("bid") and r.get("ask")]
-    classes = {}
+    classes: dict[str, list[str]] = {}
     for r in tradable:
         classes.setdefault(r.get("asset_class") or "?", []).append(r["ticker"])
-    non_crypto = sorted(t for t, names in classes.items() if t not in ("crypto",) for t in [t])
     return {
         "n_listed": len(rows),
         "n_tradable": len(tradable),
@@ -259,11 +153,7 @@ def live_markets() -> dict:
     }
 
 
-def verdict(inc: dict, markets: dict | None, funding: dict | None) -> dict:
-    """The only output that matters. Everything else is supporting arithmetic."""
-    w24 = inc["windows"]["24h"]["wall_usd_per_day"]
-    identity = inc["board_identity_usd_per_day"]
-    perps_day = 0.1016 * CAPITAL / 365.0
+def verdict(markets: dict | None, funding: dict | None) -> dict:
     btc90 = None
     if funding and "btc" in funding and "windows" in funding["btc"]:
         btc90 = funding["btc"]["windows"]["90"]
@@ -274,28 +164,26 @@ def verdict(inc: dict, markets: dict | None, funding: dict | None) -> dict:
                 if not (markets or {}).get("copper_us500_wti_listed")
                 else "NEED A REREAD")
     return {
-        "move_the_257_to_perps": "NO",
+        "incentive_desk": "DEAD",
+        "owner_transfers_257_to_perps": "YES",
+        "agent_moves_money": "NO",
+        "lift_kill_switch_or_go_live": "NO",
         "dump_internet_strats_into_the_registry": "NO",
-        "restart_the_halted_perps_desk": "NO",
         "register_a_funding_overlay_today": "NO",
         "why": (
-            f"The $257 is in the predictions account, reserved for the LIP, still "
-            f"INSUFFICIENT ({inc['run_hours']}h of 48h). Last-24h wall-clock paper "
-            f"accrual is ${w24}/day against a board identity of ${identity}/day. "
-            f"The deployable perps posture at this size is gated beta at about "
-            f"${perps_day:.2f}/day with a ~$24 drawdown, and that desk is owner-halted "
-            f"after two paper days. A catalog of internet perps strategies is the "
-            f"set this desk already killed; more trials raise the deflated-Sharpe "
-            f"bar. BTC Kalshi funding is still live on a 90-interval window"
-            f"{btc_bit}, which is the one named opening — watch it, do not "
-            f"register it on three months of one name. Jupiter/Hyperliquid are "
-            f"the wrong venue for this account. Copper/US500/WTI {listings}."
+            "Owner killed the incentive desk 2026-09-18 and is moving the $257 "
+            "to perps margin themselves. Agents do not transfer and do not lift "
+            f"KILL_SWITCH_PERPS. Gated beta at this size is about "
+            f"${0.1016 * CAPITAL / 365.0:.2f}/day with a ~$24 drawdown. "
+            "A catalog of internet perps strategies is the set this desk already "
+            "killed; more trials raise the deflated-Sharpe bar. BTC Kalshi funding "
+            f"is still live on a 90-interval window{btc_bit}. Copper/US500/WTI "
+            f"{listings}."
         ),
-        "what_would_change_this": [
-            "incentive gate prints GO on a trailing 24h that is not still falling, then a $40 canary — still not the full $257",
-            "incentive gate prints NO and stays there: then the $257 is free, and perps is still only a beta bet after the §7 paper gate",
-            "a non-crypto listing (copper, US500, WTI) — the missing diversifier",
-            "Kalshi-native BTC funding history long enough to pre-register a cost overlay against the existing crowding-gauge miss",
+        "what_is_next": [
+            "owner transfers $257 from predictions to perps margin",
+            "then work the perps desk in paper; §7 still binds",
+            "do not register a funding overlay on three months of one name",
         ],
     }
 
@@ -304,15 +192,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--live", action="store_true",
                     help="hit Kalshi public perps endpoints for funding and listings")
-    ap.add_argument("--state", default=INCENTIVE_STATE)
     ap.add_argument("--out", default=OUT)
     args = ap.parse_args()
 
-    with open(args.state) as fh:
-        st = json.load(fh)
     with open(GRANULARITY) as fh:
         gran = json.load(fh)
-    inc = incentive_screen(st)
     perps = {
         "trend_long_only@0.12": perps_row(gran, "trend_long_only@0.12", CAPITAL),
         "vol_target_hold@0.12": perps_row(gran, "vol_target_hold@0.12", CAPITAL),
@@ -324,18 +208,16 @@ def main() -> int:
         "ran_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "live": bool(args.live),
         "capital_usd": CAPITAL,
-        "verdict": verdict(inc, markets, funding),
-        "incentive": inc,
+        "verdict": verdict(markets, funding),
         "perps_at_257": perps,
-        "allocation": allocation_table(inc, perps),
+        "allocation": allocation_table(perps),
         "already_killed": [
             {"name": a, "family": b, "why": c} for a, b, c in ALREADY_KILLED
         ],
         "plumbing": {
-            "predictions_vs_margin": "separate accounts; liquidation on perps cannot touch predictions",
-            "to_use_257_on_perps": "owner applies for margin, completes the tutorial, transfers from predictions",
-            "kill_switch_perps": True,
-            "incentive_armed": False,
+            "predictions_vs_margin": "separate accounts; owner transfers, agents do not",
+            "kill_switch_perps": os.path.exists(KILL),
+            "incentive_desk": "DEAD",
             "perps_status": "HALTED, shadow, live=false",
         },
         "funding": funding,
@@ -347,10 +229,11 @@ def main() -> int:
         f.write("\n")
 
     v = payload["verdict"]
-    print(f"move $257 to perps: {v['move_the_257_to_perps']}")
+    print(f"incentive desk: {v['incentive_desk']}")
+    print(f"owner transfers $257 to perps: {v['owner_transfers_257_to_perps']}")
+    print(f"agent moves money: {v['agent_moves_money']}")
+    print(f"lift kill switch / go live: {v['lift_kill_switch_or_go_live']}")
     print(f"dump internet strats: {v['dump_internet_strats_into_the_registry']}")
-    print(f"restart perps desk: {v['restart_the_halted_perps_desk']}")
-    print(f"register funding overlay: {v['register_a_funding_overlay_today']}")
     print()
     print(v["why"])
     print()

@@ -724,15 +724,13 @@ checks it; removing it is an owner action by commit). Demo and live need
 
 ## 9. What would change the verdict
 
-**2026-09-18.** The owner asked whether the $257 should leave the incentive
-book for Kalshi perps or "just perps" online. Recomputed in
-`research/kalshi_perps/ALLOC_257.md`: **no.** Predictions and margin are
-separate accounts; last-24h LIP paper accrual is $3.12/day against ~$0.07/day
-for the gated perps posture; the catalog of internet perps strategies is the
-set this desk already killed; copper/US500/WTI are still unlisted. BTC
-Kalshi funding is still live (last-90 holding cost **+15.13%/yr**, zeros
-included, up from +14.25% on the 09-15 disk). That remains a watch item, not
-a registered trial. `scripts/perps_alloc_257.py --live` reprints the numbers.
+**2026-09-18, afternoon.** Owner killed the incentive desk and is moving the
+$257 to perps margin themselves. The earlier "leave it on LIP" call in this
+section is overridden. The incentive collector, quoter, and runbook are gone.
+This desk stays **HALTED** until the owner lifts the four stops in §0; a
+transfer is not a go-live. Strategy catalog and funding watch still stand in
+`research/kalshi_perps/ALLOC_257.md`. `scripts/perps_alloc_257.py --live`
+reprints the $257 economics.
 
 * A candidate that beats vol-scaled long-only out of sample with DSR ≥ 0.95
   and PBO ≤ 0.10 under the same cost model. The backlog is now shorter than

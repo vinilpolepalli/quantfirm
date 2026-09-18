@@ -1,66 +1,20 @@
 {
- "ran_at": "2026-09-18T13:03:33+00:00",
+ "ran_at": "2026-09-18T13:08:56+00:00",
  "live": true,
  "capital_usd": 257.0,
  "verdict": {
-  "move_the_257_to_perps": "NO",
+  "incentive_desk": "DEAD",
+  "owner_transfers_257_to_perps": "YES",
+  "agent_moves_money": "NO",
+  "lift_kill_switch_or_go_live": "NO",
   "dump_internet_strats_into_the_registry": "NO",
-  "restart_the_halted_perps_desk": "NO",
   "register_a_funding_overlay_today": "NO",
-  "why": "The $257 is in the predictions account, reserved for the LIP, still INSUFFICIENT (43.18h of 48h). Last-24h wall-clock paper accrual is $3.1225/day against a board identity of $1.5966/day. The deployable perps posture at this size is gated beta at about $0.07/day with a ~$24 drawdown, and that desk is owner-halted after two paper days. A catalog of internet perps strategies is the set this desk already killed; more trials raise the deflated-Sharpe bar. BTC Kalshi funding is still live on a 90-interval window (+15.1% a year paid by longs), which is the one named opening \u2014 watch it, do not register it on three months of one name. Jupiter/Hyperliquid are the wrong venue for this account. Copper/US500/WTI are still unlisted.",
-  "what_would_change_this": [
-   "incentive gate prints GO on a trailing 24h that is not still falling, then a $40 canary \u2014 still not the full $257",
-   "incentive gate prints NO and stays there: then the $257 is free, and perps is still only a beta bet after the \u00a77 paper gate",
-   "a non-crypto listing (copper, US500, WTI) \u2014 the missing diversifier",
-   "Kalshi-native BTC funding history long enough to pre-register a cost overlay against the existing crowding-gauge miss"
+  "why": "Owner killed the incentive desk 2026-09-18 and is moving the $257 to perps margin themselves. Agents do not transfer and do not lift KILL_SWITCH_PERPS. Gated beta at this size is about $0.07/day with a ~$24 drawdown. A catalog of internet perps strategies is the set this desk already killed; more trials raise the deflated-Sharpe bar. BTC Kalshi funding is still live on a 90-interval window (+15.1% a year paid by longs). Copper/US500/WTI are still unlisted.",
+  "what_is_next": [
+   "owner transfers $257 from predictions to perps margin",
+   "then work the perps desk in paper; \u00a77 still binds",
+   "do not register a funding overlay on three months of one name"
   ]
- },
- "incentive": {
-  "verdict": "INSUFFICIENT",
-  "verdict_reason": "43.2h of data, need 48h - early ticks over-read badly",
-  "capital": 257.0,
-  "started": "2026-09-16T16:16:07.458665+00:00",
-  "last_tick": "2026-09-18T11:27:08.227552+00:00",
-  "run_hours": 43.18,
-  "ticks": 30,
-  "accrued_usd": 59.0858,
-  "since_inception_usd_per_day": 32.838,
-  "board_identity_usd_per_day": 1.5966,
-  "windows": {
-   "6h": {
-    "hours": 6,
-    "n_ticks": 2,
-    "earned_usd": 0.5972,
-    "capped_interval_h": 2.0,
-    "wall_usd_per_day": 2.3888,
-    "gate_usd_per_day": null
-   },
-   "12h": {
-    "hours": 12,
-    "n_ticks": 3,
-    "earned_usd": 0.9161,
-    "capped_interval_h": 3.0,
-    "wall_usd_per_day": 1.8322,
-    "gate_usd_per_day": null
-   },
-   "24h": {
-    "hours": 24,
-    "n_ticks": 9,
-    "earned_usd": 3.1225,
-    "capped_interval_h": 8.003,
-    "wall_usd_per_day": 3.1225,
-    "gate_usd_per_day": null
-   },
-   "48h": {
-    "hours": 48,
-    "n_ticks": 30,
-    "earned_usd": 59.0858,
-    "capped_interval_h": 26.16,
-    "wall_usd_per_day": 29.5429,
-    "gate_usd_per_day": 54.2072
-   }
-  },
-  "note": "since-inception and the 48h window are early-tick over-reads; trust the 12\u201324h wall-clock windows and the board identity"
  },
  "perps_at_257": {
   "trend_long_only@0.12": {
@@ -102,39 +56,11 @@
  },
  "allocation": [
   {
-   "place": "kalshi_predictions_idle",
-   "usd_per_day": 0.0,
-   "usd_per_year": 0.0,
-   "typical_dd_usd": 0.0,
-   "what_it_is": "cash sitting where it is now, earning no 3.25% (that yield is margin-only)"
-  },
-  {
    "place": "kalshi_margin_idle",
    "usd_per_day": 0.0229,
    "usd_per_year": 8.35,
    "typical_dd_usd": 0.0,
-   "what_it_is": "transfer to perps margin and hold cash; ~3.25% APY if the $250 avg-balance rule is met"
-  },
-  {
-   "place": "incentive_board_identity",
-   "usd_per_day": 1.5966,
-   "usd_per_year": null,
-   "typical_dd_usd": 125.0,
-   "what_it_is": "accounting identity from 2026-09-16: $106k/day pot / $17.1M resting = 1.5966/day on $257. Not a promise Kalshi credits. Worst-case fill math is about -$125. Do not annualise."
-  },
-  {
-   "place": "incentive_last_24h_wall",
-   "usd_per_day": 3.1225,
-   "usd_per_year": null,
-   "typical_dd_usd": 125.0,
-   "what_it_is": "paper book logged $3.1225 in the last 24h of wall clock. Uncredited estimate. Do not annualise."
-  },
-  {
-   "place": "incentive_last_12h_wall",
-   "usd_per_day": 1.8322,
-   "usd_per_year": null,
-   "typical_dd_usd": 125.0,
-   "what_it_is": "more recent, closer to the board identity, still decaying, still uncredited"
+   "what_it_is": "cash on perps margin; ~3.25% APY if the $250 avg-balance rule is met"
   },
   {
    "place": "perps_trend_gate_12pct",
@@ -205,14 +131,13 @@
   {
    "name": "Hyperliquid / Jupiter / offshore perps",
    "family": "venue + US retail",
-   "why": "HL geoblocks US; Jupiter is unregulated 1.1\u2013250x vs JLP; this $257 is already on Kalshi"
+   "why": "HL geoblocks US; Jupiter is unregulated 1.1\u2013250x vs JLP; this $257 is a Kalshi transfer"
   }
  ],
  "plumbing": {
-  "predictions_vs_margin": "separate accounts; liquidation on perps cannot touch predictions",
-  "to_use_257_on_perps": "owner applies for margin, completes the tutorial, transfers from predictions",
+  "predictions_vs_margin": "separate accounts; owner transfers, agents do not",
   "kill_switch_perps": true,
-  "incentive_armed": false,
+  "incentive_desk": "DEAD",
   "perps_status": "HALTED, shadow, live=false"
  },
  "funding": {
@@ -291,9 +216,9 @@
     }
    ],
    "estimate_now": {
-    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "computed_time": "2026-09-18T13:08:54.444749Z",
     "funding_rate": 0,
-    "mark_price": "7.7935",
+    "mark_price": "7.7997",
     "market_ticker": "KXBTCPERP",
     "next_funding_time": "2026-09-18T20:00:00Z"
    }
@@ -373,9 +298,9 @@
     }
    ],
    "estimate_now": {
-    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "computed_time": "2026-09-18T13:08:54.444749Z",
     "funding_rate": 0,
-    "mark_price": "2.4946",
+    "mark_price": "2.4975",
     "market_ticker": "KXETHPERP",
     "next_funding_time": "2026-09-18T20:00:00Z"
    }
@@ -451,9 +376,9 @@
     }
    ],
    "estimate_now": {
-    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "computed_time": "2026-09-18T13:08:54.444749Z",
     "funding_rate": 0,
-    "mark_price": "4.3650",
+    "mark_price": "4.3742",
     "market_ticker": "KXGOLDPERP",
     "next_funding_time": "2026-09-18T14:00:00Z"
    }
@@ -529,9 +454,9 @@
     }
    ],
    "estimate_now": {
-    "computed_time": "2026-09-18T13:03:29.449442Z",
+    "computed_time": "2026-09-18T13:08:54.444749Z",
     "funding_rate": 0,
-    "mark_price": "6.6475",
+    "mark_price": "6.6639",
     "market_ticker": "KXSILVERPERP",
     "next_funding_time": "2026-09-18T14:00:00Z"
    }
