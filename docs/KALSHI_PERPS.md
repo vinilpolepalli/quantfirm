@@ -222,7 +222,7 @@ lives here; the next email about funding means the picture moved again.
 
 | Idea | Verdict | Reason (details and citations in `evidence_review.md`) |
 |---|---|---|
-| LLM decides entries, sizes, leverage | **out** | Alpha Arena S1: 4/6 lost 31–63%; S1.5: a third of $320k lost, 1,418 trades in a round; gated vs ungated agent drawdown 3% vs 46%; nof1: "that path doesn't work yet" |
+| LLM decides entries, sizes, leverage | **out** | Alpha Arena S1: 4/6 lost 31–63%; S1.5: a third of $320k lost, 1,418 trades in a round; gated vs ungated agent drawdown 3% vs 46%; nof1: "that path doesn't work yet". Re-checked 2026-09-18 when the owner asked for a research-agent long/short: still out. `research/kalshi_perps/RESEARCH_AGENT_DISCRETION.md`. |
 | Funding carry | **out on Kalshi** | deadband zeroes most intervals; collateral already earns 3.25%; 2026 basis below T-bills Feb–Jul everywhere |
 | Cross-venue funding/basis arb | **out** | needs an offshore short a US retail account cannot hold; 95% forced exits in the one large-sample study; two taker fees exceed the spread |
 | Market making / fast mean reversion | **out** | no rebates below 0.5% of venue maker volume; adverse selection; GSR quotes these books |
