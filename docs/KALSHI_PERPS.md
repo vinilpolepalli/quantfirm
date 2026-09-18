@@ -156,19 +156,20 @@ and stay a human action. GitHub cron is the durable heartbeat.
 
 **The paper positions stay the frozen legs, not a wiped $250.** Paper
 state is gitignored, so the engine now hydrates a missing local book
-from the committed desk status. The books resume from:
+from the committed desk status. First shadow tick after the lift
+(2026-09-18T13:44Z), `live: false`, no venue orders:
 
-| book | equity at halt | legs |
-|---|---:|---:|
-| incumbent | $249.75 | 1 (eth) |
-| candidate | $249.92 | 8 |
-| growth | $249.83 | 11 |
+| book | equity at halt | first tick | legs now |
+|---|---:|---:|---:|
+| incumbent | $249.75 | $249.89 | 1 (eth) |
+| candidate | $249.92 | $253.55 | 7 |
+| growth | $249.83 | $255.45 | 10 |
 
-All three within a quarter of a percent of their $250 start after two days,
-which means nothing in either direction — two days is not a result. A
-reading takes weeks. The $257 stays in predictions until the owner moves
-it. None of this promotes anything to live; the gate in §7 is unchanged
-and was never met.
+The candidate/growth jump is two days of marks (NEAR in particular) plus
+a few reduce-only shadow fills. That is not a result; do not annualise
+it. A reading takes weeks. The $257 stays in predictions until the owner
+moves it. None of this promotes anything to live; the gate in §7 is
+unchanged and was never met.
 
 ## 1a. Funding went live on BTC, and the desk noticed
 

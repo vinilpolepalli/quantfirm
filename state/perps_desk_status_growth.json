@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-16T15:19:46+00:00",
+ "ts": "2026-09-18T13:44:06+00:00",
  "book": "growth",
  "adapter": "shadow",
  "strategy": "blend_core_sleeve",
@@ -42,15 +42,15 @@
   "min_margin_ratio_headroom": 0.5,
   "consecutive_loss_days_pause": 5
  },
- "bankroll0": 250,
- "equity": 249.83,
- "cash": 249.83,
- "realized": 0.0,
- "fees": 0.1749,
- "funding": -0.0142,
- "interest": 0.0186,
- "peak_equity": 250.52,
- "drawdown": -0.0028,
+ "bankroll0": 250.0,
+ "equity": 255.45,
+ "cash": 250.66,
+ "realized": 0.83,
+ "fees": 0.1962,
+ "funding": -0.03,
+ "interest": 0.0549,
+ "peak_equity": 255.49,
+ "drawdown": -0.0002,
  "positions": [
   {
    "asset": "btc",
@@ -58,17 +58,17 @@
    "contracts": 4.0,
    "avg_price": 7.7055,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": 0.1234
+   "mark": 7.9125,
+   "weight": 0.1239
   },
   {
    "asset": "eth",
    "ticker": "KXETHPERP",
-   "contracts": 9.0,
+   "contracts": 8.0,
    "avg_price": 2.4839,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": 0.0895
+   "mark": 2.5337,
+   "weight": 0.0793
   },
   {
    "asset": "silver",
@@ -76,8 +76,8 @@
    "contracts": 3.0,
    "avg_price": 6.3805000000000005,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": 0.0766
+   "mark": 6.6396,
+   "weight": 0.078
   },
   {
    "asset": "gold",
@@ -85,35 +85,26 @@
    "contracts": 6.0,
    "avg_price": 4.2916,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": 0.1031
+   "mark": 4.3548,
+   "weight": 0.1023
   },
   {
    "asset": "near",
    "ticker": "KXNEARPERP",
-   "contracts": 3.0,
+   "contracts": 2.0,
    "avg_price": 2.4023,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": 0.0288
+   "mark": 3.7175,
+   "weight": 0.0291
   },
   {
    "asset": "vvv",
    "ticker": "KXVVVPERP",
-   "contracts": 2.0,
+   "contracts": 1.0,
    "avg_price": 2.2503,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": 0.018
-  },
-  {
-   "asset": "sui",
-   "ticker": "KXSUIPERP",
-   "contracts": -1.0,
-   "avg_price": 7.138,
-   "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": -0.0286
+   "mark": 2.6608,
+   "weight": 0.0104
   },
   {
    "asset": "bch",
@@ -121,8 +112,8 @@
    "contracts": -2.0,
    "avg_price": 2.2414,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": -0.0179
+   "mark": 2.5245,
+   "weight": -0.0198
   },
   {
    "asset": "doge",
@@ -130,17 +121,17 @@
    "contracts": -1.0,
    "avg_price": 8.3172,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": -0.0333
+   "mark": 8.6327,
+   "weight": -0.0338
   },
   {
    "asset": "bnb",
    "ticker": "KXBNBPERP",
-   "contracts": 15.0,
+   "contracts": 14.0,
    "avg_price": 0.7221,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": 0.0434
+   "mark": 0.7568,
+   "weight": 0.0415
   },
   {
    "asset": "kshib",
@@ -148,13 +139,13 @@
    "contracts": -1.0,
    "avg_price": 5.1854,
    "opened": "2026-09-15T13:05:53+00:00",
-   "mark": null,
-   "weight": -0.0208
+   "mark": 5.4229,
+   "weight": -0.0212
   }
  ],
- "gross_leverage": 0.583,
- "halted": "kill_switch",
- "kill_switch": true,
- "n_ticks": 11,
+ "gross_leverage": 0.539,
+ "halted": "",
+ "kill_switch": false,
+ "n_ticks": 12,
  "started": "2026-09-15T13:05:45+00:00"
 }
