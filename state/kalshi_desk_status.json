@@ -1,5 +1,5 @@
 {
- "ts": "2026-09-20T23:29:02Z",
+ "ts": "2026-09-21T01:34:41Z",
  "strategy": "desk_book",
  "universe": [
   "gold",
@@ -29,7 +29,7 @@
  "n_open": 0,
  "open": [],
  "n_settled": 3035,
- "updated": "2026-09-20T23:29:01Z",
+ "updated": "2026-09-21T01:34:40Z",
  "started": "2026-09-12T00:46:58Z",
  "poly_paper_loop": "down",
  "poly_paper_n_open": 0,
@@ -39,7 +39,7 @@
  "div_paper_cash": null,
  "div_paper_realized": null,
  "poly_paper": {
-  "day": "2026-09-20",
+  "day": "2026-09-21",
   "live_crypto": {
    "n": 0,
    "pnl": 0.0,
