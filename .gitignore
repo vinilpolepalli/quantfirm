@@ -41,3 +41,7 @@ research/kalshi_perps/tournament.log
 research/kalshi_perps/tournament.pid
 research/kalshi_perps/robust_*.log
 state/kalshi_incentive_orders.jsonl
+state/kalshi_copy_paper_state.json
+state/kalshi_copy_paper_trades.csv
+state/kalshi_copy_paper.log
+research/copytrade_cache/

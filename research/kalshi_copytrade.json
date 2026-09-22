@@ -1,0 +1,2398 @@
+{
+  "asof": "2026-09-22T16:21:14Z",
+  "cutoff": "2026-09-15T00:00:00Z",
+  "select_window_days": 30,
+  "decision_trial": "honest_pnl_equal",
+  "live_orders": false,
+  "kill_switch": true,
+  "pool": [
+    [
+      "WEEK",
+      "PNL",
+      20
+    ],
+    [
+      "WEEK",
+      "VOL",
+      10
+    ],
+    [
+      "MONTH",
+      "PNL",
+      15
+    ],
+    [
+      "ALL",
+      "PNL",
+      10
+    ]
+  ],
+  "n_wallets_scored": 40,
+  "n_trades_after_cutoff": 10912,
+  "mapped_notional": 2895468.78,
+  "unmapped_notional_by_reason": {
+    "no_kalshi_twin": 11033695.45,
+    "not_moneyline": 3572221.29,
+    "no_game_date": 1518052.63,
+    "league_not_on_kalshi": 112814.0
+  },
+  "unmapped_examples": [
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Falcons vs. Packers",
+      "slug": "nfl-atl-gb-2026-09-25",
+      "notional": 0.39
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Tampa Bay Rays vs. New York Yankees",
+      "slug": "mlb-tb-nyy-2026-05-23",
+      "notional": 4773.0
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Tampa Bay Rays vs. New York Yankees",
+      "slug": "mlb-tb-nyy-2026-05-23",
+      "notional": 4777.0
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Tampa Bay Rays vs. New York Yankees",
+      "slug": "mlb-tb-nyy-2026-05-23",
+      "notional": 2340.0
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Tampa Bay Rays vs. New York Yankees",
+      "slug": "mlb-tb-nyy-2026-05-23",
+      "notional": 9727.0
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Tampa Bay Rays vs. New York Yankees",
+      "slug": "mlb-tb-nyy-2026-05-23",
+      "notional": 9227.0
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Tampa Bay Rays vs. New York Yankees",
+      "slug": "mlb-tb-nyy-2026-05-23",
+      "notional": 8982.0
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Tampa Bay Rays vs. New York Yankees",
+      "slug": "mlb-tb-nyy-2026-05-23",
+      "notional": 18454.0
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Golden State Valkyries (-14.5)",
+      "slug": "wnba-gsv-por-2026-09-22-spread-away-14pt5",
+      "notional": 4.0
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Golden State Valkyries (-14.5)",
+      "slug": "wnba-gsv-por-2026-09-22-spread-away-14pt5",
+      "notional": 70.0
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Golden State Valkyries (-14.5)",
+      "slug": "wnba-gsv-por-2026-09-22-spread-away-14pt5",
+      "notional": 5.0
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Golden State Valkyries (-14.5)",
+      "slug": "wnba-gsv-por-2026-09-22-spread-away-14pt5",
+      "notional": 11.78
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Washington Mystics (-16.5)",
+      "slug": "wnba-conn-wsh-2026-09-22-spread-home-16pt5",
+      "notional": 1714.3
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Falcons vs. Packers",
+      "slug": "nfl-atl-gb-2026-09-25",
+      "notional": 65.61
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Toronto Tempo vs. Chicago Sky: O/U 178.5",
+      "slug": "wnba-tor-chi-2026-09-22-total-178pt5",
+      "notional": 11.0
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Washington Mystics (-16.5)",
+      "slug": "wnba-conn-wsh-2026-09-22-spread-home-16pt5",
+      "notional": 46.15
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Washington Mystics (-16.5)",
+      "slug": "wnba-conn-wsh-2026-09-22-spread-home-16pt5",
+      "notional": 369.23
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Toronto Tempo vs. Chicago Sky: O/U 178.5",
+      "slug": "wnba-tor-chi-2026-09-22-total-178pt5",
+      "notional": 15.07
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Spread: Washington Mystics (-16.5)",
+      "slug": "wnba-conn-wsh-2026-09-22-spread-home-16pt5",
+      "notional": 92.31
+    },
+    {
+      "reason": "no_kalshi_twin",
+      "title": "Falcons vs. Packers",
+      "slug": "nfl-atl-gb-2026-09-25",
+      "notional": 1021.91
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Toronto Tempo vs. Chicago Sky: O/U 178.5",
+      "slug": "wnba-tor-chi-2026-09-22-total-178pt5",
+      "notional": 0.92
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Toronto Tempo vs. Chicago Sky: O/U 178.5",
+      "slug": "wnba-tor-chi-2026-09-22-total-178pt5",
+      "notional": 32.41
+    },
+    {
+      "reason": "league_not_on_kalshi",
+      "title": "Toronto Tempo vs. Chicago Sky: O/U 178.5",
+      "slug": "wnba-tor-chi-2026-09-22-total-178pt5",
+      "notional": 24.5
+    },
+    {
+      "reason": "not_moneyline",
+      "title": "Houston Astros vs. Seattle Mariners: O/U 7.5",
+      "slug": "mlb-hou-sea-2026-09-22-total-7pt5",
+      "notional": 108.0
+    },
+    {
+      "reason": "not_moneyline",
+      "title": "Houston Astros vs. Seattle Mariners: O/U 7.5",
+      "slug": "mlb-hou-sea-2026-09-22-total-7pt5",
+      "notional": 819.45
+    }
+  ],
+  "leaders_scored": [
+    {
+      "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+      "name": "totoro3miyazaki",
+      "prior": {
+        "pnl": 3101012.24,
+        "vol": 6083596.99,
+        "n": 11,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x111f73e91f85b6fe4de1ddec3de2fe32122e355b",
+      "name": "Papeasy",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x4f1d5ae26fc31472966e951af3183308736d8de2",
+      "name": "e46m3",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x924379a79c64b77ad5816ad362122a5f6228658e",
+      "name": "Kch-Temp",
+      "prior": {
+        "pnl": 77322.8,
+        "vol": 42671.84,
+        "n": 1,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x3a8aa345d5db7ec5138298c8c4f4540259be7699",
+      "name": "TheReturnOfDarthMaul",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x2a69660046d7acc4ab204d7cc5ba78b0776cd2f7",
+      "name": "UpTheBlues",
+      "prior": {
+        "pnl": 432465.46,
+        "vol": 328806.31,
+        "n": 8,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x5a218c7ad04135830a45c41aaed7294df7809318",
+      "name": "balthazar",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xb7271c112cbd83eb4c1ef1b554ff963604ae2a9d",
+      "name": "Elaran1993",
+      "prior": {
+        "pnl": 146105.22,
+        "vol": 186873.51,
+        "n": 9,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+      "name": "00gringo00",
+      "prior": {
+        "pnl": 3246227.48,
+        "vol": 4479429.28,
+        "n": 5,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x6211f97a76ed5c4b1d658f637041ac5f293db89e",
+      "name": "Tiger200",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x1610db79f753a80207e1d66716be9e91e627ae49",
+      "name": "HMLSF",
+      "prior": {
+        "pnl": 737572.67,
+        "vol": 641980.92,
+        "n": 9,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x9f2fe025f84839ca81dd8e0338892605702d2ca8",
+      "name": "surfandturf",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x2005d16a84ceefa912d4e380cd32e7ff827875ea",
+      "name": "RN1",
+      "prior": {
+        "pnl": 804212.16,
+        "vol": 734267.68,
+        "n": 7,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x7f8e1877a0907f2b2c7cabf8bdb2e2a8f3854487",
+      "name": "ratatatatatatatataaaa",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x821dab0565ebf5b327f51db06223fdcfe01acf16",
+      "name": "Flaznorp",
+      "prior": null
+    },
+    {
+      "wallet": "0x1465b79bff7992bc703e1aafb3683b1089647072",
+      "name": "JnStrtPrdctnMrkts",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xfe787d2da716d60e8acff57fb87eb13cd4d10319",
+      "name": "ferrariChampions2026",
+      "prior": {
+        "pnl": 419751.1,
+        "vol": 635931.77,
+        "n": 3,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x369f46433349a57cd6d08abf2819da737c09873e",
+      "name": "kindar",
+      "prior": {
+        "pnl": 93021.95,
+        "vol": 295236.53,
+        "n": 3,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x696e42b70152f5f58777afec4705f82a71a80fd8",
+      "name": "chae1",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xcd84d7f9262516865553555751609fb6f52abec6",
+      "name": "Donkey14",
+      "prior": {
+        "pnl": 165052.9,
+        "vol": 366794.6,
+        "n": 115,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x2c335066fe58fe9237c3d3dc7b275c2a034a0563",
+      "name": "0x2c335066FE58fe9237c3d3Dc7b275C2a034a0563-1759935795465",
+      "prior": {
+        "pnl": 1926048.48,
+        "vol": 3238156.85,
+        "n": 5,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+      "name": "wr0ngw4yb3tt0r",
+      "prior": {
+        "pnl": 3202978.14,
+        "vol": 2997664.78,
+        "n": 6,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x5268527977f700f9bf9b6d5cd843859e4e70135d",
+      "name": "HomeRunHazard",
+      "prior": {
+        "pnl": 781453.32,
+        "vol": 651063.0,
+        "n": 13,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x0346afae2603313d2bbee96b628536c8cbe352a5",
+      "name": "GoalLineGhost",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x63cf8544631c31e9fcea0b02141dd24d01d6e4d0",
+      "name": "halvanicus",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x0d2d845a6ff64e31e04a70afce8a573940767ff5",
+      "name": "38791873984189",
+      "prior": {
+        "pnl": 62077.81,
+        "vol": 118625.12,
+        "n": 13,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+      "name": "vito3corleone",
+      "prior": {
+        "pnl": 5369063.68,
+        "vol": 8373430.19,
+        "n": 10,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+      "name": "SPCEXBUYER",
+      "prior": {
+        "pnl": 4333705.04,
+        "vol": 4876337.1,
+        "n": 21,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xfea31bc088000ff909be1dfd8d0e3f2c7ef2d227",
+      "name": "ndb1",
+      "prior": {
+        "pnl": 318557.98,
+        "vol": 368327.12,
+        "n": 3,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x14c7111afa871fb215339f365043d7b2837b9ccf",
+      "name": "kilian7kilian",
+      "prior": {
+        "pnl": 2109578.38,
+        "vol": 4053599.59,
+        "n": 13,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xd570e634aeb745d6501566dba5f81a555cc7e4f8",
+      "name": "0xd9670ea74384c1e1b9dc1e4267ffadaf4cdd140",
+      "prior": {
+        "pnl": 1721536.17,
+        "vol": 2627952.91,
+        "n": 29,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x56687bf447db6ffa42ffe2204a05edaa20f55839",
+      "name": "Theo4",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x204f72f35326db932158cba6adff0b9a1da95e14",
+      "name": "swisstony",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x1f2dd6d473f3e824cd2f8a89d9c69fb96f6ad0cf",
+      "name": "Fredi9999",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x6a72f61820b26b1fe4d956e17b6dc2a1ea3033ee",
+      "name": "kch123",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x96cfcb0c30942cfcd1cdf76c7d408794d66b1acb",
+      "name": "mintblade",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xed64a7bf029040aa331abc87902434d815ef217d",
+      "name": "fishalive",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0xbc11a64ab34a03a043fbe80598fa065ee87eeec6",
+      "name": "frostrizz",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x78b9ac44a6d7d7a076c14e0ad518b301b63c6b76",
+      "name": "Len9311238",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    },
+    {
+      "wallet": "0x664ce9fb97ae1bbd538d7381b2f4e92dab16f49c",
+      "name": "sparklingwater123",
+      "prior": {
+        "pnl": 0.0,
+        "vol": 0.0,
+        "n": 0,
+        "truncated": false
+      }
+    }
+  ],
+  "trials": [
+    {
+      "bankroll": 250.0,
+      "pnl_settled": 133.03,
+      "pnl_mtm": 131.62,
+      "pnl_mark_cost": 132.4,
+      "equity_mtm": 381.62,
+      "max_dd": 55.3951,
+      "max_dd_pct": 0.22158,
+      "n_closes": 54,
+      "n_fills": 91,
+      "fees": 15.26,
+      "open_basis": 49.92,
+      "n_open": 1,
+      "skips": {
+        "reshuffle": 108,
+        "cash": 5,
+        "no_book": 21,
+        "price_band": 2
+      },
+      "open": [
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "ticker": "KXMLBGAME-26SEP221915CINATL-ATL",
+          "side": "yes",
+          "qty": 78,
+          "basis": 49.92,
+          "mtm": 49.14,
+          "sell_px": 0.63
+        }
+      ],
+      "hit_rate": 0.4074,
+      "t_stat": 1.4242,
+      "by_ticker": [
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-BAL",
+          "pnl": 53.78,
+          "n": 6,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-SF",
+          "pnl": 48.78,
+          "n": 3,
+          "wins": 3
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": 26.82,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-AZ",
+          "pnl": 21.69,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": 18.69,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201340BOSTB-TB",
+          "pnl": 14.1199,
+          "n": 5,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201435TORTEX-TOR",
+          "pnl": 13.08,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-MIL",
+          "pnl": 9.43,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": 8.3599,
+          "n": 4,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP20FULMUN-MUN",
+          "pnl": 4.95,
+          "n": 3,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-CWS",
+          "pnl": 3.8299,
+          "n": 3,
+          "wins": 3
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-DET",
+          "pnl": 3.62,
+          "n": 3,
+          "wins": 3
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VCFRSO-VCF",
+          "pnl": 2.43,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-PIT",
+          "pnl": 1.14,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-SD",
+          "pnl": 1.01,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-NYY",
+          "pnl": -1.49,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-MIN",
+          "pnl": -2.62,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-MIA",
+          "pnl": -2.73,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-KC",
+          "pnl": -8.68,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-BAL",
+          "pnl": -10.38,
+          "n": 3,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-TOR",
+          "pnl": -16.62,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-DET",
+          "pnl": -23.75,
+          "n": 4,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-WSH",
+          "pnl": -32.43,
+          "n": 7,
+          "wins": 0
+        }
+      ],
+      "name": "honest_pnl_equal",
+      "biased": false,
+      "fade": false,
+      "fill": "close",
+      "leaders": [
+        {
+          "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+          "weight": 0.2,
+          "score": 5369063.6784999985
+        },
+        {
+          "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+          "weight": 0.2,
+          "score": 4333705.0398
+        },
+        {
+          "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+          "weight": 0.2,
+          "score": 3246227.4806
+        },
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "weight": 0.2,
+          "score": 3202978.1407
+        },
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.2,
+          "score": 3101012.2421
+        }
+      ],
+      "n_buckets": 150,
+      "n_trades": 500,
+      "closes_head": [
+        -0.3129,
+        -0.6443,
+        -0.0954,
+        -0.2371,
+        -0.0361,
+        5.0815,
+        -0.1857,
+        1.7371,
+        13.5771,
+        -8.68,
+        1.14,
+        2.43
+      ],
+      "closes_tail": [
+        55.0925,
+        -16.62,
+        1.2436,
+        0.8724,
+        46.664,
+        -2.62,
+        -3.6067,
+        -0.3351,
+        -0.3716,
+        12.6733,
+        18.69,
+        26.82
+      ]
+    },
+    {
+      "bankroll": 250.0,
+      "pnl_settled": 111.95,
+      "pnl_mtm": 110.79,
+      "pnl_mark_cost": 111.43,
+      "equity_mtm": 360.79,
+      "max_dd": 47.54,
+      "max_dd_pct": 0.19016,
+      "n_closes": 48,
+      "n_fills": 84,
+      "fees": 12.48,
+      "open_basis": 40.96,
+      "n_open": 1,
+      "skips": {
+        "reshuffle": 92,
+        "no_book": 17,
+        "price_band": 2,
+        "cash": 3
+      },
+      "open": [
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "ticker": "KXMLBGAME-26SEP221915CINATL-ATL",
+          "side": "yes",
+          "qty": 64,
+          "basis": 40.96,
+          "mtm": 40.32,
+          "sell_px": 0.63
+        }
+      ],
+      "hit_rate": 0.4375,
+      "t_stat": 1.4331,
+      "by_ticker": [
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-BAL",
+          "pnl": 46.8799,
+          "n": 5,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-SF",
+          "pnl": 40.51,
+          "n": 3,
+          "wins": 3
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": 21.32,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-AZ",
+          "pnl": 17.84,
+          "n": 2,
+          "wins": 2
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": 15.02,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201340BOSTB-TB",
+          "pnl": 11.48,
+          "n": 5,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201435TORTEX-TOR",
+          "pnl": 10.87,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-MIL",
+          "pnl": 7.73,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": 6.81,
+          "n": 4,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP20FULMUN-MUN",
+          "pnl": 4.98,
+          "n": 2,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-CWS",
+          "pnl": 3.14,
+          "n": 2,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-DET",
+          "pnl": 3.12,
+          "n": 2,
+          "wins": 2
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VCFRSO-VCF",
+          "pnl": 2.13,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-PIT",
+          "pnl": 1.14,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-SD",
+          "pnl": 0.87,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-MIA",
+          "pnl": -1.3,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-NYY",
+          "pnl": -1.3,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-MIN",
+          "pnl": -2.18,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-KC",
+          "pnl": -7.34,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-BAL",
+          "pnl": -9.11,
+          "n": 2,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-TOR",
+          "pnl": -13.37,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-DET",
+          "pnl": -20.2401,
+          "n": 3,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-WSH",
+          "pnl": -27.0501,
+          "n": 6,
+          "wins": 0
+        }
+      ],
+      "name": "honest_pnl_weighted",
+      "biased": false,
+      "fade": false,
+      "fill": "close",
+      "leaders": [
+        {
+          "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+          "weight": 0.2789,
+          "score": 5369063.6784999985
+        },
+        {
+          "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+          "weight": 0.2251,
+          "score": 4333705.0398
+        },
+        {
+          "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+          "weight": 0.1686,
+          "score": 3246227.4806
+        },
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "weight": 0.1664,
+          "score": 3202978.1407
+        },
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.1611,
+          "score": 3101012.2421
+        }
+      ],
+      "n_buckets": 150,
+      "n_trades": 500,
+      "closes_head": [
+        -0.2657,
+        -0.54,
+        -0.0964,
+        -0.2086,
+        5.0764,
+        -0.1474,
+        1.3857,
+        11.1086,
+        -7.34,
+        1.14,
+        2.13,
+        10.87
+      ],
+      "closes_tail": [
+        47.9267,
+        -13.37,
+        0.8324,
+        0.8724,
+        38.8052,
+        -2.18,
+        -2.9144,
+        -0.2357,
+        -0.2988,
+        10.2589,
+        15.02,
+        21.32
+      ]
+    },
+    {
+      "bankroll": 250.0,
+      "pnl_settled": 53.87,
+      "pnl_mtm": 53.87,
+      "pnl_mark_cost": 53.87,
+      "equity_mtm": 303.87,
+      "max_dd": 5.57,
+      "max_dd_pct": 0.02228,
+      "n_closes": 6,
+      "n_fills": 8,
+      "fees": 5.99,
+      "open_basis": 0,
+      "n_open": 0,
+      "skips": {
+        "reshuffle": 6,
+        "cash": 1
+      },
+      "open": [],
+      "hit_rate": 0.5,
+      "t_stat": 1.7852,
+      "by_ticker": [
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": 26.82,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": 18.69,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": 8.3599,
+          "n": 4,
+          "wins": 1
+        }
+      ],
+      "name": "honest_vol_equal",
+      "biased": false,
+      "fade": false,
+      "fill": "close",
+      "leaders": [
+        {
+          "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+          "weight": 0.2,
+          "score": 8373430.1859137
+        },
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.2,
+          "score": 6083596.98816625
+        },
+        {
+          "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+          "weight": 0.2,
+          "score": 4876337.10385883
+        },
+        {
+          "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+          "weight": 0.2,
+          "score": 4479429.28257312
+        },
+        {
+          "wallet": "0x14c7111afa871fb215339f365043d7b2837b9ccf",
+          "weight": 0.2,
+          "score": 4053599.5905590802
+        }
+      ],
+      "n_buckets": 18,
+      "n_trades": 125,
+      "closes_head": [
+        -3.6067,
+        -0.3351,
+        -0.3716,
+        12.6733,
+        18.69,
+        26.82
+      ],
+      "closes_tail": [
+        -3.6067,
+        -0.3351,
+        -0.3716,
+        12.6733,
+        18.69,
+        26.82
+      ]
+    },
+    {
+      "bankroll": 500.0,
+      "pnl_settled": 234.87,
+      "pnl_mtm": 232.05,
+      "pnl_mark_cost": 233.61,
+      "equity_mtm": 732.05,
+      "max_dd": 112.2578,
+      "max_dd_pct": 0.224516,
+      "n_closes": 68,
+      "n_fills": 113,
+      "fees": 30.77,
+      "open_basis": 99.84,
+      "n_open": 1,
+      "skips": {
+        "reshuffle": 111,
+        "cash": 4,
+        "no_book": 19,
+        "price_band": 2
+      },
+      "open": [
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "ticker": "KXMLBGAME-26SEP221915CINATL-ATL",
+          "side": "yes",
+          "qty": 156,
+          "basis": 99.84,
+          "mtm": 98.28,
+          "sell_px": 0.63
+        }
+      ],
+      "hit_rate": 0.3824,
+      "t_stat": 1.3473,
+      "by_ticker": [
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-SF",
+          "pnl": 97.53,
+          "n": 4,
+          "wins": 4
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-BAL",
+          "pnl": 86.85,
+          "n": 6,
+          "wins": 1
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": 53.64,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-AZ",
+          "pnl": 42.87,
+          "n": 2,
+          "wins": 2
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": 37.4,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201340BOSTB-TB",
+          "pnl": 27.46,
+          "n": 7,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201435TORTEX-TOR",
+          "pnl": 26.08,
+          "n": 2,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-MIL",
+          "pnl": 18.86,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": 16.74,
+          "n": 4,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP20FULMUN-MUN",
+          "pnl": 9.4699,
+          "n": 3,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-CWS",
+          "pnl": 7.64,
+          "n": 4,
+          "wins": 4
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-DET",
+          "pnl": 7.3501,
+          "n": 4,
+          "wins": 3
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VCFRSO-VCF",
+          "pnl": 5.18,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-PIT",
+          "pnl": 2.85,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-SD",
+          "pnl": 2.03,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201340CHCCIN-CIN",
+          "pnl": -1.64,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201435TORTEX-TEX",
+          "pnl": -1.68,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VILLEV-VIL",
+          "pnl": -1.99,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-NYY",
+          "pnl": -3.15,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-MIA",
+          "pnl": -5.02,
+          "n": 2,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-MIN",
+          "pnl": -6.44,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-KC",
+          "pnl": -18.34,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-BAL",
+          "pnl": -20.9299,
+          "n": 4,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-TOR",
+          "pnl": -33.21,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-DET",
+          "pnl": -49.4,
+          "n": 5,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-WSH",
+          "pnl": -65.28,
+          "n": 8,
+          "wins": 0
+        }
+      ],
+      "name": "honest_pnl_equal_500",
+      "biased": false,
+      "fade": false,
+      "fill": "close",
+      "leaders": [
+        {
+          "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+          "weight": 0.2,
+          "score": 5369063.6784999985
+        },
+        {
+          "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+          "weight": 0.2,
+          "score": 4333705.0398
+        },
+        {
+          "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+          "weight": 0.2,
+          "score": 3246227.4806
+        },
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "weight": 0.2,
+          "score": 3202978.1407
+        },
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.2,
+          "score": 3101012.2421
+        }
+      ],
+      "n_buckets": 150,
+      "n_trades": 500,
+      "closes_head": [
+        -0.6445,
+        -1.289,
+        -0.2767,
+        -0.0857,
+        -0.3887,
+        -0.4213,
+        -0.0572,
+        10.1679,
+        -1.99,
+        -0.3312,
+        2.7714,
+        27.1537
+      ],
+      "closes_tail": [
+        -33.21,
+        2.0762,
+        2.1863,
+        0.9125,
+        92.355,
+        -6.44,
+        -7.2398,
+        -0.6337,
+        -0.7332,
+        25.3467,
+        37.4,
+        53.64
+      ]
+    },
+    {
+      "bankroll": 250.0,
+      "pnl_settled": 149.53,
+      "pnl_mtm": 148.12,
+      "pnl_mark_cost": 148.9,
+      "equity_mtm": 398.12,
+      "max_dd": 55.2396,
+      "max_dd_pct": 0.220958,
+      "n_closes": 50,
+      "n_fills": 76,
+      "fees": 15.31,
+      "open_basis": 49.92,
+      "n_open": 1,
+      "skips": {
+        "reshuffle": 142,
+        "cash": 2,
+        "no_book": 34,
+        "price_gate": 15,
+        "price_band": 2
+      },
+      "open": [
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "ticker": "KXMLBGAME-26SEP221915CINATL-ATL",
+          "side": "yes",
+          "qty": 78,
+          "basis": 49.92,
+          "mtm": 49.14,
+          "sell_px": 0.63
+        }
+      ],
+      "hit_rate": 0.34,
+      "t_stat": 1.5078,
+      "by_ticker": [
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-BAL",
+          "pnl": 64.97,
+          "n": 7,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-SF",
+          "pnl": 48.78,
+          "n": 3,
+          "wins": 3
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": 26.82,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-AZ",
+          "pnl": 20.52,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": 18.69,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201340BOSTB-TB",
+          "pnl": 14.1199,
+          "n": 5,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201435TORTEX-TOR",
+          "pnl": 13.08,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-MIL",
+          "pnl": 9.7,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": 8.3599,
+          "n": 4,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP20FULMUN-MUN",
+          "pnl": 4.95,
+          "n": 3,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-CWS",
+          "pnl": 3.53,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VCFRSO-VCF",
+          "pnl": 2.43,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-DET",
+          "pnl": 2.42,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-PIT",
+          "pnl": 1.14,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-NYY",
+          "pnl": -1.49,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-MIN",
+          "pnl": -2.62,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-MIA",
+          "pnl": -2.73,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-KC",
+          "pnl": -4.16,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-BAL",
+          "pnl": -9.88,
+          "n": 3,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-TOR",
+          "pnl": -12.76,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-DET",
+          "pnl": -23.91,
+          "n": 4,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-WSH",
+          "pnl": -32.43,
+          "n": 7,
+          "wins": 0
+        }
+      ],
+      "name": "honest_pnl_pricegate",
+      "biased": false,
+      "fade": false,
+      "fill": "close",
+      "leaders": [
+        {
+          "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+          "weight": 0.2,
+          "score": 5369063.6784999985
+        },
+        {
+          "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+          "weight": 0.2,
+          "score": 4333705.0398
+        },
+        {
+          "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+          "weight": 0.2,
+          "score": 3246227.4806
+        },
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "weight": 0.2,
+          "score": 3202978.1407
+        },
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.2,
+          "score": 3101012.2421
+        }
+      ],
+      "n_buckets": 150,
+      "n_trades": 500,
+      "closes_head": [
+        -0.3129,
+        -0.6443,
+        -0.0954,
+        -0.2371,
+        -0.0361,
+        5.0815,
+        -0.1857,
+        1.7371,
+        13.5771,
+        -4.16,
+        1.14,
+        2.43
+      ],
+      "closes_tail": [
+        66.7713,
+        -12.76,
+        1.2436,
+        0.8724,
+        46.664,
+        -2.62,
+        -3.6067,
+        -0.3351,
+        -0.3716,
+        12.6733,
+        18.69,
+        26.82
+      ]
+    },
+    {
+      "bankroll": 250.0,
+      "pnl_settled": 110.17,
+      "pnl_mtm": 108.76,
+      "pnl_mark_cost": 109.54,
+      "equity_mtm": 358.76,
+      "max_dd": 56.7781,
+      "max_dd_pct": 0.227112,
+      "n_closes": 53,
+      "n_fills": 91,
+      "fees": 15.13,
+      "open_basis": 49.92,
+      "n_open": 1,
+      "skips": {
+        "reshuffle": 107,
+        "cash": 5,
+        "no_book": 21,
+        "price_band": 4
+      },
+      "open": [
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "ticker": "KXMLBGAME-26SEP221915CINATL-ATL",
+          "side": "yes",
+          "qty": 78,
+          "basis": 49.92,
+          "mtm": 49.14,
+          "sell_px": 0.63
+        }
+      ],
+      "hit_rate": 0.3962,
+      "t_stat": 1.3157,
+      "by_ticker": [
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-SF",
+          "pnl": 46.75,
+          "n": 3,
+          "wins": 3
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-BAL",
+          "pnl": 36.26,
+          "n": 6,
+          "wins": 1
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": 26.82,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-AZ",
+          "pnl": 20.55,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": 18.69,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201340BOSTB-TB",
+          "pnl": 13.9599,
+          "n": 5,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201435TORTEX-TOR",
+          "pnl": 12.47,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-MIL",
+          "pnl": 8.9,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": 8.3599,
+          "n": 4,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP20FULMUN-MUN",
+          "pnl": 4.91,
+          "n": 3,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-DET",
+          "pnl": 3.53,
+          "n": 3,
+          "wins": 2
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-CWS",
+          "pnl": 3.3801,
+          "n": 3,
+          "wins": 3
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VCFRSO-VCF",
+          "pnl": 2.43,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-SD",
+          "pnl": 1.01,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-PIT",
+          "pnl": 0.98,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610NYYAZ-NYY",
+          "pnl": -1.49,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP212145MINSF-MIN",
+          "pnl": -2.62,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-MIA",
+          "pnl": -2.66,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-KC",
+          "pnl": -8.74,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-BAL",
+          "pnl": -10.38,
+          "n": 3,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211835TORBAL-TOR",
+          "pnl": -16.49,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-DET",
+          "pnl": -24.02,
+          "n": 3,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP211840WSHDET-WSH",
+          "pnl": -32.43,
+          "n": 7,
+          "wins": 0
+        }
+      ],
+      "name": "honest_pnl_equal_adverse",
+      "biased": false,
+      "fade": false,
+      "fill": "adverse",
+      "leaders": [
+        {
+          "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+          "weight": 0.2,
+          "score": 5369063.6784999985
+        },
+        {
+          "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+          "weight": 0.2,
+          "score": 4333705.0398
+        },
+        {
+          "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+          "weight": 0.2,
+          "score": 3246227.4806
+        },
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "weight": 0.2,
+          "score": 3202978.1407
+        },
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.2,
+          "score": 3101012.2421
+        }
+      ],
+      "n_buckets": 150,
+      "n_trades": 500,
+      "closes_head": [
+        -0.3129,
+        -0.6443,
+        -0.0954,
+        -0.2371,
+        -0.0761,
+        5.0815,
+        -0.1857,
+        1.5771,
+        13.5771,
+        -8.74,
+        0.98,
+        2.43
+      ],
+      "closes_tail": [
+        37.6525,
+        -16.49,
+        1.2137,
+        0.7824,
+        44.7539,
+        -2.62,
+        -3.6067,
+        -0.3351,
+        -0.3716,
+        12.6733,
+        18.69,
+        26.82
+      ]
+    },
+    {
+      "bankroll": 250.0,
+      "pnl_settled": -99.96,
+      "pnl_mtm": -99.96,
+      "pnl_mark_cost": -99.96,
+      "equity_mtm": 150.04,
+      "max_dd": 99.96,
+      "max_dd_pct": 0.39984,
+      "n_closes": 23,
+      "n_fills": 28,
+      "fees": 7.63,
+      "open_basis": 0,
+      "n_open": 0,
+      "skips": {
+        "cash": 100,
+        "reshuffle": 244,
+        "no_book": 37
+      },
+      "open": [],
+      "hit_rate": 0.1304,
+      "t_stat": -2.2023,
+      "by_ticker": [
+        {
+          "ticker": "KXMLBGAME-26SEP201410DETCWS-DET",
+          "pnl": 10.51,
+          "n": 3,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-KC",
+          "pnl": 1.79,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VILLEV-VIL",
+          "pnl": 0.35,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201335KCPIT-PIT",
+          "pnl": -1.2,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP20FULMUN-MUN",
+          "pnl": -2.03,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201610MIASD-SD",
+          "pnl": -2.97,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": -3.09,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP20VCFRSO-VCF",
+          "pnl": -3.46,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201435TORTEX-TOR",
+          "pnl": -5.03,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": -11.92,
+          "n": 4,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201920MILBAL-MIL",
+          "pnl": -22.99,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXMLBGAME-26SEP201340BOSTB-TB",
+          "pnl": -24.93,
+          "n": 6,
+          "wins": 0
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": -34.99,
+          "n": 1,
+          "wins": 0
+        }
+      ],
+      "name": "fade_pnl_equal",
+      "biased": false,
+      "fade": true,
+      "fill": "close",
+      "leaders": [
+        {
+          "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+          "weight": 0.2,
+          "score": 5369063.6784999985
+        },
+        {
+          "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+          "weight": 0.2,
+          "score": 4333705.0398
+        },
+        {
+          "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+          "weight": 0.2,
+          "score": 3246227.4806
+        },
+        {
+          "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+          "weight": 0.2,
+          "score": 3202978.1407
+        },
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.2,
+          "score": 3101012.2421
+        }
+      ],
+      "n_buckets": 150,
+      "n_trades": 500,
+      "closes_head": [
+        -0.7761,
+        -1.5037,
+        -0.1458,
+        -0.456,
+        -0.2227,
+        -2.03,
+        0.35,
+        -2.7502,
+        -0.1052,
+        -19.2982,
+        1.79,
+        -1.2
+      ],
+      "closes_tail": [
+        -1.2,
+        -3.46,
+        -5.03,
+        -2.97,
+        10.8379,
+        -22.99,
+        -2.2309,
+        -0.3182,
+        -0.3182,
+        -9.0527,
+        -34.99,
+        -3.09
+      ]
+    },
+    {
+      "bankroll": 250.0,
+      "pnl_settled": -15.77,
+      "pnl_mtm": -15.77,
+      "pnl_mark_cost": -15.77,
+      "equity_mtm": 234.23,
+      "max_dd": 68.09,
+      "max_dd_pct": 0.27236,
+      "n_closes": 15,
+      "n_fills": 20,
+      "fees": 14.32,
+      "open_basis": 0,
+      "n_open": 0,
+      "skips": {
+        "reshuffle": 10,
+        "cash": 5
+      },
+      "open": [],
+      "hit_rate": 0.3333,
+      "t_stat": -0.1784,
+      "by_ticker": [
+        {
+          "ticker": "KXNCAAFGAME-26SEP19LSUMISS-MISS",
+          "pnl": 41.09,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+          "pnl": 26.82,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+          "pnl": 18.69,
+          "n": 1,
+          "wins": 1
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+          "pnl": 8.3599,
+          "n": 4,
+          "wins": 1
+        },
+        {
+          "ticker": "KXBUNDESLIGAGAME-26SEP19SVWFCA-FCA",
+          "pnl": -0.19,
+          "n": 3,
+          "wins": 1
+        },
+        {
+          "ticker": "KXNCAAFGAME-26SEP19VTMD-MD",
+          "pnl": -2.69,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXBUNDESLIGAGAME-26SEP20SCHSVE-SCH",
+          "pnl": -10.03,
+          "n": 1,
+          "wins": 0
+        },
+        {
+          "ticker": "KXEPLGAME-26SEP20BOULFC-LFC",
+          "pnl": -47.82,
+          "n": 2,
+          "wins": 0
+        },
+        {
+          "ticker": "KXBUNDESLIGAGAME-26SEP19VFBBVB-TIE",
+          "pnl": -50.0,
+          "n": 1,
+          "wins": 0
+        }
+      ],
+      "name": "biased_week_pnl",
+      "biased": true,
+      "fade": false,
+      "fill": "close",
+      "leaders": [
+        {
+          "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+          "weight": 0.2,
+          "score": 5.0
+        },
+        {
+          "wallet": "0x111f73e91f85b6fe4de1ddec3de2fe32122e355b",
+          "weight": 0.2,
+          "score": 4.0
+        },
+        {
+          "wallet": "0x4f1d5ae26fc31472966e951af3183308736d8de2",
+          "weight": 0.2,
+          "score": 3.0
+        },
+        {
+          "wallet": "0x924379a79c64b77ad5816ad362122a5f6228658e",
+          "weight": 0.2,
+          "score": 2.0
+        },
+        {
+          "wallet": "0x3a8aa345d5db7ec5138298c8c4f4540259be7699",
+          "weight": 0.2,
+          "score": 1.0
+        }
+      ],
+      "n_buckets": 33,
+      "n_trades": 168,
+      "closes_head": [
+        -3.6067,
+        -0.3351,
+        -0.3716,
+        12.6733,
+        18.69,
+        26.82,
+        -50.0,
+        -2.6225,
+        -2.0351,
+        4.4676,
+        -2.69,
+        41.09
+      ],
+      "closes_tail": [
+        12.6733,
+        18.69,
+        26.82,
+        -50.0,
+        -2.6225,
+        -2.0351,
+        4.4676,
+        -2.69,
+        41.09,
+        -6.6206,
+        -41.1994,
+        -10.03
+      ]
+    }
+  ],
+  "decision": {
+    "bankroll": 250.0,
+    "pnl_settled": 133.03,
+    "pnl_mtm": 131.62,
+    "pnl_mark_cost": 132.4,
+    "equity_mtm": 381.62,
+    "max_dd": 55.3951,
+    "max_dd_pct": 0.22158,
+    "n_closes": 54,
+    "n_fills": 91,
+    "fees": 15.26,
+    "open_basis": 49.92,
+    "n_open": 1,
+    "skips": {
+      "reshuffle": 108,
+      "cash": 5,
+      "no_book": 21,
+      "price_band": 2
+    },
+    "open": [
+      {
+        "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+        "ticker": "KXMLBGAME-26SEP221915CINATL-ATL",
+        "side": "yes",
+        "qty": 78,
+        "basis": 49.92,
+        "mtm": 49.14,
+        "sell_px": 0.63
+      }
+    ],
+    "hit_rate": 0.4074,
+    "t_stat": 1.4242,
+    "by_ticker": [
+      {
+        "ticker": "KXMLBGAME-26SEP211835TORBAL-BAL",
+        "pnl": 53.78,
+        "n": 6,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP212145MINSF-SF",
+        "pnl": 48.78,
+        "n": 3,
+        "wins": 3
+      },
+      {
+        "ticker": "KXLALIGAGAME-26SEP19OSARVC-RVC",
+        "pnl": 26.82,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201610NYYAZ-AZ",
+        "pnl": 21.69,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXEPLGAME-26SEP18BRECFC-CFC",
+        "pnl": 18.69,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201340BOSTB-TB",
+        "pnl": 14.1199,
+        "n": 5,
+        "wins": 2
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201435TORTEX-TOR",
+        "pnl": 13.08,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201920MILBAL-MIL",
+        "pnl": 9.43,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXEPLGAME-26SEP18BRECFC-BRE",
+        "pnl": 8.3599,
+        "n": 4,
+        "wins": 1
+      },
+      {
+        "ticker": "KXEPLGAME-26SEP20FULMUN-MUN",
+        "pnl": 4.95,
+        "n": 3,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201410DETCWS-CWS",
+        "pnl": 3.8299,
+        "n": 3,
+        "wins": 3
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP211840WSHDET-DET",
+        "pnl": 3.62,
+        "n": 3,
+        "wins": 3
+      },
+      {
+        "ticker": "KXLALIGAGAME-26SEP20VCFRSO-VCF",
+        "pnl": 2.43,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201335KCPIT-PIT",
+        "pnl": 1.14,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201610MIASD-SD",
+        "pnl": 1.01,
+        "n": 1,
+        "wins": 1
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201610NYYAZ-NYY",
+        "pnl": -1.49,
+        "n": 1,
+        "wins": 0
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP212145MINSF-MIN",
+        "pnl": -2.62,
+        "n": 1,
+        "wins": 0
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201610MIASD-MIA",
+        "pnl": -2.73,
+        "n": 1,
+        "wins": 0
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201335KCPIT-KC",
+        "pnl": -8.68,
+        "n": 1,
+        "wins": 0
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201920MILBAL-BAL",
+        "pnl": -10.38,
+        "n": 3,
+        "wins": 0
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP211835TORBAL-TOR",
+        "pnl": -16.62,
+        "n": 1,
+        "wins": 0
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP201410DETCWS-DET",
+        "pnl": -23.75,
+        "n": 4,
+        "wins": 0
+      },
+      {
+        "ticker": "KXMLBGAME-26SEP211840WSHDET-WSH",
+        "pnl": -32.43,
+        "n": 7,
+        "wins": 0
+      }
+    ],
+    "name": "honest_pnl_equal",
+    "biased": false,
+    "fade": false,
+    "fill": "close",
+    "leaders": [
+      {
+        "wallet": "0x34dd4a4b70eaf79a17878f7938263c801d4dfd83",
+        "weight": 0.2,
+        "score": 5369063.6784999985
+      },
+      {
+        "wallet": "0xcd30f4698c6f5f3829893e68e183a8e5ea18f316",
+        "weight": 0.2,
+        "score": 4333705.0398
+      },
+      {
+        "wallet": "0x51698a47f840a242abc2ca0351371c7ffac41842",
+        "weight": 0.2,
+        "score": 3246227.4806
+      },
+      {
+        "wallet": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+        "weight": 0.2,
+        "score": 3202978.1407
+      },
+      {
+        "wallet": "0x0f6f76ced62a911bccef92f50faaff143854d977",
+        "weight": 0.2,
+        "score": 3101012.2421
+      }
+    ],
+    "n_buckets": 150,
+    "n_trades": 500,
+    "closes_head": [
+      -0.3129,
+      -0.6443,
+      -0.0954,
+      -0.2371,
+      -0.0361,
+      5.0815,
+      -0.1857,
+      1.7371,
+      13.5771,
+      -8.68,
+      1.14,
+      2.43
+    ],
+    "closes_tail": [
+      55.0925,
+      -16.62,
+      1.2436,
+      0.8724,
+      46.664,
+      -2.62,
+      -3.6067,
+      -0.3351,
+      -0.3716,
+      12.6733,
+      18.69,
+      26.82
+    ]
+  }
+}
