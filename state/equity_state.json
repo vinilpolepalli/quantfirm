@@ -9,9 +9,9 @@
     "SNDK": 0.016561,
     "RY": 0.450382
   },
-  "settled_cash": 0.54,
-  "unsettled_cash": 5.63,
-  "unsettled_date": "2026-09-21",
+  "settled_cash": 6.17,
+  "unsettled_cash": 0.0,
+  "unsettled_date": null,
   "peak_equity": 295.88,
   "equity_history": [
     [
@@ -177,10 +177,14 @@
     [
       "2026-09-21T19:38:00.522542+00:00",
       285.86
+    ],
+    [
+      "2026-09-22T19:45:37.853157+00:00",
+      293.24
     ]
   ],
   "last_rebalance": "2026-09-21T19:37:50.782096+00:00",
-  "last_plan_date": "2026-09-21",
+  "last_plan_date": "2026-09-22",
   "incidents": [
     {
       "ts": "2026-08-04T19:40:00Z",
@@ -240,12 +244,12 @@
     }
   ],
   "last_prices": {
-    "INTC": 122.25,
-    "MU": 1046.99,
-    "RY": 205.9,
-    "SNDK": 1751.54,
-    "STX": 873.7295,
-    "WDC": 444.9595
+    "INTC": 123.22,
+    "MU": 1093.795,
+    "RY": 204.25,
+    "SNDK": 1894.84,
+    "STX": 922.415,
+    "WDC": 463.895
   },
   "cost_basis": 261.56,
   "contributions": [
