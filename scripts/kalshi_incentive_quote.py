@@ -14,7 +14,7 @@ A snapshot pays NOBODY unless both sides hold >= Target Size, so markets where
 our size cannot get the book over that line are skipped rather than funded.
 
 SAFETY, in the order it is enforced:
-  1. dry run unless --live AND env KALSHI_LIVE=1 AND no state/KILL_SWITCH_KALSHI;
+  1. dry run unless --live AND env KALSHI_LIVE=1 AND no state/KILL_SWITCH_INCENTIVE;
   2. the kill switch is re-checked immediately before EVERY order, not once;
   3. post_only on every order -- a maker order that crosses gets taker-filled,
      which is 4x the fee and breaks the whole thesis;
@@ -45,7 +45,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 
 from quantfirm.kalshi.client import KalshiClient          # noqa: E402
-from quantfirm.kalshi.halt import kill_switch_tripped     # noqa: E402
+from quantfirm.kalshi.halt import incentive_kill_tripped  # noqa: E402
 
 # This book arms SEPARATELY from the 15m desk. KALSHI_LIVE is shared, so if we
 # keyed off it alone, turning the metals desk on would silently start quoting
@@ -258,7 +258,7 @@ def main():
     client = KalshiClient(env="prod")
 
     # ---- gate 1: may we trade at all? -----------------------------------
-    killed = kill_switch_tripped()
+    killed = incentive_kill_tripped()
     env_live = os.environ.get("KALSHI_LIVE") == "1"
     armed = os.path.exists(ARM)
     live = args.live and env_live and armed and not killed and client.can_trade
@@ -269,7 +269,7 @@ def main():
           + ("" if armed else "  <- this book is not armed"))
     print(f"  credentials present  {client.can_trade}")
     print(f"  kill switch clear    {not killed}"
-          + ("" if not killed else "  <- state/KILL_SWITCH_KALSHI is present"))
+          + ("" if not killed else "  <- state/KILL_SWITCH_INCENTIVE is present"))
     print(f"  => {'LIVE, ORDERS WILL BE SENT' if live else 'DRY RUN, nothing will be sent'}\n")
 
     # ---- gate 2: broker state is truth ----------------------------------
@@ -349,7 +349,7 @@ def main():
             log(intent)                                   # log BEFORE sending
             if not live:
                 continue
-            if kill_switch_tripped():                     # re-check every order
+            if incentive_kill_tripped():                  # re-check every order
                 print("  kill switch tripped mid-run — stopping")
                 return 1
             try:
@@ -374,7 +374,7 @@ def main():
         print("  1. KALSHI_PROD_KEY_ID and KALSHI_PROD_PRIVATE_KEY in the environment")
         print("  2. KALSHI_LIVE=1")
         print("  3. touch state/INCENTIVE_LIVE   (arms THIS book only)")
-        print("  4. rm state/KILL_SWITCH_KALSHI")
+        print("  4. rm state/KILL_SWITCH_INCENTIVE")
         print("  5. --live on the command line")
     return 0
 
