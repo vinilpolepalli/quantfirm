@@ -153,7 +153,22 @@ To arm, **all five** are required, by design:
 4. `state/INCENTIVE_LIVE` exists — arms **this book only**
 5. `--live` on the command line
 
-and `state/KILL_SWITCH_KALSHI` must be absent.
+and `state/KILL_SWITCH_INCENTIVE` must be absent.
+
+**That last file changed on 2026-09-16, and the reason matters.** The incentive
+book used to halt on `state/KILL_SWITCH_KALSHI`, which is shared with the 15m
+metals desk. That desk is halted and the owner wants it to stay halted, so
+arming the incentive book would have meant deleting the halt from a $250 live
+metals desk as a side effect — "run incentives only" was not expressible. The
+incentive book now has its own switch, for the same reason `INCENTIVE_LIVE` is
+separate from `KALSHI_LIVE`. The cost: `KILL_SWITCH_KALSHI` no longer stops
+this book. Stopping everything on Kalshi is two files now — see below.
+
+Note that **the go/no-go gate does not block the quoter**. `verdict()` lives in
+`kalshi_incentive_paper.py`; `kalshi_incentive_quote.py` never reads it. The
+gate tells you whether the evidence supports funding the book. It is not a lock,
+and `INSUFFICIENT` has never been what stops an order from going out — the five
+conditions above are.
 
 `INCENTIVE_LIVE` is separate from `KALSHI_LIVE` on purpose: `KALSHI_LIVE` is
 shared with the 15m metals desk, so without a separate flag, turning that desk
@@ -176,9 +191,24 @@ and `state/KILL_SWITCH_KALSHI` must be removed, which is two more deliberate
 acts. Setting the secrets while the book still reads `INSUFFICIENT` is safe and
 is what lets the hourly pass reconcile against real broker state.
 
-To stop everything: `touch state/KILL_SWITCH_KALSHI`, then
-`python3 scripts/kalshi_incentive_quote.py --cancel-all --live` to pull resting
-quotes.
+To stop **this book**:
+
+```bash
+touch state/KILL_SWITCH_INCENTIVE
+python3 scripts/kalshi_incentive_quote.py --cancel-all --live   # pull resting quotes
+```
+
+To stop **everything on Kalshi**, both files, because the desks halt separately:
+
+```bash
+touch state/KILL_SWITCH_INCENTIVE   # this book
+touch state/KILL_SWITCH_KALSHI      # the 15m metals desk
+```
+
+Creating either is always safe. The incentive quoter re-reads
+`KILL_SWITCH_INCENTIVE` immediately before every single order, not once per
+pass, so dropping the file mid-run stops it at the next order rather than at
+the next tick.
 
 ## Rotation
 
