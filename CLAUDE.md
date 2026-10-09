@@ -9,9 +9,13 @@ Read this before touching anything.
 1. **Never send a live order that the code's own gate would not send.** Every
    desk gates on a kill-switch file plus an explicit env flag. Do not bypass a
    gate to "test" something — run the dry run instead.
-2. **Kill switches are files.** `state/KILL_SWITCH_KALSHI`, `KILL_SWITCH_PERPS`,
-   `KILL_SWITCH_EQ`, `state/INCENTIVE_LIVE` (that last one *arms* rather than
-   halts). Present = that desk is stopped. Creating one is always safe.
+2. **Kill switches are files.** `state/KILL_SWITCH_KALSHI`,
+   `KILL_SWITCH_INCENTIVE`, `KILL_SWITCH_PERPS`, `KILL_SWITCH_EQ`, and
+   `state/INCENTIVE_LIVE` (that last one *arms* rather than halts). Present =
+   that desk is stopped. Creating one is always safe. Note the incentive book
+   halts on `KILL_SWITCH_INCENTIVE`, **not** `KILL_SWITCH_KALSHI` — they were
+   split on 2026-09-16 so the incentive book could run while the 15m metals
+   desk stays halted. Stopping all of Kalshi means touching both.
 3. **Broker state is truth.** Reconcile against the venue before deciding
    anything; never "correct" a mismatch by trading.
 4. **Promotion is gated**: IDEA → RESEARCH → REVIEW → PAPER → CANARY →
