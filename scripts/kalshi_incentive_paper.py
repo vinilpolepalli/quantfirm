@@ -254,10 +254,18 @@ def main():
         rate, size, share, excluded = rate_per_hour(m, per)
         got = rate * interval_h
         earned += got
+        # This rebuilds the position dict from scratch each tick, so anything
+        # recorded when the slot was OPENED has to be carried forward by hand
+        # or it survives exactly one tick. age_h_at_open is the whole point of
+        # recording it -- a verdict built on programs that were minutes old is
+        # measuring freshness, not edge -- and it was being dropped before the
+        # first tick that could use it. `opened` had the same bug, unnoticed.
         kept.append(dict(ticker=pos["ticker"], capital=per, size=round(size, 1),
                          share=round(share, 4), rate_per_hour=round(rate, 4),
                          excluded=excluded, accrued=round(pos.get("accrued", 0.0) + got, 4),
-                         ends=m["ends"]))
+                         ends=m["ends"],
+                         age_h_at_open=pos.get("age_h_at_open"),
+                         opened=pos.get("opened")))
 
     # 2. refill empty slots with the best available
     if len(kept) < args.slots:
