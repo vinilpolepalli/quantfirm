@@ -9,9 +9,9 @@
     "MPC": 0.161162,
     "DELL": 0.072721
   },
-  "settled_cash": -108.51,
-  "unsettled_cash": 114.69,
-  "unsettled_date": "2026-10-14",
+  "settled_cash": 6.18,
+  "unsettled_cash": 0.0,
+  "unsettled_date": null,
   "peak_equity": 295.88,
   "equity_history": [
     [
@@ -245,10 +245,14 @@
     [
       "2026-10-14T19:48:09.069856+00:00",
       247.39
+    ],
+    [
+      "2026-10-15T19:47:34.261260+00:00",
+      240.84
     ]
   ],
   "last_rebalance": "2026-10-14T19:47:52.054858+00:00",
-  "last_plan_date": "2026-10-14",
+  "last_plan_date": "2026-10-15",
   "incidents": [
     {
       "ts": "2026-08-04T19:40:00Z",
@@ -308,12 +312,12 @@
     }
   ],
   "last_prices": {
-    "INTC": 98.4917,
-    "MU": 917.697,
-    "SNDK": 1405.58,
-    "STX": 715.99,
-    "MPC": 482.715,
-    "DELL": 506.8999
+    "INTC": 96.6379,
+    "MU": 928.3422,
+    "SNDK": 1382.3338,
+    "STX": 686.96,
+    "MPC": 473.455,
+    "DELL": 465.09
   },
   "cost_basis": 261.56,
   "contributions": [
