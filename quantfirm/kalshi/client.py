@@ -262,6 +262,35 @@ class KalshiClient:
     def cancel_order(self, order_id: str) -> dict:
         return self._req("DELETE", f"/portfolio/events/orders/{order_id}", auth=True)
 
+    def cancel_order_checked(self, order_id: str) -> dict:
+        """Cancel and classify the outcome. A 404 is not a cancel.
+
+        Live-ops lesson: swallowing a 404 and re-posting stacks live
+        positions. ``outcome`` is cancelled / already_gone / failed.
+        This method still talks to the venue — callers must already be
+        inside a live path the desk's own gate would allow.
+        """
+        try:
+            body = self.cancel_order(order_id)
+            return {"outcome": classify_cancel(200), "body": body}
+        except KalshiApiError as e:
+            return {"outcome": classify_cancel(e.status, e.body),
+                    "status": e.status, "body": e.body}
+
+
+def classify_cancel(status: int, body: str = "") -> str:
+    """Map a cancel HTTP outcome to cancelled / already_gone / failed.
+
+    404 means the order is already gone (filled or expired) or the
+    request hit the wrong shard. 409 is a race on an already-terminal
+    order. Neither is "cancelled".
+    """
+    if status in (200, 201, 204):
+        return "cancelled"
+    if status in (404, 409):
+        return "already_gone"
+    return "failed"
+
 
 class KalshiApiError(RuntimeError):
     def __init__(self, status: int, body: str):
