@@ -1,0 +1,36 @@
+name: kalshi-oss-paper
+on:
+  schedule:
+    - cron: '*/20 * * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: kalshi-oss-paper
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -q requests
+      - name: tick the OSS paper sleeve
+        run: python3 scripts/kalshi_oss_paper.py --capital 257
+      - name: commit state
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/kalshi_oss_paper.json
+          git diff --staged --quiet && { echo "no change"; exit 0; }
+          git commit -m "kalshi: oss paper tick $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
+            echo "push race, retry $i"; sleep $((2**i))
+          done
+          exit 1
